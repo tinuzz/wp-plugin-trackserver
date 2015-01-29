@@ -1,0 +1,59 @@
+TODO:
+
+Server:
+- implement TrackMe export to KML/GPX. How? Create blog post?
+- implement tripname normalization; find a way around Trackme using the name as the PK
+- reverse geocoding for trip names
+- maybe use export button to trigger tripame normalization
+- add columns to trip (& location?) tables to store remote IP
+- logging requests to MySQL
+- use geoJSON instead of Polyline, if callbacks are feasable for extracting metadata
+- implement GPSgate protocol
+- implement OSMand protocol
+
+Frontend:
+- DONE: Leaflet shortcode / map view.
+- Icons for start/finish
+- Media manager integration
+- DONE: autoupdate (live tracking) toggle button
+
+Admin backend:
+- DONE: Manage trips (name, comment, delete)
+- Internationalization
+- DONE: Add HOWTO screens for all clients
+- Add columns for nr. of points and distance to table with tracks
+
+Javascript:
+- DONE: move the thickbox manipulation to its own file
+- DONE: properly destroy map objects in the admin viewer when closing the thickbox
+
+
+
+REWRITE RULES
+
+$url = site_url(null, 'http');
+$base_uri = preg_replace('/^http:\/\/[^\/]+/', '', $url);
+$tag = $this -> options ['trackme_slug'];
+$extension = $this -> options ['trackme_extension'];
+$ajax_uri = admin_url('admin-ajax.php?action=trackserver_trackme');
+$ajax_uri = preg_replace('/^https?:\/\/[^\/]+/', '', $ajax_uri);
+
+$apache = <<<EOF
+# BEGIN Trackserver
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase $base_uri/
+RewriteRule ^$tag/requests\.$extension /wp/wp-admin/admin-ajax.php?action=trackserver_trackme [L]
+</IfModule>
+# END Trackserver
+EOF;
+
+$nginx = <<<EOF
+location = $base_uri/$tag/requests.$extension {
+        try_files \$uri \$uri/ $ajax_uri;
+}
+EOF;
+
+$apache = htmlspecialchars($apache);
+$nginx  = htmlspecialchars($nginx);
+
