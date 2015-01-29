@@ -26,7 +26,7 @@ are included. Maps can be viewed in full-screen on modern browsers.
 This plugin was written by Martijn Grendelman. It includes some code and libraries written by other people:
 
 * [Polyline encoder](https://github.com/emcconville/polyline-encoder) by Eric McConville
-* [Leaflet.js][leafletjs] by Vladimir Agafonkin and others
+* [Leaflet.js](http://leafletjs.com/) by Vladimir Agafonkin and others
 * [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) by John Firebaugh and others
 * [Leaflet-omnivore](https://github.com/mapbox/leaflet-omnivore) by Mapbox
 * [GPXpress](https://wordpress.org/support/plugin/gpxpress) by David Keen was an inspiration sometimes
