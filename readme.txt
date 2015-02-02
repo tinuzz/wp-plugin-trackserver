@@ -41,7 +41,10 @@ are included. Maps can be viewed in full-screen on modern browsers.
 
 = Credits =
 
-This plugin was written by Martijn Grendelman. It includes some code and libraries written by other people:
+This plugin was written by Martijn Grendelman. Development is tracked on Github:
+https://github.com/tinuzz/wp-plugin-trackserver
+
+It includes some code and libraries written by other people:
 
 * [Polyline encoder](https://github.com/emcconville/polyline-encoder) by Eric McConville
 * [Leaflet.js][leafletjs] by Vladimir Agafonkin and others
