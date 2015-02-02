@@ -3,54 +3,83 @@ var Trackserver = (function () {
     return {
 
         mapdata: {},
-        ts_tracks: {},
-        ts_latlngs: {},
-        ts_titles: {},
-        ts_markers: {},
+        mydata: {},
         timer: false,
         adminmap: false,
+
+        Mapicon: L.Icon.extend({
+            iconSize:     [15, 15],
+            iconAnchor:   [8, 8],
+            popupAnchor:  [0, 8]
+        }),
 
         init: function (mapdata) {
             this.mapdata = mapdata;
             this.create_maps();
         },
 
+        get_mydata: function(div_id, prop) {
+            if (this.mydata.hasOwnProperty(div_id)) {
+                if (this.mydata[div_id].hasOwnProperty(prop)) {
+                    return this.mydata[div_id][prop];
+                }
+            }
+            return false;
+        },
+
+        set_mydata: function (div_id, prop, value) {
+            if (!this.mydata.hasOwnProperty(div_id)) {
+                this.mydata[div_id] = {};
+            }
+            this.mydata[div_id][prop] = value;
+        },
+
         process_data: function (data, options) {
             var o = typeof data === 'string' ?  JSON.parse(data) : data;
-            var ts_latlng = new L.latLng(o.metadata.last_trkpt_lat, o.metadata.last_trkpt_lon);
-            this.ts_latlngs[options.div_id] = ts_latlng;
-            var ts_title = o.metadata.last_trkpt_time;
-            this.ts_titles[options.div_id] = ts_title;
+            var start_latlng = new L.latLng(o.metadata.first_trkpt);
+            var end_latlng = new L.latLng(o.metadata.last_trkpt);
+            var title = o.metadata.last_trkpt_time;
+
+            this.set_mydata(options.div_id, 'start', start_latlng);
+            this.set_mydata(options.div_id, 'end', end_latlng);
+            this.set_mydata(options.div_id, 'title', title);
             return o.track;
         },
 
         draw_track: function (map, track_url, div_id, is_live) {
 
             if (track_url) {
-                var old_track = false;
-                var old_marker = false;
-                var ts_markers = this.ts_markers;
-                var ts_latlngs = this.ts_latlngs;
-                var ts_titles = this.ts_titles;
+                var start_icon = new this.Mapicon ({iconUrl: trackserver_iconpath + 'greendot_15.png'});
+                var end_icon = new this.Mapicon ({iconUrl: trackserver_iconpath + 'reddot_15.png'});
 
                 // Identify any existing track layer and marker
-                if (this.ts_tracks.hasOwnProperty(div_id)) {
-                    old_track = this.ts_tracks[div_id];
-                }
-                if (this.ts_markers.hasOwnProperty(div_id)) {
-                    old_marker = this.ts_markers[div_id];
-                }
+                var old_track = this.get_mydata(div_id, 'track');
+                var old_start_marker = this.get_mydata(div_id, 'start_marker');
+                var old_end_marker = this.get_mydata(div_id, 'end_marker');
+
+                var _this = this;
 
                 // First draw the new track...
                 var runLayer = omnivore.polyline(track_url, {'ondata': L.bind(this.process_data, this), 'div_id': div_id} )
                     .on ('ready', function () {
                         // ...and then delete the old one, to prevent flickering
                         if (old_track) map.removeLayer (old_track);
+
                         if (is_live) {
-                            if (old_marker) map.removeLayer (old_marker);
-                            ts_markers[div_id] = new L.marker(ts_latlngs[div_id], {title: ts_titles[div_id]}).addTo(map);
+                            if (old_start_marker) map.removeLayer (old_start_marker);
+                            if (old_end_marker) map.removeLayer (old_end_marker);
+
+                            start_latlng = _this.get_mydata(div_id, 'start');
+                            start_marker = new L.marker(start_latlng, {icon: start_icon}).addTo(map);
+                            _this.set_mydata(div_id, 'start_marker', start_marker);
+
+                            end_latlng = _this.get_mydata(div_id, 'end');
+                            end_title = _this.get_mydata(div_id, 'title');
+                            end_marker = new L.marker(end_latlng, {icon: end_icon, title: end_title }).addTo(map);
+                            _this.set_mydata(div_id, 'end_marker', end_marker);
+
                             // Then, center the map on the last point / current position
-                            this._map.setView(ts_latlngs[div_id], map.getZoom());
+                            this._map.setView(end_latlng, map.getZoom());
                         }
                         else {
                             this._map.fitBounds(this.getBounds());
@@ -63,7 +92,7 @@ var Trackserver = (function () {
                             .setContent("Track could not be loaded:<br />" + str).openOn(this._map);
                     })
                     .addTo(map);
-                this.ts_tracks[div_id] = runLayer;
+                this.set_mydata(div_id, 'track', runLayer);
             }
         },
 

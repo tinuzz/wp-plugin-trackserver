@@ -1229,16 +1229,14 @@ EOF;
 
 						$points = array();
 						foreach ($res as $row) {
-							$p = array ($row ['latitude'], $row ['longitude']);  // We need $p below
+							$p = array ($row ['latitude'], $row ['longitude']);  // We need this below
 							$points[] = $p;
 						}
 						$encoded = Polyline::Encode($points);
 						$metadata = array (
-							'last_trkpt_time' => $row ['occurred'],
-							'last_trkpt_lat'  => $row ['latitude'],
-							'last_trkpt_lon'  => $row ['longitude'],
-							'start_trkpt' => $points[0],
-							'end_trkpt' => $p
+							'first_trkpt' => $points[0],
+							'last_trkpt' => $p,
+							'last_trkpt_time' => $row ['occurred']
 						);
 						$data = array ('track' => $encoded, 'metadata' => $metadata);
 
