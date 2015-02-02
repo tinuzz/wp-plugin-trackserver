@@ -142,6 +142,7 @@ EOF;
 				// To be localized in the shortcode and enqueued in loop_end
 				// Also localized and enqueued in admin_enqueue_scripts
 				wp_register_script ('trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js');
+				wp_localize_script ('trackserver', 'trackserver_iconpath', TRACKSERVER_PLUGIN_URL . 'img/');
 			}
 
 			/**
@@ -609,7 +610,6 @@ EOF;
 			function loop_end ()
 			{
 				wp_localize_script('trackserver', 'trackserver_mapdata', $this -> mapdata);
-				wp_localize_script('trackserver', 'trackserver_iconpath', TRACKSERVER_PLUGIN_URL . 'img/');
 				wp_enqueue_script ('trackserver');
 			}
 
