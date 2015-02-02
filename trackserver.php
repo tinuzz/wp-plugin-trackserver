@@ -609,6 +609,7 @@ EOF;
 			function loop_end ()
 			{
 				wp_localize_script('trackserver', 'trackserver_mapdata', $this -> mapdata);
+				wp_localize_script('trackserver', 'trackserver_iconpath', TRACKSERVER_PLUGIN_URL . 'img/');
 				wp_enqueue_script ('trackserver');
 			}
 
