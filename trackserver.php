@@ -172,7 +172,7 @@ EOF;
 						// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
 						$track_base_url = get_home_url (null, '/' . $this -> options ['gettrack_slug'] . "/?", (is_ssl()  ? 'https' : 'http'));
 						wp_localize_script('trackserver', 'track_base_url', $track_base_url);
-						wp_enqueue_script ('trackserver');
+						wp_enqueue_script ('trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js', array(), false, true);
 
 						// no break!
 
