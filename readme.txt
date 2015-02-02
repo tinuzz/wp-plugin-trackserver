@@ -1,7 +1,19 @@
-# wp-plugin-trackserver
-A WordPress plugin for GPS tracking and publishing
+=== Trackserver ===
+Contributors: tinuzz
+Donate link: http://www.grendelman.net/wp/trackserver-wordpress-plugin/
+Tags: gps, gpx, map, leaflet, track, mobile, tracking
+Requires at least: 4.0
+Tested up to: 4.1
+Stable tag: trunk
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Getting your GPS tracks into Wordpress and publishing them has never been easier!
+GPS Track Server for TrackMe, OruxMaps and others
+
+== Description ==
+
+Getting your GPS tracks into Wordpress and publishing them has never been
+easier!
 
 Trackserver is a plugin for storing and publishing GPS routes. It is a server
 companion to several mobile apps for location tracking, and it can display maps
@@ -13,15 +25,21 @@ is not the publishing, but rather the collection and storing of tracks and
 locations. It's all about keeping your data to yourself. Several mobile apps
 and protocols are supported for getting tracks into trackserver:
 
-* [TrackMe](http://www.luisespinosa.com/trackme_eng.html)
-* [MapMyTracks protocol](https://github.com/MapMyTracks/api) for example using [OruxMaps](http://www.oruxmaps.com/index_en.html)
-* HTTP POST, for example using [AutoShare](https://play.google.com/store/apps/details?id=com.dngames.autoshare)
+* [TrackMe][trackme]
+* [MapMyTracks protocol][mapmytracks], for example using [OruxMaps][oruxmaps]
+* HTTP POST, for example using [AutoShare][autoshare]
 
 A shortcode is provided for displaying your tracks on a map. Maps are displayed
-using the fantastic [Leaflet library](http://leafletjs.com/) and some useful Leaflet plugins
+using the fantastic [Leaflet library][leafletjs] and some useful Leaflet plugins
 are included. Maps can be viewed in full-screen on modern browsers.
 
-# Credits
+[trackme]: http://www.luisespinosa.com/trackme_eng.html
+[mapmytracks]: https://github.com/MapMyTracks/api
+[oruxmaps]: http://www.oruxmaps.com/index_en.html
+[autoshare]: https://play.google.com/store/apps/details?id=com.dngames.autoshare
+[leafletjs]: http://leafletjs.com/
+
+= Credits =
 
 This plugin was written by Martijn Grendelman. It includes some code and libraries written by other people:
 
@@ -31,9 +49,32 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 * [Leaflet-omnivore](https://github.com/mapbox/leaflet-omnivore) by Mapbox
 * [GPXpress](https://wordpress.org/support/plugin/gpxpress) by David Keen was an inspiration sometimes
 
-# Frequently Asked Questions
+= TODO =
 
-## What are the available shortcode attributes?
+* Support [OsmAnd's](http://osmand.net/) tracking protocol
+* Support [GpsGate](http://gpsgate.com/) tracking protocol
+* Explicitly allow/disallow users to use the tracking features (or use minimal capabilities)
+* More shortcode parameters and map options
+* More track management features
+* Track statistics, like distance, average speed, etc.
+* Add map profiles, maybe include [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers) plugin
+* Internationalization
+* ...
+
+More TODO-items and feature ideas in the TODO file contained in the plugin archive.
+
+== Installation ==
+
+1. Use Wordpress' built-in plugin installer, or copy the folder from the plugin
+   archive to the `/wp-content/plugins/` directory.
+1. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Configure the slugs that the plugin will listen on for location updates.
+1. Configure your mobile apps and start tracking!
+1. Use the shortcode [tsmap] to include maps and tracks in your posts and pages.
+
+== Frequently Asked Questions ==
+
+= What are the available shortcode attributes? =
 
 * track: track id or 'live'
 * width: map width
@@ -43,7 +84,7 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 
 Example: [tsmap track=39 align=center class=mymap]
 
-## What is live tracking?
+= What is live tracking? =
 
 By using the shortcode with the 'track=live' parameter, the most recently updated track
 belonging to the author of the current post/page is published on the map.
@@ -53,7 +94,7 @@ view is always centered to the most recent trackpoint. A marker is shown in
 that location. Live tracking can be stopped and restarted with a simple control
 button that is shown on the map.
 
-## What about security?
+= What about security? =
 
 By installing this plugin, all your local users get the ability to use the
 tracking features. There is currently no way to allow/disallow users to use these
@@ -71,11 +112,21 @@ Tracks can only be published in Wordpress posts or pages, and cannot be
 downloaded from outside Wordpress. Requests for downloading tracks need to
 have a cryptographic signature that only Wordpress can generate.
 
-## What GPX namespaces are supported for GPX import (via HTTP POST)?
+= What GPX namespaces are supported for GPX import (via HTTP POST)? =
 Only http://www.topografix.com/GPX/1/1 at the moment.
 
-## Is it free?
+= Is it free? =
 Yes. Donations are welcome. Please visit
 http://www.grendelman.net/wp/trackserver-wordpress-plugin/
 for details.
+
+== Changelog ==
+
+= 0.9 =
+* Initial release, with tracking supoort, simple shortcode and track management interface
+
+== Upgrade Notice ==
+
+= 1.0 =
+This will be the first stable release.
 
