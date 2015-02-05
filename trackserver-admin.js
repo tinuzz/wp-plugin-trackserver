@@ -87,23 +87,105 @@ var tb_remove = function ()
     if (typeof Trackserver !== 'undefined' && Trackserver.adminmap) {
         Trackserver.adminmap.remove();
     }
+    trackserver_mapdata = false;
 }
 
-var action_selected = function (val) {
-    if (val == -1) {
-        alert('No action selected');
-        return false;
-    }
-    return true;
-}
+var ts_tb_show = function (div, caption, width, height) {
+    tb_window_width = width;
+    tb_window_height = height;
+    tb_show(caption, "#TB_inline?width=&inlineId=" + div, "");
+    return false;
+};
 
-jQuery('#doaction').click(function(){
-    var val = jQuery('#bulk-action-selector-top').val();
-    if (! action_selected( val )) return false;
-    alert('Are you sure? ' + val);
-});
-jQuery('#doaction2').click(function(){
-    var val = jQuery('#bulk-action-selector-bottom').val();
-    if (! action_selected( val )) return false;
-    alert('Are you sure? ' + val);
-});
+// Put our own stuff in a separate namespace
+var TrackserverAdmin = (function () {
+
+    return {
+
+        init: function() {
+            this.checked = false;
+            this.setup_eventhandlers();
+        },
+
+        check_selection: function( action ) {
+            if (action == -1) {
+                alert('No action selected');
+                return false;
+            }
+
+            var min_items = 1;
+            var min_str = 'track';
+            if ( action == 'merge' ) {
+                min_items = 2;
+                min_str = 'tracks';
+            }
+            //var checked = jQuery('input[name=track\\[\\]]:checked');
+            this.checked = jQuery('input[name=track\\[\\]]:checked');
+            if (this.checked.length < min_items) {
+                alert('For ' + action + ', select ' + min_items + ' ' + min_str + ' at minimum');
+                return false;
+            }
+            return true;
+        },
+
+        handle_bulk_action: function (action) {
+            if (action == 'delete') {
+                if (confirm('Are you sure?')) {
+                    return true;
+                }
+            }
+            if (action == 'merge') {
+                // Get the last selected row
+                var last = this.checked.last();
+                var row = last.closest("tr");
+                var tds = row.find("td");
+                var merged_name;
+                // Loop over the cells to find the track name
+                jQuery.each(tds, function() {
+                    switch (this.className) {
+                        case 'name column-name':
+                            merged_name = jQuery(this).text();
+                            break;
+                    }
+                });
+                console.log(merged_name);
+                jQuery('#input-merged-name').val(merged_name + ' (merged)');
+                ts_tb_show('ts-merge-modal', 'Merge tracks', 600, 200);
+                return false;
+            }
+            return false;
+        },
+
+        setup_eventhandlers: function() {
+
+            _this = this;
+
+            jQuery('#doaction').click( function() {
+                var action = jQuery('#bulk-action-selector-top').val();
+                if (! _this.check_selection( action )) return false;
+                return _this.handle_bulk_action( action );
+            });
+
+            jQuery('#doaction2').click( function() {
+                var action = jQuery('#bulk-action-selector-bottom').val();
+                if (! _this.check_selection( action )) return false;
+                return _this.handle_bulk_action( action );
+            });
+
+            // When submitting for 'merge', add a hidden field to the bulk
+            // action form, containing the name for the merged track.
+            jQuery('#merge-submit-button').click( function() {
+                var merged_name = jQuery('#input-merged-name').val();
+                jQuery('#trackserver-tracks').append(
+                    jQuery('<input>').attr({
+                        type: 'hidden',
+                        name: 'merged_name',
+                        value: merged_name
+                    }))
+                .submit();
+            });
+        }
+    };
+})();
+
+TrackserverAdmin.init();
