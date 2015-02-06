@@ -1324,6 +1324,7 @@ EOF;
 					</div>
 					<div id="ts-merge-modal" style="display:none;">
 						<p>
+							Merge all points of multiple tracks into one track. Please specify the name for the merged track.
 							<form method="post" action="<?=$url?>">
 								<table>
 									<?php wp_nonce_field('manage_track'); ?>
@@ -1333,6 +1334,7 @@ EOF;
 									</tr>
 								</table>
 								<br />
+								<span class="aligncenter"><i>Warning: this action cannot be undone!</i></span><br />
 								<div class="alignright">
 									<input class="button action" type="button" value="Save" id="merge-submit-button">
 									<input class="button action" type="button" value="Cancel" onClick="tb_remove(); return false;">
