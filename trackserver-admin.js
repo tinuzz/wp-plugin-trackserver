@@ -54,6 +54,9 @@ var tb_click = function(e)
                 case 'source column-source':
                     jQuery('#input-track-source').val(jQuery(this).text());
                     break;
+                case 'comment column-comment':
+                    jQuery('#input-track-comment').val(jQuery(this).text());
+                    break;
                 case 'nonce column-nonce':
                     jQuery('#_wpnonce').val(jQuery(this).text());
                     break;
