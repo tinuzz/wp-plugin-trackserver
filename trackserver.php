@@ -14,15 +14,15 @@ License: GPL2
 2015-01-02 - v1.0 - first version
 */
 
-	if (!defined('ABSPATH')) {
-		die("No, sorry.");
+	if ( ! defined( 'ABSPATH' ) ) {
+		die( "No, sorry." );
 	}
 
-	if (!class_exists('trackserver')) {
+	if ( ! class_exists( 'trackserver' ) ) {
 
-		define('TRACKSERVER_PLUGIN_DIR', plugin_dir_path(__FILE__));
-		define('TRACKSERVER_PLUGIN_URL', plugin_dir_url(__FILE__));
-		define('TRACKSERVER_JSLIB', TRACKSERVER_PLUGIN_URL . 'lib/');
+		define( 'TRACKSERVER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+		define( 'TRACKSERVER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+		define( 'TRACKSERVER_JSLIB', TRACKSERVER_PLUGIN_URL . 'lib/' );
 
 		class trackserver {
 
@@ -41,13 +41,12 @@ License: GPL2
 			/**
 			 * Constructor
 			 */
-			function __construct ()
-			{
+			function __construct () {
 				global $wpdb;
 				$this -> tbl_tracks = $wpdb->prefix . "ts_tracks";
 				$this -> tbl_locations = $wpdb->prefix . "ts_locations";
-				$this -> options = get_option('trackserver_options');
-				$this -> option_defaults ["db_version"] = $this -> db_version;
+				$this -> options = get_option( 'trackserver_options' );
+				$this -> option_defaults["db_version"] = $this -> db_version;
 				// Should be a configuration option
 				$this -> options['gettrack_slug'] = 'trackserver/gettrack';
 				$this -> shortcode = 'tsmap';
@@ -58,56 +57,54 @@ License: GPL2
 				$this -> bulk_action_result_msg = false;
 
 				// Bootstrap
-				$this -> add_actions ();
-				if (is_admin ()) {
-					$this -> add_admin_actions ();
+				$this -> add_actions();
+				if ( is_admin() ) {
+					$this -> add_admin_actions();
 				}
 			}
 
 			/**
 			 * Add actions and filters.
 			 */
-			function add_actions ()
-			{
+			function add_actions() {
+
 				// This hook is called upon activation of the plugin
-				register_activation_hook(__FILE__, array (&$this, 'trackserver_install'));
+				register_activation_hook( __FILE__, array( &$this, 'trackserver_install' ) );
 
 				// Custom request parser; core protocol handler
-				add_action ('parse_request', array (&$this, 'parse_request'));
+				add_action( 'parse_request', array ( &$this, 'parse_request' ) );
 
 				// Add handler for TrackMe server via WP AJAX interface for both logged-in and not-logged-in users
-				add_action ('wp_ajax_trackserver_trackme', array (&$this, 'handle_trackme_request'));
-				add_action ('wp_ajax_nopriv_trackserver_trackme', array (&$this, 'handle_trackme_request'));
+				add_action( 'wp_ajax_trackserver_trackme', array( &$this, 'handle_trackme_request' ) );
+				add_action( 'wp_ajax_nopriv_trackserver_trackme', array( &$this, 'handle_trackme_request' ) );
 
 				// Front-end JavaScript and CSS
-				add_action('wp_enqueue_scripts', array(&$this, 'wp_enqueue_scripts'));
+				add_action( 'wp_enqueue_scripts', array( &$this, 'wp_enqueue_scripts' ) );
 
 				// Shortcode
-				add_shortcode('tsmap', array(&$this, 'handle_shortcode'));
-				add_action('loop_end', array(&$this, 'loop_end'));
+				add_shortcode( 'tsmap', array( &$this, 'handle_shortcode' ) );
+				add_action( 'loop_end', array( &$this, 'loop_end' ) );
 			}
 
 			/**
 			 * Add actions for the admin pages
 			 */
-			function add_admin_actions ()
-			{
-				add_action ('admin_menu', array (&$this, 'admin_menu'));
-				add_action ('admin_init', array (&$this, 'admin_init'));
-				add_filter('plugin_action_links_' .plugin_basename(__FILE__), array(&$this, 'add_settings_link'));
-				add_action ('admin_head', array (&$this, 'admin_head'));  // CSS for table styling
-				//add_action ('admin_footer-trackserver_page_trackserver-tracks', array (&$this, 'admin_footer'));  // Javascript for Thickbox manipulation
-				//add_action ('admin_footer-toplevel_page_trackserver-options', array (&$this, 'admin_footer'));  // Javascript for Thickbox manipulation
-				add_action ('admin_post_trackserver_save_track', array (&$this, 'admin_post_save_track'));
-				add_action ('admin_post_trackserver_upload_track', array (&$this, 'admin_post_upload_track'));
+			function add_admin_actions() {
 
-				// Backend JavaScript and CSS
-				add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
+				add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
+				add_action( 'admin_init', array( &$this, 'admin_init' ) );
+				add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'add_settings_link' ) );
+				add_action( 'admin_head', array( &$this, 'admin_head' ) );  // CSS for table styling
+				add_action( 'admin_post_trackserver_save_track', array( &$this, 'admin_post_save_track' ) );
+				add_action( 'admin_post_trackserver_upload_track', array( &$this, 'admin_post_upload_track' ) );
+				add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
 
 			}
 
-			function admin_head ()
-			{
+			/**
+			 * Function that prints some CSS in the header of the admin panel
+			 */
+			function admin_head() {
 				echo <<<EOF
 					<style type="text/css">
 						.wp-list-table .column-id { width: 50px; }
@@ -125,106 +122,75 @@ EOF;
 			 * Function to update options. Set the value in the options array and
 			 * write the array to the database.
 			 */
-			function update_option ($option, $value)
-			{
-				$this -> options [$option] = $value;
-				update_option ('trackserver_options', $this -> options);
+			function update_option( $option, $value ) {
+				$this -> options[ $option ] = $value;
+				update_option( 'trackserver_options', $this -> options );
 			}
 
 			/**
 			 * Handler for 'wp_print_scripts'.
 			 * Load scripts.
 			 */
-			function load_common_scripts ()
-			{
-				wp_enqueue_style('leaflet', TRACKSERVER_JSLIB . 'leaflet-0.7.3/leaflet.css');
-				wp_enqueue_script('leaflet', TRACKSERVER_JSLIB . 'leaflet-0.7.3/leaflet.js', array(), false, true);
-				wp_enqueue_style('leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.css');
-				wp_enqueue_script('leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.min.js', array(), false, true);
-				wp_enqueue_script('leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), false, true);
+			function load_common_scripts() {
+
+				wp_enqueue_style( 'leaflet', TRACKSERVER_JSLIB . 'leaflet-0.7.3/leaflet.css');
+				wp_enqueue_script( 'leaflet', TRACKSERVER_JSLIB . 'leaflet-0.7.3/leaflet.js', array(), false, true );
+				wp_enqueue_style( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.css' );
+				wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.min.js', array(), false, true );
+				wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), false, true );
 
 				// To be localized in the shortcode and enqueued in loop_end
 				// Also localized and enqueued in admin_enqueue_scripts
-				wp_register_script ('trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js');
-				wp_localize_script ('trackserver', 'trackserver_iconpath', TRACKSERVER_PLUGIN_URL . 'img/');
+				wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js' );
+				wp_localize_script( 'trackserver', 'trackserver_iconpath', TRACKSERVER_PLUGIN_URL . 'img/' );
 			}
 
 			/**
 			 * Handler for 'wp_enqueue_scripts'.
 			 * Load javascript and stylesheets on the front-end.
 			 */
-			function wp_enqueue_scripts ()
-			{
-				if ($this -> detect_shortcode ()) {
-					$this -> load_common_scripts ();
+			function wp_enqueue_scripts() {
+				if ( $this -> detect_shortcode() ) {
+					$this -> load_common_scripts();
 
 					// Live-update only on the front-end, not in admin
-					wp_enqueue_style('leaflet-messagebox', TRACKSERVER_JSLIB .'leaflet-messagebox-1.0/leaflet-messagebox.css');
-					wp_enqueue_script('leaflet-messagebox', TRACKSERVER_JSLIB .'leaflet-messagebox-1.0/leaflet-messagebox.js', array(), false, true);
-					wp_enqueue_style('leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.0/leaflet-liveupdate.css');
-					wp_enqueue_script('leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.0/leaflet-liveupdate.js', array(), false, true);
+					wp_enqueue_style( 'leaflet-messagebox', TRACKSERVER_JSLIB .'leaflet-messagebox-1.0/leaflet-messagebox.css' );
+					wp_enqueue_script( 'leaflet-messagebox', TRACKSERVER_JSLIB .'leaflet-messagebox-1.0/leaflet-messagebox.js', array(), false, true );
+					wp_enqueue_style( 'leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.0/leaflet-liveupdate.css' );
+					wp_enqueue_script( 'leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.0/leaflet-liveupdate.js', array(), false, true );
 				}
 			}
 
-			function admin_enqueue_scripts ($hook)
-			{
+			function admin_enqueue_scripts( $hook ) {
 
-				switch ($hook) {
+				switch ( $hook ) {
 					case 'trackserver_page_trackserver-tracks':
 
-						$this -> load_common_scripts ();
+						$this -> load_common_scripts();
 
 						// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
-						$track_base_url = get_home_url (null, '/' . $this -> options ['gettrack_slug'] . "/?", (is_ssl()  ? 'https' : 'http'));
-						wp_localize_script('trackserver', 'track_base_url', $track_base_url);
-						wp_enqueue_script ('trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js', array(), false, true);
+						$track_base_url = get_home_url( null, '/' . $this -> options['gettrack_slug'] . "/?", ( is_ssl()  ? 'https' : 'http' ) );
+						wp_localize_script( 'trackserver', 'track_base_url', $track_base_url );
+						wp_enqueue_script( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.js', array(), false, true );
 
-						// no break!
+						// No break! The following goes for both hooks.
 
 					case 'toplevel_page_trackserver-options':
 
 						// Enqueue the admin js (Thickbox overrides) in the footer
-						wp_enqueue_script ('trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array ('thickbox'), null, true);
-
+						wp_enqueue_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox' ), null, true );
 						break;
 				}
-			}
-
-			/**
-			 * Handler for 'admin_print_scripts'.
-			 * Load admin scripts.
-			 */
-			function admin_print_scripts ()
-			{
-				$this -> load_admin_scripts ();
-			}
-
-			/**
-			 * Handler for 'wp_print_scripts'.
-			 * Load admin scripts.
-			 */
-			function load_admin_scripts ()
-			{
-			}
-
-			/**
-			 * Handler for 'wp_print_scripts'.
-			 * Load option page scripts.
-			 */
-			function load_optionpage_scripts ()
-			{
-				wp_enqueue_script ('nextgen-admin', plugins_url('nextgen-options.js', __FILE__));
 			}
 
 			/**
 			 * Installer function. This runs when the plugin in activated and installs
 			 * the database table and sets default option values
 			 */
-			function trackserver_install ()
-			{
+			function trackserver_install() {
 				global $wpdb;
 
-				$sql = "CREATE TABLE IF NOT EXISTS ". $this -> tbl_locations. " (
+				$sql = "CREATE TABLE IF NOT EXISTS " . $this -> tbl_locations . " (
 					`id` int(11) NOT NULL AUTO_INCREMENT,
 					`trip_id` int(11) NOT NULL,
 					`latitude` double NOT NULL,
@@ -239,9 +205,9 @@ EOF;
 					PRIMARY KEY (`id`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-				$wpdb->query ($sql);
+				$wpdb->query( $sql );
 
-				$sql = "CREATE TABLE IF NOT EXISTS ". $this -> tbl_tracks. " (
+				$sql = "CREATE TABLE IF NOT EXISTS " . $this -> tbl_tracks . " (
 					`id` int(11) NOT NULL AUTO_INCREMENT,
 					`user_id` int(11) NOT NULL,
 					`name` varchar(255) NOT NULL,
@@ -252,20 +218,19 @@ EOF;
 					PRIMARY KEY (`id`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-				$wpdb->query ($sql);
+				$wpdb->query( $sql );
 
 				// Update database schema
-				$this -> check_update_db ();
+				$this -> check_update_db();
 
 				// Add options to the database
-				$this -> add_options ();
+				$this -> add_options();
 			}
 
 			/**
 			 * Check if the database schema is the correct version and upgrade if necessary.
 			 */
-			function check_update_db ()
-			{
+			function check_update_db() {
 				global $wpdb;
 
 				// Upgrade table if necessary. Add upgrade SQL statements here, and
@@ -287,14 +252,12 @@ EOF;
 			}
 
 
-			function add_options()
-			{
+			function add_options() {
 				add_option('trackserver_options', $this -> option_defaults);
 				$this -> options = get_option('trackserver_options');
 			}
 
-			function options_page_html ()
-			{
+			function options_page_html() {
 				if (!current_user_can('manage_options')) {
 					wp_die( __('You do not have sufficient permissions to access this page.') );
 				}
@@ -323,15 +286,13 @@ EOF;
 			/**
 			 * Filter callback to add a link to the plugin's settings.
 			 */
-			public function add_settings_link ($links)
-			{
+			function add_settings_link( $links ) {
 				$settings_link = '<a href="admin.php?page=trackserver-options">Settings</a>';
 				array_unshift ($links, $settings_link);
 				return $links;
 			}
 
-			function advanced_settings_html ()
-			{
+			function advanced_settings_html() {
 				add_settings_field ('trackserver_gettrack_slug','Gettrack URL slug',
 						array (&$this, 'gettrack_slug_html'), 'trackserver', 'trackserver-advanced');
 				/*
@@ -342,8 +303,7 @@ EOF;
 				*/
 			}
 
-			function trackme_settings_html ()
-			{
+			function trackme_settings_html() {
 				$trackme_settings_img = TRACKSERVER_PLUGIN_URL . 'img/trackme-settings.png';
 
 				echo <<<EOF
@@ -357,15 +317,13 @@ EOF;
 						</p>
 					</div>
 EOF;
-
 				add_settings_field ('trackserver_trackme_slug','TrackMe URL slug',
 						array (&$this, 'trackme_slug_html'), 'trackserver', 'trackserver-trackme');
 				add_settings_field ('trackserver_trackme_extension','TrackMe server extension',
 						array (&$this, 'trackme_extension_html'), 'trackserver', 'trackserver-trackme');
 			}
 
-			function mapmytracks_settings_html ()
-			{
+			function mapmytracks_settings_html() {
 				$mapmytracks_settings_img = TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png';
 
 				echo <<<EOF
@@ -383,8 +341,7 @@ EOF;
 						array (&$this, 'mapmytracks_tag_html'), 'trackserver', 'trackserver-mapmytracks');
 			}
 
-			function httppost_settings_html ()
-			{
+			function httppost_settings_html() {
 				$autoshare_settings_img = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
 
 				echo <<<EOF
@@ -402,8 +359,7 @@ EOF;
 						array (&$this, 'upload_tag_html'), 'trackserver', 'trackserver-httppost');
 			}
 
-			function gettrack_slug_html ()
-			{
+			function gettrack_slug_html() {
 				$val = $this -> options ['gettrack_slug'];
 				$url = site_url(null);
 				echo <<<EOF
@@ -411,10 +367,9 @@ EOF;
 					There is generally no need to change this.<br />
 					<input type="text" size="25" name="trackserver_options[gettrack_slug]" id="trackserver_gettrack_slug" value="$val" autocomplete="off" /><br /><br />
 EOF;
-
 			}
-			function trackme_slug_html ()
-			{
+
+			function trackme_slug_html() {
 				$val = $this -> options ['trackme_slug'];
 				$url = site_url(null);
 				echo <<<EOF
@@ -424,11 +379,9 @@ EOF;
 					Note about HTTPS: TrackMe as of v1.11.1 does not support <a href="http://en.wikipedia.org/wiki/Server_Name_Indication">SNI</a> for HTTPS connections.
 					If your Wordpress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a problem with TrackMe that Trackserver cannot fix.
 EOF;
-
 			}
 
-			function trackme_extension_html ()
-			{
+			function trackme_extension_html() {
 				$tag = $this -> options ['trackme_slug'];
 				$val = $this -> options ['trackme_extension'];
 				$url = site_url(null, 'http');
@@ -440,11 +393,9 @@ EOF;
 					as long as the request is handled by Wordpress' index.php, so it's better to not use any known file type extension, like 'html' or 'jpg'. A single
 					character like 'z' (the default) should work just fine. Change the 'Server extension' setting in TrackMe to match the value you put here.<br /><br />
 EOF;
-
 			}
 
-			function mapmytracks_tag_html ()
-			{
+			function mapmytracks_tag_html() {
 				$val = $this -> options ['mapmytracks_tag'];
 				$url = site_url(null);
 				echo <<<EOF
@@ -456,8 +407,7 @@ EOF;
 EOF;
 			}
 
-			function upload_tag_html ()
-			{
+			function upload_tag_html() {
 				$val = $this -> options ['upload_tag'];
 				$url = site_url(null, 'http');
 				echo <<<EOF
@@ -466,8 +416,7 @@ EOF;
 EOF;
 			}
 
-			function normalize_tripnames_html ()
-			{
+			function normalize_tripnames_html() {
 				$val = (isset ($this -> options ['normalize_tripnames']) ? $this -> options ['normalize_tripnames'] : "");
 				$ch = "";
 				if ($val == 'yes') $ch = "checked";
@@ -477,8 +426,7 @@ EOF;
 EOF;
 			}
 
-			function tripnames_format_html ()
-			{
+			function tripnames_format_html() {
 				$val = $this -> options ['tripnames_format'];
 				echo <<<EOF
 					Normalized trip name format, in <a href="http://php.net/strftime" target="_blank">strftime()</a> format, applied to the first location's timestamp.<br />
@@ -486,13 +434,11 @@ EOF;
 EOF;
 			}
 
-			function admin_init ()
-			{
+			function admin_init() {
 				$this -> register_settings ();
 			}
 
-			function register_settings ()
-			{
+			function register_settings () {
 				// All options in one array
 				register_setting ('trackserver-options', 'trackserver_options');
 				// Add settings and settings sections
@@ -502,8 +448,7 @@ EOF;
 				add_settings_section('trackserver-advanced', 'Advanced settings', array (&$this, 'advanced_settings_html'),  'trackserver');
 			}
 
-			function admin_menu ()
-			{
+			function admin_menu() {
 				$page = add_options_page('Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-admin-menu', array (&$this, 'options_page_html'));
 				$page = str_replace('admin_page_', '', $page);
 				$this -> options_page = str_replace('settings_page_', '', $page);
@@ -526,9 +471,7 @@ EOF;
 				add_action( 'load-' . $page2, array( &$this, 'load_manage_tracks' ));
 			}
 
-			function detect_shortcode ()
-			{
-
+			function detect_shortcode() {
 				global $wp_query;
 				$posts = $wp_query->posts;
 				$pattern = get_shortcode_regex ();
@@ -544,8 +487,7 @@ EOF;
 				return false;
 			}
 
-			public function handle_shortcode ($atts)
-			{
+			function handle_shortcode( $atts ) {
 				global $wpdb;
 
 				$defaults = array (
@@ -615,8 +557,7 @@ EOF;
 			/**
 			 * Fucntion to enqueue the localized JavaScript that initializes the map(s)
 			 */
-			function loop_end ()
-			{
+			function loop_end() {
 				wp_localize_script('trackserver', 'trackserver_mapdata', $this -> mapdata);
 				wp_enqueue_script ('trackserver');
 			}
@@ -625,8 +566,7 @@ EOF;
 			 * Function to handle the request. This does a simple string comparison on the request URI to see
 			 * if we need to handle the request. If so, it does. If not, it passes on the request.
 			 */
-			function parse_request ($wp)
-			{
+			function parse_request( $wp ) {
 				$url = site_url(null, 'http');
 				$tag = $this -> options ['trackme_slug'];
 				$ext = $this -> options ['trackme_extension'];
@@ -672,8 +612,8 @@ EOF;
 				return $wp;
 			}
 
-			function validate_trackme_login ()
-			{
+			function validate_trackme_login() {
+
 				$username = urldecode ($_GET['u']);
 				$password = urldecode ($_GET['p']);
 
@@ -704,8 +644,8 @@ EOF;
 			 * Function to handle TrackMe GET requests. It validates the user and password and
 			 * delegates the requested action to a dedicated function
 			 */
-			function handle_trackme_request ()
-			{
+			function handle_trackme_request() {
+
 				// If this function returns, we're OK
 				$user_id = $this -> validate_trackme_login ();
 
@@ -726,15 +666,13 @@ EOF;
 			/**
 			 * Function to handle TrackMe export requests. Not currently implemented.
 			 */
-			function handle_trackme_export ()
-			{
+			function handle_trackme_export() {
 				http_response_code(501);
 				echo "Export is not supported by the server.";
 
 			}
 
-			function handle_mapmytracks_request ()
-			{
+			function handle_mapmytracks_request() {
 				// If this function returns, we're OK
 				$user_id = $this -> validate_http_basicauth ();
 
@@ -763,8 +701,7 @@ EOF;
 			 * Sample request:
 			 * /wp/trackme/requests.z?a=upload&u=martijn&p=xxx&lat=51.44820629&long=5.47286778&do=2015-01-03%2022:22:15&db=8&tn=Auto_2015.01.03_10.22.06&sp=0.000&alt=55.000
 			 */
-			function handle_trackme_upload ($user_id)
-			{
+			function handle_trackme_upload( $user_id ) {
 				global $wpdb;
 
 				$trip_name = urldecode($_GET['tn']);
@@ -846,8 +783,7 @@ EOF;
 			 * Function to handle the 'gettriplist' action from a TrackMe GET request. It prints a list of all trips
 			 * currently in the database, containing name and creation timestamp
 			 */
-			function handle_trackme_gettriplist ($user_id)
-			{
+			function handle_trackme_gettriplist( $user_id ) {
 				global $wpdb;
 
 				$sql = $wpdb -> prepare ("SELECT name,created FROM ". $this -> tbl_tracks ." WHERE user_id=%d ORDER BY name ", $user_id);
@@ -864,8 +800,7 @@ EOF;
 			 * Function to handle the 'deletetrip' action from a TrackMe GET request. If a trip ID can be found from the
 			 * supplied name, all locations and the trip record for the ID are deleted from the database.
 			 */
-			function handle_trackme_deletetrip ($user_id)
-			{
+			function handle_trackme_deletetrip( $user_id ) {
 				global $wpdb;
 
 				$trip_name = urldecode($_GET['tn']);
@@ -895,8 +830,7 @@ EOF;
 			/**
 			 * Function to print a result for the TrackMe client. It prints a result code and optionally a message.
 			 */
-			function trackme_result ($rc, $message = false)
-			{
+			function trackme_result( $rc, $message = false ) {
 				echo "Result:$rc";
 				if ($message) {
 					echo "|$message";
@@ -908,8 +842,7 @@ EOF;
 			 * Function to validate a timestamp supplied by a client. It checks if the timestamp is in the required
 			 * format and if the timestamp is unchanged after parsing.
 			 */
-			function validate_timestamp ($ts)
-			{
+			function validate_timestamp( $ts ) {
 			    $d = DateTime::createFromFormat('Y-m-d H:i:s', $ts);
 			    return $d && $d->format('Y-m-d H:i:s') == $ts;
 			}
@@ -918,10 +851,9 @@ EOF;
 			 * Function to validate Wordpress credentials for basic HTTP authentication. If no crededtials are received,
 			 * we send a 401 status code. If the username or password are incorrect, we terminate.
 			 */
-			function validate_http_basicauth ()
-			{
-				if (!isset($_SERVER['PHP_AUTH_USER'])) {
+			function validate_http_basicauth() {
 
+				if (!isset($_SERVER['PHP_AUTH_USER'])) {
 					header ('WWW-Authenticate: Basic realm="Authentication Required"');
 					header ('HTTP/1.0 401 Unauthorized');
 					die ("Authentication required\n");
@@ -947,8 +879,7 @@ EOF;
 			 * valid points are received. Valid points are inserted and and the new trip ID is
 			 * returned in an XML message.
 			 */
-			function handle_mapmytracks_start_activity ($user_id)
-			{
+			function handle_mapmytracks_start_activity( $user_id ) {
 				global $wpdb;
 
 				$trip_name = $_POST['title'];
@@ -984,8 +915,7 @@ EOF;
 			 * Function to handle 'update_activity' request for the MapMyTracks protocol. It checks if the supplied
 			 * activity_id is valid and owned by the current user before inserting the received points into the database.
 			 */
-			function handle_mapmytracks_update_activity ($user_id)
-			{
+			function handle_mapmytracks_update_activity( $user_id ) {
 				global $wpdb;
 
 				$sql = $wpdb -> prepare ("SELECT id, user_id FROM ". $this -> tbl_tracks. " WHERE id=%d;", $_POST['activity_id']);
@@ -1011,15 +941,14 @@ EOF;
 			 * Function to handle 'stop_activity' request for the MapMyTracks protocol. This doesn't
 			 * do anything, except return a bogus (but appropriate) XML message.
 			 */
-			function handle_mapmytracks_stop_activity ($user_id)
-			{
+			function handle_mapmytracks_stop_activity( $user_id ) {
 				$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><message />');
 				$xml->addChild('type', 'activity_stopped');
 				echo $xml->asXML();
 			}
 
-			function mapmytracks_parse_points ($points)
-			{
+			function mapmytracks_parse_points( $points ) {
+
 				// Check the points syntax. It should match groups of four items, each containing only
 				// numbers, some also dots and dashes
 				$pattern = '/^([\d.]+ [\d.]+ [\d.-]+ [\d]+ ?)*$/';
@@ -1045,8 +974,7 @@ EOF;
 				}
 			}
 
-			function mapmytracks_insert_points ($points, $trip_id)
-			{
+			function mapmytracks_insert_points( $points, $trip_id ) {
 				global $wpdb;
 
 				if ($points) {
@@ -1073,8 +1001,8 @@ EOF;
 				return true;
 			}
 
-			function mapmytracks_get_source ()
-			{
+			function mapmytracks_get_source() {
+
 					$source = '';
 					if (array_key_exists ('source', $_POST)) {
 						$source .= $_POST['source'];
@@ -1107,7 +1035,7 @@ EOF;
 				return $new;
 			}
 
-			function handle_uploaded_files ( $user_id ) {
+			function handle_uploaded_files( $user_id ) {
 
 				$tmp = $this -> get_temp_dir ();
 				$schema = plugin_dir_path( __FILE__ ) .'/gpx-1.1.xsd';
@@ -1153,8 +1081,7 @@ EOF;
 				echo $msg;
 			}
 
-			function handle_admin_upload () {
-
+			function handle_admin_upload() {
 				$user_id = get_current_user_id();
 				return $this -> handle_uploaded_files( $user_id );
 			}
@@ -1164,8 +1091,7 @@ EOF;
 			 * provided DOMDocument to SimpleXML for easier processing and uses the same intermediate format
 			 * as the MapMyTracks import, so it can use the same function for inserting the locations
 			 */
-			function process_gpx ($dom, $user_id)
-			{
+			function process_gpx( $dom, $user_id ) {
 				global $wpdb;
 
 				$gpx = simplexml_import_dom ($dom);
@@ -1202,8 +1128,7 @@ EOF;
 				return array('num_trk' => $ntrk, 'num_trkpt' => $ntrkpt);
 			}
 
-			function get_temp_dir ()
-			{
+			function get_temp_dir() {
 				$tmp = get_temp_dir () .'/trackserver';
 				if (!file_exists($tmp)) {
 					mkdir($tmp);
@@ -1211,22 +1136,20 @@ EOF;
 				return $tmp;
 			}
 
-			function parse_iso_date ($ts)
-			{
+			function parse_iso_date( $ts ) {
 				//$i = new DateInterval ('PT' .strval (get_option( 'gmt_offset' ) * HOUR_IN_SECONDS) .'S');
 				$d = new DateTime ($ts);
 				//$d = $d -> add($i);
 				return $d->format('U');
 			}
 
-			function get_author( $post_id )
-			{
+			function get_author( $post_id ) {
 				$post = get_post( $post_id );
 				return $post -> post_author;
 			}
 
-			function handle_gettrack ()
-			{
+			function handle_gettrack() {
+
 				// Include polyline encoder
 				require_once TRACKSERVER_PLUGIN_DIR . 'Polyline.php';
 
@@ -1310,8 +1233,8 @@ EOF;
 				$this -> tracks_list_table = new Tracks_List_Table ($list_table_options);
 			}
 
-			function manage_tracks_html ()
-			{
+			function manage_tracks_html() {
+
 				if (!current_user_can('manage_options')) {
 					wp_die( __('You do not have sufficient permissions to access this page.') );
 				}
@@ -1405,17 +1328,17 @@ EOF;
 				<?php
 			}
 
-			function profiles_html ()
-			{
+			function profiles_html() {
+
 				if (!current_user_can('manage_options')) {
 					wp_die( __('You do not have sufficient permissions to access this page.') );
 				}
 				echo "<h2>Trackserver map profiles</h2>";
 			}
 
-			function admin_post_save_track ()
-			{
+			function admin_post_save_track() {
 				global $wpdb;
+
 				check_admin_referer ('manage_track_' . $_REQUEST ['track_id']);
 
 				// Save track. Use stripslashes() on the data, because WP magically escapes it.
@@ -1442,7 +1365,7 @@ EOF;
 			/**
 			 * Handler for the admin_post_trackserver_upload_track action
 			 */
-			function admin_post_upload_track () {
+			function admin_post_upload_track() {
 				check_admin_referer ('upload_track');
 				$message = $this -> handle_admin_upload();
 				setcookie('ts_bulk_result', $message, time() + 300);
@@ -1477,8 +1400,7 @@ EOF;
 			/**
 			 * Function to process any bulk action from the tracks_list_table
 			 */
-			function process_bulk_action ($action)
-			{
+			function process_bulk_action( $action ) {
 				global $wpdb;
 
 				// The action name is 'bulk-' + plural form of items in WP_List_Table
@@ -1541,28 +1463,8 @@ EOF;
 				}
 			}
 
-			/**
-			 * A function to load some javascript to hook into the Thickbox used for editing
-			 * in the admin backend.
-			 * http://stackoverflow.com/questions/6091998/how-would-you-trigger-an-event-when-a-thickbox-closes
-			 * This is tied to the action 'admin_footer-trackserver_page_trackserver-tracks', where the
-			 * suffix is obtained from $GLOBALS['hook_suffix'].
-			 * http://codex.wordpress.org/Plugin_API/Action_Reference/admin_footer-%28hookname%29
-			 * This action is run really late (just before the </body> tag) and is page-specific.
-			 */
-			function admin_footer ()
-			{
-				/* This is NOT the right way to print scripts, but using wp_register_script / wp_enqueue_script
-				 * I could not get WP to load this script in the footer AFTER thickbox, which is necessary
-				 * because we override some of its functions
-         */
-				echo "<script type='text/javascript' src='" .TRACKSERVER_PLUGIN_URL ."trackserver-admin.js'></script>";
-			}
-
 		} // class
 	} // if !class_exists
 
 	// Main
-	$trackserver = new trackserver ();
-
-?>
+	$trackserver = new trackserver();
