@@ -151,7 +151,6 @@ var TrackserverAdmin = (function () {
                             break;
                     }
                 });
-                console.log(merged_name);
                 jQuery('#input-merged-name').val(merged_name + ' (merged)');
                 ts_tb_show('ts-merge-modal', 'Merge tracks', 600, 250);
                 return false;
@@ -186,6 +185,48 @@ var TrackserverAdmin = (function () {
                         value: merged_name
                     }))
                 .submit();
+            });
+
+            jQuery('#addtrack-button').click( function () {
+                ts_tb_show('ts-upload-modal', 'Upload GPX files', 600, 400);
+                return false;
+            });
+
+            // Button that activates the file input
+            jQuery('#ts-select-files-button').click( function () {
+                jQuery('#ts-file-input').click();
+            });
+
+            // Process selected files. The upload button stays disabled if any
+            // non-GPX files are selected.
+            jQuery('#ts-file-input').change( function (e) {
+                jQuery('#ts-file-input').each(function() {
+                    var out='<ul style="list-style:square inside">';
+                    var f = e.target.files,
+                        len = f.length,
+                        re = /\.gpx$/i,
+                        error = false;
+                    for (var i=0;i<len;i++){
+                        if (! re.test(f[i].name)) {
+                                error = '<i>Error: You have selected non-GPX files. Please upload GPX files only.</i>';
+                        }
+                        out += '<li>' + f[i].name + '</li>';
+                    }
+                    out += '</ul>';
+                    if (!error) {
+                        jQuery('#ts-upload-files-button').removeAttr('disabled');
+                    }
+                    else {
+                        jQuery('#ts-upload-files-button').attr('disabled', 'disabled');
+                    }
+                    jQuery('#ts-upload-filelist').html(out);
+                    jQuery('#ts-upload-warning').html(error || '');
+                });
+            });
+
+            jQuery('#ts-upload-files-button').click( function() {
+                jQuery('#ts-upload-files-button').attr('disabled', 'disabled').html('Wait...');
+                jQuery('#ts-upload-form').submit();
             });
         }
     };

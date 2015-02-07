@@ -99,6 +99,7 @@ License: GPL2
 				//add_action ('admin_footer-trackserver_page_trackserver-tracks', array (&$this, 'admin_footer'));  // Javascript for Thickbox manipulation
 				//add_action ('admin_footer-toplevel_page_trackserver-options', array (&$this, 'admin_footer'));  // Javascript for Thickbox manipulation
 				add_action ('admin_post_trackserver_save_track', array (&$this, 'admin_post_save_track'));
+				add_action ('admin_post_trackserver_upload_track', array (&$this, 'admin_post_upload_track'));
 
 				// Backend JavaScript and CSS
 				add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
@@ -1088,15 +1089,33 @@ EOF;
 					return $source;
 			}
 
-			function handle_upload ()
-			{
-				header ('Content-Type: text/plain');
-				$user_id = $this -> validate_http_basicauth ();
+			function rearrange( $files ) {
+				$j = 0;
+				foreach ($files as $postvar => $arr) {
+					foreach( $arr as $key => $list ){
+						if ( is_array( $list ) ) {
+							foreach( $list as $i => $val ){
+									$new[ $j + $i ][ $key ] = $val;
+							}
+						}
+						else {
+							$new[ $j ][ $key ] = $list;
+						}
+					}
+					$j += $i + 1;
+				}
+				return $new;
+			}
+
+			function handle_uploaded_files ( $user_id ) {
 
 				$tmp = $this -> get_temp_dir ();
 				$schema = plugin_dir_path( __FILE__ ) .'/gpx-1.1.xsd';
 
-				foreach ($_FILES as $f) {
+				$message = '';
+				$files = $this -> rearrange( $_FILES );
+
+				foreach ($files as $f) {
 					$filename = $tmp .'/'. uniqid ();
 
 					// Check the filename extension case-insensitively
@@ -1107,23 +1126,37 @@ EOF;
 							$xml -> load ($filename);
 							if ($xml -> schemaValidate ($schema)) {
 								if ($result = $this -> process_gpx ($xml, $user_id)) {
-									echo "OK: File '". $f ['name'] . "'. Imported ".
+									$message .= "OK: File '". $f ['name'] . "'. Imported ".
 										$result ['num_trkpt'] ." points from ". $result ['num_trk'] ." tracks\n";
 								}
 							}
 							else {
-								echo "ERROR: File '". $f ['name'] . "' could not be validated as GPX 1.1.\n";
+								$message .= "ERROR: File '". $f ['name'] . "' could not be validated as GPX 1.1.\n";
 							}
 						}
 						else {
-							echo "ERROR: Upload '". $f ['name'] . "' failed (rc=". $f ['error'] . ")\n";
+							$message .= "ERROR: Upload '". $f ['name'] . "' failed (rc=". $f ['error'] . ")\n";
 						}
 					}
 					else {
-						echo "ERROR: Only .gpx files accepted\n";
-					}
+						$message .= "ERROR: Only .gpx files accepted; discarding '". $f ['name'] . "'\n";
+				}
 					unlink ($filename);
 				}
+				return $message;
+			}
+
+			function handle_upload() {
+				header ('Content-Type: text/plain');
+				$user_id = $this -> validate_http_basicauth ();
+				$msg = $this -> handle_uploaded_files( $user_id );
+				echo $msg;
+			}
+
+			function handle_admin_upload () {
+
+				$user_id = get_current_user_id();
+				return $this -> handle_uploaded_files( $user_id );
 			}
 
 			/**
@@ -1343,6 +1376,24 @@ EOF;
 							</form>
 						</p>
 					</div>
+					<div id="ts-upload-modal" style="display:none;">
+						<div style="padding: 15px 0">
+							<form id="ts-upload-form" method="post" action="<?=$url?>" enctype="multipart/form-data">
+								<?php wp_nonce_field('upload_track'); ?>
+								<input type="hidden" name="action" value="trackserver_upload_track" />
+								<input type="file" name="gpxfile[]" multiple="multiple" style="display: none" id="ts-file-input" />
+								<input type="button" class="button button-hero" value="Select files" id="ts-select-files-button" />
+								<!-- <input type="button" class="button button-hero" value="Upload" id="ts-upload-files-button" disabled="disabled" /> -->
+								<button type="button" class="button button-hero" value="Upload" id="ts-upload-files-button" disabled="disabled">Upload</button>
+							</form>
+							<br />
+							<br />
+							Selected files:<br />
+							<div id="ts-upload-filelist" style="height: 200px; max-height: 200px; overflow-y: auto; border: 1px solid #dddddd; padding-left: 5px;"></div>
+							<br />
+							<div id="ts-upload-warning"></div>
+						</div>
+					</div>
 					<form id="trackserver-tracks" method="post">
 						<input type="hidden" name="page" value="trackserver-tracks" />
 						<div class="wrap">
@@ -1385,6 +1436,19 @@ EOF;
 
 				// Redirect back to the admin page. This should be safe.
 				wp_redirect ($_REQUEST ['_wp_http_referer']);
+				exit;
+			}
+
+			/**
+			 * Handler for the admin_post_trackserver_upload_track action
+			 */
+			function admin_post_upload_track () {
+				check_admin_referer ('upload_track');
+				$message = $this -> handle_admin_upload();
+				setcookie('ts_bulk_result', $message, time() + 300);
+				// Redirect back to the admin page. This should be safe.
+				wp_redirect ($_REQUEST ['_wp_http_referer']);
+				exit;
 			}
 
 			/**
@@ -1471,7 +1535,7 @@ EOF;
 				if ( $this -> bulk_action_result_msg ) {
 					?>
 						<div class="updated">
-							<p><?= htmlspecialchars( $this -> bulk_action_result_msg ) ?></p>
+							<p><?= nl2br( htmlspecialchars( $this -> bulk_action_result_msg ) ) ?></p>
 						</div>
 					<?php
 				}
