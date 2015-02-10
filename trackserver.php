@@ -1322,6 +1322,24 @@ EOF;
 							</div>
 						</p>
 					</div>
+					<div id="ts-merge-modal" style="display:none;">
+						<p>
+							<form method="post" action="<?=$url?>">
+								<table>
+									<?php wp_nonce_field('manage_track'); ?>
+									<tr>
+										<th style="width: 150px;">Merged track name</th>
+										<td><input id="input-merged-name" name="name" type="text" style="width: 400px" /></td>
+									</tr>
+								</table>
+								<br />
+								<div class="alignright">
+									<input class="button action" type="button" value="Save" id="merge-submit-button">
+									<input class="button action" type="button" value="Cancel" onClick="tb_remove(); return false;">
+								</div>
+							</form>
+						</p>
+					</div>
 					<form id="trackserver-tracks" method="post">
 						<input type="hidden" name="page" value="trackserver-tracks" />
 						<div class="wrap">
@@ -1346,16 +1364,23 @@ EOF;
 				global $wpdb;
 				check_admin_referer ('manage_track_' . $_REQUEST ['track_id']);
 
-				// Save track
+				// Save track. Use stripslashes() on the data, because WP magically escapes it.
+				$name = stripslashes( $_REQUEST['name'] );
+				$source = stripslashes( $_REQUEST['source'] );
+				$comment = stripslashes( $_REQUEST['comment'] );
+
 				$data = array (
-					'name' => $_REQUEST['name'],
-					'source' => $_REQUEST['source'],
-					'comment' => $_REQUEST['comment']
+					'name' => $name,
+					'source' => $source,
+					'comment' => $comment
 				);
 				$where = array ('id' => $_REQUEST ['track_id']);
 				$wpdb -> update ($this -> tbl_tracks, $data, $where, '%s', '%d');
 
-				// Back to the admin page. This should be safe.
+				$message = 'Track "' . $name . '" (ID=' . $_REQUEST ['track_id'] . ') saved';
+				setcookie('ts_bulk_result', $message, time() + 300);
+
+				// Redirect back to the admin page. This should be safe.
 				wp_redirect ($_REQUEST ['_wp_http_referer']);
 			}
 
@@ -1368,7 +1393,7 @@ EOF;
 				if ($action = $this -> tracks_list_table -> get_current_action()) {
 					$this -> process_bulk_action( $action );
 				}
-				// If a result message is passed, set it up and remove all evidence
+				// Set it up bulk action result notice
 				$this -> setup_bulk_action_result_msg();
 			}
 
@@ -1377,7 +1402,7 @@ EOF;
 			 */
 			function setup_bulk_action_result_msg() {
 				if ( isset( $_COOKIE['ts_bulk_result'] ) ) {
-					$this -> bulk_action_result_msg = $_COOKIE['ts_bulk_result'];
+					$this -> bulk_action_result_msg = stripslashes( $_COOKIE['ts_bulk_result'] );
 					setcookie( 'ts_bulk_result', '', time() - 3600 );
 				}
 			}
@@ -1389,20 +1414,49 @@ EOF;
 			{
 				global $wpdb;
 
+				// The action name is 'bulk-' + plural form of items in WP_List_Table
+				check_admin_referer('bulk-tracks');
+
 				if ( $action === 'delete' ) {
-					// The action name is 'bulk-' + plural form of items in WP_List_Table
-					check_admin_referer('bulk-tracks');
-					// Convert to int, remove value '0'. How useful is it to escape integers?
+					// Convert to int, remove value '0'.
 					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ));
+					// How useful is it to escape integers?
 					array_walk( $track_ids, array( $wpdb, 'escape_by_ref' ) );
 					$in = '(' . implode( ',', $track_ids ) . ')';
-					$sql = 'DELETE FROM ' . $this -> tbl_locations . " WHERE trip_id IN $in;";
+					$sql = 'DELETE FROM ' . $this -> tbl_locations . " WHERE trip_id IN $in";
 					$nl = $wpdb -> query( $sql );
-					$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in;";
+					$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
 					$nt = $wpdb -> query( $sql );
 					$message = "Deleted " . intval( $nl ) . " location(s) in " . intval( $nt ) . " track(s).";
 					setcookie('ts_bulk_result', $message, time() + 300);
-					wp_redirect( home_url( "wp-admin/admin.php?page=trackserver-tracks" ) );
+					wp_redirect ($_REQUEST ['_wp_http_referer']);
+					exit;
+				}
+
+				if ( $action === 'merge' ) {
+					// Convert to int, remove value '0'.
+					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ));
+					// Need at least 2 tracks
+					if ( ( $n = count( $track_ids ) ) > 1) {
+						$id = min( $track_ids );
+						$rest = array_diff( $track_ids, array( $id ) );
+						// How useful is it to escape integers?
+						array_walk( $rest, array( $wpdb, 'escape_by_ref' ) );
+						$in = '(' . implode( ',', $rest ) . ')';
+						$sql = $wpdb -> prepare( "UPDATE " . $this -> tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id );
+						$nl = $wpdb -> query( $sql );
+						$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in;";
+						$nt = $wpdb -> query( $sql );
+						$sql = $wpdb -> prepare( "UPDATE " . $this -> tbl_tracks . " SET name=%s WHERE id=%d",
+							 ( $name = stripslashes( $_REQUEST['merged_name'] ) ), $id );
+						$wpdb -> query( $sql );
+						$message = "Merged " . intval( $nl ) . " location(s) from " . intval( $nt ) . ' track(s) into "' . $name . '"';
+					}
+					else {
+						$message = "Need >= 2 tracks to merge, got only $n";
+					}
+					setcookie('ts_bulk_result', $message, time() + 300);
+					wp_redirect ($_REQUEST ['_wp_http_referer']);
 					exit;
 				}
 			}
@@ -1414,7 +1468,7 @@ EOF;
 				if ( $this -> bulk_action_result_msg ) {
 					?>
 						<div class="updated">
-							<p><?= $this -> bulk_action_result_msg ?></p>
+							<p><?= htmlspecialchars( $this -> bulk_action_result_msg ) ?></p>
 						</div>
 					<?php
 				}

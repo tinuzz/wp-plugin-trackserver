@@ -75,7 +75,7 @@
 			function get_bulk_actions() {
 				$actions = array(
 					'delete'	=> 'Delete',
-					// 'merge'	=> 'Merge'
+					'merge'	=> 'Merge',
 				);
 				return $actions;
 			}
