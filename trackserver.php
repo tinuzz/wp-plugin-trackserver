@@ -133,7 +133,7 @@ EOF;
 			 */
 			function load_common_scripts() {
 
-				wp_enqueue_style( 'leaflet', TRACKSERVER_JSLIB . 'leaflet-0.7.3/leaflet.css');
+				wp_enqueue_style( 'leaflet', TRACKSERVER_JSLIB . 'leaflet-0.7.3/leaflet.css' );
 				wp_enqueue_script( 'leaflet', TRACKSERVER_JSLIB . 'leaflet-0.7.3/leaflet.js', array(), false, true );
 				wp_enqueue_style( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.css' );
 				wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.min.js', array(), false, true );
@@ -241,8 +241,8 @@ EOF;
 				$upgrade_sql[7] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `source` VARCHAR( 255 ) NOT NULL AFTER `created`";
 
 				$installed_version = $this -> options['db_version'];
-				if ($installed_version != $this -> db_version) {
-					for ($i = $installed_version + 1; $i <= $this -> db_version; $i++) {
+				if ( $installed_version != $this -> db_version ) {
+					for ($i = $installed_version + 1; $i <= $this -> db_version; $i++ ) {
 						if ( array_key_exists( $i, $upgrade_sql ) ) {
 							$wpdb -> query( $upgrade_sql[ $i ] );
 						}
@@ -499,7 +499,7 @@ EOF;
 					'class' => ''
 				);
 
-				$atts = shortcode_atts($defaults, $atts, $this -> shortcode);
+				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
 
 				static $num_maps = 0;
 				$div_id = 'tsmap_' . ++$num_maps;
@@ -984,7 +984,7 @@ EOF;
 					$now = current_time( 'Y-m-d H:i:s' );
 					foreach ( $points as $p ) {
 						$ts = $p['timestamp'];
-						$occurred = date( 'Y-m-d H:i:s', $ts + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ));
+						$occurred = date( 'Y-m-d H:i:s', $ts + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) );
 						$data = array(
 							'trip_id' => $trip_id,
 							'latitude' => $p['latitude'],
@@ -1043,46 +1043,45 @@ EOF;
 
 			function handle_uploaded_files( $user_id ) {
 
-				$tmp = $this -> get_temp_dir ();
-				$schema = plugin_dir_path( __FILE__ ) .'/gpx-1.1.xsd';
+				$tmp = $this -> get_temp_dir();
+				$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.1.xsd';
 
 				$message = '';
 				$files = $this -> rearrange( $_FILES );
 
-				foreach ($files as $f) {
-					$filename = $tmp .'/'. uniqid ();
+				foreach ( $files as $f ) {
+					$filename = $tmp . '/' . uniqid();
 
 					// Check the filename extension case-insensitively
-					if (strcasecmp (substr ($f ['name'], -4), '.gpx') == 0) {
-
-						if ($f ['error'] == 0 && move_uploaded_file ($f ['tmp_name'], $filename)) {
+					if ( strcasecmp( substr( $f['name'], -4 ), '.gpx' ) == 0 ) {
+						if ( $f['error'] == 0 && move_uploaded_file( $f['tmp_name'], $filename ) ) {
 							$xml = new DOMDocument();
-							$xml -> load ($filename);
-							if ($xml -> schemaValidate ($schema)) {
-								if ($result = $this -> process_gpx ($xml, $user_id)) {
-									$message .= "OK: File '". $f ['name'] . "'. Imported ".
-										$result ['num_trkpt'] ." points from ". $result ['num_trk'] ." tracks\n";
+							$xml -> load( $filename );
+							if ( $xml -> schemaValidate( $schema ) ) {
+								if ( $result = $this -> process_gpx( $xml, $user_id ) ) {
+									$message .= "OK: File '" . $f['name'] . "'. Imported ".
+										$result['num_trkpt'] . " points from " . $result['num_trk'] . " tracks\n";
 								}
 							}
 							else {
-								$message .= "ERROR: File '". $f ['name'] . "' could not be validated as GPX 1.1.\n";
+								$message .= "ERROR: File '" . $f['name'] . "' could not be validated as GPX 1.1.\n";
 							}
 						}
 						else {
-							$message .= "ERROR: Upload '". $f ['name'] . "' failed (rc=". $f ['error'] . ")\n";
+							$message .= "ERROR: Upload '" . $f['name'] . "' failed (rc=" . $f['error'] . ")\n";
 						}
 					}
 					else {
-						$message .= "ERROR: Only .gpx files accepted; discarding '". $f ['name'] . "'\n";
+						$message .= "ERROR: Only .gpx files accepted; discarding '" . $f['name'] . "'\n";
 				}
-					unlink ($filename);
+					unlink( $filename );
 				}
 				return $message;
 			}
 
 			function handle_upload() {
-				header ('Content-Type: text/plain');
-				$user_id = $this -> validate_http_basicauth ();
+				header( 'Content-Type: text/plain' );
+				$user_id = $this -> validate_http_basicauth();
 				$msg = $this -> handle_uploaded_files( $user_id );
 				echo $msg;
 			}
@@ -1100,53 +1099,52 @@ EOF;
 			function process_gpx( $dom, $user_id ) {
 				global $wpdb;
 
-				$gpx = simplexml_import_dom ($dom);
-				$source = $gpx ['creator'];
+				$gpx = simplexml_import_dom( $dom );
+				$source = $gpx['creator'];
 				$trip_start = false;
 
 				$ntrk = 0;
 				$ntrkpt = 0;
-				foreach ($gpx -> trk as $trk) {
-					$points = array ();
+				foreach ( $gpx -> trk as $trk ) {
+					$points = array();
 					$trip_name = $trk -> name;
-					foreach ($trk -> trkseg -> trkpt as $trkpt) {
-						if (!$trip_start) {
-							$trip_start = date ('Y-m-d H:i:s', $this -> parse_iso_date ((string) $trkpt -> time));
+					foreach ( $trk -> trkseg -> trkpt as $trkpt ) {
+						if ( ! $trip_start ) {
+							$trip_start = date( 'Y-m-d H:i:s', $this -> parse_iso_date( (string) $trkpt -> time ) );
 						}
 						$points[] = array(
-							'latitude' => $trkpt ['lat'],
-							'longitude' => $trkpt ['lon'],
+							'latitude' => $trkpt['lat'],
+							'longitude' => $trkpt['lon'],
 							'altitude' => (string) $trkpt -> ele,
-							'timestamp' => $this -> parse_iso_date ((string) $trkpt -> time)
+							'timestamp' => $this -> parse_iso_date( (string) $trkpt -> time )
 						);
 						$ntrkpt++;
 					}
 
-					$data = array ('user_id' => $user_id, 'name' => $trip_name, 'created' => $trip_start, 'source' => $source);
-					$format = array ('%d', '%s', '%s', '%s');
-					if ($wpdb -> insert ($this -> tbl_tracks, $data, $format)) {
+					$data = array( 'user_id' => $user_id, 'name' => $trip_name, 'created' => $trip_start, 'source' => $source );
+					$format = array( '%d', '%s', '%s', '%s' );
+					if ( $wpdb -> insert( $this -> tbl_tracks, $data, $format ) ) {
 						$trip_id = $wpdb -> insert_id;
-						$this -> mapmytracks_insert_points ($points, $trip_id);
+						$this -> mapmytracks_insert_points( $points, $trip_id );
 					}
 					$ntrk++;
 				}
-
-				return array('num_trk' => $ntrk, 'num_trkpt' => $ntrkpt);
+				return array( 'num_trk' => $ntrk, 'num_trkpt' => $ntrkpt );
 			}
 
 			function get_temp_dir() {
-				$tmp = get_temp_dir () .'/trackserver';
-				if (!file_exists($tmp)) {
-					mkdir($tmp);
+				$tmp = get_temp_dir() . '/trackserver';
+				if ( ! file_exists( $tmp ) ) {
+					mkdir( $tmp );
 				}
 				return $tmp;
 			}
 
 			function parse_iso_date( $ts ) {
-				//$i = new DateInterval ('PT' .strval (get_option( 'gmt_offset' ) * HOUR_IN_SECONDS) .'S');
-				$d = new DateTime ($ts);
-				//$d = $d -> add($i);
-				return $d->format('U');
+				//$i = new DateInterval('PT' .strval (get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) .'S' );
+				$d = new DateTime( $ts );
+				//$d = $d -> add( $i );
+				return $d -> format( 'U' );
 			}
 
 			function get_author( $post_id ) {
@@ -1161,56 +1159,56 @@ EOF;
 
 				global $wpdb;
 
-				$post_id = intval($_REQUEST ['p']);
-				$track_id = $_REQUEST ['id'];
+				$post_id = intval( $_REQUEST['p'] );
+				$track_id = $_REQUEST['id'];
 
-				if ($track_id != 'live') {
-					$track_id = intval ($track_id);
-					$author_id = $this -> get_author($post_id);
+				if ( $track_id != 'live' ) {
+					$track_id = intval( $track_id );
+					$author_id = $this -> get_author( $post_id );
 				}
 
 				// Refuse to serve the track without a valid nonce. Admin screen uses a different nonce.
 				if (
-					(array_key_exists('admin', $_REQUEST) &&
-					!wp_verify_nonce ($_REQUEST['_wpnonce'], 'manage_track_'.$track_id) ) ||
-					((!array_key_exists('admin', $_REQUEST)) &&
-					!wp_verify_nonce ($_REQUEST['_wpnonce'], 'gettrack_'.$track_id ."_p". $post_id ))
+					( array_key_exists( 'admin', $_REQUEST ) &&
+					! wp_verify_nonce( $_REQUEST['_wpnonce'], 'manage_track_' . $track_id ) ) ||
+					( ( ! array_key_exists( 'admin', $_REQUEST ) ) &&
+					! wp_verify_nonce( $_REQUEST['_wpnonce'], 'gettrack_' . $track_id . "_p" . $post_id ) )
 				) {
-					header('HTTP/1.1 403 Forbidden');
+					header( 'HTTP/1.1 403 Forbidden' );
 					echo "Access denied (t=$track_id).\n";
 					die();
 				}
 
-				if ($track_id) {
-					if ($track_id == 'live') {
-						$sql = $wpdb -> prepare ('SELECT id FROM '. $this -> tbl_tracks .' WHERE user_id=%d ORDER BY created DESC LIMIT 0,1', $author_id);
+				if ( $track_id ) {
+					if ( $track_id == 'live' ) {
+						$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks .
+								' WHERE user_id=%d ORDER BY created DESC LIMIT 0,1', $author_id );
 					}
 					else {
-						$sql = $wpdb -> prepare ('SELECT id FROM '. $this -> tbl_tracks .' WHERE id=%d', $track_id);
+						$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id=%d', $track_id );
 					}
-					$trip_id = $wpdb -> get_var ($sql);
+					$trip_id = $wpdb -> get_var( $sql );
 
-					if ($trip_id) {
-
-						$sql = $wpdb -> prepare ('SELECT latitude, longitude, occurred FROM '. $this -> tbl_locations .
-							' WHERE trip_id=%d ORDER BY occurred;', $trip_id);
-						$res = $wpdb -> get_results ($sql, ARRAY_A);
+					if ( $trip_id ) {
+						$sql = $wpdb -> prepare( 'SELECT latitude, longitude, occurred FROM ' . $this -> tbl_locations .
+							' WHERE trip_id=%d ORDER BY occurred', $trip_id );
+						$res = $wpdb -> get_results( $sql, ARRAY_A );
 
 						$points = array();
-						foreach ($res as $row) {
-							$p = array ($row ['latitude'], $row ['longitude']);  // We need this below
+						foreach ( $res as $row ) {
+							$p = array( $row['latitude'], $row['longitude'] );  // We need this below
 							$points[] = $p;
 						}
-						$encoded = Polyline::Encode($points);
-						$metadata = array (
+						$encoded = Polyline::Encode( $points );
+						$metadata = array(
 							'first_trkpt' => $points[0],
 							'last_trkpt' => $p,
-							'last_trkpt_time' => $row ['occurred']
+							'last_trkpt_time' => $row['occurred']
 						);
-						$data = array ('track' => $encoded, 'metadata' => $metadata);
+						$data = array( 'track' => $encoded, 'metadata' => $metadata );
 
-						header ('Content-Type: application/json');
-						echo json_encode ($data);
+						header( 'Content-Type: application/json' );
+						echo json_encode( $data );
 					}
 				}
 				else {
@@ -1226,26 +1224,26 @@ EOF;
 				}
 
 				// Load prerequisites
-				if (!class_exists ('WP_List_Table')) {
-					require_once (ABSPATH .'wp-admin/includes/class-wp-list-table.php');
+				if ( ! class_exists( 'WP_List_Table' ) ) {
+					require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 				}
-				require_once (TRACKSERVER_PLUGIN_DIR .'tracks-list-table.php');
+				require_once( TRACKSERVER_PLUGIN_DIR . 'tracks-list-table.php' );
 
-				$list_table_options = array (
+				$list_table_options = array(
 					'tbl_tracks' => $this -> tbl_tracks,
 					'tbl_locations' => $this -> tbl_locations,
 				);
 
-				$this -> tracks_list_table = new Tracks_List_Table ($list_table_options);
+				$this -> tracks_list_table = new Tracks_List_Table( $list_table_options );
 			}
 
 			function manage_tracks_html() {
 
-				if (!current_user_can('manage_options')) {
+				if ( ! current_user_can( 'manage_options' ) ) {
 					wp_die( __('You do not have sufficient permissions to access this page.') );
 				}
 
-				add_thickbox ();
+				add_thickbox();
 				$this -> setup_tracks_list_table();
 				$this -> tracks_list_table -> prepare_items();
 
@@ -1256,7 +1254,7 @@ EOF;
 						<p>
 							<form method="post" action="<?=$url?>">
 								<table>
-									<?php wp_nonce_field('manage_track'); ?>
+									<?php wp_nonce_field( 'manage_track' ); ?>
 									<input type="hidden" name="action" value="trackserver_save_track" />
 									<input type="hidden" id="track_id" name="track_id" value="" />
 									<tr>
@@ -1290,7 +1288,7 @@ EOF;
 							Merge all points of multiple tracks into one track. Please specify the name for the merged track.
 							<form method="post" action="<?=$url?>">
 								<table>
-									<?php wp_nonce_field('manage_track'); ?>
+									<?php wp_nonce_field( 'manage_track' ); ?>
 									<tr>
 										<th style="width: 150px;">Merged track name</th>
 										<td><input id="input-merged-name" name="name" type="text" style="width: 400px" /></td>
@@ -1308,7 +1306,7 @@ EOF;
 					<div id="ts-upload-modal" style="display:none;">
 						<div style="padding: 15px 0">
 							<form id="ts-upload-form" method="post" action="<?=$url?>" enctype="multipart/form-data">
-								<?php wp_nonce_field('upload_track'); ?>
+								<?php wp_nonce_field( 'upload_track' ); ?>
 								<input type="hidden" name="action" value="trackserver_upload_track" />
 								<input type="file" name="gpxfile[]" multiple="multiple" style="display: none" id="ts-file-input" />
 								<input type="button" class="button button-hero" value="Select files" id="ts-select-files-button" />
@@ -1336,7 +1334,7 @@ EOF;
 
 			function profiles_html() {
 
-				if (!current_user_can('manage_options')) {
+				if ( ! current_user_can( 'manage_options' ) ) {
 					wp_die( __('You do not have sufficient permissions to access this page.') );
 				}
 				echo "<h2>Trackserver map profiles</h2>";
@@ -1345,26 +1343,26 @@ EOF;
 			function admin_post_save_track() {
 				global $wpdb;
 
-				check_admin_referer ('manage_track_' . $_REQUEST ['track_id']);
+				check_admin_referer( 'manage_track_' . $_REQUEST['track_id'] );
 
 				// Save track. Use stripslashes() on the data, because WP magically escapes it.
 				$name = stripslashes( $_REQUEST['name'] );
 				$source = stripslashes( $_REQUEST['source'] );
 				$comment = stripslashes( $_REQUEST['comment'] );
 
-				$data = array (
+				$data = array(
 					'name' => $name,
 					'source' => $source,
 					'comment' => $comment
 				);
-				$where = array ('id' => $_REQUEST ['track_id']);
-				$wpdb -> update ($this -> tbl_tracks, $data, $where, '%s', '%d');
+				$where = array( 'id' => $_REQUEST['track_id'] );
+				$wpdb -> update( $this -> tbl_tracks, $data, $where, '%s', '%d' );
 
-				$message = 'Track "' . $name . '" (ID=' . $_REQUEST ['track_id'] . ') saved';
-				setcookie('ts_bulk_result', $message, time() + 300);
+				$message = 'Track "' . $name . '" (ID=' . $_REQUEST['track_id'] . ') saved';
+				setcookie( 'ts_bulk_result', $message, time() + 300 );
 
 				// Redirect back to the admin page. This should be safe.
-				wp_redirect ($_REQUEST ['_wp_http_referer']);
+				wp_redirect( $_REQUEST['_wp_http_referer'] );
 				exit;
 			}
 
@@ -1372,11 +1370,11 @@ EOF;
 			 * Handler for the admin_post_trackserver_upload_track action
 			 */
 			function admin_post_upload_track() {
-				check_admin_referer ('upload_track');
+				check_admin_referer( 'upload_track' );
 				$message = $this -> handle_admin_upload();
-				setcookie('ts_bulk_result', $message, time() + 300);
+				setcookie( 'ts_bulk_result', $message, time() + 300 );
 				// Redirect back to the admin page. This should be safe.
-				wp_redirect ($_REQUEST ['_wp_http_referer']);
+				wp_redirect( $_REQUEST['_wp_http_referer'] );
 				exit;
 			}
 
@@ -1386,7 +1384,7 @@ EOF;
 			 */
 			function load_manage_tracks() {
 				$this -> setup_tracks_list_table();
-				if ($action = $this -> tracks_list_table -> get_current_action()) {
+				if ( $action = $this -> tracks_list_table -> get_current_action() ) {
 					$this -> process_bulk_action( $action );
 				}
 				// Set it up bulk action result notice
@@ -1410,11 +1408,11 @@ EOF;
 				global $wpdb;
 
 				// The action name is 'bulk-' + plural form of items in WP_List_Table
-				check_admin_referer('bulk-tracks');
+				check_admin_referer( 'bulk-tracks' );
 
 				if ( $action === 'delete' ) {
 					// Convert to int, remove value '0'.
-					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ));
+					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ) );
 					// How useful is it to escape integers?
 					array_walk( $track_ids, array( $wpdb, 'escape_by_ref' ) );
 					$in = '(' . implode( ',', $track_ids ) . ')';
@@ -1422,27 +1420,27 @@ EOF;
 					$nl = $wpdb -> query( $sql );
 					$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
 					$nt = $wpdb -> query( $sql );
-					$message = "Deleted " . intval( $nl ) . " location(s) in " . intval( $nt ) . " track(s).";
-					setcookie('ts_bulk_result', $message, time() + 300);
-					wp_redirect ($_REQUEST ['_wp_http_referer']);
+					$message = 'Deleted ' . intval( $nl ) . ' location(s) in ' . intval( $nt ) . ' track(s).';
+					setcookie( 'ts_bulk_result', $message, time() + 300 );
+					wp_redirect( $_REQUEST['_wp_http_referer'] );
 					exit;
 				}
 
 				if ( $action === 'merge' ) {
 					// Convert to int, remove value '0'.
-					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ));
+					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ) );
 					// Need at least 2 tracks
-					if ( ( $n = count( $track_ids ) ) > 1) {
+					if ( ( $n = count( $track_ids ) ) > 1 ) {
 						$id = min( $track_ids );
 						$rest = array_diff( $track_ids, array( $id ) );
 						// How useful is it to escape integers?
 						array_walk( $rest, array( $wpdb, 'escape_by_ref' ) );
 						$in = '(' . implode( ',', $rest ) . ')';
-						$sql = $wpdb -> prepare( "UPDATE " . $this -> tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id );
+						$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id );
 						$nl = $wpdb -> query( $sql );
-						$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in;";
+						$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
 						$nt = $wpdb -> query( $sql );
-						$sql = $wpdb -> prepare( "UPDATE " . $this -> tbl_tracks . " SET name=%s WHERE id=%d",
+						$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_tracks . ' SET name=%s WHERE id=%d',
 							 ( $name = stripslashes( $_REQUEST['merged_name'] ) ), $id );
 						$wpdb -> query( $sql );
 						$message = "Merged " . intval( $nl ) . " location(s) from " . intval( $nt ) . ' track(s) into "' . $name . '"';
@@ -1450,8 +1448,8 @@ EOF;
 					else {
 						$message = "Need >= 2 tracks to merge, got only $n";
 					}
-					setcookie('ts_bulk_result', $message, time() + 300);
-					wp_redirect ($_REQUEST ['_wp_http_referer']);
+					setcookie( 'ts_bulk_result', $message, time() + 300 );
+					wp_redirect( $_REQUEST['_wp_http_referer'] );
 					exit;
 				}
 			}
