@@ -1374,18 +1374,11 @@ EOF;
 
 			/**
 			 * Function to set up a bulk action result message to be displayed later.
-			 * After preparing the message, remove the related query strings from the
-			 * REQUEST_URI, so they don't get passed on to subsequent pages.
 			 */
 			function setup_bulk_action_result_msg() {
-				if ($_REQUEST['action_msg'] == 'delete') {
-					$nl = intval( $_REQUEST['nl'] );
-					$nt = intval( $_REQUEST['nt'] );
-					$this -> bulk_action_result_msg = "Deleted $nl location(s) from $nt track(s)";
-					// We need to het rid of the query string manipulation. This is kind of ugly, but it works.
-					$_SERVER['REQUEST_URI'] = remove_query_arg( 'action_msg', $_SERVER['REQUEST_URI'] );
-					$_SERVER['REQUEST_URI'] = remove_query_arg( 'nl', $_SERVER['REQUEST_URI'] );
-					$_SERVER['REQUEST_URI'] = remove_query_arg( 'nt', $_SERVER['REQUEST_URI'] );
+				if ( isset( $_COOKIE['ts_bulk_result'] ) ) {
+					$this -> bulk_action_result_msg = $_COOKIE['ts_bulk_result'];
+					setcookie( 'ts_bulk_result', '', time() - 3600 );
 				}
 			}
 
@@ -1407,7 +1400,9 @@ EOF;
 					$nl = $wpdb -> query( $sql );
 					$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in;";
 					$nt = $wpdb -> query( $sql );
-					wp_redirect( home_url( "wp-admin/admin.php?page=trackserver-tracks&action_msg=delete&nl=$nl&nt=$nt" ) );
+					$message = "Deleted " . intval( $nl ) . " location(s) in " . intval( $nt ) . " track(s).";
+					setcookie('ts_bulk_result', $message, time() + 300);
+					wp_redirect( home_url( "wp-admin/admin.php?page=trackserver-tracks" ) );
 					exit;
 				}
 			}
