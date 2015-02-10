@@ -329,10 +329,10 @@ EOF;
 				return $links;
 			}
 
-			function general_settings_html ()
+			function advanced_settings_html ()
 			{
 				add_settings_field ('trackserver_gettrack_slug','Gettrack URL slug',
-						array (&$this, 'gettrack_slug_html'), 'trackserver', 'trackserver-general');
+						array (&$this, 'gettrack_slug_html'), 'trackserver', 'trackserver-advanced');
 				/*
 				add_settings_field ('trackserver_normalize_tripnames','Normalize trip names',
 						array (&$this, 'normalize_tripnames_html'), 'trackserver', 'trackserver-trackme');
@@ -495,10 +495,10 @@ EOF;
 				// All options in one array
 				register_setting ('trackserver-options', 'trackserver_options');
 				// Add settings and settings sections
-				add_settings_section('trackserver-general', 'General settings', array (&$this, 'general_settings_html'),  'trackserver');
 				add_settings_section('trackserver-trackme', 'TrackMe settings', array (&$this, 'trackme_settings_html'),  'trackserver');
 				add_settings_section('trackserver-mapmytracks', 'OruxMaps / MapMyTracks settings', array (&$this, 'mapmytracks_settings_html'),  'trackserver');
 				add_settings_section('trackserver-httppost', 'HTTP upload settings', array (&$this, 'httppost_settings_html'),  'trackserver');
+				add_settings_section('trackserver-advanced', 'Advanced settings', array (&$this, 'advanced_settings_html'),  'trackserver');
 			}
 
 			function admin_menu ()
@@ -511,14 +511,15 @@ EOF;
 				// A dedicated menu in the main tree
 				add_menu_page ('Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-options', array (&$this, 'options_page_html'),
 					TRACKSERVER_PLUGIN_URL . 'img/trackserver.png');
+
 				add_submenu_page ('trackserver-options', 'Trackserver options', 'Options', 'manage_options', 'trackserver-options',
 					array (&$this, 'options_page_html'));
+				$page2 = add_submenu_page ('trackserver-options', 'Manage tracks', 'Manage tracks', 'manage_options', 'trackserver-tracks',
+					array (&$this, 'manage_tracks_html'));
 				/*
 				add_submenu_page ('trackserver-options', 'Trackserver profiles', 'Map profiles', 'manage_options', 'trackserver-profiles',
 					array (&$this, 'profiles_html'));
 				*/
-				$page2 = add_submenu_page ('trackserver-options', 'Manage tracks', 'Manage tracks', 'manage_options', 'trackserver-tracks',
-					array (&$this, 'manage_tracks_html'));
 
 				// Early action to set up the 'Manage tracks' page and handle bulk actions.
 				add_action( 'load-' . $page2, array( &$this, 'load_manage_tracks' ));
