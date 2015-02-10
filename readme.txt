@@ -127,6 +127,8 @@ for details.
 
 = UNRELEASED =
 * Implement 'delete' bulk-action in track management
+* Implement 'merge' bulk-action in track management
+* Implement 'Upload tracks' from track management
 
 = 0.9 =
 * Initial release, with tracking supoort, simple shortcode and track management interface
