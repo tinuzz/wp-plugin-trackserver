@@ -153,7 +153,7 @@ var TrackserverAdmin = (function () {
                 });
                 console.log(merged_name);
                 jQuery('#input-merged-name').val(merged_name + ' (merged)');
-                ts_tb_show('ts-merge-modal', 'Merge tracks', 600, 200);
+                ts_tb_show('ts-merge-modal', 'Merge tracks', 600, 250);
                 return false;
             }
             return false;
