@@ -54,6 +54,8 @@ License: GPL2
 				$this -> use_mapbox = false;
 				$this -> mapbox_token = 'pk.eyJ1IjoidGludXp6IiwiYSI6IlVXYUYwcG8ifQ.pe5iF9bAH3zx3ztc6PzHFA';
 				$this -> mapdata = array ();
+				$this -> tracks_list_table = false;
+				$this -> bulk_action_result_msg = false;
 
 				// Bootstrap
 				$this -> add_actions ();
@@ -100,6 +102,7 @@ License: GPL2
 
 				// Backend JavaScript and CSS
 				add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
+
 			}
 
 			function admin_head ()
@@ -514,8 +517,11 @@ EOF;
 				add_submenu_page ('trackserver-options', 'Trackserver profiles', 'Map profiles', 'manage_options', 'trackserver-profiles',
 					array (&$this, 'profiles_html'));
 				*/
-				add_submenu_page ('trackserver-options', 'Manage tracks', 'Manage tracks', 'manage_options', 'trackserver-tracks',
+				$page2 = add_submenu_page ('trackserver-options', 'Manage tracks', 'Manage tracks', 'manage_options', 'trackserver-tracks',
 					array (&$this, 'manage_tracks_html'));
+
+				// Early action to set up the 'Manage tracks' page and handle bulk actions.
+				add_action( 'load-' . $page2, array( &$this, 'load_manage_tracks' ));
 			}
 
 			function detect_shortcode ()
@@ -935,7 +941,7 @@ EOF;
 			/**
 			 * Function to handle the 'start_activity' request for the MapMyTracks protocol. If no
 			 * title / trip name is received, nothing is done. Received points are validated. Trip
- 			 * is inserted with the first point's timstamp as start time, or the current time if no
+			 * is inserted with the first point's timstamp as start time, or the current time if no
 			 * valid points are received. Valid points are inserted and and the new trip ID is
 			 * returned in an XML message.
 			 */
@@ -1181,8 +1187,8 @@ EOF;
 
 			function get_author( $post_id )
 			{
-     		$post = get_post( $post_id );
-     		return $post -> post_author;
+				$post = get_post( $post_id );
+				return $post -> post_author;
 			}
 
 			function handle_gettrack ()
@@ -1249,10 +1255,11 @@ EOF;
 				}
 			}
 
-			function manage_tracks_html ()
-			{
-				if (!current_user_can('manage_options')) {
-					wp_die( __('You do not have sufficient permissions to access this page.') );
+			function setup_tracks_list_table() {
+
+				// Do this only once.
+				if ( $this -> tracks_list_table ) {
+					return;
 				}
 
 				// Load prerequisites
@@ -1260,15 +1267,24 @@ EOF;
 					require_once (ABSPATH .'wp-admin/includes/class-wp-list-table.php');
 				}
 				require_once (TRACKSERVER_PLUGIN_DIR .'tracks-list-table.php');
-				add_thickbox ();
 
 				$list_table_options = array (
 					'tbl_tracks' => $this -> tbl_tracks,
 					'tbl_locations' => $this -> tbl_locations,
 				);
 
-				$list_table = new Tracks_List_Table ($list_table_options);
-				$list_table -> prepare_items ();
+				$this -> tracks_list_table = new Tracks_List_Table ($list_table_options);
+			}
+
+			function manage_tracks_html ()
+			{
+				if (!current_user_can('manage_options')) {
+					wp_die( __('You do not have sufficient permissions to access this page.') );
+				}
+
+				add_thickbox ();
+				$this -> setup_tracks_list_table();
+				$this -> tracks_list_table -> prepare_items();
 
 				$url = admin_url() . 'admin-post.php';
 
@@ -1306,11 +1322,12 @@ EOF;
 							</div>
 						</p>
 					</div>
-        	<form id="trackserver-tracks" method="post">
+					<form id="trackserver-tracks" method="post">
 						<input type="hidden" name="page" value="trackserver-tracks" />
 						<div class="wrap">
 							<h2>Manage tracks</h2>
-							<?php $list_table -> display () ?>
+							<?php $this -> notice_bulk_action_result() ?>
+							<?php $this -> tracks_list_table -> display() ?>
 						</div>
 					</form>
 				<?php
@@ -1340,6 +1357,72 @@ EOF;
 
 				// Back to the admin page. This should be safe.
 				wp_redirect ($_REQUEST ['_wp_http_referer']);
+			}
+
+			/**
+			 * Handler for the load-$hook for the 'Manage tracks' page
+			 * It sets up the list table and processes any bulk actions
+			 */
+			function load_manage_tracks() {
+				$this -> setup_tracks_list_table();
+				if ($action = $this -> tracks_list_table -> get_current_action()) {
+					$this -> process_bulk_action( $action );
+				}
+				// If a result message is passed, set it up and remove all evidence
+				$this -> setup_bulk_action_result_msg();
+			}
+
+			/**
+			 * Function to set up a bulk action result message to be displayed later.
+			 * After preparing the message, remove the related query strings from the
+			 * REQUEST_URI, so they don't get passed on to subsequent pages.
+			 */
+			function setup_bulk_action_result_msg() {
+				if ($_REQUEST['action_msg'] == 'delete') {
+					$nl = intval( $_REQUEST['nl'] );
+					$nt = intval( $_REQUEST['nt'] );
+					$this -> bulk_action_result_msg = "Deleted $nl location(s) from $nt track(s)";
+					// We need to het rid of the query string manipulation. This is kind of ugly, but it works.
+					$_SERVER['REQUEST_URI'] = remove_query_arg( 'action_msg', $_SERVER['REQUEST_URI'] );
+					$_SERVER['REQUEST_URI'] = remove_query_arg( 'nl', $_SERVER['REQUEST_URI'] );
+					$_SERVER['REQUEST_URI'] = remove_query_arg( 'nt', $_SERVER['REQUEST_URI'] );
+				}
+			}
+
+			/**
+			 * Function to process any bulk action from the tracks_list_table
+			 */
+			function process_bulk_action ($action)
+			{
+				global $wpdb;
+
+				if ( $action === 'delete' ) {
+					// The action name is 'bulk-' + plural form of items in WP_List_Table
+					check_admin_referer('bulk-tracks');
+					// Convert to int, remove value '0'. How useful is it to escape integers?
+					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ));
+					array_walk( $track_ids, array( $wpdb, 'escape_by_ref' ) );
+					$in = '(' . implode( ',', $track_ids ) . ')';
+					$sql = 'DELETE FROM ' . $this -> tbl_locations . " WHERE trip_id IN $in;";
+					$nl = $wpdb -> query( $sql );
+					$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in;";
+					$nt = $wpdb -> query( $sql );
+					wp_redirect( home_url( "wp-admin/admin.php?page=trackserver-tracks&action_msg=delete&nl=$nl&nt=$nt" ) );
+					exit;
+				}
+			}
+
+			/**
+			 * Function to display the bulk_action_result_msg
+			 */
+			function notice_bulk_action_result() {
+				if ( $this -> bulk_action_result_msg ) {
+					?>
+						<div class="updated">
+							<p><?= $this -> bulk_action_result_msg ?></p>
+						</div>
+					<?php
+				}
 			}
 
 			/**

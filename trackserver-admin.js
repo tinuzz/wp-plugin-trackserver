@@ -89,6 +89,21 @@ var tb_remove = function ()
     }
 }
 
+var action_selected = function (val) {
+    if (val == -1) {
+        alert('No action selected');
+        return false;
+    }
+    return true;
+}
+
 jQuery('#doaction').click(function(){
-    alert('Are you sure?');
+    var val = jQuery('#bulk-action-selector-top').val();
+    if (! action_selected( val )) return false;
+    alert('Are you sure? ' + val);
+});
+jQuery('#doaction2').click(function(){
+    var val = jQuery('#bulk-action-selector-bottom').val();
+    if (! action_selected( val )) return false;
+    alert('Are you sure? ' + val);
 });

@@ -39,7 +39,7 @@
 				return sprintf(
 					'<input type="checkbox" name="%1$s[]" value="%2$s" />',
 					/*$1%s*/ $this->_args['singular'],  //Let's simply repurpose the table's singular label ("movie")
-					/*$2%s*/ $item['ID']				//The value of the checkbox should be the record's id
+					/*$2%s*/ $item['id']				//The value of the checkbox should be the record's id
 				);
 			}
 
@@ -80,15 +80,12 @@
 				return $actions;
 			}
 
-			function process_bulk_action ()
-			{
-				//Detect when a bulk action is being triggered...
-				if( 'delete' === $this->current_action() ) {
-					//wp_die('Items deleted (or they would be if we had items to delete)!');
-					echo "DELETE!";
-					//wp_redirect (home_url('wp-admin/admin.php?page=trackserver-tracks&deleted=1&ids=12,45'));
-					//exit;
-				}
+			function get_current_action () {
+					$action = $this -> current_action();
+					if ( array_key_exists( $action, $this -> get_bulk_actions())) {
+						return $action;
+					}
+					return false;
 			}
 
 			function extra_tablenav ($where)
@@ -109,12 +106,6 @@
 				$sortable = $this -> get_sortable_columns();
 
 				$this -> _column_headers = array($columns, $hidden, $sortable);
-
-				/**
-				 * Optional. You can handle your bulk actions however you see fit. In this
-				 * case, we'll handle them within our package just to keep things clean.
-				 */
-				$this -> process_bulk_action();
 
 				# This should be prettier
 				$orderby = 'tstart';
