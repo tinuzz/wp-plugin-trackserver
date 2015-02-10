@@ -125,6 +125,9 @@ for details.
 
 == Changelog ==
 
+= UNRELEASED =
+* Implement 'delete' bulk-action in track management
+
 = 0.9 =
 * Initial release, with tracking supoort, simple shortcode and track management interface
 
