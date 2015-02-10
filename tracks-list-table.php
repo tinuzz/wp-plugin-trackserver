@@ -91,7 +91,7 @@
 			function extra_tablenav ($where)
 			{
 				echo '<div class="alignleft actions bulkactions">';
-				echo '<input id="addtrack" class="button action" type="submit" value="Upload track" name="">';
+				echo '<input id="addtrack-button" class="button action" type="submit" value="Upload track" name="">';
 				echo '</div>';
 			}
 
