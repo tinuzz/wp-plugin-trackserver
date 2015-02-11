@@ -130,10 +130,11 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= 1.0 =
 * Implement 'delete' bulk-action in track management
 * Implement 'merge' bulk-action in track management
 * Implement 'Upload tracks' from track management
+* Code cleanups
 
 = 0.9 =
 * Initial release, with tracking supoort, simple shortcode and track management interface
