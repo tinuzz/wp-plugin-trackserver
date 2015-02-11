@@ -497,7 +497,8 @@ EOF;
 					'height' => '480px',
 					'track' => false,
 					'align' => '',
-					'class' => ''
+					'class' => '',
+					'markers' => true
 				);
 
 				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
@@ -542,6 +543,8 @@ EOF;
 					}
 				}
 
+				$markers = ( in_array( $atts['markers'], array( 'false', 'f', 'no', 'n' ), true ) ? false : true );
+
 				$mapdata = array(
 					'div_id'       => $div_id,
 					'track_url'    => $track_url,
@@ -550,6 +553,7 @@ EOF;
 					'default_zoom' => '16',
 					'fullscreen'   => true,
 					'is_live'      => $is_live,
+					'markers'      => $markers,
 				);
 
 				$this -> mapdata[] = $mapdata;
