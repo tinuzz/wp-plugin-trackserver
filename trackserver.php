@@ -48,7 +48,8 @@ License: GPL2
 				$this -> tbl_tracks = $wpdb->prefix . "ts_tracks";
 				$this -> tbl_locations = $wpdb->prefix . "ts_locations";
 				$this -> options = get_option( 'trackserver_options' );
-				$this -> option_defaults["db_version"] = $this -> db_version;
+				$this -> option_defaults['db_version'] = $this -> db_version;
+				$this -> add_missing_options();
 				$this -> shortcode = 'tsmap';
 				$this -> mapdata = array();
 				$this -> tracks_list_table = false;
@@ -58,6 +59,17 @@ License: GPL2
 				$this -> add_actions();
 				if ( is_admin() ) {
 					$this -> add_admin_actions();
+				}
+			}
+
+			/**
+			 * Function to fill in missing default options
+			 */
+			function add_missing_options() {
+				foreach ( $this -> option_defaults as $option => $value ) {
+					if ( ! array_key_exists( $option, $this -> options ) ) {
+						$this -> update_option( $option, $value );
+					}
 				}
 			}
 
