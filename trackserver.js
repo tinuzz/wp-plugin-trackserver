@@ -8,9 +8,11 @@ var Trackserver = (function () {
         adminmap: false,
 
         Mapicon: L.Icon.extend({
-            iconSize:     [15, 15],
-            iconAnchor:   [8, 8],
-            popupAnchor:  [0, 8]
+            options: {
+                iconSize:     [15, 15],
+                iconAnchor:   [8, 8],
+                popupAnchor:  [0, 8]
+            }
         }),
 
         init: function (mapdata) {
