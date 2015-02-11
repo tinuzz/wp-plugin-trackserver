@@ -123,6 +123,11 @@ Yes. Donations are welcome. Please visit
 http://www.grendelman.net/wp/trackserver-wordpress-plugin/
 for details.
 
+== Screenshots ==
+
+1. The track management page in the WordPress admin
+2. Configuration of OruxMaps for use with Trackserver / WordPress
+
 == Changelog ==
 
 = UNRELEASED =
