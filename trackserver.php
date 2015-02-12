@@ -38,6 +38,7 @@ License: GPL2
 				'gettrack_slug' => 'trackserver/gettrack',
 				'normalize_tripnames' => 'yes',
 				'tripnames_format' => '%F %T',
+				'tile_url' => 'http://otile3.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png',
 			);
 
 			/**
@@ -152,7 +153,12 @@ EOF;
 				// To be localized in the shortcode and enqueued in loop_end
 				// Also localized and enqueued in admin_enqueue_scripts
 				wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js' );
-				wp_localize_script( 'trackserver', 'trackserver_iconpath', TRACKSERVER_PLUGIN_URL . 'img/' );
+
+				$settings = array(
+						'iconpath' => TRACKSERVER_PLUGIN_URL . 'img/',
+						'tile_url' => $this -> options['tile_url'],
+				);
+				wp_localize_script( 'trackserver', 'trackserver_settings', $settings );
 			}
 
 			/**
@@ -368,6 +374,18 @@ EOF;
 						array( &$this, 'upload_tag_html' ), 'trackserver', 'trackserver-httppost' );
 			}
 
+			function shortcode_settings_html() {
+				add_settings_field( 'trackserver_tile_url', 'OSM/Google tile server URL',
+						array( &$this, 'tile_url_html' ), 'trackserver', 'trackserver-shortcode' );
+			}
+
+			function tile_url_html() {
+				$val = $this -> options['tile_url'];
+				echo <<<EOF
+					<input type="text" size="50" name="trackserver_options[tile_url]" id="trackserver_tile_url" value="$val" autocomplete="off" /><br /><br />
+EOF;
+			}
+
 			function gettrack_slug_html() {
 				$val = $this -> options['gettrack_slug'];
 				$url = site_url( null );
@@ -456,6 +474,7 @@ EOF;
 				add_settings_section( 'trackserver-trackme', 'TrackMe settings', array( &$this, 'trackme_settings_html' ), 'trackserver' );
 				add_settings_section( 'trackserver-mapmytracks', 'OruxMaps / MapMyTracks settings', array( &$this, 'mapmytracks_settings_html' ), 'trackserver' );
 				add_settings_section( 'trackserver-httppost', 'HTTP upload settings', array( &$this, 'httppost_settings_html' ),  'trackserver' );
+				add_settings_section( 'trackserver-shortcode', 'Shortcode / map settings', array( &$this, 'shortcode_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-advanced', 'Advanced settings', array( &$this, 'advanced_settings_html' ),  'trackserver' );
 			}
 
