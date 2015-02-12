@@ -51,8 +51,8 @@ var Trackserver = (function () {
         draw_track: function (map, track_url, div_id, is_live, markers) {
 
             if (track_url) {
-                var start_icon = new this.Mapicon ({iconUrl: trackserver_iconpath + 'greendot_15.png'});
-                var end_icon = new this.Mapicon ({iconUrl: trackserver_iconpath + 'reddot_15.png'});
+                var start_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'greendot_15.png'});
+                var end_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'reddot_15.png'});
 
                 // Identify any existing track layer and marker
                 var old_track = this.get_mydata(div_id, 'track');
@@ -150,15 +150,7 @@ var Trackserver = (function () {
                 }
 
                 var map_layer0 = L.tileLayer(
-                    'https://{s}.tiles.mapbox.com/v4/dennisl.4e2aab76/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGludXp6IiwiYSI6IlVXYUYwcG8ifQ.pe5iF9bAH3zx3ztc6PzHFA',
-                    { maxZoom: 18 });
-
-                var map_layer1 = L.tileLayer(
-                    'https://www.grendelman.net/map/tms_r.ashx?x={x}&y={y}&z={z}',
-                    { maxZoom: 18 });
-
-                var map_layer2 = L.tileLayer(
-                    'https://{s}.tiles.mapbox.com/v4/aj.um7z9lus/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGludXp6IiwiYSI6IlVXYUYwcG8ifQ.pe5iF9bAH3zx3ztc6PzHFA',
+                    trackserver_settings['tile_url'],
                     { maxZoom: 18 });
 
                 var options = {center : center, zoom : zoom, layers: [map_layer0], messagebox: true };
