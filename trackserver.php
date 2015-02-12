@@ -35,6 +35,7 @@ License: GPL2
 				'trackme_extension' => 'z',
 				'mapmytracks_tag' => 'mapmytracks',
 				'upload_tag' => 'tsupload',
+				'gettrack_slug' => 'trackserver/gettrack',
 				'normalize_tripnames' => 'yes',
 				'tripnames_format' => '%F %T',
 			);
@@ -48,11 +49,7 @@ License: GPL2
 				$this -> tbl_locations = $wpdb->prefix . "ts_locations";
 				$this -> options = get_option( 'trackserver_options' );
 				$this -> option_defaults["db_version"] = $this -> db_version;
-				// Should be a configuration option
-				$this -> options['gettrack_slug'] = 'trackserver/gettrack';
 				$this -> shortcode = 'tsmap';
-				$this -> use_mapbox = false;
-				$this -> mapbox_token = 'pk.eyJ1IjoidGludXp6IiwiYSI6IlVXYUYwcG8ifQ.pe5iF9bAH3zx3ztc6PzHFA';
 				$this -> mapdata = array();
 				$this -> tracks_list_table = false;
 				$this -> bulk_action_result_msg = false;
