@@ -66,24 +66,24 @@ var Trackserver = (function () {
                     .on ('ready', function () {
                         // ...and then delete the old one, to prevent flickering
                         if (old_track) map.removeLayer (old_track);
+                        if (old_start_marker) map.removeLayer (old_start_marker);
+                        if (old_end_marker) map.removeLayer (old_end_marker);
+
+                        start_latlng = _this.get_mydata(div_id, 'start');
+                        start_marker = new L.marker(start_latlng, {icon: start_icon}).addTo(map);
+                        _this.set_mydata(div_id, 'start_marker', start_marker);
+
+                        end_latlng = _this.get_mydata(div_id, 'end');
+                        end_title = _this.get_mydata(div_id, 'title');
+                        end_marker = new L.marker(end_latlng, {icon: end_icon, title: end_title }).addTo(map);
+                        _this.set_mydata(div_id, 'end_marker', end_marker);
 
                         if (is_live) {
-                            if (old_start_marker) map.removeLayer (old_start_marker);
-                            if (old_end_marker) map.removeLayer (old_end_marker);
-
-                            start_latlng = _this.get_mydata(div_id, 'start');
-                            start_marker = new L.marker(start_latlng, {icon: start_icon}).addTo(map);
-                            _this.set_mydata(div_id, 'start_marker', start_marker);
-
-                            end_latlng = _this.get_mydata(div_id, 'end');
-                            end_title = _this.get_mydata(div_id, 'title');
-                            end_marker = new L.marker(end_latlng, {icon: end_icon, title: end_title }).addTo(map);
-                            _this.set_mydata(div_id, 'end_marker', end_marker);
-
                             // Then, center the map on the last point / current position
                             this._map.setView(end_latlng, map.getZoom());
                         }
                         else {
+                            // or fit the entire track on the map
                             this._map.fitBounds(this.getBounds());
                         }
                     })
