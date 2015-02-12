@@ -84,8 +84,9 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 * height: map height
 * align: 'left', 'center' or 'right'
 * class: a CSS class to add to the map div for customization
+* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end markers on the track
 
-Example: [tsmap track=39 align=center class=mymap]
+Example: [tsmap track=39 align=center class=mymap markers=n]
 
 = What is live tracking? =
 
@@ -129,6 +130,9 @@ for details.
 2. Configuration of OruxMaps for use with Trackserver / WordPress
 
 == Changelog ==
+
+= UNRELEASED =
+* Implement 'markers' shortcode to disable start/end markers on tracks
 
 = v1.0 =
 * Implement 'delete' bulk-action in track management

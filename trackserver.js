@@ -48,7 +48,7 @@ var Trackserver = (function () {
             return o.track;
         },
 
-        draw_track: function (map, track_url, div_id, is_live) {
+        draw_track: function (map, track_url, div_id, is_live, markers) {
 
             if (track_url) {
                 var start_icon = new this.Mapicon ({iconUrl: trackserver_iconpath + 'greendot_15.png'});
@@ -70,13 +70,15 @@ var Trackserver = (function () {
                         if (old_end_marker) map.removeLayer (old_end_marker);
 
                         start_latlng = _this.get_mydata(div_id, 'start');
-                        start_marker = new L.marker(start_latlng, {icon: start_icon}).addTo(map);
-                        _this.set_mydata(div_id, 'start_marker', start_marker);
-
                         end_latlng = _this.get_mydata(div_id, 'end');
                         end_title = _this.get_mydata(div_id, 'title');
-                        end_marker = new L.marker(end_latlng, {icon: end_icon, title: end_title }).addTo(map);
-                        _this.set_mydata(div_id, 'end_marker', end_marker);
+
+                        if (markers) {
+                            start_marker = new L.marker(start_latlng, {icon: start_icon}).addTo(map);
+                            _this.set_mydata(div_id, 'start_marker', start_marker);
+                            end_marker = new L.marker(end_latlng, {icon: end_icon, title: end_title }).addTo(map);
+                            _this.set_mydata(div_id, 'end_marker', end_marker);
+                        }
 
                         if (is_live) {
                             // Then, center the map on the last point / current position
@@ -105,8 +107,9 @@ var Trackserver = (function () {
             var map       = liveupdate._map,
                 track_url = liveupdate.options.track_url,
                 div_id    = liveupdate.options.div_id;
+                markers   = liveupdate.options.markers;
 
-            this.draw_track( map, track_url, div_id, true);
+            this.draw_track( map, track_url, div_id, true, markers );
         },
 
         create_maps: function () {
@@ -131,6 +134,7 @@ var Trackserver = (function () {
                 var fullscreen = mapdata[i]['fullscreen'];
                 var center     = L.latLng(lat, lon);
                 var is_live    = mapdata[i]['is_live'];
+                var markers    = mapdata[i]['markers'];
 
                 /*
                  * The map div in the admin screen is re-used when viewing multiple maps.
@@ -174,13 +178,14 @@ var Trackserver = (function () {
                     L.control.liveupdate ({
                         track_url: track_url,
                         div_id: div_id,
+                        markers: markers,
                         update_map: L.bind(this.update_track, this)
                     })
                     .addTo( map )
                     .startUpdating();
                 }
                 else {
-                    this.draw_track (map, track_url, div_id, is_live);
+                    this.draw_track (map, track_url, div_id, is_live, markers);
                 }
             }
         }
