@@ -131,8 +131,10 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= v1.1 =
 * Implement 'markers' shortcode to disable start/end markers on tracks
+* Make tile server URL a configurable option
+* Bugfixes
 
 = v1.0 =
 * Implement 'delete' bulk-action in track management
