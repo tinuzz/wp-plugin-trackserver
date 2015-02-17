@@ -96,6 +96,10 @@ License: GPL2
 				// Shortcode
 				add_shortcode( 'tsmap', array( &$this, 'handle_shortcode' ) );
 				add_action( 'loop_end', array( &$this, 'loop_end' ) );
+
+				// Media upload
+				add_filter( 'upload_mimes', array( &$this, 'upload_mimes' ) );
+				add_filter( 'media_send_to_editor', array( &$this, 'media_send_to_editor' ), 10, 3 );
 			}
 
 			/**
@@ -1075,6 +1079,16 @@ EOF;
 				return $new;
 			}
 
+			function validate_gpx( $filename ) {
+				$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.1.xsd';
+				$xml = new DOMDocument();
+				$xml -> load( $filename );
+				if ( $xml -> schemaValidate( $schema ) ) {
+					return $xml;
+				}
+				return false;
+			}
+
 			function handle_uploaded_files( $user_id ) {
 
 				$tmp = $this -> get_temp_dir();
@@ -1089,13 +1103,10 @@ EOF;
 					// Check the filename extension case-insensitively
 					if ( strcasecmp( substr( $f['name'], -4 ), '.gpx' ) == 0 ) {
 						if ( $f['error'] == 0 && move_uploaded_file( $f['tmp_name'], $filename ) ) {
-							$xml = new DOMDocument();
-							$xml -> load( $filename );
-							if ( $xml -> schemaValidate( $schema ) ) {
-								if ( $result = $this -> process_gpx( $xml, $user_id ) ) {
-									$message .= "OK: File '" . $f['name'] . "'. Imported ".
-										$result['num_trkpt'] . " points from " . $result['num_trk'] . " tracks\n";
-								}
+							if ( $xml = $this -> validate_gpx( $filename ) ) {
+								$result = $this -> process_gpx( $xml, $user_id );
+								$message .= "OK: File '" . $f['name'] . "'. Imported ".
+									$result['num_trkpt'] . " points from " . $result['num_trk'] . " tracks\n";
 							}
 							else {
 								$message .= "ERROR: File '" . $f['name'] . "' could not be validated as GPX 1.1.\n";
@@ -1113,6 +1124,9 @@ EOF;
 				return $message;
 			}
 
+			/**
+			 * Function to handle file uploads from a (mobile) client to the 'upload' slug
+			 */
 			function handle_upload() {
 				header( 'Content-Type: text/plain' );
 				$user_id = $this -> validate_http_basicauth();
@@ -1120,9 +1134,23 @@ EOF;
 				echo $msg;
 			}
 
+			/**
+			 * Function to handle file uploads from the WordPress admin
+			 */
 			function handle_admin_upload() {
 				$user_id = get_current_user_id();
 				return $this -> handle_uploaded_files( $user_id );
+			}
+
+			/**
+			 * Function to get a track ID by name. Used to find duplicates.
+			 */
+			function get_track_id_by_name( $name, $user_id ) {
+				global $wpdb;
+				$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks .
+					' WHERE name=%s AND user_id=%d LIMIT 0,1', $name, $user_id );
+				$trip_id = $wpdb -> get_var( $sql );
+				return ( $trip_id ? $trip_id : false );
 			}
 
 			/**
@@ -1130,40 +1158,49 @@ EOF;
 			 * provided DOMDocument to SimpleXML for easier processing and uses the same intermediate format
 			 * as the MapMyTracks import, so it can use the same function for inserting the locations
 			 */
-			function process_gpx( $dom, $user_id ) {
+			function process_gpx( $dom, $user_id, $skip_existing = false ) {
 				global $wpdb;
 
 				$gpx = simplexml_import_dom( $dom );
 				$source = $gpx['creator'];
 				$trip_start = false;
-
 				$ntrk = 0;
 				$ntrkpt = 0;
+				$track_ids = array();
+
 				foreach ( $gpx -> trk as $trk ) {
 					$points = array();
 					$trip_name = $trk -> name;
-					foreach ( $trk -> trkseg -> trkpt as $trkpt ) {
-						if ( ! $trip_start ) {
-							$trip_start = date( 'Y-m-d H:i:s', $this -> parse_iso_date( (string) $trkpt -> time ) );
-						}
-						$points[] = array(
-							'latitude' => $trkpt['lat'],
-							'longitude' => $trkpt['lon'],
-							'altitude' => (string) $trkpt -> ele,
-							'timestamp' => $this -> parse_iso_date( (string) $trkpt -> time )
-						);
-						$ntrkpt++;
-					}
 
-					$data = array( 'user_id' => $user_id, 'name' => $trip_name, 'created' => $trip_start, 'source' => $source );
-					$format = array( '%d', '%s', '%s', '%s' );
-					if ( $wpdb -> insert( $this -> tbl_tracks, $data, $format ) ) {
-						$trip_id = $wpdb -> insert_id;
-						$this -> mapmytracks_insert_points( $points, $trip_id );
+					if ( $skip_existing && ( $trk_id = $this -> get_track_id_by_name( $trip_name, $user_id ) ) ) {
+						$track_ids[] = $trk_id;
 					}
-					$ntrk++;
+					else {
+
+						foreach ( $trk -> trkseg -> trkpt as $trkpt ) {
+							if ( ! $trip_start ) {
+								$trip_start = date( 'Y-m-d H:i:s', $this -> parse_iso_date( (string) $trkpt -> time ) );
+							}
+							$points[] = array(
+								'latitude' => $trkpt['lat'],
+								'longitude' => $trkpt['lon'],
+								'altitude' => (string) $trkpt -> ele,
+								'timestamp' => $this -> parse_iso_date( (string) $trkpt -> time )
+							);
+							$ntrkpt++;
+						}
+
+						$data = array( 'user_id' => $user_id, 'name' => $trip_name, 'created' => $trip_start, 'source' => $source );
+						$format = array( '%d', '%s', '%s', '%s' );
+						if ( $wpdb -> insert( $this -> tbl_tracks, $data, $format ) ) {
+							$trip_id = $wpdb -> insert_id;
+							$this -> mapmytracks_insert_points( $points, $trip_id );
+							$track_ids[] = $trip_id;
+							$ntrk++;
+						}
+					}
 				}
-				return array( 'num_trk' => $ntrk, 'num_trkpt' => $ntrkpt );
+				return array( 'num_trk' => $ntrk, 'num_trkpt' => $ntrkpt, 'track_ids' => $track_ids );
 			}
 
 			function get_temp_dir() {
@@ -1181,6 +1218,9 @@ EOF;
 				return $d -> format( 'U' );
 			}
 
+			/**
+			 * Function to return the author ID for a given post ID
+			 */
 			function get_author( $post_id ) {
 				$post = get_post( $post_id );
 				return $post -> post_author;
@@ -1499,6 +1539,56 @@ EOF;
 						</div>
 					<?php
 				}
+			}
+
+			/**
+			 * Filter callback to allow .gpx file uploads.
+			 *
+			 * @param array $existing_mimes the existing mime types.
+			 * @return array the allowed mime types.
+			 */
+			function upload_mimes( $existing_mimes = array() ) {
+
+					// Add file extension 'extension' with mime type 'mime/type'
+					$existing_mimes['gpx'] = 'application/gpx+xml';
+
+					// and return the new full result
+					return $existing_mimes;
+			}
+
+			/**
+			 * Filter function that inserts tracks from the media library into the
+			 * database and returns shortcodes for the added tracks.
+			 */
+			function media_send_to_editor( $html, $id, $attachment ) {
+
+				$type = get_post_mime_type( $id );
+
+				// Only act on GPX files
+				if ( $type == 'application/gpx+xml' ) {
+					$user_id = $this -> get_author( $id );
+					$filename = get_attached_file( $id );
+					if ( $xml = $this -> validate_gpx( $filename ) ) {
+
+						// Call 'process_gpx' with 'skip_existing' == true, to prevent
+						// uploaded files being processed more than once
+						$result = $this -> process_gpx( $xml, $user_id, true );
+
+						if ( count( $result['track_ids'] ) > 0 ) {
+							$html = '';
+							foreach ( $result['track_ids'] as $trk) {
+								$html .= "[tsmap track=$trk]\n";
+							}
+						}
+						else {
+							$html = "Error: no tracks found in GPX.";
+						}
+					}
+					else {
+						$html =  'Error: file could not be parsed as valid GPX 1.1.';
+					}
+				}
+				return $html;
 			}
 
 		} // class
