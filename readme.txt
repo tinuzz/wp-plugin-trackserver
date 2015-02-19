@@ -133,6 +133,7 @@ for details.
 
 = UNRELEASED =
 * Allow GPX files to be uploaded and added to posts/pages via the WP media manager
+* Drastically improve performance of importing GPX files (via WP admin or HTTP POST)
 
 = v1.1 =
 * Implement 'markers' shortcode to disable start/end markers on tracks
