@@ -1020,21 +1020,36 @@ EOF;
 
 				if ( $points ) {
 					$now = current_time( 'Y-m-d H:i:s' );
+
+					$sqldata = array();
+
 					foreach ( $points as $p ) {
 						$ts = $p['timestamp'];
 						$occurred = date( 'Y-m-d H:i:s', $ts + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) );
-						$data = array(
-							'trip_id' => $trip_id,
-							'latitude' => $p['latitude'],
-							'longitude' => $p['longitude'],
-							'altitude' => $p['altitude'],
-							'created' => $now,
-							'occurred' => $occurred
-						);
-						$format = array( '%d', '%s', '%s', '%s', '%s', '%s' );
+						$sqldata[] = $wpdb -> prepare( '(%d, %s, %s, %s, %s, %s)',
+							$trip_id, $p['latitude'], $p['longitude'], $p['altitude'], $now, $occurred );
+					}
 
-						// If insertion fails, return false immediately
-						if ( ! $wpdb -> insert( $this -> tbl_locations, $data, $format ) ) {
+					// Let's see how many rows we can put in a single MySQL INSERT query.
+					// A row is roughly 86 bytes, so lets's use 100 to be on the safe side.
+					$sql = "SHOW VARIABLES LIKE 'max_allowed_packet'";  // returns 2 columns
+					$max_bytes = intval( $wpdb -> get_var( $sql, 1 ) ); // we need the 2nd
+
+					if ( $max_bytes ) {
+						$max_rows = (int) ( $max_bytes / 100 );
+					}
+					else {
+						$max_rows = 10000;   // max_allowed_packet is 1MB by default
+					}
+					$sqldata = array_chunk( $sqldata, $max_rows );
+
+					// Insert the data into the databae in chunks of $max_rows.
+					// If insertion fails, return false immediately
+					foreach ($sqldata as $chunk) {
+						$sql = 'INSERT INTO ' . $this -> tbl_locations .
+						 ' (trip_id, latitude, longitude, altitude, created, occurred) VALUES ';
+						$sql .= implode( ',', $chunk );
+						if ( $wpdb -> query( $sql ) === false ) {
 							return false;
 						}
 					}
@@ -1105,8 +1120,9 @@ EOF;
 						if ( $f['error'] == 0 && move_uploaded_file( $f['tmp_name'], $filename ) ) {
 							if ( $xml = $this -> validate_gpx( $filename ) ) {
 								$result = $this -> process_gpx( $xml, $user_id );
-								$message .= "OK: File '" . $f['name'] . "'. Imported ".
-									$result['num_trkpt'] . " points from " . $result['num_trk'] . " tracks\n";
+								$message .= "File '" . $f['name'] . "': imported ".
+									$result['num_trkpt'] . ' points from ' . $result['num_trk'] .
+								 	' track(s) in '. $result['exec_time'] . " seconds.\n";
 							}
 							else {
 								$message .= "ERROR: File '" . $f['name'] . "' could not be validated as GPX 1.1.\n";
@@ -1168,6 +1184,7 @@ EOF;
 				$ntrkpt = 0;
 				$track_ids = array();
 
+				$exec_t0 = microtime( true );
 				foreach ( $gpx -> trk as $trk ) {
 					$points = array();
 					$trip_name = $trk -> name;
@@ -1200,7 +1217,8 @@ EOF;
 						}
 					}
 				}
-				return array( 'num_trk' => $ntrk, 'num_trkpt' => $ntrkpt, 'track_ids' => $track_ids );
+				$exec_time = round( microtime( true ) - $exec_t0, 1);
+				return array( 'num_trk' => $ntrk, 'num_trkpt' => $ntrkpt, 'track_ids' => $track_ids, 'exec_time' => $exec_time );
 			}
 
 			function get_temp_dir() {
