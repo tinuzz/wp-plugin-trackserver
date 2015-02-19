@@ -1399,11 +1399,9 @@ EOF;
 						</p>
 					</div>
 					<div id="ts-view-modal" style="display:none;">
-						<p>
 							<div id="tsadminmapcontainer">
-								<div id="tsadminmap" style="width: 100%; height: 100%;"></div>
+								<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
 							</div>
-						</p>
 					</div>
 					<div id="ts-merge-modal" style="display:none;">
 						<p>
