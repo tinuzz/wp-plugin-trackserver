@@ -22,8 +22,8 @@
 						$item ['id'].'" data-action="edit">Edit</a>';
 				}
 				elseif ($column_name == 'view') {
-					return ' <a href="#TB_inline?width=&inlineId=ts-view-modal" title="View track on map" class="thickbox" data-id="'.
-						$item ['id'].'" data-action="view">View</a>';
+					return ' <a href="#TB_inline?width=&inlineId=ts-view-modal" title="View ' . htmlspecialchars( $item['name'] ) .
+					 	'" class="thickbox" data-id="' . $item ['id'] . '" data-action="view">View</a>';
 				}
 				elseif ($column_name == 'nonce') {
 					return wp_create_nonce ('manage_track_' . $item ['id']);
