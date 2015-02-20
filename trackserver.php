@@ -291,11 +291,9 @@ EOF;
 
 				settings_fields( 'trackserver-options' );
 				do_settings_sections( 'trackserver' );
+				submit_button( 'Update options', 'primary', 'submit' );
 
 				echo <<<EOF
-				<p class="submit">
-					<input type="submit" name="submit" value="Update Options" />
-				</p>
 			</form>
 			<hr />
 		</div>
