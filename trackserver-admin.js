@@ -76,7 +76,7 @@ var tb_show = function(c, u, i)
     margin = '-' + parseInt((tb_window_width / 2),10) + 'px';
     jQuery("#TB_window").css({"width": tb_window_width + 'px', "height": tb_window_height + 'px', "marginleft": margin});
     jQuery("#TB_ajaxContent").css({"width": (tb_window_width - 30) + 'px', "height": (tb_window_height - 45) + 'px'});
-    jQuery("#tsadminmapcontainer").css({"width": (tb_window_width - 30) + 'px', "height": (tb_window_height - 118)});
+    jQuery("#tsadminmapcontainer").css({"width": (tb_window_width - 32) + 'px', "height": (tb_window_height - 60)});
     if (trackserver_mapdata) {
         Trackserver.init( trackserver_mapdata );
     }
