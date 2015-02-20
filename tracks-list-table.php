@@ -82,7 +82,7 @@
 
 			function get_current_action () {
 					$action = $this -> current_action();
-					if ( array_key_exists( $action, $this -> get_bulk_actions())) {
+					if ( $action && array_key_exists( $action, $this -> get_bulk_actions())) {
 						return $action;
 					}
 					return false;
