@@ -131,6 +131,9 @@ for details.
 
 == Changelog ==
 
+= UNRELEASED =
+* Allow GPX files to be uploaded and added to posts/pages via the WP media manager
+
 = v1.1 =
 * Implement 'markers' shortcode to disable start/end markers on tracks
 * Make tile server URL a configurable option
