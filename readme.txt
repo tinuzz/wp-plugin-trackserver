@@ -3,7 +3,7 @@ Contributors: tinuzz
 Donate link: http://www.grendelman.net/wp/trackserver-wordpress-plugin/
 Tags: gps, gpx, map, leaflet, track, mobile, tracking
 Requires at least: 4.0
-Tested up to: 4.1
+Tested up to: 4.1.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -131,13 +131,14 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= v1.2 =
 * Allow GPX files to be uploaded and added to posts/pages via the WP media manager
 * Drastically improve performance of importing GPX files (via WP admin or HTTP POST)
 * Fix UTC to local time conversion for GPX imports, correct for DST in most cases
 * Show start/end markers in track view modal in the admin
 * Show map name as modal title when viewing from track management in the admin
 * Optimize track view modal layout
+* Bugfixes
 
 = v1.1 =
 * Implement 'markers' shortcode to disable start/end markers on tracks
