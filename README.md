@@ -55,17 +55,15 @@ button that is shown on the map.
 
 ## What about security?
 
-By installing this plugin, all your local users get the ability to use the
-tracking features. There is currently no way to allow/disallow users to use these
-features.
+The plugin uses a custom Wordpress capability to manage who can use the
+tracking features and manage their own tracks. The capability is granted to
+authors, editors and administrators, but not to subscribers. This is hardcoded
+for now, and (re)activation of the plugin will re-grant the capability to
+the three listed roles.
 
 Users who can create/edit posts can also use the [tsmap] shortcode
 and publish maps with their own tracks. It is not possible for users (not even
-admins) to publish other people's tracks.
-
-Track management is restricted to users with the 'manage_options' capability,
-which are only administrators by default. So, users who are not administrators
-can create tracks but not manage them. This will be addressed in a future version.
+admins) to publish (or manage) other people's tracks.
 
 Tracks can only be published in Wordpress posts or pages, and cannot be
 downloaded from outside Wordpress. Requests for downloading tracks need to
