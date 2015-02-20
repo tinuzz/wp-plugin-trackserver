@@ -245,8 +245,9 @@ EOF;
 				// Update database schema
 				$this -> check_update_db();
 
-				// Add options to the database
+				// Add options and capabilities to the database
 				$this -> add_options();
+				$this -> set_capabilities();
 			}
 
 			/**
@@ -276,6 +277,14 @@ EOF;
 			function add_options() {
 				add_option( 'trackserver_options', $this -> option_defaults );
 				$this -> options = get_option( 'trackserver_options' );
+			}
+
+			function set_capabilities() {
+				$roles = array( 'administrator', 'editor', 'author' );
+				foreach ( $roles as $rolename ) {
+					$role = get_role( $rolename );
+					$role -> add_cap( 'use_trackserver' );
+				}
 			}
 
 			function options_page_html() {
@@ -494,7 +503,7 @@ EOF;
 
 				add_submenu_page( 'trackserver-options', 'Trackserver options', 'Options', 'manage_options', 'trackserver-options',
 					array( &$this, 'options_page_html' ) );
-				$page2 = add_submenu_page( 'trackserver-options', 'Manage tracks', 'Manage tracks', 'manage_options', 'trackserver-tracks',
+				$page2 = add_submenu_page( 'trackserver-options', 'Manage tracks', 'Manage tracks', 'use_trackserver', 'trackserver-tracks',
 					array( &$this, 'manage_tracks_html' ) );
 				/*
 				add_submenu_page( 'trackserver-options', 'Trackserver profiles', 'Map profiles', 'manage_options', 'trackserver-profiles',
@@ -667,11 +676,11 @@ EOF;
 						$hash = $user -> data -> user_pass;
 						$user_id = intval( $user -> data -> ID );
 
-						if ( wp_check_password( $password, $hash, $user_id ) ) {
+						if ( wp_check_password( $password, $hash, $user_id ) && user_can( $user_id, 'use_trackserver' ) ) {
 							return $user_id;
 						}
 						else {
-							$this -> trackme_result( 1 );  // Password incorrect
+							$this -> trackme_result( 1 );  // Password incorrect or insufficient permissions
 						}
 					}
 					else {
@@ -906,7 +915,12 @@ EOF;
 					$user_id = intval( $user -> data -> ID );
 
 					if ( wp_check_password( $_SERVER['PHP_AUTH_PW'], $hash, $user_id ) ) {
-						return $user_id;
+						if ( user_can( $user_id, 'use_trackserver' ) ) {
+							return $user_id;
+						}
+						else {
+							die( "User has insufficient permissions\n" );
+						}
 					}
 				}
 				die( "Username or password incorrect\n" );
@@ -1184,7 +1198,12 @@ EOF;
 			 */
 			function handle_admin_upload() {
 				$user_id = get_current_user_id();
-				return $this -> handle_uploaded_files( $user_id );
+				if ( user_can( $user_id, 'use_trackserver' ) ) {
+					return $this -> handle_uploaded_files( $user_id );
+				}
+				else {
+					return "User has insufficient permissions.";
+				}
 			}
 
 			/**
@@ -1360,7 +1379,7 @@ EOF;
 
 			function manage_tracks_html() {
 
-				if ( ! current_user_can( 'manage_options' ) ) {
+				if ( ! current_user_can( 'use_trackserver' ) ) {
 					wp_die( __('You do not have sufficient permissions to access this page.') );
 				}
 
