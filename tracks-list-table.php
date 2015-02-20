@@ -22,7 +22,7 @@
 						$item ['id'].'" data-action="edit">Edit</a>';
 				}
 				elseif ($column_name == 'view') {
-					return ' <a href="#TB_inline?width=&inlineId=ts-view-modal" title="View ' . htmlspecialchars( $item['name'] ) .
+					return ' <a href="#TB_inline?width=&inlineId=ts-view-modal" title="' . htmlspecialchars( $item['name'] ) .
 					 	'" class="thickbox" data-id="' . $item ['id'] . '" data-action="view">View</a>';
 				}
 				elseif ($column_name == 'nonce') {
