@@ -135,6 +135,9 @@ for details.
 * Allow GPX files to be uploaded and added to posts/pages via the WP media manager
 * Drastically improve performance of importing GPX files (via WP admin or HTTP POST)
 * Fix UTC to local time conversion for GPX imports, correct for DST in most cases
+* Show start/end markers in track view modal in the admin
+* Show map name as modal title when viewing from track management in the admin
+* Optimize track view modal layout
 
 = v1.1 =
 * Implement 'markers' shortcode to disable start/end markers on tracks
