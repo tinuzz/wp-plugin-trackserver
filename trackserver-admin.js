@@ -33,7 +33,7 @@ var tb_click = function(e)
                     break;
             }
         });
-        trackserver_mapdata = [{"div_id":"tsadminmap","track_url":track_url,"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false}];
+        trackserver_mapdata = [{"div_id":"tsadminmap","track_url":track_url,"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"markers":true}];
     }
     if (ts_action == 'howto') {
 
