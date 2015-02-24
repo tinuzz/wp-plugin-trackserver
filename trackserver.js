@@ -48,7 +48,7 @@ var Trackserver = (function () {
             return o.track;
         },
 
-        draw_track: function (map, track_url, div_id, is_live, markers) {
+        draw_track: function (map, track_url, track_type, div_id, is_live, markers) {
 
             if (track_url) {
                 var start_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'greendot_15.png'});
@@ -61,8 +61,17 @@ var Trackserver = (function () {
 
                 var _this = this;
 
+                var track_function = omnivore.polyline;
+                var track_options = { 'ondata': L.bind( this.process_data, this ), 'div_id': div_id };
+
+                if ( track_type == 'gpx' ) {
+                    track_function = omnivore.gpx;
+                    track_options = { 'div_id': div_id };
+                    markers = false;
+                }
+
                 // First draw the new track...
-                var runLayer = omnivore.polyline(track_url, {'ondata': L.bind(this.process_data, this), 'div_id': div_id} )
+                var runLayer = track_function(track_url, track_options )
                     .on ('ready', function () {
                         // ...and then delete the old one, to prevent flickering
                         if (old_track) map.removeLayer (old_track);
@@ -104,12 +113,13 @@ var Trackserver = (function () {
         // Wrapper for 'draw_track' that gets its data from the liveupdate object.
         update_track: function (liveupdate) {
 
-            var map       = liveupdate._map,
-                track_url = liveupdate.options.track_url,
-                div_id    = liveupdate.options.div_id;
-                markers   = liveupdate.options.markers;
+            var map        = liveupdate._map,
+                track_url  = liveupdate.options.track_url,
+                track_type = liveupdate.options.track_type,
+                div_id     = liveupdate.options.div_id;
+                markers    = liveupdate.options.markers;
 
-            this.draw_track( map, track_url, div_id, true, markers );
+            this.draw_track( map, track_url, track_type, div_id, true, markers );
         },
 
         create_maps: function () {
@@ -128,6 +138,7 @@ var Trackserver = (function () {
 
                 var div_id     = mapdata[i]['div_id'];
                 var track_url  = mapdata[i]['track_url'];
+                var track_type = mapdata[i]['track_type'];
                 var lat        = parseFloat (mapdata[i]['default_lat']);
                 var lon        = parseFloat (mapdata[i]['default_lon']);
                 var zoom       = parseInt (mapdata[i]['default_zoom']);
@@ -169,6 +180,7 @@ var Trackserver = (function () {
                 if (is_live) {
                     L.control.liveupdate ({
                         track_url: track_url,
+                        track_type: track_type,
                         div_id: div_id,
                         markers: markers,
                         update_map: L.bind(this.update_track, this)
@@ -177,7 +189,7 @@ var Trackserver = (function () {
                     .startUpdating();
                 }
                 else {
-                    this.draw_track (map, track_url, div_id, is_live, markers);
+                    this.draw_track (map, track_url, track_type, div_id, is_live, markers);
                 }
             }
         }
