@@ -27,11 +27,27 @@ License: GPL2
 		define( 'TRACKSERVER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 		define( 'TRACKSERVER_JSLIB', TRACKSERVER_PLUGIN_URL . 'lib/' );
 
+		/**
+		 * The main plugin class.
+		 */
 		class trackserver {
 
-			var $db_version = "7";
+			/**
+			 * Database version that this code base needs.
+			 *
+			 * @since 1.0
+			 * @access private
+			 * @var int $db_version
+			 */
+			var $db_version = 7;
 
-			// Option defaults. More in the constructor
+			/**
+			 * Default values for options. See class constructor for more.
+			 *
+			 * @since 1.0
+			 * @access private
+			 * @var array $option_defaults
+			 */
 			var $option_defaults = array(
 				'trackme_slug' => 'trackme',
 				'trackme_extension' => 'z',
@@ -44,7 +60,9 @@ License: GPL2
 			);
 
 			/**
-			 * Constructor
+			 * Class constructor.
+			 *
+			 * @since 1.0
 			 */
 			function __construct () {
 				global $wpdb;
@@ -66,7 +84,9 @@ License: GPL2
 			}
 
 			/**
-			 * Function to fill in missing default options
+			 * Fill in missing default options.
+			 *
+			 * @since 1.1
 			 */
 			function add_missing_options() {
 				foreach ( $this -> option_defaults as $option => $value ) {
@@ -77,7 +97,9 @@ License: GPL2
 			}
 
 			/**
-			 * Add actions and filters.
+			 * Add common actions and filters.
+			 *
+			 * @since 1.0
 			 */
 			function add_actions() {
 
@@ -104,7 +126,9 @@ License: GPL2
 			}
 
 			/**
-			 * Add actions for the admin pages
+			 * Add actions for the admin pages.
+			 *
+			 * @since 1.0
 			 */
 			function add_admin_actions() {
 
@@ -119,7 +143,9 @@ License: GPL2
 			}
 
 			/**
-			 * Function that prints some CSS in the header of the admin panel
+			 * Print some CSS in the header of the admin panel.
+			 *
+			 * @since 1.0
 			 */
 			function admin_head() {
 				echo <<<EOF
@@ -136,8 +162,16 @@ EOF;
 			}
 
 			/**
-			 * Function to update options. Set the value in the options array and
-			 * write the array to the database.
+			 * Update options.
+			 *
+			 * Set the value in the options array and write the array to the database.
+			 *
+			 * @since 1.0
+			 *
+			 * @see update_option()
+			 *
+			 * @param string $option Option name
+			 * @param string $value Option value
 			 */
 			function update_option( $option, $value ) {
 				$this -> options[ $option ] = $value;
@@ -145,8 +179,9 @@ EOF;
 			}
 
 			/**
-			 * Handler for 'wp_print_scripts'.
-			 * Load scripts.
+			 * Handler for 'wp_print_scripts'. Load scripts.
+			 *
+			 * @since 1.0
 			 */
 			function load_common_scripts() {
 
@@ -168,8 +203,10 @@ EOF;
 			}
 
 			/**
-			 * Handler for 'wp_enqueue_scripts'.
-			 * Load javascript and stylesheets on the front-end.
+			 * Handler for 'wp_enqueue_scripts'. Load javascript and stylesheets on
+			 * the front-end.
+			 *
+			 * @since 1.0
 			 */
 			function wp_enqueue_scripts() {
 				if ( $this -> detect_shortcode() ) {
@@ -183,6 +220,14 @@ EOF;
 				}
 			}
 
+			/**
+			 * Handler for 'admin_enqueue_scripts'. Load javascript and stylesheets
+			 * in the admin panel.
+			 *
+			 * @since 1.0
+			 *
+			 * @param string $hook The hook suffix for the current admin page.
+			 */
 			function admin_enqueue_scripts( $hook ) {
 
 				switch ( $hook ) {
@@ -206,8 +251,14 @@ EOF;
 			}
 
 			/**
-			 * Installer function. This runs when the plugin in activated and installs
-			 * the database table and sets default option values
+			 * Installer function.
+			 *
+			 * This runs when the plugin in activated and installs the database table
+			 * and sets default option values
+			 *
+			 * @since 1.0
+			 *
+			 * @global object $wpdb The WordPress database interface
 			 */
 			function trackserver_install() {
 				global $wpdb;
@@ -252,6 +303,10 @@ EOF;
 
 			/**
 			 * Check if the database schema is the correct version and upgrade if necessary.
+			 *
+			 * @since 1.0
+			 *
+			 * @global object $wpdb The WordPress database interface
 			 */
 			function check_update_db() {
 				global $wpdb;
@@ -263,7 +318,7 @@ EOF;
 				$upgrade_sql[6] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `created` TIMESTAMP NOT NULL AFTER `updated`";
 				$upgrade_sql[7] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `source` VARCHAR( 255 ) NOT NULL AFTER `created`";
 
-				$installed_version = $this -> options['db_version'];
+				$installed_version = (int) $this -> options['db_version'];
 				if ( $installed_version != $this -> db_version ) {
 					for ($i = $installed_version + 1; $i <= $this -> db_version; $i++ ) {
 						if ( array_key_exists( $i, $upgrade_sql ) ) {
@@ -274,11 +329,21 @@ EOF;
 				$this -> update_option( 'db_version', $this -> db_version );
 			}
 
+			/**
+			 * Add the Trackserver options array to the database and read it back.
+			 *
+			 * @since 1.0
+			 */
 			function add_options() {
 				add_option( 'trackserver_options', $this -> option_defaults );
 				$this -> options = get_option( 'trackserver_options' );
 			}
 
+			/**
+			 * Add capabilities for using Trackserver to WordPress roles.
+			 *
+			 * @since 1.3
+			 */
 			function set_capabilities() {
 				$roles = array( 'administrator', 'editor', 'author' );
 				foreach ( $roles as $rolename ) {
@@ -287,6 +352,11 @@ EOF;
 				}
 			}
 
+			/**
+			 * Output HTML for the Trackserver options page.
+			 *
+			 * @since 1.0
+			 */
 			function options_page_html() {
 				if ( ! current_user_can( 'manage_options' ) ) {
 					wp_die( __('You do not have sufficient permissions to access this page.') );
@@ -318,9 +388,6 @@ EOF;
 				$settings_link = '<a href="admin.php?page=trackserver-options">Settings</a>';
 				array_unshift( $links, $settings_link );
 				return $links;
-			}
-
-			function advanced_settings_html() {
 			}
 
 			function trackme_settings_html() {
@@ -372,6 +439,9 @@ EOF;
 			}
 
 			function shortcode_settings_html() {
+			}
+
+			function advanced_settings_html() {
 			}
 
 			function tile_url_html() {
