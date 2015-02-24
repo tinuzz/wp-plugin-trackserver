@@ -133,6 +133,7 @@ for details.
 * Add 'use_trackserver' capability for authors, editors and admins and use it to
   restrict tracking to those roles, while at the same time allowing non-admins
   to manage their own tracks
+* Code cleanup and inline documentation
 
 = v1.2 =
 * Allow GPX files to be uploaded and added to posts/pages via the WP media manager
