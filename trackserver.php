@@ -39,7 +39,7 @@ License: GPL2
 			 * @access private
 			 * @var int $db_version
 			 */
-			var $db_version = 7;
+			var $db_version = 8;
 
 			/**
 			 * Default values for options. See class constructor for more.
@@ -288,6 +288,7 @@ EOF;
 					`created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 					`source` varchar(255) NOT NULL,
 					`comment` varchar(255) NOT NULL,
+					`distance` int(11) NOT NULL,
 					PRIMARY KEY (`id`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
@@ -317,6 +318,7 @@ EOF;
 				$upgrade_sql[5] = "ALTER TABLE " . $this -> tbl_tracks . " CHANGE `created` `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP";
 				$upgrade_sql[6] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `created` TIMESTAMP NOT NULL AFTER `updated`";
 				$upgrade_sql[7] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `source` VARCHAR( 255 ) NOT NULL AFTER `created`";
+				$upgrade_sql[8] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `distance` INT( 11 ) NOT NULL AFTER `comment`";
 
 				$installed_version = (int) $this -> options['db_version'];
 				if ( $installed_version != $this -> db_version ) {
@@ -896,6 +898,7 @@ EOF;
 							}
 
 							if ($wpdb -> insert( $this -> tbl_locations, $data, $format ) ) {
+								$this -> calculate_distance( $trip_id );
 								$this -> trackme_result( 0 );
 							}
 							else {
@@ -1178,6 +1181,9 @@ EOF;
 							return false;
 						}
 					}
+
+					// Update the track's distance in the database
+					$this -> calculate_distance( $trip_id );
 				}
 				return true;
 			}
@@ -1735,6 +1741,40 @@ EOF;
 					}
 				}
 				return $html;
+			}
+
+			function distance( $lat1, $lon1, $lat2, $lon2 ) {
+				$radius = 6371000; // meter
+				list( $lat1, $lon1, $lat2, $lon2 ) = array_map( 'deg2rad', array( $lat1, $lon1, $lat2, $lon2 ) );
+
+				$dlat = $lat2 - $lat1;
+				$dlon = $lon2 - $lon1;
+				$a = pow ( sin( $dlat / 2 ), 2 ) + cos( $lat1 ) * cos( $lat2 ) * pow( sin( $dlon / 2 ), 2 );
+				$c = 2 * atan2( sqrt( $a ), sqrt( 1 - $a ) );
+				$d = $radius * $c;
+				return (int) $d;
+			}
+
+			function calculate_distance( $track_id ) {
+				global $wpdb;
+
+				$sql = $wpdb -> prepare( 'SELECT latitude, longitude FROM ' . $this -> tbl_locations .
+					' WHERE trip_id=%d ORDER BY occurred', $track_id );
+				$res = $wpdb -> get_results( $sql, ARRAY_A );
+
+				$oldlat = false;
+				$distance = 0;
+				foreach ( $res as $row ) {
+					if ($oldlat) {
+						$distance += $this -> distance( $oldlat, $oldlon, $row['latitude'], $row['longitude'] );
+					}
+					$oldlat = $row['latitude'];
+					$oldlon = $row['longitude'];
+				}
+
+				if ( $distance > 0 ) {
+					$wpdb -> update( $this -> tbl_tracks, array( 'distance' => $distance ), array( 'id' => $track_id ), '%d', '%d' );
+				}
 			}
 
 		} // class
