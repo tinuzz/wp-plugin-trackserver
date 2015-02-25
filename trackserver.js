@@ -48,7 +48,7 @@ var Trackserver = (function () {
             return o.track;
         },
 
-        draw_track: function (map, track_url, track_type, div_id, is_live, markers) {
+        draw_track: function (map, mydata, track_url, track_type, div_id, is_live, markers) {
 
             if (track_url) {
                 var start_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'greendot_15.png'});
@@ -61,17 +61,27 @@ var Trackserver = (function () {
 
                 var _this = this;
 
+                var customLayer = false;
+                if (mydata.color) {
+                    var track_style = {
+                        'color': mydata.color
+                    };
+                    var layer_options = {
+                        'style': track_style
+                    };
+                    customLayer = L.geoJson(null, layer_options);
+                }
                 var track_function = omnivore.polyline;
                 var track_options = { 'ondata': L.bind( this.process_data, this ), 'div_id': div_id };
 
-                if ( track_type == 'gpx' ) {
+                if ( mydata['track_type'] == 'gpx' ) {
                     track_function = omnivore.gpx;
                     track_options = { 'div_id': div_id };
                     markers = false;
                 }
 
                 // First draw the new track...
-                var runLayer = track_function(track_url, track_options )
+                var runLayer = track_function(track_url, track_options, customLayer )
                     .on ('ready', function () {
                         // ...and then delete the old one, to prevent flickering
                         if (old_track) map.removeLayer (old_track);
@@ -118,8 +128,9 @@ var Trackserver = (function () {
                 track_type = liveupdate.options.track_type,
                 div_id     = liveupdate.options.div_id;
                 markers    = liveupdate.options.markers;
+                mydata     = liveupdate.options.mapdata;
 
-            this.draw_track( map, track_url, track_type, div_id, true, markers );
+            this.draw_track( map, mydata, track_url, track_type, div_id, true, markers );
         },
 
         create_maps: function () {
@@ -147,6 +158,8 @@ var Trackserver = (function () {
                 var is_live    = mapdata[i]['is_live'];
                 var markers    = mapdata[i]['markers'];
 
+                var mydata     = mapdata[i];
+
                 /*
                  * The map div in the admin screen is re-used when viewing multiple maps.
                  * When closing the thickbox, the map object is normally removed and the
@@ -167,7 +180,7 @@ var Trackserver = (function () {
                 var options = {center : center, zoom : zoom, layers: [map_layer0], messagebox: true };
                 var map = L.map(div_id, options);
 
-                // An ugly shortcut to able to destroy the map in WP admin
+                // An ugly shortcut to be able to destroy the map in WP admin
                 if (div_id == 'tsadminmap') {
                     this.adminmap = map;
                 }
@@ -183,13 +196,14 @@ var Trackserver = (function () {
                         track_type: track_type,
                         div_id: div_id,
                         markers: markers,
+                        mapdata: mydata,
                         update_map: L.bind(this.update_track, this)
                     })
                     .addTo( map )
                     .startUpdating();
                 }
                 else {
-                    this.draw_track (map, track_url, track_type, div_id, is_live, markers);
+                    this.draw_track (map, mydata, track_url, track_type, div_id, is_live, markers);
                 }
             }
         }
