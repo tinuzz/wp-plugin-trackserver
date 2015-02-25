@@ -1635,6 +1635,7 @@ EOF;
 
 				// The action name is 'bulk-' + plural form of items in WP_List_Table
 				check_admin_referer( 'bulk-tracks' );
+				$user_id = get_current_user_id();
 
 				if ( $action === 'delete' ) {
 					// Convert to int, remove value '0'.
@@ -1673,6 +1674,32 @@ EOF;
 					}
 					else {
 						$message = "Need >= 2 tracks to merge, got only $n";
+					}
+					setcookie( 'ts_bulk_result', $message, time() + 300 );
+					wp_redirect( $_REQUEST['_wp_http_referer'] );
+					exit;
+				}
+
+				if ( $action === 'recalc' ) {
+
+					// Convert to int, remove value '0'.
+					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ) );
+					// How useful is it to escape integers?
+					array_walk( $track_ids, array( $wpdb, 'escape_by_ref' ) );
+					$in = '(' . implode( ',', $track_ids ) . ')';
+
+					$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id );
+					$tracks = $wpdb -> get_col( $sql );
+					if ( $tracks ) {
+						$exec_t0 = microtime( true );
+						foreach ( $tracks as $track_id ) {
+							$this -> calculate_distance( $track_id );
+						}
+						$exec_time = round( microtime( true ) - $exec_t0, 1);
+						$message = 'Recalculated track stats for ' . count( $tracks ) . " tracks in $exec_time seconds";
+					}
+					else {
+						$message = "No tracks found to recalculate";
 					}
 					setcookie( 'ts_bulk_result', $message, time() + 300 );
 					wp_redirect( $_REQUEST['_wp_http_referer'] );
