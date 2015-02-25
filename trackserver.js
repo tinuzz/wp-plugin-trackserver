@@ -48,7 +48,7 @@ var Trackserver = (function () {
             return o.track;
         },
 
-        draw_track: function (map, mydata, track_url, track_type, div_id, is_live, markers) {
+        draw_track: function (map, mydata, track_url, div_id, is_live, markers) {
 
             if (track_url) {
                 var start_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'greendot_15.png'});
@@ -125,12 +125,11 @@ var Trackserver = (function () {
 
             var map        = liveupdate._map,
                 track_url  = liveupdate.options.track_url,
-                track_type = liveupdate.options.track_type,
                 div_id     = liveupdate.options.div_id;
                 markers    = liveupdate.options.markers;
-                mydata     = liveupdate.options.mapdata;
+                mydata     = liveupdate.options.mydata;
 
-            this.draw_track( map, mydata, track_url, track_type, div_id, true, markers );
+            this.draw_track( map, mydata, track_url, div_id, true, markers );
         },
 
         create_maps: function () {
@@ -149,7 +148,6 @@ var Trackserver = (function () {
 
                 var div_id     = mapdata[i]['div_id'];
                 var track_url  = mapdata[i]['track_url'];
-                var track_type = mapdata[i]['track_type'];
                 var lat        = parseFloat (mapdata[i]['default_lat']);
                 var lon        = parseFloat (mapdata[i]['default_lon']);
                 var zoom       = parseInt (mapdata[i]['default_zoom']);
@@ -193,17 +191,16 @@ var Trackserver = (function () {
                 if (is_live) {
                     L.control.liveupdate ({
                         track_url: track_url,
-                        track_type: track_type,
                         div_id: div_id,
                         markers: markers,
-                        mapdata: mydata,
+                        mydata: mydata,
                         update_map: L.bind(this.update_track, this)
                     })
                     .addTo( map )
                     .startUpdating();
                 }
                 else {
-                    this.draw_track (map, mydata, track_url, track_type, div_id, is_live, markers);
+                    this.draw_track (map, mydata, track_url, div_id, is_live, markers);
                 }
             }
         }
