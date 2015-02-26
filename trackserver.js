@@ -48,7 +48,9 @@ var Trackserver = (function () {
             return o.track;
         },
 
-        draw_track: function (map, mymapdata, div_id) {
+        draw_track: function (map, mymapdata) {
+
+            var div_id = mymapdata.div_id;
 
             if (mymapdata.track_url) {
                 var start_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'greendot_15.png'});
@@ -121,10 +123,9 @@ var Trackserver = (function () {
         update_track: function (liveupdate) {
 
             var map        = liveupdate._map,
-                div_id     = liveupdate.options.div_id,
                 mymapdata  = liveupdate.options.mymapdata;
 
-            this.draw_track( map, mymapdata, div_id );
+            this.draw_track( map, mymapdata );
         },
 
         create_maps: function () {
@@ -141,7 +142,6 @@ var Trackserver = (function () {
 
             for (i = 0; i < mapdata.length; i++) {
 
-                var div_id     = mapdata[i]['div_id'];
                 var lat        = parseFloat (mapdata[i]['default_lat']);
                 var lon        = parseFloat (mapdata[i]['default_lon']);
                 var zoom       = parseInt (mapdata[i]['default_zoom']);
@@ -156,7 +156,7 @@ var Trackserver = (function () {
                  * there, we have a fallback here, that empties the div and sets ._leaflet
                  * to false, making re-initialization possible.
                  */
-                var container = L.DomUtil.get(div_id);
+                var container = L.DomUtil.get( mymapdata.div_id );
                 if (container._leaflet) {
                     jQuery(container).empty();
                     container._leaflet = false;
@@ -167,10 +167,10 @@ var Trackserver = (function () {
                     { maxZoom: 18 });
 
                 var options = {center : center, zoom : zoom, layers: [map_layer0], messagebox: true };
-                var map = L.map(div_id, options);
+                var map = L.map( mymapdata.div_id, options );
 
                 // An ugly shortcut to be able to destroy the map in WP admin
-                if (div_id == 'tsadminmap') {
+                if ( mymapdata.div_id == 'tsadminmap' ) {
                     this.adminmap = map;
                 }
 
@@ -181,7 +181,6 @@ var Trackserver = (function () {
                 // Load and display the track. Use the liveupdate control to do it when appropriate.
                 if (mymapdata.is_live) {
                     L.control.liveupdate ({
-                        div_id: div_id,
                         mymapdata: mymapdata,
                         update_map: L.bind(this.update_track, this)
                     })
@@ -189,7 +188,7 @@ var Trackserver = (function () {
                     .startUpdating();
                 }
                 else {
-                    this.draw_track (map, mymapdata, div_id);
+                    this.draw_track ( map, mymapdata );
                 }
             }
         }
