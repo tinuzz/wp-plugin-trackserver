@@ -40,8 +40,13 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 * height: map height
 * align: 'left', 'center' or 'right'
 * class: a CSS class to add to the map div for customization
+* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end markers on the track
+* gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes precedence over 'gpx'. Markers are disabled for GPX files.
+* color: the color of the track on the map, default comes from Leaflet
+* weight: the weight of the track on the map, default comes from Leaflet
+* opacity: the opacity of the track on the map, default comes from Leaflet
 
-Example: [tsmap track=39 align=center class=mymap]
+Example: [tsmap track=39 align=center class=mymap markers=n color=#ff0000]
 
 ## What is live tracking?
 

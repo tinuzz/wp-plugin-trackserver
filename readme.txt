@@ -88,8 +88,11 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
   markers on the track
 * gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
   precedence over 'gpx'. Markers are disabled for GPX files.
+* color: the color of the track on the map, default comes from Leaflet
+* weight: the weight of the track on the map, default comes from Leaflet
+* opacity: the opacity of the track on the map, default comes from Leaflet
 
-Example: [tsmap track=39 align=center class=mymap markers=n]
+Example: [tsmap track=39 align=center class=mymap markers=n color=#ff0000]
 
 = What is live tracking? =
 
@@ -140,6 +143,7 @@ for details.
   external URL
 * Calculate and store the total distance of a track at the time of upload
 * Add bulk action to recalculate track distances
+* Add shortcode attributes: color, weight, opacity, for controlling track display style
 * Fix security bug where it was possible to delete or merge other users' tracks
 * Code cleanup and inline documentation
 
