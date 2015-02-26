@@ -48,7 +48,7 @@ var Trackserver = (function () {
             return o.track;
         },
 
-        draw_track: function (map, mymapdata, div_id, is_live) {
+        draw_track: function (map, mymapdata, div_id) {
 
             if (mymapdata.track_url) {
                 var start_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'greendot_15.png'});
@@ -96,7 +96,7 @@ var Trackserver = (function () {
                             _this.set_mydata(div_id, 'end_marker', end_marker);
                         }
 
-                        if (is_live) {
+                        if (mymapdata.is_live) {
                             // Then, center the map on the last point / current position
                             this._map.setView(end_latlng, map.getZoom());
                         }
@@ -124,7 +124,7 @@ var Trackserver = (function () {
                 div_id     = liveupdate.options.div_id,
                 mymapdata  = liveupdate.options.mymapdata;
 
-            this.draw_track( map, mymapdata, div_id, true );
+            this.draw_track( map, mymapdata, div_id );
         },
 
         create_maps: function () {
@@ -145,9 +145,7 @@ var Trackserver = (function () {
                 var lat        = parseFloat (mapdata[i]['default_lat']);
                 var lon        = parseFloat (mapdata[i]['default_lon']);
                 var zoom       = parseInt (mapdata[i]['default_zoom']);
-                var fullscreen = mapdata[i]['fullscreen'];
                 var center     = L.latLng(lat, lon);
-                var is_live    = mapdata[i]['is_live'];
 
                 var mymapdata  = mapdata[i];
 
@@ -176,12 +174,12 @@ var Trackserver = (function () {
                     this.adminmap = map;
                 }
 
-                if (fullscreen) {
+                if (mymapdata.fullscreen) {
                     L.control.fullscreen().addTo(map);
                 }
 
                 // Load and display the track. Use the liveupdate control to do it when appropriate.
-                if (is_live) {
+                if (mymapdata.is_live) {
                     L.control.liveupdate ({
                         div_id: div_id,
                         mymapdata: mymapdata,
@@ -191,7 +189,7 @@ var Trackserver = (function () {
                     .startUpdating();
                 }
                 else {
-                    this.draw_track (map, mymapdata, div_id, is_live);
+                    this.draw_track (map, mymapdata, div_id);
                 }
             }
         }
