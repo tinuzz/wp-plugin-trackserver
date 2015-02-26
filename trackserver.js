@@ -48,9 +48,9 @@ var Trackserver = (function () {
             return o.track;
         },
 
-        draw_track: function (map, mydata, track_url, div_id, is_live, markers) {
+        draw_track: function (map, mymapdata, div_id, is_live, markers) {
 
-            if (track_url) {
+            if (mymapdata.track_url) {
                 var start_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'greendot_15.png'});
                 var end_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'reddot_15.png'});
 
@@ -62,26 +62,23 @@ var Trackserver = (function () {
                 var _this = this;
 
                 var customLayer = false;
-                if (mydata.color) {
-                    var track_style = {
-                        'color': mydata.color
-                    };
+                if (mymapdata.style) {
                     var layer_options = {
-                        'style': track_style
+                        'style': mymapdata.style
                     };
                     customLayer = L.geoJson(null, layer_options);
                 }
                 var track_function = omnivore.polyline;
                 var track_options = { 'ondata': L.bind( this.process_data, this ), 'div_id': div_id };
 
-                if ( mydata['track_type'] == 'gpx' ) {
+                if ( mymapdata['track_type'] == 'gpx' ) {
                     track_function = omnivore.gpx;
                     track_options = { 'div_id': div_id };
                     markers = false;
                 }
 
                 // First draw the new track...
-                var runLayer = track_function(track_url, track_options, customLayer )
+                var runLayer = track_function(mymapdata.track_url, track_options, customLayer )
                     .on ('ready', function () {
                         // ...and then delete the old one, to prevent flickering
                         if (old_track) map.removeLayer (old_track);
@@ -124,12 +121,11 @@ var Trackserver = (function () {
         update_track: function (liveupdate) {
 
             var map        = liveupdate._map,
-                track_url  = liveupdate.options.track_url,
                 div_id     = liveupdate.options.div_id,
                 markers    = liveupdate.options.markers,
-                mydata     = liveupdate.options.mydata;
+                mymapdata  = liveupdate.options.mymapdata;
 
-            this.draw_track( map, mydata, track_url, div_id, true, markers );
+            this.draw_track( map, mymapdata, div_id, true, markers );
         },
 
         create_maps: function () {
@@ -147,7 +143,6 @@ var Trackserver = (function () {
             for (i = 0; i < mapdata.length; i++) {
 
                 var div_id     = mapdata[i]['div_id'];
-                var track_url  = mapdata[i]['track_url'];
                 var lat        = parseFloat (mapdata[i]['default_lat']);
                 var lon        = parseFloat (mapdata[i]['default_lon']);
                 var zoom       = parseInt (mapdata[i]['default_zoom']);
@@ -156,7 +151,7 @@ var Trackserver = (function () {
                 var is_live    = mapdata[i]['is_live'];
                 var markers    = mapdata[i]['markers'];
 
-                var mydata     = mapdata[i];
+                var mymapdata  = mapdata[i];
 
                 /*
                  * The map div in the admin screen is re-used when viewing multiple maps.
@@ -190,17 +185,16 @@ var Trackserver = (function () {
                 // Load and display the track. Use the liveupdate control to do it when appropriate.
                 if (is_live) {
                     L.control.liveupdate ({
-                        track_url: track_url,
                         div_id: div_id,
                         markers: markers,
-                        mydata: mydata,
+                        mymapdata: mymapdata,
                         update_map: L.bind(this.update_track, this)
                     })
                     .addTo( map )
                     .startUpdating();
                 }
                 else {
-                    this.draw_track (map, mydata, track_url, div_id, is_live, markers);
+                    this.draw_track (map, mymapdata, div_id, is_live, markers);
                 }
             }
         }
