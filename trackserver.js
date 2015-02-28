@@ -125,8 +125,8 @@ var Trackserver = (function () {
 
             var map        = liveupdate._map,
                 track_url  = liveupdate.options.track_url,
-                div_id     = liveupdate.options.div_id;
-                markers    = liveupdate.options.markers;
+                div_id     = liveupdate.options.div_id,
+                markers    = liveupdate.options.markers,
                 mydata     = liveupdate.options.mydata;
 
             this.draw_track( map, mydata, track_url, div_id, true, markers );
