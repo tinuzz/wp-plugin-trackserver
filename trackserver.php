@@ -175,6 +175,7 @@ License: GPL2
 						.wp-list-table .column-tstart { width: 150px; }
 						.wp-list-table .column-tend { width: 150px; }
 						.wp-list-table .column-numpoints { width: 50px; }
+						.wp-list-table .column-distance { width: 60px; }
 						.wp-list-table .column-edit { width: 50px; }
 						.wp-list-table .column-view { width: 50px; }
 						#addtrack { margin: 1px 8px 0 0; }
