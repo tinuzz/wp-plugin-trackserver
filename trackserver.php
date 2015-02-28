@@ -1628,6 +1628,29 @@ EOF;
 			}
 
 			/**
+			 * Filter an array of track IDs for tracks that don't belong to the current user
+			 *
+			 * @since 1.3
+			 *
+			 * @global object $wpdb The WordPress database interface
+			 *
+			 * @param array $track_ids Track IDs to filter
+			 */
+			function filter_current_user_tracks( $track_ids ) {
+				global $wpdb;
+
+				$user_id = get_current_user_id();
+				// Convert to int, remove value '0'.
+				$track_ids = array_diff( array_map( 'intval', (array) $track_ids ), array( 0 ) );
+				if ( count( $track_ids ) > 0 ) {
+					$in = '(' . implode( ',', $track_ids ) . ')';
+					$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id );
+					return $wpdb -> get_col( $sql );
+				}
+				return array();
+			}
+
+			/**
 			 * Function to process any bulk action from the tracks_list_table
 			 */
 			function process_bulk_action( $action ) {
@@ -1635,27 +1658,27 @@ EOF;
 
 				// The action name is 'bulk-' + plural form of items in WP_List_Table
 				check_admin_referer( 'bulk-tracks' );
-				$user_id = get_current_user_id();
 
 				if ( $action === 'delete' ) {
-					// Convert to int, remove value '0'.
-					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ) );
-					// How useful is it to escape integers?
-					array_walk( $track_ids, array( $wpdb, 'escape_by_ref' ) );
-					$in = '(' . implode( ',', $track_ids ) . ')';
-					$sql = 'DELETE FROM ' . $this -> tbl_locations . " WHERE trip_id IN $in";
-					$nl = $wpdb -> query( $sql );
-					$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
-					$nt = $wpdb -> query( $sql );
-					$message = 'Deleted ' . intval( $nl ) . ' location(s) in ' . intval( $nt ) . ' track(s).';
+					$track_ids = $this -> filter_current_user_tracks( $_REQUEST['track'] );
+					if ( count( $track_ids ) > 0 ) {
+						$in = '(' . implode( ',', $track_ids ) . ')';
+						$sql = 'DELETE FROM ' . $this -> tbl_locations . " WHERE trip_id IN $in";
+						$nl = $wpdb -> query( $sql );
+						$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
+						$nt = $wpdb -> query( $sql );
+						$message = 'Deleted ' . intval( $nl ) . ' location(s) in ' . intval( $nt ) . ' track(s).';
+					}
+					else {
+						$message = "No tracks deleted";
+					}
 					setcookie( 'ts_bulk_result', $message, time() + 300 );
 					wp_redirect( $_REQUEST['_wp_http_referer'] );
 					exit;
 				}
 
 				if ( $action === 'merge' ) {
-					// Convert to int, remove value '0'.
-					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ) );
+					$track_ids = $this -> filter_current_user_tracks( $_REQUEST['track'] );
 					// Need at least 2 tracks
 					if ( ( $n = count( $track_ids ) ) > 1 ) {
 						$id = min( $track_ids );
@@ -1681,22 +1704,14 @@ EOF;
 				}
 
 				if ( $action === 'recalc' ) {
-
-					// Convert to int, remove value '0'.
-					$track_ids = array_diff( array_map( 'intval', $_REQUEST[ 'track' ] ), array( 0 ) );
-					// How useful is it to escape integers?
-					array_walk( $track_ids, array( $wpdb, 'escape_by_ref' ) );
-					$in = '(' . implode( ',', $track_ids ) . ')';
-
-					$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id );
-					$tracks = $wpdb -> get_col( $sql );
-					if ( $tracks ) {
+					$track_ids = $this -> filter_current_user_tracks( $_REQUEST['track'] );
+					if ( count( $track_ids ) > 0 ) {
 						$exec_t0 = microtime( true );
-						foreach ( $tracks as $track_id ) {
-							$this -> calculate_distance( $track_id );
+						foreach ( $track_ids as $id ) {
+							$this -> calculate_distance( $id );
 						}
 						$exec_time = round( microtime( true ) - $exec_t0, 1);
-						$message = 'Recalculated track stats for ' . count( $tracks ) . " tracks in $exec_time seconds";
+						$message = 'Recalculated track stats for ' . count( $track_ids ) . " tracks in $exec_time seconds";
 					}
 					else {
 						$message = "No tracks found to recalculate";

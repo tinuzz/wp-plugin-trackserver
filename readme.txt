@@ -140,6 +140,7 @@ for details.
   external URL
 * Calculate and store the total distance of a track at the time of upload
 * Add bulk action to recalculate track distances
+* Fix security bug where it was possible to delete or merge other users' tracks
 * Code cleanup and inline documentation
 
 = v1.2 =
