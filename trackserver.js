@@ -48,7 +48,7 @@ var Trackserver = (function () {
             return o.track;
         },
 
-        draw_track: function (map, mymapdata, div_id, is_live, markers) {
+        draw_track: function (map, mymapdata, div_id, is_live) {
 
             if (mymapdata.track_url) {
                 var start_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'greendot_15.png'});
@@ -71,10 +71,10 @@ var Trackserver = (function () {
                 var track_function = omnivore.polyline;
                 var track_options = { 'ondata': L.bind( this.process_data, this ), 'div_id': div_id };
 
-                if ( mymapdata['track_type'] == 'gpx' ) {
+                if ( mymapdata.track_type == 'gpx' ) {
                     track_function = omnivore.gpx;
                     track_options = { 'div_id': div_id };
-                    markers = false;
+                    mymapdata.markers = false;
                 }
 
                 // First draw the new track...
@@ -89,7 +89,7 @@ var Trackserver = (function () {
                         end_latlng = _this.get_mydata(div_id, 'end');
                         end_title = _this.get_mydata(div_id, 'title');
 
-                        if (markers) {
+                        if (mymapdata.markers) {
                             start_marker = new L.marker(start_latlng, {icon: start_icon}).addTo(map);
                             _this.set_mydata(div_id, 'start_marker', start_marker);
                             end_marker = new L.marker(end_latlng, {icon: end_icon, title: end_title }).addTo(map);
@@ -122,10 +122,9 @@ var Trackserver = (function () {
 
             var map        = liveupdate._map,
                 div_id     = liveupdate.options.div_id,
-                markers    = liveupdate.options.markers,
                 mymapdata  = liveupdate.options.mymapdata;
 
-            this.draw_track( map, mymapdata, div_id, true, markers );
+            this.draw_track( map, mymapdata, div_id, true );
         },
 
         create_maps: function () {
@@ -149,7 +148,6 @@ var Trackserver = (function () {
                 var fullscreen = mapdata[i]['fullscreen'];
                 var center     = L.latLng(lat, lon);
                 var is_live    = mapdata[i]['is_live'];
-                var markers    = mapdata[i]['markers'];
 
                 var mymapdata  = mapdata[i];
 
@@ -186,7 +184,6 @@ var Trackserver = (function () {
                 if (is_live) {
                     L.control.liveupdate ({
                         div_id: div_id,
-                        markers: markers,
                         mymapdata: mymapdata,
                         update_map: L.bind(this.update_track, this)
                     })
@@ -194,7 +191,7 @@ var Trackserver = (function () {
                     .startUpdating();
                 }
                 else {
-                    this.draw_track (map, mymapdata, div_id, is_live, markers);
+                    this.draw_track (map, mymapdata, div_id, is_live);
                 }
             }
         }
