@@ -84,7 +84,10 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 * height: map height
 * align: 'left', 'center' or 'right'
 * class: a CSS class to add to the map div for customization
-* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end markers on the track
+* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end
+  markers on the track
+* gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
+  precedence over 'gpx'. Markers are disabled for GPX files.
 
 Example: [tsmap track=39 align=center class=mymap markers=n]
 
@@ -130,9 +133,11 @@ for details.
 == Changelog ==
 
 = UNRELEASED =
-* Add 'use_trackserver' capability for authors, editors and admins and use it to
-  restrict tracking to those roles, while at the same time allowing non-admins
-  to manage their own tracks
+* Add 'use_trackserver' capability for authors, editors and admins and use it
+  to restrict tracking to those roles, while at the same time allowing non-
+  admins to manage their own tracks
+* Add shortcode attribute 'gpx' for loading a GPX file directly from an
+  external URL
 * Code cleanup and inline documentation
 
 = v1.2 =

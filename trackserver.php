@@ -614,7 +614,7 @@ EOF;
 					'align'   => '',
 					'class'   => '',
 					'track'   => false,
-					//'gpx'     => false,
+					'gpx'     => false,
 					'markers' => true
 				);
 
@@ -657,7 +657,12 @@ EOF;
 						// https://core.trac.wordpress.org/ticket/4221
 						$nonce = wp_create_nonce( 'gettrack_' . $validated_id . "_p" . $post_id );
 						$track_url = get_home_url(null, '/' . $this -> options['gettrack_slug'] . "/?id=$validated_id&p=$post_id&_wpnonce=$nonce" );
+						$track_type = 'polyline';
 					}
+				}
+				elseif ( $atts['gpx'] ) {
+					$track_url = $atts['gpx'];
+					$track_type = 'gpx';
 				}
 
 				$markers = ( in_array( $atts['markers'], array( 'false', 'f', 'no', 'n' ), true ) ? false : true );
@@ -665,6 +670,7 @@ EOF;
 				$mapdata = array(
 					'div_id'       => $div_id,
 					'track_url'    => $track_url,
+					'track_type'   => $track_type,
 					'default_lat'  => '51.443168',
 					'default_lon'  => '5.447200',
 					'default_zoom' => '16',
