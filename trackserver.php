@@ -855,6 +855,9 @@ EOF;
 						break;
 					case 'get_activity':
 						break;
+					default:
+						http_response_code( 501 );
+						echo "Illegal request.";
 				}
 			}
 
