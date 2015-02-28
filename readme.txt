@@ -136,6 +136,8 @@ for details.
 == Changelog ==
 
 = UNRELEASED =
+* Fix a grave bug, that made Trackserver usable ONLY on WP installs using
+  mod-rewrite and Pretty Permalinks.
 * Add 'use_trackserver' capability for authors, editors and admins and use it
   to restrict tracking to those roles, while at the same time allowing non-
   admins to manage their own tracks
