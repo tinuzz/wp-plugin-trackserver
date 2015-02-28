@@ -72,6 +72,7 @@
 				$actions = array(
 					'delete' => 'Delete',
 					'merge'  => 'Merge',
+					'recalc' => 'Recalculate',
 				);
 				return $actions;
 			}
