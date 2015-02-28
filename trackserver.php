@@ -617,7 +617,10 @@ EOF;
 					'class'   => '',
 					'track'   => false,
 					'gpx'     => false,
-					'markers' => true
+					'markers' => true,
+					'color'   => false,
+					'weight'  => false,
+					'opacity' => false
 				);
 
 				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
@@ -680,6 +683,14 @@ EOF;
 					'is_live'      => $is_live,
 					'markers'      => $markers,
 				);
+
+				$style = array();
+				if ( $atts['color'] )   { $style['color']   = (string) $atts['color']; }
+				if ( $atts['weight'] )  { $style['weight']  = (int) $atts['weight']; }
+				if ( $atts['opacity'] ) { $style['opacity'] = (float) $atts['opacity']; }
+				if ( count( $style ) > 0 ) {
+					$mapdata['style'] = $style;
+				}
 
 				$this -> mapdata[] = $mapdata;
 				$out = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . $atts['width'] . '; height: ' . $atts['height'] . '; max-width: 100%"></div>';
