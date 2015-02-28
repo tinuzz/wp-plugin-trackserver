@@ -135,7 +135,7 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= v1.3 =
 * Fix a grave bug, that made Trackserver usable ONLY on WP installs using
   mod-rewrite and Pretty Permalinks.
 * Add 'use_trackserver' capability for authors, editors and admins and use it
