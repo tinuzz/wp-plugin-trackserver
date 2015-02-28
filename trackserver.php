@@ -321,14 +321,6 @@ EOF;
 			}
 
 			function advanced_settings_html() {
-				add_settings_field( 'trackserver_gettrack_slug','Gettrack URL slug',
-						array( &$this, 'gettrack_slug_html' ), 'trackserver', 'trackserver-advanced' );
-				/*
-				add_settings_field( 'trackserver_normalize_tripnames','Normalize trip names',
-						array( &$this, 'normalize_tripnames_html' ), 'trackserver', 'trackserver-trackme' );
-				add_settings_field( 'trackserver_tripnames_format','Trip name format',
-						array( &$this, 'tripnames_format_html' ), 'trackserver', 'trackserver-trackme' );
-				*/
 			}
 
 			function trackme_settings_html() {
@@ -345,10 +337,6 @@ EOF;
 						</p>
 					</div>
 EOF;
-				add_settings_field( 'trackserver_trackme_slug','TrackMe URL slug',
-						array( &$this, 'trackme_slug_html' ), 'trackserver', 'trackserver-trackme' );
-				add_settings_field( 'trackserver_trackme_extension','TrackMe server extension',
-						array( &$this, 'trackme_extension_html' ), 'trackserver', 'trackserver-trackme' );
 			}
 
 			function mapmytracks_settings_html() {
@@ -365,8 +353,6 @@ EOF;
 						</p>
 					</div>
 EOF;
-				add_settings_field( 'trackserver_mapmytracks_tag', 'MapMyTracks URL slug',
-						array( &$this, 'mapmytracks_tag_html' ), 'trackserver', 'trackserver-mapmytracks' );
 			}
 
 			function httppost_settings_html() {
@@ -383,13 +369,9 @@ EOF;
 						</p>
 					</div>
 EOF;
-				add_settings_field( 'trackserver_upload_tag', 'HTTP POST URL slug',
-						array( &$this, 'upload_tag_html' ), 'trackserver', 'trackserver-httppost' );
 			}
 
 			function shortcode_settings_html() {
-				add_settings_field( 'trackserver_tile_url', 'OSM/Google tile server URL',
-						array( &$this, 'tile_url_html' ), 'trackserver', 'trackserver-shortcode' );
 			}
 
 			function tile_url_html() {
@@ -483,12 +465,35 @@ EOF;
 			function register_settings () {
 				// All options in one array
 				register_setting( 'trackserver-options', 'trackserver_options' );
-				// Add settings and settings sections
+
+				// Add sections
 				add_settings_section( 'trackserver-trackme', 'TrackMe settings', array( &$this, 'trackme_settings_html' ), 'trackserver' );
 				add_settings_section( 'trackserver-mapmytracks', 'OruxMaps / MapMyTracks settings', array( &$this, 'mapmytracks_settings_html' ), 'trackserver' );
 				add_settings_section( 'trackserver-httppost', 'HTTP upload settings', array( &$this, 'httppost_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-shortcode', 'Shortcode / map settings', array( &$this, 'shortcode_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-advanced', 'Advanced settings', array( &$this, 'advanced_settings_html' ),  'trackserver' );
+
+				// Settings for section 'trackserver-trackme'
+				add_settings_field( 'trackserver_trackme_slug','TrackMe URL slug',
+						array( &$this, 'trackme_slug_html' ), 'trackserver', 'trackserver-trackme' );
+				add_settings_field( 'trackserver_trackme_extension','TrackMe server extension',
+						array( &$this, 'trackme_extension_html' ), 'trackserver', 'trackserver-trackme' );
+
+				// Settings for section 'trackserver-mapmytracks'
+				add_settings_field( 'trackserver_mapmytracks_tag', 'MapMyTracks URL slug',
+						array( &$this, 'mapmytracks_tag_html' ), 'trackserver', 'trackserver-mapmytracks' );
+
+				// Settings for section 'trackserver-httppost'
+				add_settings_field( 'trackserver_upload_tag', 'HTTP POST URL slug',
+						array( &$this, 'upload_tag_html' ), 'trackserver', 'trackserver-httppost' );
+
+				// Settings for section 'trackserver-shortcode'
+				add_settings_field( 'trackserver_tile_url', 'OSM/Google tile server URL',
+						array( &$this, 'tile_url_html' ), 'trackserver', 'trackserver-shortcode' );
+
+				// Settings for section 'trackserver-advanced'
+				add_settings_field( 'trackserver_gettrack_slug','Gettrack URL slug',
+						array( &$this, 'gettrack_slug_html' ), 'trackserver', 'trackserver-advanced' );
 			}
 
 			function admin_menu() {
