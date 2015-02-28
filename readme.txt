@@ -138,6 +138,7 @@ for details.
   admins to manage their own tracks
 * Add shortcode attribute 'gpx' for loading a GPX file directly from an
   external URL
+* Calculate and store the total distance of a track at the time of upload
 * Code cleanup and inline documentation
 
 = v1.2 =
