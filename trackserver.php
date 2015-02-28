@@ -609,11 +609,12 @@ EOF;
 				global $wpdb;
 
 				$defaults = array(
-					'width' => '640px',
-					'height' => '480px',
-					'track' => false,
-					'align' => '',
-					'class' => '',
+					'width'   => '640px',
+					'height'  => '480px',
+					'align'   => '',
+					'class'   => '',
+					'track'   => false,
+					//'gpx'     => false,
 					'markers' => true
 				);
 
