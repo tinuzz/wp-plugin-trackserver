@@ -21,7 +21,7 @@ License: GPL2
 		die( "No, sorry." );
 	}
 
-	if ( ! class_exists( 'trackserver' ) ) {
+	if ( ! class_exists( 'Trackserver' ) ) {
 
 		define( 'TRACKSERVER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 		define( 'TRACKSERVER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -30,7 +30,7 @@ License: GPL2
 		/**
 		 * The main plugin class.
 		 */
-		class trackserver {
+		class Trackserver {
 
 			/**
 			 * Database version that this code base needs.
@@ -1823,4 +1823,4 @@ EOF;
 	} // if !class_exists
 
 	// Main
-	$trackserver = new trackserver();
+	$trackserver = new Trackserver();
