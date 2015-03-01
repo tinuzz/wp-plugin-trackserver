@@ -53,6 +53,8 @@ License: GPL2
 				'trackme_slug' => 'trackme',
 				'trackme_extension' => 'z',
 				'mapmytracks_tag' => 'mapmytracks',
+				'osmand_slug' => 'osmand',
+				'osmand_trackname_format' => '%F %H',
 				'upload_tag' => 'tsupload',
 				'gettrack_slug' => 'trackserver/gettrack',
 				'normalize_tripnames' => 'yes',
@@ -71,6 +73,7 @@ License: GPL2
 				$this -> tbl_locations = $wpdb->prefix . "ts_locations";
 				$this -> options = get_option( 'trackserver_options' );
 				$this -> option_defaults['db_version'] = $this -> db_version;
+				$this -> option_defaults['osmand_key'] = substr( uniqid(), 0, 8 );
 				$this -> add_missing_options();
 				$this -> shortcode = 'tsmap';
 				$this -> mapdata = array();
@@ -455,6 +458,9 @@ EOF;
 EOF;
 			}
 
+			function osmand_settings_html() {
+			}
+
 			function httppost_settings_html() {
 				$autoshare_settings_img = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
 
@@ -531,6 +537,46 @@ EOF;
 EOF;
 			}
 
+			function osmand_slug_html() {
+				$val = $this -> options['osmand_slug'];
+				$url = site_url( null ) . $this -> url_prefix;
+				$suffix = htmlspecialchars( '/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=<username>&key=<access key>' );
+				echo <<<EOF
+					The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd ($url/<b>&lt;slug&gt;</b>/?...) <br />
+					<input type="text" size="25" name="trackserver_options[osmand_slug]" id="trackserver_osmand_slug" value="$val" autocomplete="off" /><br /><br />
+					<strong>Full URL:</strong> $url/$val$suffix<br />
+EOF;
+			}
+
+			function osmand_key_html() {
+				$val = $this -> options['osmand_key'];
+				echo <<<EOF
+					An access key for online tracking. We do not use WordPress password
+					here for security reasons. The key should be added, together with
+					your WordPress username, as a URL parameter to the online tracking
+					URL set in OsmAnd, as displayed above. Change this regularly.<br />
+					<input type="text" size="25" name="trackserver_options[osmand_key]" id="trackserver_osmand_key" value="$val" autocomplete="off" /><br /><br />
+EOF;
+			}
+
+			function osmand_trackname_format_html() {
+				$val = $this -> options['osmand_trackname_format'];
+				echo <<<EOF
+					Generated track name in <a href="http://php.net/manual/en/function.strftime.php" target="_blank">strftime()</a>
+					format.  OsmAnd online tracking does not support the concept of
+					'tracks', there are only locations.  Trackserver needs to group these
+					in tracks and automatically generates new tracks based on the
+					location's timestamp. The format to use (and thus, how often to start
+					a new track) can be specified here.  If you specify a constant
+					string, without any strftime() format placeholders, one and the same
+					track will be used forever and all locations.
+					<br /><br />
+					<input type="text" size="25" name="trackserver_options[osmand_trackname_format]" id="trackserver_osmand_trackname_format" value="$val" autocomplete="off" /><br />
+					%Y = year, %m = month, %d = day, %H = hour, %F = %Y-%m-%d
+					<br />
+EOF;
+			}
+
 			function upload_tag_html() {
 				$val = $this -> options['upload_tag'];
 				$url = site_url( null, 'http' ) . $this -> url_prefix;
@@ -571,6 +617,7 @@ EOF;
 				// Add sections
 				add_settings_section( 'trackserver-trackme', 'TrackMe settings', array( &$this, 'trackme_settings_html' ), 'trackserver' );
 				add_settings_section( 'trackserver-mapmytracks', 'OruxMaps / MapMyTracks settings', array( &$this, 'mapmytracks_settings_html' ), 'trackserver' );
+				add_settings_section( 'trackserver-osmand', 'OsmAnd online tracking settings', array( &$this, 'osmand_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-httppost', 'HTTP upload settings', array( &$this, 'httppost_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-shortcode', 'Shortcode / map settings', array( &$this, 'shortcode_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-advanced', 'Advanced settings', array( &$this, 'advanced_settings_html' ),  'trackserver' );
@@ -584,6 +631,14 @@ EOF;
 				// Settings for section 'trackserver-mapmytracks'
 				add_settings_field( 'trackserver_mapmytracks_tag', 'MapMyTracks URL slug',
 						array( &$this, 'mapmytracks_tag_html' ), 'trackserver', 'trackserver-mapmytracks' );
+
+				// Settings for section 'trackserver-osmand'
+				add_settings_field( 'trackserver_osmand_slug', 'OsmAnd URL slug',
+						array( &$this, 'osmand_slug_html' ), 'trackserver', 'trackserver-osmand' );
+				add_settings_field( 'trackserver_osmand_key', 'OsmAnd access key',
+						array( &$this, 'osmand_key_html' ), 'trackserver', 'trackserver-osmand' );
+				add_settings_field( 'trackserver_osmand_trackname_format', 'OsmAnd trackname format',
+						array( &$this, 'osmand_trackname_format_html' ), 'trackserver', 'trackserver-osmand' );
 
 				// Settings for section 'trackserver-httppost'
 				add_settings_field( 'trackserver_upload_tag', 'HTTP POST URL slug',
@@ -761,10 +816,18 @@ EOF;
 				}
 
 				$tag = $this -> options['mapmytracks_tag'];
-				$uri = $base_uri . "/" . $tag ;
+				$uri = $base_uri . "/" . $tag;
 
 				if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
 					$this -> handle_mapmytracks_request();
+					die();
+				}
+
+				$slug = $this -> options['osmand_slug'];
+				$uri = $base_uri . "/" . $slug;
+
+				if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
+					$this -> handle_osmand_request();
 					die();
 				}
 
@@ -1015,6 +1078,121 @@ EOF;
 					echo "|$message";
 				}
 				die();
+			}
+
+			function osmand_terminate( $http = '403', $message = 'Access denied' ) {
+				http_response_code( $http );
+				header( 'Content-Type: text/plain' );
+				echo $message . "\n";
+				die();
+			}
+
+			function validate_osmand_login() {
+
+				$username = urldecode( $_GET['username'] );
+				$key = urldecode( $_GET['key'] );
+
+				if ( $key != $this -> options['osmand_key'] ) {
+					$this -> osmand_terminate();
+				}
+
+				if ( $username == '') {
+					$this -> osmand_terminate();
+				}
+
+				$user = get_user_by( 'login', $username );
+				if ( $user ) {
+					$user_id = intval( $user -> data -> ID );
+
+					if ( user_can( $user_id, 'use_trackserver' ) ) {
+						return $user_id;
+					}
+				}
+				$this -> osmand_terminate();
+			}
+
+			/*
+			 * Sample request:
+			 * /wp/osmand/?lat=51.448334&lon=5.4725113&timestamp=1425238292902&hdop=11.0&altitude=80.0&speed=0.0
+			 */
+			function handle_osmand_request() {
+				global $wpdb;
+
+				// If this function returns, we're OK
+				$user_id = $this -> validate_osmand_login();
+
+				// Timestamp is sent in milliseconds, and in UTC
+				$ts = round( (int) urldecode( $_GET["timestamp"] ) / 1000 );
+				$ts += $this -> utc_to_local_offset( $ts );
+				$occurred = date( 'Y-m-d H:i:s', $ts );
+
+				if ( $ts > 0 ) {
+
+					// Get track name from strftime format string
+					$trackname = strftime( $this -> options['osmand_trackname_format'], $ts );
+
+					if ( $trackname != '' ) {
+
+						// Try to find the trip
+						$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trackname );
+						$track_id = $wpdb -> get_var( $sql );
+
+						if ( $track_id == null ) {
+							$data = array( 'user_id' => $user_id, 'name' => $trackname, 'created' => $occurred, 'source' => 'OsmAnd' );
+							$format = array( '%d', '%s', '%s', '%s' );
+
+							if ( $wpdb -> insert( $this -> tbl_tracks, $data, $format ) ) {
+								$track_id = $wpdb -> insert_id;
+							}
+							else {
+								$this -> osmand_terminate( 501, 'Database error' );
+							}
+						}
+
+						if ( intval( $track_id ) > 0 ) {
+
+							$latitude = $_GET['lat'];
+							$longitude = $_GET['lon'];
+							$altitude = urldecode( $_GET['altitude'] );
+							$speed = urldecode( $_GET['speed'] );
+							$heading = urldecode( $_GET['bearing'] );
+							$now = current_time( 'Y-m-d H:i:s' );
+
+							if ( $latitude != '' && $longitude != '' ) {
+								$data = array(
+									'trip_id' => $track_id,
+									'latitude' => $latitude,
+									'longitude' => $longitude,
+									'created' => $now,
+									'occurred' => $occurred,
+								);
+								$format = array( '%d', '%s', '%s', '%s', '%s' );
+
+								if ( $altitude != '' ) {
+									$data['altitude'] = $altitude;
+									$format[] = '%s';
+								}
+								if ( $speed != '' ) {
+									$data['speed'] = $speed;
+									$format[] = '%s';
+								}
+								if ( $heading != '' ) {
+									$data['heading'] = $heading;
+									$format[] = '%s';
+								}
+
+								if ($wpdb -> insert( $this -> tbl_locations, $data, $format ) ) {
+									$this -> calculate_distance( $track_id );
+									$this -> osmand_terminate( 200, 'OK, track ID = ' . $track_id );
+								}
+								else {
+									$this -> osmand_terminate( 500, $wpdb -> last_error );
+								}
+							}
+						}
+					}
+				}
+				$this -> osmand_terminate( 400, 'Bad request' );
 			}
 
 			/**
