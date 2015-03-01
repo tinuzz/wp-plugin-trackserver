@@ -9,19 +9,19 @@ Server:
 - logging requests to MySQL
 - use geoJSON instead of Polyline, if callbacks are feasable for extracting metadata
 - implement GPSgate protocol
-- implement OSMand protocol
+- DONE: implement OSMand protocol
 
 Frontend:
 - DONE: Leaflet shortcode / map view.
-- Icons for start/finish
-- Media manager integration
+- DONE: Icons for start/finish
+- DONE: Media manager integration
 - DONE: autoupdate (live tracking) toggle button
 
 Admin backend:
 - DONE: Manage trips (name, comment, delete)
 - Internationalization
 - DONE: Add HOWTO screens for all clients
-- Add columns for nr. of points and distance to table with tracks
+- DONE: Add columns for nr. of points and distance to table with tracks
 
 Javascript:
 - DONE: move the thickbox manipulation to its own file
