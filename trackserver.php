@@ -386,24 +386,32 @@ EOF;
 				if ( ! current_user_can( 'manage_options' ) ) {
 					wp_die( __('You do not have sufficient permissions to access this page.') );
 				}
+				?>
+				<div class="wrap">
+					<h2>Trackserver Options</h2>
 
-				echo <<<EOF
-		<div class="wrap">
-			<h2>Trackserver Options</h2>
-			<hr />
-			<form id="trackserver-options" name="trackserver-options" action="options.php" method="post">
-EOF;
+				<?php
+					if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == 'true' ) {
+				?>
+					<div class="updated">
+						<p>Settings updated</p>
+					</div>
+				<?php
+					}
+				?>
+					<hr />
+					<form id="trackserver-options" name="trackserver-options" action="options.php" method="post">
+				<?php
 
 				settings_fields( 'trackserver-options' );
 				do_settings_sections( 'trackserver' );
 				submit_button( 'Update options', 'primary', 'submit' );
 
-				echo <<<EOF
-			</form>
-			<hr />
-		</div>
-EOF;
-
+				?>
+					</form>
+					<hr />
+				</div>
+				<?php
 			}
 
 			/**
