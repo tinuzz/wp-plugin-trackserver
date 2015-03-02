@@ -1333,37 +1333,46 @@ EOF;
 				}
 			}
 
+			/**
+			 * Calculate the local time offset and correct for DST.
+			 *
+			 * We use the same method as 'wp_timezone_override_offset', which serves
+			 * as a default override for the 'gmt_offset' option, except we use a
+			 * given timestamp for the calculation instead of the current time.
+			 *
+			 * The timezone used is WP's configured timezone if any, or else PHP's
+			 * system timezone if set. Ultimately, we fall back to 'Europe/London',
+			 * which is just like UTC/GMT, but with DST.
+			 *
+			 * Ideally, we would lookup the timezone from the actual coordinates of
+			 * the track points, but we don't have a the necessary data. We could use
+			 * a service like the Google Time Zone API, but those usually require
+			 * registration, so we don't do that (yet). So the calculation may be
+			 * incorrect if your track is from a location that has different DST
+			 * rules than the chosen time zone.
+			 *
+			 * We calculate the offset once, so even if a DST transition took place
+			 * during your track, it remains continuous.
+			 *
+			 * @since 1.3
+			 *
+			 * @param int $ts The unix timestamp to calculate an offset for.
+			 */
 			function utc_to_local_offset( $ts ) {
 
-				// Calculate the local time offset and correct for DST. WP's timezone
-				// is UTC by default, which has no DST, so we have to choose an
-				// appropriate timezone for our calculation. If set, we use PHP's
-				// date.timezone setting, otherwise we use 'Europe/London', which is
-				// just like UTC/GMT, but with DST. Ideally, we would lookup the
-				// timezone from the actual coordinates of the track points, but we
-				// don't have a the necessary data. We could use a service like the
-				// Google Time Zone API, but those usually require registration, so
-				// we don't do that (yet). So the calculation is incorrect if your
-				// track is from a location that has different DST rules than the
-				// chosen time zone, or has a DST offset other than 1 hour.
-				// (http://www.timeanddate.com/time/australia/lord-howe-island.html)
-				// We calculate the offset once, so even if your track crosses a
-				// timezone boundary, it remains continuous.
-
-				$offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;  // Base offset, no DST
-				$ts0 = $ts + $offset;                // Local time, no DST
-				$localtz = ini_get( 'date.timezone' );
-				if ( ! $localtz ) {
-					$localtz = 'Europe/London';
+				if ( ! $localtz = get_option( 'timezone_string' ) ) {
+					if ( ! $localtz = ini_get( 'date.timezone' ) ) {
+						$localtz = 'Europe/London';
+					}
 				}
-				$wptz = date_default_timezone_get();
-				date_default_timezone_set( $localtz );
-				$is_dst = date( 'I', $ts0 );
-				date_default_timezone_set( $wptz );
+				$timezone_object = timezone_open( $localtz );
+				$datetime_object = date_create(); // DateTime object with UTC timezone
 
-				// Add 1 hour for DST
-				$offset += ( $is_dst ? 3600 : 0 );
-				return $offset;
+				if ( false === $timezone_object || false === $datetime_object ) {
+					return 0;
+				}
+				date_timestamp_set( $datetime_object, $ts );
+				return timezone_offset_get( $timezone_object, $datetime_object );
 			}
 
 			function mapmytracks_insert_points( $points, $trip_id ) {
@@ -1857,7 +1866,7 @@ EOF;
 			 *
 			 * @global object $wpdb The WordPress database interface
 			 *
-			 * @param array $track_ids Track IDs to filter
+			 * @param array $track_ids Track IDs to filter.
 			 */
 			function filter_current_user_tracks( $track_ids ) {
 				global $wpdb;
