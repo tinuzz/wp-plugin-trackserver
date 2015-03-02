@@ -138,7 +138,7 @@ for details.
 
 = UNRELEASED =
 * Add OsmAnd live tracking support.
-* Fix buggy timezone offset calculation, that would break during DST
+* Fix buggy timezone offset calculation, that would break during DST.
 * Draw a start/end marker for each track on a map. Loading tracks from a
   GPX URL already supports multiple tracks.
 
@@ -147,37 +147,37 @@ for details.
   mod-rewrite and Pretty Permalinks.
 * Add 'use_trackserver' capability for authors, editors and admins and use it
   to restrict tracking to those roles, while at the same time allowing non-
-  admins to manage their own tracks
+  admins to manage their own tracks.
 * Add shortcode attribute 'gpx' for loading a GPX file directly from an
-  external URL
-* Calculate and store the total distance of a track at the time of upload
-* Add bulk action to recalculate track distances
-* Add shortcode attributes: color, weight, opacity, for controlling track display style
-* Fix security bug where it was possible to delete or merge other users' tracks
-* Code cleanup and inline documentation
+  external URL.
+* Calculate and store the total distance of a track at the time of upload.
+* Add bulk action to recalculate track distances.
+* Add shortcode attributes: color, weight, opacity, for controlling track display style.
+* Fix security bug where it was possible to delete or merge other users' tracks.
+* Code cleanup and inline documentation.
 
 = v1.2 =
-* Allow GPX files to be uploaded and added to posts/pages via the WP media manager
-* Drastically improve performance of importing GPX files (via WP admin or HTTP POST)
-* Fix UTC to local time conversion for GPX imports, correct for DST in most cases
-* Show start/end markers in track view modal in the admin
-* Show map name as modal title when viewing from track management in the admin
-* Optimize track view modal layout
-* Bugfixes
+* Allow GPX files to be uploaded and added to posts/pages via the WP media manager.
+* Drastically improve performance of importing GPX files (via WP admin or HTTP POST).
+* Fix UTC to local time conversion for GPX imports, correct for DST in most cases.
+* Show start/end markers in track view modal in the admin.
+* Show map name as modal title when viewing from track management in the admin.
+* Optimize track view modal layout.
+* Bugfixes.
 
 = v1.1 =
-* Implement 'markers' shortcode to disable start/end markers on tracks
-* Make tile server URL a configurable option
-* Bugfixes
+* Implement 'markers' shortcode to disable start/end markers on tracks.
+* Make tile server URL a configurable option.
+* Bugfixes.
 
 = v1.0 =
-* Implement 'delete' bulk-action in track management
-* Implement 'merge' bulk-action in track management
-* Implement 'Upload tracks' from track management
-* Code cleanups
+* Implement 'delete' bulk-action in track management.
+* Implement 'merge' bulk-action in track management.
+* Implement 'Upload tracks' from track management.
+* Code cleanups.
 
 = v0.9 =
-* Initial release, with tracking supoort, simple shortcode and track management interface
+* Initial release, with tracking supoort, simple shortcode and track management interface.
 
 == Upgrade Notice ==
 
