@@ -38,14 +38,20 @@ var Trackserver = (function () {
 
         process_data: function (data, options) {
             var o = typeof data === 'string' ?  JSON.parse(data) : data;
-            var start_latlng = new L.latLng(o.metadata.first_trkpt);
-            var end_latlng = new L.latLng(o.metadata.last_trkpt);
             var title = o.metadata.last_trkpt_time;
-
-            this.set_mydata(options.div_id, 'start', start_latlng);
-            this.set_mydata(options.div_id, 'end', end_latlng);
             this.set_mydata(options.div_id, 'title', title);
             return o.track;
+        },
+
+        get_sorted_keys: function( obj ) {
+            var keys = [];
+            for ( var key in obj ) {
+                if ( obj.hasOwnProperty( key ) ) {
+                    keys.push( key );
+                }
+            }
+            keys.sort();
+            return keys;
         },
 
         draw_track: function (map, mymapdata) {
@@ -56,10 +62,8 @@ var Trackserver = (function () {
                 var start_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'greendot_15.png'});
                 var end_icon = new this.Mapicon ({iconUrl: trackserver_settings['iconpath'] + 'reddot_15.png'});
 
-                // Identify any existing track layer and marker
                 var old_track = this.get_mydata(div_id, 'track');
-                var old_start_marker = this.get_mydata(div_id, 'start_marker');
-                var old_end_marker = this.get_mydata(div_id, 'end_marker');
+                var old_markers = this.get_mydata(div_id, 'markers');
 
                 var _this = this;
 
@@ -76,26 +80,40 @@ var Trackserver = (function () {
                 if ( mymapdata.track_type == 'gpx' ) {
                     track_function = omnivore.gpx;
                     track_options = { 'div_id': div_id };
-                    mymapdata.markers = false;
                 }
 
                 // First draw the new track...
                 var runLayer = track_function(mymapdata.track_url, track_options, customLayer )
                     .on ('ready', function () {
+
                         // ...and then delete the old one, to prevent flickering
                         if (old_track) map.removeLayer (old_track);
-                        if (old_start_marker) map.removeLayer (old_start_marker);
-                        if (old_end_marker) map.removeLayer (old_end_marker);
 
-                        start_latlng = _this.get_mydata(div_id, 'start');
-                        end_latlng = _this.get_mydata(div_id, 'end');
-                        end_title = _this.get_mydata(div_id, 'title');
+                        // Remove any old markers
+                        if (old_markers) {
+                            for ( var i = 0; i < old_markers.length; ++i ) {
+                                map.removeLayer( old_markers[i] );
+                            }
+                        }
 
                         if (mymapdata.markers) {
-                            start_marker = new L.marker(start_latlng, {icon: start_icon}).addTo(map);
-                            _this.set_mydata(div_id, 'start_marker', start_marker);
-                            end_marker = new L.marker(end_latlng, {icon: end_icon, title: end_title }).addTo(map);
-                            _this.set_mydata(div_id, 'end_marker', end_marker);
+
+                            var end_title = _this.get_mydata(div_id, 'title');
+                            var layer_ids = _this.get_sorted_keys( this._layers );
+                            var id, layer, start_latlng, end_latlng, start_marker, end_marker;
+                            var markers = [];
+
+                            for ( var i = 0; i < layer_ids.length; ++i ) {
+                                id = layer_ids[i];
+                                layer = this._layers[id];
+                                start_latlng = layer._latlngs[0];
+                                end_latlng   = layer._latlngs[ layer._latlngs.length - 1 ];
+                                start_marker = new L.marker(start_latlng, {icon: start_icon}).addTo(map);
+                                end_marker   = new L.marker(end_latlng, {icon: end_icon, title: end_title }).addTo(map);
+                                markers.push(start_marker);
+                                markers.push(end_marker);
+                            }
+                            _this.set_mydata(div_id, 'markers', markers);
                         }
 
                         if (mymapdata.is_live) {
