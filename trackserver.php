@@ -1149,45 +1149,42 @@ EOF;
 							}
 						}
 
-						if ( intval( $track_id ) > 0 ) {
+						$latitude = $_GET['lat'];
+						$longitude = $_GET['lon'];
+						$altitude = urldecode( $_GET['altitude'] );
+						$speed = urldecode( $_GET['speed'] );
+						$heading = urldecode( $_GET['bearing'] );
+						$now = current_time( 'Y-m-d H:i:s' );
 
-							$latitude = $_GET['lat'];
-							$longitude = $_GET['lon'];
-							$altitude = urldecode( $_GET['altitude'] );
-							$speed = urldecode( $_GET['speed'] );
-							$heading = urldecode( $_GET['bearing'] );
-							$now = current_time( 'Y-m-d H:i:s' );
+						if ( $latitude != '' && $longitude != '' ) {
+							$data = array(
+								'trip_id' => $track_id,
+								'latitude' => $latitude,
+								'longitude' => $longitude,
+								'created' => $now,
+								'occurred' => $occurred,
+							);
+							$format = array( '%d', '%s', '%s', '%s', '%s' );
 
-							if ( $latitude != '' && $longitude != '' ) {
-								$data = array(
-									'trip_id' => $track_id,
-									'latitude' => $latitude,
-									'longitude' => $longitude,
-									'created' => $now,
-									'occurred' => $occurred,
-								);
-								$format = array( '%d', '%s', '%s', '%s', '%s' );
+							if ( $altitude != '' ) {
+								$data['altitude'] = $altitude;
+								$format[] = '%s';
+							}
+							if ( $speed != '' ) {
+								$data['speed'] = $speed;
+								$format[] = '%s';
+							}
+							if ( $heading != '' ) {
+								$data['heading'] = $heading;
+								$format[] = '%s';
+							}
 
-								if ( $altitude != '' ) {
-									$data['altitude'] = $altitude;
-									$format[] = '%s';
-								}
-								if ( $speed != '' ) {
-									$data['speed'] = $speed;
-									$format[] = '%s';
-								}
-								if ( $heading != '' ) {
-									$data['heading'] = $heading;
-									$format[] = '%s';
-								}
-
-								if ($wpdb -> insert( $this -> tbl_locations, $data, $format ) ) {
-									$this -> calculate_distance( $track_id );
-									$this -> osmand_terminate( 200, 'OK, track ID = ' . $track_id );
-								}
-								else {
-									$this -> osmand_terminate( 500, $wpdb -> last_error );
-								}
+							if ($wpdb -> insert( $this -> tbl_locations, $data, $format ) ) {
+								$this -> calculate_distance( $track_id );
+								$this -> osmand_terminate( 200, 'OK, track ID = ' . $track_id );
+							}
+							else {
+								$this -> osmand_terminate( 500, $wpdb -> last_error );
 							}
 						}
 					}
