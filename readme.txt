@@ -27,6 +27,7 @@ and protocols are supported for getting tracks into trackserver:
 
 * [TrackMe][trackme]
 * [MapMyTracks protocol][mapmytracks], for example using [OruxMaps][oruxmaps]
+* [OsmAnd's][osmand] live tracking protocol
 * HTTP POST, for example using [AutoShare][autoshare]
 
 A shortcode is provided for displaying your tracks on a map. Maps are displayed
@@ -35,6 +36,7 @@ are included. Maps can be viewed in full-screen on modern browsers.
 
 [trackme]: http://www.luisespinosa.com/trackme_eng.html
 [mapmytracks]: https://github.com/MapMyTracks/api
+[osmand] http://osmand.net/
 [oruxmaps]: http://www.oruxmaps.com/index_en.html
 [autoshare]: https://play.google.com/store/apps/details?id=com.dngames.autoshare
 [leafletjs]: http://leafletjs.com/
@@ -54,7 +56,6 @@ It includes some code and libraries written by other people:
 
 = TODO =
 
-* Support [OsmAnd's](http://osmand.net/) tracking protocol
 * Support [GpsGate](http://gpsgate.com/) tracking protocol
 * Explicitly allow/disallow users to use the tracking features (or use minimal capabilities)
 * More shortcode parameters and map options
@@ -134,6 +135,9 @@ for details.
 2. Configuration of OruxMaps for use with Trackserver / WordPress
 
 == Changelog ==
+
+= UNRELEASED =
+* Add OsmAnd live tracking support.
 
 = v1.3 =
 * Fix a grave bug, that made Trackserver usable ONLY on WP installs using

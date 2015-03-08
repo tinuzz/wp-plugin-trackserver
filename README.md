@@ -15,6 +15,7 @@ and protocols are supported for getting tracks into trackserver:
 
 * [TrackMe](http://www.luisespinosa.com/trackme_eng.html)
 * [MapMyTracks protocol](https://github.com/MapMyTracks/api) for example using [OruxMaps](http://www.oruxmaps.com/index_en.html)
+* [OsmAnd](http://osmand.net/) live tracking
 * HTTP POST, for example using [AutoShare](https://play.google.com/store/apps/details?id=com.dngames.autoshare)
 
 A shortcode is provided for displaying your tracks on a map. Maps are displayed
