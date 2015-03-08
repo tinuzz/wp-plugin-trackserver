@@ -41,6 +41,10 @@ are included. Maps can be viewed in full-screen on modern browsers.
 [autoshare]: https://play.google.com/store/apps/details?id=com.dngames.autoshare
 [leafletjs]: http://leafletjs.com/
 
+= Requirements =
+
+Trackserver requires PHP 5.3 or newer.
+
 = Credits =
 
 This plugin was written by Martijn Grendelman. Development is tracked on Github:
@@ -57,7 +61,7 @@ It includes some code and libraries written by other people:
 = TODO =
 
 * Support [GpsGate](http://gpsgate.com/) tracking protocol
-* Explicitly allow/disallow users to use the tracking features (or use minimal capabilities)
+* Better permissions/authorization system
 * More shortcode parameters and map options
 * More track management features
 * Track statistics, like distance, average speed, etc.
