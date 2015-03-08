@@ -136,11 +136,13 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= v1.4 =
 * Add OsmAnd live tracking support.
 * Fix buggy timezone offset calculation, that would break during DST.
 * Draw a start/end marker for each track on a map. Loading tracks from a
   GPX URL already supports multiple tracks.
+* Add a compatibility fix for PHP < 5.4
+* Fix a bug with viewing tracks in WP admin without pretty permalinks
 
 = v1.3 =
 * Fix a grave bug, that made Trackserver usable ONLY on WP installs using
