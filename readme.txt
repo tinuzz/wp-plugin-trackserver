@@ -138,6 +138,7 @@ for details.
 
 = UNRELEASED =
 * Add OsmAnd live tracking support.
+* Fix buggy timezone offset calculation, that would break during DST
 
 = v1.3 =
 * Fix a grave bug, that made Trackserver usable ONLY on WP installs using
