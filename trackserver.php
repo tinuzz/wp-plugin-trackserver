@@ -75,12 +75,12 @@ License: GPL2
 				$this -> options = get_option( 'trackserver_options' );
 				$this -> option_defaults['db_version'] = $this -> db_version;
 				$this -> option_defaults['osmand_key'] = substr( uniqid(), 0, 8 );
-				$this -> add_missing_options();
 				$this -> shortcode = 'tsmap';
 				$this -> mapdata = array();
 				$this -> tracks_list_table = false;
 				$this -> bulk_action_result_msg = false;
 				$this -> url_prefix = '';
+				$this -> trackserver_update();
 
 				// Bootstrap
 				$this -> add_actions();
@@ -321,11 +321,24 @@ EOF;
 
 				$wpdb->query( $sql );
 
-				// Update database schema
-				$this -> check_update_db();
-
 				// Add options and capabilities to the database
 				$this -> add_options();
+
+				// Run update function
+				$this -> trackserver_update();
+			}
+
+			/**
+			 * Update function.
+			 *
+			 * This function updates the database, sets default values for new options and
+			 * resets the capabilities
+			 *
+			 * @since 1.5
+			 */
+			function trackserver_update() {
+				$this -> check_update_db();
+				$this -> add_missing_options();
 				$this -> set_capabilities();
 			}
 
@@ -354,8 +367,8 @@ EOF;
 							$wpdb -> query( $upgrade_sql[ $i ] );
 						}
 					}
+					$this -> update_option( 'db_version', $this -> db_version );
 				}
-				$this -> update_option( 'db_version', $this -> db_version );
 			}
 
 			/**
@@ -377,6 +390,9 @@ EOF;
 				$roles = array( 'administrator', 'editor', 'author' );
 				foreach ( $roles as $rolename ) {
 					$role = get_role( $rolename );
+					if ( $role -> has_cap( 'use_trackserver' ) ) {
+						break;
+					}
 					$role -> add_cap( 'use_trackserver' );
 				}
 			}
