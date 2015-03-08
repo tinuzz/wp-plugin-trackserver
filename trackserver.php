@@ -1158,42 +1158,45 @@ EOF;
 				}
 			}
 
+			function utc_to_local_offset( $ts ) {
+
+				// Calculate the local time offset and correct for DST. WP's timezone
+				// is UTC by default, which has no DST, so we have to choose an
+				// appropriate timezone for our calculation. If set, we use PHP's
+				// date.timezone setting, otherwise we use 'Europe/London', which is
+				// just like UTC/GMT, but with DST. Ideally, we would lookup the
+				// timezone from the actual coordinates of the track points, but we
+				// don't have a the necessary data. We could use a service like the
+				// Google Time Zone API, but those usually require registration, so
+				// we don't do that (yet). So the calculation is incorrect if your
+				// track is from a location that has different DST rules than the
+				// chosen time zone, or has a DST offset other than 1 hour.
+				// (http://www.timeanddate.com/time/australia/lord-howe-island.html)
+				// We calculate the offset once, so even if your track crosses a
+				// timezone boundary, it remains continuous.
+
+				$offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;  // Base offset, no DST
+				$ts0 = $ts + $offset;                // Local time, no DST
+				$localtz = ini_get( 'date.timezone' );
+				if ( ! $localtz ) {
+					$localtz = 'Europe/London';
+				}
+				$wptz = date_default_timezone_get();
+				date_default_timezone_set( $localtz );
+				$is_dst = date( 'I', $ts0 );
+				date_default_timezone_set( $wptz );
+
+				// Add 1 hour for DST
+				$offset += ( $is_dst ? 3600 : 0 );
+				return $offset;
+			}
+
 			function mapmytracks_insert_points( $points, $trip_id ) {
 				global $wpdb;
 
 				if ( $points ) {
 					$now = current_time( 'Y-m-d H:i:s' );
-
-					// Calculate the local time offset and correct for DST. WP's timezone
-					// is UTC by default, which has no DST, so we have to choose an
-					// appropriate timezone for our calculation. If set, we use PHP's
-					// date.timezone setting, otherwise we use 'Europe/London', which is
-					// just like UTC/GMT, but with DST. Ideally, we would lookup the
-					// timezone from the actual coordinates of the track points, but we
-					// don't have a the necessary data. We could use a service like the
-					// Google Time Zone API, but those usually require registration, so
-					// we don't do that (yet). So the calculation is incorrect if your
-					// track is from a location that has different DST rules than the
-					// chosen time zone, or has a DST offset other than 1 hour.
-					// (http://www.timeanddate.com/time/australia/lord-howe-island.html)
-					// We calculate the offset once, so even if your track crosses a
-					// timezone boundary, it remains continuous.
-
-					$offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;  // Base offset, no DST
-					$ts0 = $points[0]['timestamp'] + $offset;                // Local time, no DST
-					$localtz = ini_get( 'date.timezone' );
-					if ( ! $localtz ) {
-						$localtz = 'Europe/London';
-					}
-
-					$wptz = date_default_timezone_get();
-					date_default_timezone_set( $localtz );
-					$is_dst = date( 'I', $ts0 );
-					date_default_timezone_set( $wptz );
-
-					// Add 1 hour for DST
-					$offset += ( $is_dst ? 3600 : 0 );
-
+					$offset = $this -> utc_to_local_offset( $points[0]['timestamp'] );
 					$sqldata = array();
 
 					foreach ( $points as $p ) {
