@@ -140,6 +140,10 @@ for details.
 
 == Changelog ==
 
+= UNRELEASED =
+* Make plugin run a cheap 'update' routine on every request, because we cannot
+  assume that the activation hook is run every time the plugin is updated.
+
 = v1.4 =
 * Add OsmAnd live tracking support.
 * Fix buggy timezone offset calculation, that would break during DST.
