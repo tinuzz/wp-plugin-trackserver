@@ -3,7 +3,7 @@ Contributors: tinuzz
 Donate link: http://www.grendelman.net/wp/trackserver-wordpress-plugin/
 Tags: gps, gpx, map, leaflet, track, mobile, tracking
 Requires at least: 4.0
-Tested up to: 4.1.1
+Tested up to: 4.2
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -140,9 +140,11 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= v1.5 =
 * Make plugin run a cheap 'update' routine on every request, because we cannot
   assume that the activation hook is run every time the plugin is updated.
+* Fix a bug where tracks management would not show any tracks due to a broken
+  SQL query.
 
 = v1.4 =
 * Add OsmAnd live tracking support.
