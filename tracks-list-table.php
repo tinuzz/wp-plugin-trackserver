@@ -1,6 +1,8 @@
 <?php
 	class Tracks_List_Table extends WP_List_Table {
 
+			private $options;
+
 			function __construct( $options ) {
 					global $status, $page;
 
