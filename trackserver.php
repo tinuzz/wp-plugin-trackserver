@@ -62,6 +62,7 @@ License: GPL2
 				'normalize_tripnames' => 'yes',
 				'tripnames_format' => '%F %T',
 				'tile_url' => 'http://otile3.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png',
+				'attribution' => 'Tiles by <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
 			);
 
 			/**
@@ -226,6 +227,7 @@ EOF;
 				$settings = array(
 						'iconpath' => TRACKSERVER_PLUGIN_URL . 'img/',
 						'tile_url' => $this -> options['tile_url'],
+						'attribution' => $this -> options['attribution'],
 				);
 				wp_localize_script( 'trackserver', 'trackserver_settings', $settings );
 			}
@@ -508,6 +510,13 @@ EOF;
 EOF;
 			}
 
+			function attribution_html() {
+				$val = htmlspecialchars( $this -> options['attribution'] );
+				echo <<<EOF
+					<input type="text" size="50" name="trackserver_options[attribution]" id="trackserver_attribution" value="$val" autocomplete="off" /><br /><br />
+EOF;
+			}
+
 			function gettrack_slug_html() {
 				$val = htmlspecialchars( $this -> options['gettrack_slug'] );
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
@@ -664,6 +673,8 @@ EOF;
 				// Settings for section 'trackserver-shortcode'
 				add_settings_field( 'trackserver_tile_url', 'OSM/Google tile server URL',
 						array( &$this, 'tile_url_html' ), 'trackserver', 'trackserver-shortcode' );
+				add_settings_field( 'trackserver_attribution', 'Tile attribution',
+						array( &$this, 'attribution_html' ), 'trackserver', 'trackserver-shortcode' );
 
 				// Settings for section 'trackserver-advanced'
 				add_settings_field( 'trackserver_gettrack_slug','Gettrack URL slug',
