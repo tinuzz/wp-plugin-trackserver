@@ -82,6 +82,18 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 
 == Frequently Asked Questions ==
 
+= What is this 'slug' you are talking about? =
+
+Slugs in WordPress are short descriptions of posts and pages, to be used in
+URLs (permalinks). They are the part of the URL that makes WordPress serve
+a particular page. Trackserver uses slugs to 'listen' for tracking requests
+from mobile apps, and you can configure these slugs to be anything you want.
+Trackserver comes with default values for these slugs, that should work for
+most people. Changing them is usually not necessary.
+
+Please refer to the [Wordpress Codex](http://codex.wordpress.org/Glossary#Slug) for more information
+about slugs in general.
+
 = What are the available shortcode attributes? =
 
 * track: track id or 'live'
