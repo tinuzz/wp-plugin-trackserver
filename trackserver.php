@@ -11,6 +11,7 @@ Author URI: http://www.grendelman.net/
 License: GPL2
 
 === RELEASE NOTES ===
+2015-04-29 - v1.6 - Map data / tile attribution and bugfix
 2015-04-15 - v1.5 - Bugfixes
 2015-03-08 - v1.4 - OsmAnd support, other features and bugfixes
 2015-02-28 - v1.3 - features and bugfixes
