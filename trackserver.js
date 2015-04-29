@@ -182,7 +182,7 @@ var Trackserver = (function () {
 
                 var map_layer0 = L.tileLayer(
                     trackserver_settings['tile_url'],
-                    { maxZoom: 18 });
+                    { attribution: trackserver_settings['attribution'], maxZoom: 18 });
 
                 var options = {center : center, zoom : zoom, layers: [map_layer0], messagebox: true };
                 var map = L.map( mymapdata.div_id, options );

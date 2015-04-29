@@ -140,6 +140,12 @@ for details.
 
 == Changelog ==
 
+= UNRELEASED =
+* Add option for setting the map tile attribution, as required by most tile
+  services and data providers like OSM. If non-empty, the attribution is
+  displayed on every map.
+* Properly escape option values on the options page.
+
 = v1.5 =
 * Make plugin run a cheap 'update' routine on every request, because we cannot
   assume that the activation hook is run every time the plugin is updated.
