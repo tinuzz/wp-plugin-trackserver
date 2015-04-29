@@ -36,7 +36,7 @@ are included. Maps can be viewed in full-screen on modern browsers.
 
 [trackme]: http://www.luisespinosa.com/trackme_eng.html
 [mapmytracks]: https://github.com/MapMyTracks/api
-[osmand] http://osmand.net/
+[osmand]: http://osmand.net/
 [oruxmaps]: http://www.oruxmaps.com/index_en.html
 [autoshare]: https://play.google.com/store/apps/details?id=com.dngames.autoshare
 [leafletjs]: http://leafletjs.com/
