@@ -502,15 +502,15 @@ EOF;
 			}
 
 			function tile_url_html() {
-				$val = $this -> options['tile_url'];
+				$val = htmlspecialchars( $this -> options['tile_url'] );
 				echo <<<EOF
 					<input type="text" size="50" name="trackserver_options[tile_url]" id="trackserver_tile_url" value="$val" autocomplete="off" /><br /><br />
 EOF;
 			}
 
 			function gettrack_slug_html() {
-				$val = $this -> options['gettrack_slug'];
-				$url = site_url( null ) . $this -> url_prefix;
+				$val = htmlspecialchars( $this -> options['gettrack_slug'] );
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
 				echo <<<EOF
 					The URL slug for the 'gettrack' API, used by Trackserver's shortcode [tsmap] ($url/<b>&lt;slug&gt;</b>/) <br />
 					There is generally no need to change this.<br />
@@ -519,8 +519,8 @@ EOF;
 			}
 
 			function trackme_slug_html() {
-				$val = $this -> options['trackme_slug'];
-				$url = site_url( null ) . $this -> url_prefix;
+				$val = htmlspecialchars( $this -> options['trackme_slug'] );
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
 				echo <<<EOF
 					The URL slug for TrackMe, used in 'URL Header' setting in TrackMe ($url/<b>&lt;slug&gt;</b>/) <br />
 					<input type="text" size="25" name="trackserver_options[trackme_slug]" id="trackserver_trackme_slug" value="$val" autocomplete="off" /><br /><br />
@@ -531,8 +531,7 @@ EOF;
 			}
 
 			function trackme_extension_html() {
-				$tag = $this -> options['trackme_slug'];
-				$val = $this -> options['trackme_extension'];
+				$val = htmlspecialchars( $this -> options['trackme_extension'] );
 				echo <<<EOF
 					The Server extension for TrackMe<br />
 					<input type="text" size="25" name="trackserver_options[trackme_extension]" id="trackserver_trackme_extension" value="$val" autocomplete="off" /><br />
@@ -544,8 +543,8 @@ EOF;
 			}
 
 			function mapmytracks_tag_html() {
-				$val = $this -> options['mapmytracks_tag'];
-				$url = site_url( null ) . $this -> url_prefix;
+				$val = htmlspecialchars( $this -> options['mapmytracks_tag'] );
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
 				echo <<<EOF
 					The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps ($url/<b>&lt;slug&gt;</b>/) <br />
 					<input type="text" size="25" name="trackserver_options[mapmytracks_tag]" id="trackserver_mapmytracks_tag" value="$val" autocomplete="off" /><br /><br />
@@ -556,8 +555,8 @@ EOF;
 			}
 
 			function osmand_slug_html() {
-				$val = $this -> options['osmand_slug'];
-				$url = site_url( null ) . $this -> url_prefix;
+				$val = htmlspecialchars( $this -> options['osmand_slug'] );
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
 				$suffix = htmlspecialchars( '/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=<username>&key=<access key>' );
 				echo <<<EOF
 					The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd ($url/<b>&lt;slug&gt;</b>/?...) <br />
@@ -567,7 +566,7 @@ EOF;
 			}
 
 			function osmand_key_html() {
-				$val = $this -> options['osmand_key'];
+				$val = htmlspecialchars( $this -> options['osmand_key'] );
 				echo <<<EOF
 					An access key for online tracking. We do not use WordPress password
 					here for security reasons. The key should be added, together with
@@ -578,7 +577,7 @@ EOF;
 			}
 
 			function osmand_trackname_format_html() {
-				$val = $this -> options['osmand_trackname_format'];
+				$val = htmlspecialchars( $this -> options['osmand_trackname_format'] );
 				echo <<<EOF
 					Generated track name in <a href="http://php.net/manual/en/function.strftime.php" target="_blank">strftime()</a>
 					format.  OsmAnd online tracking does not support the concept of
@@ -596,8 +595,8 @@ EOF;
 			}
 
 			function upload_tag_html() {
-				$val = $this -> options['upload_tag'];
-				$url = site_url( null, 'http' ) . $this -> url_prefix;
+				$val = htmlspecialchars( $this -> options['upload_tag'] );
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
 				echo <<<EOF
 					The URL slug for upload via HTTP POST ($url/<b>&lt;slug&gt;</b>/) <br />
 					<input type="text" size="25" name="trackserver_options[upload_tag]" id="trackserver_upload_tag" value="$val" autocomplete="off" /><br />
@@ -617,7 +616,7 @@ EOF;
 			}
 
 			function tripnames_format_html() {
-				$val = $this -> options['tripnames_format'];
+				$val = htmlspecialchars( $this -> options['tripnames_format'] );
 				echo <<<EOF
 					Normalized trip name format, in <a href="http://php.net/strftime" target="_blank">strftime()</a> format, applied to the first location's timestamp.<br />
 					<input type="text" size="25" name="trackserver_options[tripnames_format]" id="trackserver_tripnames_format" value="$val" autocomplete="off" /><br />
