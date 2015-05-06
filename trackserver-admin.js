@@ -231,6 +231,13 @@ var TrackserverAdmin = (function () {
                 jQuery('#ts-upload-files-button').attr('disabled', 'disabled').html('Wait...');
                 jQuery('#ts-upload-form').submit();
             });
+
+            jQuery('#ts-delete-track').click( function() {
+                if (confirm( 'Are you sure?' )) {
+                    jQuery('#trackserver-edit-action').val('delete');
+                    jQuery('#trackserver-edit-track').submit();
+                }
+            });
         }
     };
 })();
