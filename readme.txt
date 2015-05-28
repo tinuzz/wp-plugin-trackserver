@@ -154,7 +154,8 @@ for details.
 
 = UNRELEASED =
 * Add a 'Delete' link in the track edit modal, so you don't have to use a
-  bulk action to delete a single track
+  bulk action to delete a single track.
+* Do not omit tracks with zero locations in track management.
 
 = v1.6 =
 * Add option for setting the map tile attribution, as required by most tile
