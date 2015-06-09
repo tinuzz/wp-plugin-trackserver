@@ -156,6 +156,9 @@ for details.
 * Add a 'Delete' link in the track edit modal, so you don't have to use a
   bulk action to delete a single track.
 * Do not omit tracks with zero locations in track management.
+* Partial i18n and Dutch translation
+* Support the 'getttripfull' action for TrackMe, to allow TrackMe 2.0
+  to import your tracks from the server.
 
 = v1.6 =
 * Add option for setting the map tile attribution, as required by most tile
