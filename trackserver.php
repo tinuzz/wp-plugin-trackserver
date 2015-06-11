@@ -234,6 +234,7 @@ EOF;
 						'tile_url' => $this -> options['tile_url'],
 						'attribution' => $this -> options['attribution'],
 				);
+
 				wp_localize_script( 'trackserver', 'trackserver_settings', $settings );
 			}
 
@@ -276,10 +277,26 @@ EOF;
 						wp_enqueue_script( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.js', array(), false, true );
 
 						// No break! The following goes for both hooks.
+						// The options page only has 'trackserver-admin.js'.
 
 					case 'toplevel_page_trackserver-options':
 
+						$settings = array(
+							'msg' => array(
+								'areyousure' => __( 'Are you sure?', 'trackserver' ),
+								'delete' => __( 'deletion', 'trackserver' ),
+								'merge' => __( 'merging', 'trackserver' ),
+								'recalc' => __( 'recalculation', 'trackserver' ),
+								'track' => __( 'track', 'trackserver' ),
+								'tracks' => __( 'tracks', 'trackserver' ),
+								/* translators: %1$s = action, %2$s = number and %3$s is 'track' or 'tracks' */
+								'selectminimum' => __( 'For %1$s, select %2$s %3$s at minimum', 'trackserver' ),
+							),
+						);
+
 						// Enqueue the admin js (Thickbox overrides) in the footer
+						wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL .'trackserver-admin.js' );
+						wp_localize_script( 'trackserver-admin', 'trackserver_admin_settings', $settings );
 						wp_enqueue_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox' ), null, true );
 						break;
 				}

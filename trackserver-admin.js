@@ -101,6 +101,9 @@ var ts_tb_show = function (div, caption, width, height) {
 };
 
 // Put our own stuff in a separate namespace
+// This relies on the global variable trackserver_admin_settings['msg']
+// for translated messages.
+//
 var TrackserverAdmin = (function () {
 
     return {
@@ -117,15 +120,20 @@ var TrackserverAdmin = (function () {
             }
 
             var min_items = 1;
-            var min_str = 'track';
+            var min_str = trackserver_admin_settings['msg']['track'];
             if ( action == 'merge' ) {
                 min_items = 2;
-                min_str = 'tracks';
+                min_str = trackserver_admin_settings['msg']['tracks'];
             }
             //var checked = jQuery('input[name=track\\[\\]]:checked');
             this.checked = jQuery('input[name=track\\[\\]]:checked');
             if (this.checked.length < min_items) {
-                alert('For ' + action + ', select ' + min_items + ' ' + min_str + ' at minimum');
+                actionstr = trackserver_admin_settings['msg'][action] || action;
+                errorstr = trackserver_admin_settings['msg']['selectminimum'].
+                    replace(/%1\$s/g, actionstr).
+                    replace(/%2\$s/g, min_items).
+                    replace(/%3\$s/g, min_str);
+                alert(errorstr);
                 return false;
             }
             return true;
@@ -133,7 +141,7 @@ var TrackserverAdmin = (function () {
 
         handle_bulk_action: function (action) {
             if (action == 'delete') {
-                if (confirm('Are you sure?')) {
+                if (confirm(trackserver_admin_settings['msg']['areyousure'])) {
                     return true;
                 }
             }
@@ -233,7 +241,7 @@ var TrackserverAdmin = (function () {
             });
 
             jQuery('#ts-delete-track').click( function() {
-                if (confirm( 'Are you sure?' )) {
+                if (confirm(trackserver_admin_settings['msg']['areyousure'])) {
                     jQuery('#trackserver-edit-action').val('delete');
                     jQuery('#trackserver-edit-track').submit();
                 }
