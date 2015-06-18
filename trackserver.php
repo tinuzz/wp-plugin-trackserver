@@ -1741,7 +1741,7 @@ EOF;
 				?>
 					<div id="ts-edit-modal" style="display:none;">
 						<p>
-							<form method="post" action="<?=$url?>">
+							<form id="trackserver-edit-track" method="post" action="<?=$url?>">
 								<table>
 									<?php wp_nonce_field( 'manage_track' ); ?>
 									<input type="hidden" name="action" value="trackserver_save_track" />
@@ -1762,6 +1762,8 @@ EOF;
 								<br />
 								<input class="button action" type="submit" value="Save" name="save_track">
 								<input class="button action" type="button" value="Cancel" onClick="tb_remove(); return false;">
+								<input type="hidden" id="trackserver-edit-action" name="trackserver_action" value="save">
+								<a id="ts-delete-track" href="#" style="float: right; color: red" >Delete</a>
 							</form>
 						</p>
 					</div>
@@ -1837,16 +1839,25 @@ EOF;
 				$source = stripslashes( $_REQUEST['source'] );
 				$comment = stripslashes( $_REQUEST['comment'] );
 
-				$data = array(
-					'name' => $name,
-					'source' => $source,
-					'comment' => $comment
-				);
-				$where = array( 'id' => $_REQUEST['track_id'] );
-				$wpdb -> update( $this -> tbl_tracks, $data, $where, '%s', '%d' );
+				if ( $_REQUEST['trackserver_action'] == 'delete' ) {
+					$result = $this -> wpdb_delete_tracks( (int) $_REQUEST['track_id'] );
+					$message = 'Track "' . $name . '" (ID=' . $_REQUEST['track_id'] . ', ' .
+						 $result['locations'] . ' locations) deleted';
+					setcookie( 'ts_bulk_result', $message, time() + 300 );
+				}
+				else {
 
-				$message = 'Track "' . $name . '" (ID=' . $_REQUEST['track_id'] . ') saved';
-				setcookie( 'ts_bulk_result', $message, time() + 300 );
+					$data = array(
+						'name' => $name,
+						'source' => $source,
+						'comment' => $comment
+					);
+					$where = array( 'id' => $_REQUEST['track_id'] );
+					$wpdb -> update( $this -> tbl_tracks, $data, $where, '%s', '%d' );
+
+					$message = 'Track "' . $name . '" (ID=' . $_REQUEST['track_id'] . ') saved';
+					setcookie( 'ts_bulk_result', $message, time() + 300 );
+				}
 
 				// Redirect back to the admin page. This should be safe.
 				wp_redirect( $_REQUEST['_wp_http_referer'] );
@@ -1912,6 +1923,28 @@ EOF;
 			}
 
 			/**
+			 * Function to delete tracks from the database
+			 *
+			 * @since 1.7
+			 *
+			 * @global object $wpdb The WordPress database interface
+			 *
+			 * @param array $track_ids Track IDs to delete.
+			 */
+			function wpdb_delete_tracks( $track_ids ) {
+				global $wpdb;
+				if ( ! is_array( $track_ids ) ) {
+					$track_ids = array( $track_ids );
+				}
+				$in = '(' . implode( ',', $track_ids ) . ')';
+				$sql = 'DELETE FROM ' . $this -> tbl_locations . " WHERE trip_id IN $in";
+				$nl = $wpdb -> query( $sql );
+				$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
+				$nt = $wpdb -> query( $sql );
+				return array( 'locations' => $nl, 'tracks' => $nt );
+			}
+
+			/**
 			 * Function to process any bulk action from the tracks_list_table
 			 */
 			function process_bulk_action( $action ) {
@@ -1923,11 +1956,9 @@ EOF;
 				if ( $action === 'delete' ) {
 					$track_ids = $this -> filter_current_user_tracks( $_REQUEST['track'] );
 					if ( count( $track_ids ) > 0 ) {
-						$in = '(' . implode( ',', $track_ids ) . ')';
-						$sql = 'DELETE FROM ' . $this -> tbl_locations . " WHERE trip_id IN $in";
-						$nl = $wpdb -> query( $sql );
-						$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
-						$nt = $wpdb -> query( $sql );
+						$result = $this -> wpdb_delete_tracks( $track_ids );
+						$nl = $result['locations'];
+						$nt = $result['tracks'];
 						$message = 'Deleted ' . intval( $nl ) . ' location(s) in ' . intval( $nt ) . ' track(s).';
 					}
 					else {

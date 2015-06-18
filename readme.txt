@@ -152,6 +152,10 @@ for details.
 
 == Changelog ==
 
+= UNRELEASED =
+* Add a 'Delete' link in the track edit modal, so you don't have to use a
+  bulk action to delete a single track
+
 = v1.6 =
 * Add option for setting the map tile attribution, as required by most tile
   services and data providers like OSM. If non-empty, the attribution is
