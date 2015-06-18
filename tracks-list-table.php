@@ -18,12 +18,12 @@
 
 			function column_default( $item, $column_name ) {
 				if ( $column_name == 'edit' ) {
-					return ' <a href="#TB_inline?width=&inlineId=ts-edit-modal" title="Edit track properties" class="thickbox" data-id="'.
-						$item['id'] . '" data-action="edit">Edit</a>';
+					return ' <a href="#TB_inline?width=&inlineId=ts-edit-modal" title="' . esc_attr__( 'Edit track properties', 'trackserver' ) .
+						'" class="thickbox" data-id="' . $item['id'] . '" data-action="edit">' . esc_html__( 'Edit', 'trackserver' ) . '</a>';
 				}
 				elseif ( $column_name == 'view' ) {
 					return ' <a href="#TB_inline?width=&inlineId=ts-view-modal" title="' . htmlspecialchars( $item['name'] ) .
-						'" class="thickbox" data-id="' . $item['id'] . '" data-action="view">View</a>';
+						'" class="thickbox" data-id="' . $item['id'] . '" data-action="view">' . esc_html__( 'View', 'trackserver' ) . '</a>';
 				}
 				elseif ( $column_name == 'nonce' ) {
 					return wp_create_nonce( 'manage_track_' . $item['id'] );
@@ -45,16 +45,16 @@
 			function get_columns() {
 				$columns = array(
 					'cb'        => '<input type="checkbox" />', //Render a checkbox instead of text
-					'id'        => 'ID',
-					'name'      => 'Name',
-					'tstart'    => 'Start',
-					'tend'      => 'End',
-					'numpoints' => 'Points',
-					'distance'  => 'Distance',
-					'source'    => 'Source',
-					'comment'   => 'Comment',
-					'view'      => 'View',
-					'edit'      => 'Edit',
+					'id'        => esc_html__( 'ID', 'trackserver' ),
+					'name'      => esc_html__( 'Name', 'trackserver' ),
+					'tstart'    => esc_html__( 'Start', 'trackserver' ),
+					'tend'      => esc_html__( 'End', 'trackserver' ),
+					'numpoints' => esc_html__( 'Points', 'trackserver' ),
+					'distance'  => esc_html__( 'Distance', 'trackserver' ),
+					'source'    => esc_html__( 'Source', 'trackserver' ),
+					'comment'   => esc_html__( 'Comment', 'trackserver' ),
+					'view'      => esc_html__( 'View', 'trackserver' ),
+					'edit'      => esc_html__( 'Edit', 'trackserver' ),
 					'nonce'     => 'Nonce',
 				);
 				return $columns;
@@ -72,9 +72,9 @@
 
 			function get_bulk_actions() {
 				$actions = array(
-					'delete' => 'Delete',
-					'merge'  => 'Merge',
-					'recalc' => 'Recalculate',
+					'delete' => esc_html__( 'Delete', 'trackserver' ),
+					'merge'  => esc_html__( 'Merge', 'trackserver' ),
+					'recalc' => esc_html__( 'Recalculate', 'trackserver' ),
 				);
 				return $actions;
 			}
@@ -89,7 +89,7 @@
 
 			function extra_tablenav( $where ) {
 				echo '<div class="alignleft actions bulkactions">';
-				echo '<input id="addtrack-button" class="button action" type="submit" value="Upload tracks" name="">';
+				echo '<input id="addtrack-button" class="button action" type="submit" value="' . esc_attr__( 'Upload tracks', 'trackserver' ) . '" name="">';
 				echo '</div>';
 			}
 

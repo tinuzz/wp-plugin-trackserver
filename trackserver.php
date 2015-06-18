@@ -413,14 +413,15 @@ EOF;
 				if ( ! current_user_can( 'manage_options' ) ) {
 					wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 				}
-				?>
-				<div class="wrap">
-					<h2>Trackserver Options</h2>
 
-				<?php
-					if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == 'true' ) {
-						echo '<div class="updated"><p>' . __( 'Settings updated', 'trackserver' ) . '</p></div>';
-					}
+				echo '<div class="wrap"><h2>';
+				esc_html_e( 'Trackserver Options', 'trackserver' );
+				echo '</h2>';
+
+				if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == 'true' ) {
+					echo '<div class="updated"><p>' . esc_html__( 'Settings updated', 'trackserver' ) . '</p></div>';
+				}
+
 				?>
 					<hr />
 					<form id="trackserver-options" name="trackserver-options" action="options.php" method="post">
@@ -428,7 +429,7 @@ EOF;
 
 				settings_fields( 'trackserver-options' );
 				do_settings_sections( 'trackserver' );
-				submit_button( __( 'Update options', 'trackserver' ), 'primary', 'submit' );
+				submit_button( esc_attr__( 'Update options', 'trackserver' ), 'primary', 'submit' );
 
 				?>
 					</form>
@@ -441,24 +442,25 @@ EOF;
 			 * Filter callback to add a link to the plugin's settings.
 			 */
 			function add_settings_link( $links ) {
-				$settings_link = '<a href="admin.php?page=trackserver-options">' . __( 'Settings', 'trackserver' ) . '</a>';
+				$settings_link = '<a href="admin.php?page=trackserver-options">' . esc_html__( 'Settings', 'trackserver' ) . '</a>';
 				array_unshift( $links, $settings_link );
 				return $links;
 			}
 
 			function trackme_settings_html() {
 				$trackme_settings_img = TRACKSERVER_PLUGIN_URL . 'img/trackme-settings.png';
-				$howto = __( 'How to use TrackMe', 'trackserver' );
-				$download = __( 'Download TrackMe', 'trackserver' );
+				$howto = esc_html__( 'How to use TrackMe', 'trackserver' );
+				$download = esc_html__( 'Download TrackMe', 'trackserver' );
+				$settings = esc_attr__( 'TrackMe settings', 'trackserver' );
 
 				echo <<<EOF
 					<a class="thickbox" href="#TB_inline?width=&inlineId=ts-trackmehowto-modal"
-						data-action="howto" title="TrackMe settings">$howto</a> &nbsp; &nbsp;
+						data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
 					<a href="https://play.google.com/store/apps/details?id=LEM.TrackMe" target="tsexternal">$download</a>
 					<br />
 					<div id="ts-trackmehowto-modal" style="display:none;">
 						<p>
-								<img src="$trackme_settings_img" alt="TrackMe settings" />
+								<img src="$trackme_settings_img" alt="$settings" />
 						</p>
 					</div>
 EOF;
@@ -466,15 +468,18 @@ EOF;
 
 			function mapmytracks_settings_html() {
 				$mapmytracks_settings_img = TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png';
+				$howto = esc_html__( 'How to use OruxMaps MapMyTracks', 'trackserver' );
+				$download = esc_html__( 'Download OruxMaps', 'trackserver' );
+				$settings = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
 
 				echo <<<EOF
 					<a class="thickbox" href="#TB_inline?width=&inlineId=ts-oruxmapshowto-modal"
-						data-action="howto" title="OruxMaps MapMyTracks settings">How to use OruxMaps MapMyTracks</a> &nbsp; &nbsp;
-					<a href="https://play.google.com/store/apps/details?id=com.orux.oruxmaps" target="tsexternal">Download OruxMaps</a>
+						data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
+					<a href="https://play.google.com/store/apps/details?id=com.orux.oruxmaps" target="tsexternal">$download</a>
 					<br />
 					<div id="ts-oruxmapshowto-modal" style="display:none;">
 						<p>
-								<img src="$mapmytracks_settings_img" alt="OruxMaps MapMyTracks settings" />
+								<img src="$mapmytracks_settings_img" alt="$settings" />
 						</p>
 					</div>
 EOF;
@@ -485,15 +490,18 @@ EOF;
 
 			function httppost_settings_html() {
 				$autoshare_settings_img = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
+				$howto = esc_html__( 'How to use AutoShare', 'trackserver' );
+				$download = esc_html__( 'Download AutoShare', 'trackserver' );
+				$settings = esc_attr__( 'AutoShare settings', 'trackserver' );
 
 				echo <<<EOF
 					<a class="thickbox" href="#TB_inline?width=&inlineId=ts-autosharehowto-modal"
-						data-action="howto" title="AutoShare settings">How to use AutoShare</a> &nbsp; &nbsp;
-					<a href="https://play.google.com/store/apps/details?id=com.dngames.autoshare" target="tsexternal">Download AutoShare</a>
+						data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
+					<a href="https://play.google.com/store/apps/details?id=com.dngames.autoshare" target="tsexternal">$download</a>
 					<br />
 					<div id="ts-autosharehowto-modal" style="display:none;">
 						<p>
-								<img src="$autoshare_settings_img" alt="AutoShare settings" />
+								<img src="$autoshare_settings_img" alt="$settings" />
 						</p>
 					</div>
 EOF;
@@ -514,104 +522,163 @@ EOF;
 
 			function attribution_html() {
 				$val = htmlspecialchars( $this -> options['attribution'] );
-				echo <<<EOF
-					<input type="text" size="50" name="trackserver_options[attribution]" id="trackserver_attribution" value="$val" autocomplete="off" /><br /><br />
+				$format = <<<EOF
+					<input type="text" size="50" name="trackserver_options[attribution]" id="trackserver_attribution" value="$val" autocomplete="off" /><br />
+					%1\$s<br />
 EOF;
+
+				printf( $format,
+					esc_html__( 'Please check with your map tile provider what attribution is required.', 'trackserver' ) );
 			}
 
 			function gettrack_slug_html() {
 				$val = htmlspecialchars( $this -> options['gettrack_slug'] );
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
-				echo <<<EOF
-					The URL slug for the 'gettrack' API, used by Trackserver's shortcode [tsmap] ($url/<b>&lt;slug&gt;</b>/) <br />
-					There is generally no need to change this.<br />
-					<input type="text" size="25" name="trackserver_options[gettrack_slug]" id="trackserver_gettrack_slug" value="$val" autocomplete="off" /><br /><br />
+
+				$format = <<<EOF
+					%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
+					%2\$s<br />
+					<input type="text" size="25" name="trackserver_options[gettrack_slug]" id="trackserver_gettrack_slug" value="$val" autocomplete="off" /><br />
+					<br />
 EOF;
+
+				printf( $format,
+					esc_html__( "The URL slug for the 'gettrack' API, used by Trackserver's shortcode [tsmap]", 'trackserver' ),
+					esc_html__( 'There is generally no need to change this.', 'trackserver' ) );
 			}
 
 			function trackme_slug_html() {
 				$val = htmlspecialchars( $this -> options['trackme_slug'] );
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
-				echo <<<EOF
-					The URL slug for TrackMe, used in 'URL Header' setting in TrackMe ($url/<b>&lt;slug&gt;</b>/) <br />
+				$linkurl = esc_attr__( 'http://en.wikipedia.org/wiki/Server_Name_Indication', 'trackserver' );
+				$link = "<a href=\"$linkurl\">SNI</a>";
+
+				$format = <<<EOF
+					%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
 					<input type="text" size="25" name="trackserver_options[trackme_slug]" id="trackserver_trackme_slug" value="$val" autocomplete="off" /><br /><br />
-					<strong>Full URL header:</strong> $url/$val<br /><br />
-					Note about HTTPS: TrackMe as of v1.11.1 does not support <a href="http://en.wikipedia.org/wiki/Server_Name_Indication">SNI</a> for HTTPS connections.
-					If your Wordpress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a problem with TrackMe that Trackserver cannot fix.
+					<strong>%2\$s:</strong> $url/$val<br /><br />
+					%3\$s<br /><br />
 EOF;
+
+				printf( $format,
+					esc_html__( "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe", 'trackserver' ),
+					esc_html__( 'Full URL header', 'trackserver' ),
+					sprintf( esc_html__( 'Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS connections. ' .
+					'If your WordPress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a ' .
+					'problem with %1$s that Trackserver cannot fix.', 'trackserver' ),
+					'TrackMe', '2.00.1', $link ) );
 			}
 
 			function trackme_extension_html() {
 				$val = htmlspecialchars( $this -> options['trackme_extension'] );
-				echo <<<EOF
-					The Server extension for TrackMe<br />
+
+				$format = <<<EOF
+					%1\$s<br />
 					<input type="text" size="25" name="trackserver_options[trackme_extension]" id="trackserver_trackme_extension" value="$val" autocomplete="off" /><br />
 					<br />
-					<b>WARNING</b>: the default value in TrackMe is 'php', but this will most likely NOT work, so better change it to something else. Anything will do,
-					as long as the request is handled by Wordpress' index.php, so it's better to not use any known file type extension, like 'html' or 'jpg'. A single
-					character like 'z' (the default) should work just fine. Change the 'Server extension' setting in TrackMe to match the value you put here.<br /><br />
+					<b>%2\$s</b>: %3\$s<br /><br />
 EOF;
+				printf( $format,
+					esc_html__( "The Server extension in TrackMe's settings", 'trackserver' ),
+					esc_html__( 'WARNING', 'trackserver' ),
+					esc_html__( "the default value in TrackMe is 'php', but this will most likely NOT work, so better change it to something else. Anything will do, " .
+					"as long as the request is handled by Wordpress' index.php, so it's better to not use any known file type extension, like 'html' or 'jpg'. A single " .
+					"character like 'z' (the default) should work just fine. Change the 'Server extension' setting in TrackMe to match the value you put here.",
+					'trackserver' ) );
 			}
 
 			function mapmytracks_tag_html() {
 				$val = htmlspecialchars( $this -> options['mapmytracks_tag'] );
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
-				echo <<<EOF
-					The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps ($url/<b>&lt;slug&gt;</b>/) <br />
+				$linkurl = esc_attr__( 'http://en.wikipedia.org/wiki/Server_Name_Indication', 'trackserver' );
+				$link = "<a href=\"$linkurl\">SNI</a>";
+
+				$format = <<<EOF
+					%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
 					<input type="text" size="25" name="trackserver_options[mapmytracks_tag]" id="trackserver_mapmytracks_tag" value="$val" autocomplete="off" /><br /><br />
-					<strong>Full custom URL:</strong> $url/$val<br /><br />
-					Note about HTTPS: OruxMaps as of v6.0.5 does not support <a href="http://en.wikipedia.org/wiki/Server_Name_Indication">SNI</a> for HTTPS connections.
-					If your Wordpress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a problem with OruxMaps that Trackserver cannot fix.
+					<strong>%2\$s:</strong> $url/$val<br /><br />
+					%3\$s<br /><br />
 EOF;
+
+				printf( $format,
+					esc_html__( "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps", 'trackserver' ),
+					esc_html__( 'Full custom URL', 'trackserver' ),
+					sprintf( esc_html__( 'Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS connections. ' .
+					'If your WordPress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a ' .
+					'problem with %1$s that Trackserver cannot fix.', 'trackserver' ),
+					'OruxMaps', '6.0.5', $link ) );
 			}
 
 			function osmand_slug_html() {
 				$val = htmlspecialchars( $this -> options['osmand_slug'] );
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
-				$suffix = htmlspecialchars( '/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=<username>&key=<access key>' );
-				echo <<<EOF
-					The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd ($url/<b>&lt;slug&gt;</b>/?...) <br />
+
+				$format = <<<EOF
+					%1\$s ($url/<b>&lt;slug&gt;</b>/?...) <br />
 					<input type="text" size="25" name="trackserver_options[osmand_slug]" id="trackserver_osmand_slug" value="$val" autocomplete="off" /><br /><br />
-					<strong>Full URL:</strong> $url/$val$suffix<br />
 EOF;
+
+				printf( $format,
+					esc_html__( "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd", 'trackserver' ) );
 			}
 
 			function osmand_key_html() {
-				$val = htmlspecialchars( $this -> options['osmand_key'] );
-				echo <<<EOF
-					An access key for online tracking. We do not use WordPress password
-					here for security reasons. The key should be added, together with
-					your WordPress username, as a URL parameter to the online tracking
-					URL set in OsmAnd, as displayed above. Change this regularly.<br />
-					<input type="text" size="25" name="trackserver_options[osmand_key]" id="trackserver_osmand_key" value="$val" autocomplete="off" /><br /><br />
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
+				$key = htmlspecialchars( $this -> options['osmand_key'] );
+				$slug = htmlspecialchars( $this -> options['osmand_slug'] );
+				$current_user = wp_get_current_user();
+				$username = $current_user->user_login;
+				$suffix = htmlspecialchars( "/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=$username&key=$key" );
+
+				$format = <<<EOF
+					%1\$s<br />
+					<input type="text" size="25" name="trackserver_options[osmand_key]" id="trackserver_osmand_key" value="$key" autocomplete="off" /><br /><br />
+					<strong>%2\$s:</strong> $url/$slug$suffix<br />
 EOF;
+
+				printf( $format,
+					esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
+					'The key should be added, together with your WordPress username, as a URL parameter to the online tracking ' .
+					'URL set in OsmAnd, as displayed below. Change this regularly.', 'trackserver' ),
+					esc_html__( "Full URL", 'trackserver' ) );
 			}
 
 			function osmand_trackname_format_html() {
-				$val = htmlspecialchars( $this -> options['osmand_trackname_format'] );
-				echo <<<EOF
-					Generated track name in <a href="http://php.net/manual/en/function.strftime.php" target="_blank">strftime()</a>
-					format.  OsmAnd online tracking does not support the concept of
-					'tracks', there are only locations.  Trackserver needs to group these
-					in tracks and automatically generates new tracks based on the
-					location's timestamp. The format to use (and thus, how often to start
-					a new track) can be specified here.  If you specify a constant
-					string, without any strftime() format placeholders, one and the same
-					track will be used forever and all locations.
-					<br /><br />
+				$val = htmlspecialchars( str_replace( '%', '%%', $this -> options['osmand_trackname_format'] ) );
+				$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
+
+				$format = <<<EOF
+					%1\$s<br /><br />
 					<input type="text" size="25" name="trackserver_options[osmand_trackname_format]" id="trackserver_osmand_trackname_format" value="$val" autocomplete="off" /><br />
-					%Y = year, %m = month, %d = day, %H = hour, %F = %Y-%m-%d
+					%%Y = %2\$s, %%m = %3\$s, %%d = %4\$s, %%H = %5\$s, %%F = %%Y-%%m-%%d
 					<br />
 EOF;
+
+				printf( $format,
+					sprintf( esc_html__( 'Generated track name in %1$s format. OsmAnd online tracking does not support the concept of ' .
+					"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
+					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
+					"can be specified here.  If you specify a constant string, without any strftime() format placeholders, one " .
+					"and the same track will be used forever and all locations.", 'trackserver' ), $link ),
+					esc_html__( 'year', 'trackserver' ),
+					esc_html__( 'month', 'trackserver' ),
+					esc_html__( 'day', 'trackserver' ),
+					esc_html__( 'hour', 'trackserver' ) );
 			}
 
 			function upload_tag_html() {
 				$val = htmlspecialchars( $this -> options['upload_tag'] );
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
-				echo <<<EOF
-					The URL slug for upload via HTTP POST ($url/<b>&lt;slug&gt;</b>/) <br />
+
+				$format = <<<EOF
+					%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
 					<input type="text" size="25" name="trackserver_options[upload_tag]" id="trackserver_upload_tag" value="$val" autocomplete="off" /><br />
+					<br />
+					<strong>%2\$s:</strong> $url/$val<br />
 EOF;
+				printf( $format,
+					esc_html__( 'The URL slug for upload via HTTP POST', 'trackserver' ),
+					esc_html__( "Full URL", 'trackserver' ) );
 			}
 
 			function normalize_tripnames_html() {
@@ -643,43 +710,43 @@ EOF;
 				register_setting( 'trackserver-options', 'trackserver_options' );
 
 				// Add sections
-				add_settings_section( 'trackserver-trackme', __( 'TrackMe settings', 'trackserver' ), array( &$this, 'trackme_settings_html' ), 'trackserver' );
-				add_settings_section( 'trackserver-mapmytracks', __( 'OruxMaps / MapMyTracks settings', 'trackserver' ), array( &$this, 'mapmytracks_settings_html' ), 'trackserver' );
-				add_settings_section( 'trackserver-osmand', __( 'OsmAnd online tracking settings', 'trackserver' ), array( &$this, 'osmand_settings_html' ),  'trackserver' );
-				add_settings_section( 'trackserver-httppost', __( 'HTTP upload settings', 'trackserver' ), array( &$this, 'httppost_settings_html' ),  'trackserver' );
-				add_settings_section( 'trackserver-shortcode', __( 'Shortcode / map settings', 'trackserver' ), array( &$this, 'shortcode_settings_html' ),  'trackserver' );
-				add_settings_section( 'trackserver-advanced', __( 'Advanced settings', 'trackserver' ), array( &$this, 'advanced_settings_html' ),  'trackserver' );
+				add_settings_section( 'trackserver-trackme', esc_html__( 'TrackMe settings', 'trackserver' ), array( &$this, 'trackme_settings_html' ), 'trackserver' );
+				add_settings_section( 'trackserver-mapmytracks', esc_html__( 'OruxMaps MapMyTracks settings', 'trackserver' ), array( &$this, 'mapmytracks_settings_html' ), 'trackserver' );
+				add_settings_section( 'trackserver-osmand', esc_html__( 'OsmAnd online tracking settings', 'trackserver' ), array( &$this, 'osmand_settings_html' ),  'trackserver' );
+				add_settings_section( 'trackserver-httppost', esc_html__( 'HTTP upload settings', 'trackserver' ), array( &$this, 'httppost_settings_html' ),  'trackserver' );
+				add_settings_section( 'trackserver-shortcode', esc_html__( 'Shortcode / map settings', 'trackserver' ), array( &$this, 'shortcode_settings_html' ),  'trackserver' );
+				add_settings_section( 'trackserver-advanced', esc_html__( 'Advanced settings', 'trackserver' ), array( &$this, 'advanced_settings_html' ),  'trackserver' );
 
 				// Settings for section 'trackserver-trackme'
-				add_settings_field( 'trackserver_trackme_slug', __( 'TrackMe URL slug', 'trackserver' ),
+				add_settings_field( 'trackserver_trackme_slug', esc_html__( 'TrackMe URL slug', 'trackserver' ),
 						array( &$this, 'trackme_slug_html' ), 'trackserver', 'trackserver-trackme' );
-				add_settings_field( 'trackserver_trackme_extension', __( 'TrackMe server extension', 'trackserver' ),
+				add_settings_field( 'trackserver_trackme_extension', esc_html__( 'TrackMe server extension', 'trackserver' ),
 						array( &$this, 'trackme_extension_html' ), 'trackserver', 'trackserver-trackme' );
 
 				// Settings for section 'trackserver-mapmytracks'
-				add_settings_field( 'trackserver_mapmytracks_tag', __( 'MapMyTracks URL slug', 'trackserver' ),
+				add_settings_field( 'trackserver_mapmytracks_tag', esc_html__( 'MapMyTracks URL slug', 'trackserver' ),
 						array( &$this, 'mapmytracks_tag_html' ), 'trackserver', 'trackserver-mapmytracks' );
 
 				// Settings for section 'trackserver-osmand'
-				add_settings_field( 'trackserver_osmand_slug', __( 'OsmAnd URL slug', 'trackserver' ),
+				add_settings_field( 'trackserver_osmand_slug', esc_html__( 'OsmAnd URL slug', 'trackserver' ),
 						array( &$this, 'osmand_slug_html' ), 'trackserver', 'trackserver-osmand' );
-				add_settings_field( 'trackserver_osmand_key', __( 'OsmAnd access key', 'trackserver' ),
+				add_settings_field( 'trackserver_osmand_key', esc_html__( 'OsmAnd access key', 'trackserver' ),
 						array( &$this, 'osmand_key_html' ), 'trackserver', 'trackserver-osmand' );
-				add_settings_field( 'trackserver_osmand_trackname_format', __( 'OsmAnd trackname format', 'trackserver' ),
+				add_settings_field( 'trackserver_osmand_trackname_format', esc_html__( 'OsmAnd trackname format', 'trackserver' ),
 						array( &$this, 'osmand_trackname_format_html' ), 'trackserver', 'trackserver-osmand' );
 
 				// Settings for section 'trackserver-httppost'
-				add_settings_field( 'trackserver_upload_tag', __( 'HTTP POST URL slug', 'trackserver' ),
+				add_settings_field( 'trackserver_upload_tag', esc_html__( 'HTTP POST URL slug', 'trackserver' ),
 						array( &$this, 'upload_tag_html' ), 'trackserver', 'trackserver-httppost' );
 
 				// Settings for section 'trackserver-shortcode'
-				add_settings_field( 'trackserver_tile_url', __( 'OSM/Google tile server URL', 'trackserver' ),
+				add_settings_field( 'trackserver_tile_url', esc_html__( 'OSM/Google tile server URL', 'trackserver' ),
 						array( &$this, 'tile_url_html' ), 'trackserver', 'trackserver-shortcode' );
-				add_settings_field( 'trackserver_attribution', __( 'Tile attribution', 'trackserver' ),
+				add_settings_field( 'trackserver_attribution', esc_html__( 'Tile attribution', 'trackserver' ),
 						array( &$this, 'attribution_html' ), 'trackserver', 'trackserver-shortcode' );
 
 				// Settings for section 'trackserver-advanced'
-				add_settings_field( 'trackserver_gettrack_slug', __( 'Gettrack URL slug', 'trackserver' ),
+				add_settings_field( 'trackserver_gettrack_slug', esc_html__( 'Gettrack URL slug', 'trackserver' ),
 						array( &$this, 'gettrack_slug_html' ), 'trackserver', 'trackserver-advanced' );
 			}
 
@@ -690,12 +757,12 @@ EOF;
 				$this -> options_page_url = menu_page_url( $this -> options_page, false );
 
 				// A dedicated menu in the main tree
-				add_menu_page( __( 'Trackserver Options', 'trackserver' ), __( 'Trackserver', 'trackserver' ), 'manage_options',
+				add_menu_page( esc_html__( 'Trackserver Options', 'trackserver' ), esc_html__( 'Trackserver', 'trackserver' ), 'manage_options',
 					'trackserver-options', array( &$this, 'options_page_html' ), TRACKSERVER_PLUGIN_URL . 'img/trackserver.png' );
 
-				add_submenu_page( 'trackserver-options', __( 'Trackserver options', 'trackserver' ), __( 'Options', 'trackserver' ),
+				add_submenu_page( 'trackserver-options', esc_html__( 'Trackserver Options', 'trackserver' ), esc_html__( 'Options', 'trackserver' ),
 					'manage_options', 'trackserver-options', array( &$this, 'options_page_html' ) );
-				$page2 = add_submenu_page( 'trackserver-options', __( 'Manage tracks', 'trackserver' ), __( 'Manage tracks', 'trackserver' ),
+				$page2 = add_submenu_page( 'trackserver-options', esc_html__( 'Manage tracks', 'trackserver' ), __( 'Manage tracks', 'trackserver' ),
 					 'use_trackserver', 'trackserver-tracks', array( &$this, 'manage_tracks_html' ) );
 				/*
 				add_submenu_page( 'trackserver-options', 'Trackserver profiles', 'Map profiles', 'manage_options', 'trackserver-profiles',
@@ -1513,20 +1580,27 @@ EOF;
 						if ( $f['error'] == 0 && move_uploaded_file( $f['tmp_name'], $filename ) ) {
 							if ( $xml = $this -> validate_gpx( $filename ) ) {
 								$result = $this -> process_gpx( $xml, $user_id );
-								$message .= "File '" . $f['name'] . "': imported ".
-									$result['num_trkpt'] . ' points from ' . $result['num_trk'] .
-								 	' track(s) in '. $result['exec_time'] . " seconds.\n";
+
+								// No need to HTML-escape the message here
+								$format = __( "File '%1\$s': imported %2\$s points from %3\$s track(s) in %4\$s seconds.", 'trackserver' );
+								$message .= sprintf( $format,
+								(string) $f['name'],
+									(string) $result['num_trkpt'],
+									(string) $result['num_trk'],
+									(string) $result['exec_time'] ) . "\n";
 							}
 							else {
-								$message .= "ERROR: File '" . $f['name'] . "' could not be validated as GPX 1.1.\n";
+								// No need to HTML-escape the message here
+								$message .= sprintf( __( "ERROR: File '%1\$s' could not be validated as GPX 1.1", 'trackserver' ), $f['name'] ) . "\n";
 							}
 						}
 						else {
-							$message .= "ERROR: Upload '" . $f['name'] . "' failed (rc=" . $f['error'] . ")\n";
+							// No need to HTML-escape the message here
+							$message .= sprintf( __( "ERROR: Upload '%1\$s' failed", 'trackserver' ), $f['name'] ) .  " (rc=" . $f['error'] . ")\n";
 						}
 					}
 					else {
-						$message .= "ERROR: Only .gpx files accepted; discarding '" . $f['name'] . "'\n";
+						$message .= sprintf( __( "ERROR: Only .gpx files accepted; discarding '%1\$s'", 'trackserver' ), $f['name'] ) . "\n";
 				}
 					unlink( $filename );
 				}
@@ -1730,7 +1804,7 @@ EOF;
 			function manage_tracks_html() {
 
 				if ( ! current_user_can( 'use_trackserver' ) ) {
-					wp_die( __('You do not have sufficient permissions to access this page.') );
+					wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 				}
 
 				add_thickbox();
@@ -1748,23 +1822,23 @@ EOF;
 									<input type="hidden" name="action" value="trackserver_save_track" />
 									<input type="hidden" id="track_id" name="track_id" value="" />
 									<tr>
-										<th style="width: 150px;">Name</th>
+										<th style="width: 150px;"><?php esc_html_e( 'Name', 'trackserver' ); ?></th>
 										<td><input id="input-track-name" name="name" type="text" style="width: 400px" /></td>
 									</tr>
 									<tr>
-										<th>Source</th>
+										<th><?php esc_html_e( 'Source', 'trackserver' ); ?></th>
 										<td><input id="input-track-source" name="source" type="text" style="width: 400px" /></td>
 									</tr>
 									<tr>
-										<th>Comment</th>
+										<th><?php esc_html_e( 'Comment', 'trackserver' ); ?></th>
 										<td><textarea id="input-track-comment" name="comment" rows="3" style="width: 400px; resize: none;"></textarea></td>
 									</tr>
 								</table>
 								<br />
-								<input class="button action" type="submit" value="Save" name="save_track">
-								<input class="button action" type="button" value="Cancel" onClick="tb_remove(); return false;">
+								<input class="button action" type="submit" value="<?php esc_attr_e( 'Save', 'trackserver' ); ?>" name="save_track">
+								<input class="button action" type="button" value="<?php esc_attr_e( 'Cancel', 'trackserver' ); ?>" onClick="tb_remove(); return false;">
 								<input type="hidden" id="trackserver-edit-action" name="trackserver_action" value="save">
-								<a id="ts-delete-track" href="#" style="float: right; color: red" >Delete</a>
+								<a id="ts-delete-track" href="#" style="float: right; color: red" ><?php esc_html_e( 'Delete', 'trackserver' ); ?></a>
 							</form>
 						</p>
 					</div>
@@ -1775,20 +1849,20 @@ EOF;
 					</div>
 					<div id="ts-merge-modal" style="display:none;">
 						<p>
-							Merge all points of multiple tracks into one track. Please specify the name for the merged track.
+							<?php esc_html__( 'Merge all points of multiple tracks into one track. Please specify the name for the merged track.', 'trackserver' ); ?>
 							<form method="post" action="<?=$url?>">
 								<table>
 									<?php wp_nonce_field( 'manage_track' ); ?>
 									<tr>
-										<th style="width: 150px;">Merged track name</th>
+										<th style="width: 150px;"><?php esc_html_e( 'Merged track name', 'trackserver' ); ?></th>
 										<td><input id="input-merged-name" name="name" type="text" style="width: 400px" /></td>
 									</tr>
 								</table>
 								<br />
-								<span class="aligncenter"><i>Warning: this action cannot be undone!</i></span><br />
+								<span class="aligncenter"><i><?php esc_html_e( 'Warning: this action cannot be undone!', 'trackserver' ); ?></i></span><br />
 								<div class="alignright">
-									<input class="button action" type="button" value="Save" id="merge-submit-button">
-									<input class="button action" type="button" value="Cancel" onClick="tb_remove(); return false;">
+									<input class="button action" type="button" value="<?php esc_attr_e( 'Save', 'trackserver' ); ?>" id="merge-submit-button">
+									<input class="button action" type="button" value="<?php esc_attr_e( 'Cancel', 'trackserver' ); ?>" onClick="tb_remove(); return false;">
 								</div>
 							</form>
 						</p>
@@ -1799,13 +1873,13 @@ EOF;
 								<?php wp_nonce_field( 'upload_track' ); ?>
 								<input type="hidden" name="action" value="trackserver_upload_track" />
 								<input type="file" name="gpxfile[]" multiple="multiple" style="display: none" id="ts-file-input" />
-								<input type="button" class="button button-hero" value="Select files" id="ts-select-files-button" />
+								<input type="button" class="button button-hero" value="<?php esc_attr_e( 'Select files', 'trackserver' ); ?>" id="ts-select-files-button" />
 								<!-- <input type="button" class="button button-hero" value="Upload" id="ts-upload-files-button" disabled="disabled" /> -->
-								<button type="button" class="button button-hero" value="Upload" id="ts-upload-files-button" disabled="disabled">Upload</button>
+								<button type="button" class="button button-hero" value="<?php esc_attr_e( 'Upload', 'trackserver' ); ?>" id="ts-upload-files-button" disabled="disabled"><?php esc_html_e( 'Upload', 'trackserver' ); ?></button>
 							</form>
 							<br />
 							<br />
-							Selected files:<br />
+							<?php esc_html_e( 'Selected files', 'trackserver' ); ?>:<br />
 							<div id="ts-upload-filelist" style="height: 200px; max-height: 200px; overflow-y: auto; border: 1px solid #dddddd; padding-left: 5px;"></div>
 							<br />
 							<div id="ts-upload-warning"></div>
@@ -1814,7 +1888,7 @@ EOF;
 					<form id="trackserver-tracks" method="post">
 						<input type="hidden" name="page" value="trackserver-tracks" />
 						<div class="wrap">
-							<h2>Manage tracks</h2>
+							<h2><?php esc_html_e( 'Manage tracks', 'trackserver' ); ?></h2>
 							<?php $this -> notice_bulk_action_result() ?>
 							<?php $this -> tracks_list_table -> display() ?>
 						</div>
@@ -1825,7 +1899,7 @@ EOF;
 			function profiles_html() {
 
 				if ( ! current_user_can( 'manage_options' ) ) {
-					wp_die( __('You do not have sufficient permissions to access this page.') );
+					wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 				}
 				echo "<h2>Trackserver map profiles</h2>";
 			}
@@ -1960,10 +2034,11 @@ EOF;
 						$result = $this -> wpdb_delete_tracks( $track_ids );
 						$nl = $result['locations'];
 						$nt = $result['tracks'];
-						$message = 'Deleted ' . intval( $nl ) . ' location(s) in ' . intval( $nt ) . ' track(s).';
+						$format = __( 'Deleted %1$d location(s) in %2$d track(s).', 'trackserver' );
+						$message = sprintf( $format, intval( $nl ), intval( $nt ) );
 					}
 					else {
-						$message = "No tracks deleted";
+						$message = __( "No tracks deleted", 'trackserver' );
 					}
 					setcookie( 'ts_bulk_result', $message, time() + 300 );
 					wp_redirect( $_REQUEST['_wp_http_referer'] );
@@ -1986,10 +2061,12 @@ EOF;
 						$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_tracks . ' SET name=%s WHERE id=%d',
 							 ( $name = stripslashes( $_REQUEST['merged_name'] ) ), $id );
 						$wpdb -> query( $sql );
-						$message = "Merged " . intval( $nl ) . " location(s) from " . intval( $nt ) . ' track(s) into "' . $name . '"';
+						$format = __( "Merged %1\$d location(s) from %2\$d track(s) into '%3\$s'.", 'trackserver' );
+						$message = sprintf( $format, intval( $nl ), intval( $nt ), $name );
 					}
 					else {
-						$message = "Need >= 2 tracks to merge, got only $n";
+						$format = __( "Need >= 2 tracks to merge, got only %1\$d", 'trackserver' );
+						$message = sprintf( $format, $n );
 					}
 					setcookie( 'ts_bulk_result', $message, time() + 300 );
 					wp_redirect( $_REQUEST['_wp_http_referer'] );
@@ -2004,10 +2081,11 @@ EOF;
 							$this -> calculate_distance( $id );
 						}
 						$exec_time = round( microtime( true ) - $exec_t0, 1);
-						$message = 'Recalculated track stats for ' . count( $track_ids ) . " tracks in $exec_time seconds";
+						$format = __( 'Recalculated track stats for %1$d track(s) in %2$d seconds', 'trackserver' );
+						$message = sprintf( $format, count( $track_ids ), $exec_time );
 					}
 					else {
-						$message = "No tracks found to recalculate";
+						$message = __( "No tracks found to recalculate", 'trackserver' );
 					}
 					setcookie( 'ts_bulk_result', $message, time() + 300 );
 					wp_redirect( $_REQUEST['_wp_http_referer'] );
