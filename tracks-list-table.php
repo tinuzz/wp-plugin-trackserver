@@ -121,9 +121,9 @@
 
 				$sql = 'SELECT t.id, t.name, t.source, t.comment, min(l.occurred) as tstart, max(l.occurred) ' .
 					'as tend, count(l.occurred) as numpoints, t.distance FROM '.
-					$this -> options['tbl_tracks'] . ' t INNER JOIN ' . $this -> options['tbl_locations'] .
+					$this -> options['tbl_tracks'] . ' t LEFT JOIN ' . $this -> options['tbl_locations'] .
 					" l ON l.trip_id = t.id WHERE user_id='" . get_current_user_id() .
-					"' GROUP BY l.trip_id ORDER BY $orderby $order LIMIT $offset,$limit";
+					"' GROUP BY t.id ORDER BY $orderby $order LIMIT $offset,$limit";
 				$data = $wpdb -> get_results( $sql, ARRAY_A );
 
 				/*
