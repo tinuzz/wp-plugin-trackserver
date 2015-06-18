@@ -1,0 +1,126 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Trackserver\n"
+"POT-Creation-Date: 2015-06-04 00:34+0100\n"
+"PO-Revision-Date: 2015-06-04 00:34+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.10\n"
+"X-Poedit-Basepath: /home/martijn/src/wp-plugin-trackserver\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: /home/martijn/src/wp-plugin-trackserver\n"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:414
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:1733
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:1828
+msgid "You do not have sufficient permissions to access this page."
+msgstr "U heeft niet voldoende rechten om deze pagina te raadplegen."
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:422
+msgid "Settings updated"
+msgstr "Instellingen opgeslagen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:431
+msgid "Update options"
+msgstr "Opties bijwerken"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:444
+msgid "Settings"
+msgstr "Instellingen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:451
+msgid "How to use TrackMe"
+msgstr "TrackMe gebruiken"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:452
+msgid "Download TrackMe"
+msgstr "TrackMe downloaden"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:646
+msgid "TrackMe settings"
+msgstr "TrackMe instellingen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:647
+msgid "OruxMaps / MapMyTracks settings"
+msgstr "OruxMaps / MapMyTracks instellingen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:648
+msgid "OsmAnd online tracking settings"
+msgstr "OsmAnd online tracking instellingen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:649
+msgid "HTTP upload settings"
+msgstr "HTTP upload instellingen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:650
+msgid "Shortcode / map settings"
+msgstr "Shortcode / kaartinstellingen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:651
+msgid "Advanced settings"
+msgstr "Geavanceerde instellingen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:654
+msgid "TrackMe URL slug"
+msgstr "TrackMe URL slug"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:656
+msgid "TrackMe server extension"
+msgstr "TrackMe server extentie"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:660
+msgid "MapMyTracks URL slug"
+msgstr "MapMyTracks URL slug"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:664
+msgid "OsmAnd URL slug"
+msgstr "OsmAnd URL slug"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:666
+msgid "OsmAnd access key"
+msgstr "OsmAnd toegangscode"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:668
+msgid "OsmAnd trackname format"
+msgstr "OsmAnd tracknaam formaat"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:672
+msgid "HTTP POST URL slug"
+msgstr "HTTP POST URL slug"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:676
+msgid "OSM/Google tile server URL"
+msgstr "OSM/Google tile server URL"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:678
+msgid "Tile attribution"
+msgstr "Tile attributie"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:682
+msgid "Gettrack URL slug"
+msgstr "Gettrack URL slug"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:693
+msgid "Trackserver Options"
+msgstr "Trackserver Instellingen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:693
+msgid "Trackserver"
+msgstr "Trackserver"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:696
+msgid "Trackserver options"
+msgstr "Trackserver instellingen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:696
+msgid "Options"
+msgstr "Instellingen"
+
+#: /home/martijn/src/wp-plugin-trackserver/trackserver.php:698
+msgid "Manage tracks"
+msgstr "Tracks beheren"
