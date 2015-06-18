@@ -63,10 +63,11 @@ It includes some code and libraries written by other people:
 * Support [GpsGate](http://gpsgate.com/) tracking protocol
 * Better permissions/authorization system
 * More shortcode parameters and map options
-* More track management features
+* Multiple tracks per map
+* More track management features, like folders/collections and editing / splitting tracks
+* A shortcode for downloading a track in GPX or other formats
 * Track statistics, like distance, average speed, etc.
 * Add map profiles, maybe include [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers) plugin
-* Internationalization
 * ...
 
 More TODO-items and feature ideas in the TODO file contained in the plugin archive.
@@ -152,13 +153,14 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= v1.7 =
 * Add a 'Delete' link in the track edit modal, so you don't have to use a
   bulk action to delete a single track.
 * Do not omit tracks with zero locations in track management.
-* Partial i18n and Dutch translation
+* Full i18n and Dutch translation
 * Support the 'getttripfull' action for TrackMe, to allow TrackMe 2.0
   to import your tracks from the server.
+* Use HTTPS in default map tile URL
 
 = v1.6 =
 * Add option for setting the map tile attribution, as required by most tile
