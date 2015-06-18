@@ -65,7 +65,7 @@ UNRELEASED -        TrackMe 2.0 compatibily, i18n and bugfixes
 				'gettrack_slug' => 'trackserver/gettrack',
 				'normalize_tripnames' => 'yes',
 				'tripnames_format' => '%F %T',
-				'tile_url' => 'http://otile3.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png',
+				'tile_url' => 'https://otile3-s.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png',
 				'attribution' => 'Tiles by <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
 			);
 
