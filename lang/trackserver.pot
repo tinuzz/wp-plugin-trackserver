@@ -1,0 +1,395 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Trackserver\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-06-10 11:45+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../tracks-list-table.php:21
+msgid "Edit track properties"
+msgstr ""
+
+#: ../tracks-list-table.php:22 ../tracks-list-table.php:57
+msgid "Edit"
+msgstr ""
+
+#: ../tracks-list-table.php:26 ../tracks-list-table.php:56
+msgid "View"
+msgstr ""
+
+#: ../tracks-list-table.php:48
+msgid "ID"
+msgstr ""
+
+#: ../tracks-list-table.php:49 ../trackserver.php:1878
+msgid "Name"
+msgstr ""
+
+#: ../tracks-list-table.php:50
+msgid "Start"
+msgstr ""
+
+#: ../tracks-list-table.php:51
+msgid "End"
+msgstr ""
+
+#: ../tracks-list-table.php:52
+msgid "Points"
+msgstr ""
+
+#: ../tracks-list-table.php:53
+msgid "Distance"
+msgstr ""
+
+#: ../tracks-list-table.php:54 ../trackserver.php:1882
+msgid "Source"
+msgstr ""
+
+#: ../tracks-list-table.php:55 ../trackserver.php:1886
+msgid "Comment"
+msgstr ""
+
+#: ../tracks-list-table.php:75 ../trackserver.php:1894
+msgid "Delete"
+msgstr ""
+
+#: ../tracks-list-table.php:76
+msgid "Merge"
+msgstr ""
+
+#: ../tracks-list-table.php:77
+msgid "Recalculate"
+msgstr ""
+
+#: ../tracks-list-table.php:92
+msgid "Upload tracks"
+msgstr ""
+
+#: ../trackserver.php:415 ../trackserver.php:1860 ../trackserver.php:1955
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: ../trackserver.php:419 ../trackserver.php:761 ../trackserver.php:764
+msgid "Trackserver Options"
+msgstr ""
+
+#: ../trackserver.php:423
+msgid "Settings updated"
+msgstr ""
+
+#: ../trackserver.php:433
+msgid "Update options"
+msgstr ""
+
+#: ../trackserver.php:446
+msgid "Settings"
+msgstr ""
+
+#: ../trackserver.php:453
+msgid "How to use TrackMe"
+msgstr ""
+
+#: ../trackserver.php:454
+msgid "Download TrackMe"
+msgstr ""
+
+#: ../trackserver.php:455 ../trackserver.php:714
+msgid "TrackMe settings"
+msgstr ""
+
+#: ../trackserver.php:472
+msgid "How to use OruxMaps MapMyTracks"
+msgstr ""
+
+#: ../trackserver.php:473
+msgid "Download OruxMaps"
+msgstr ""
+
+#: ../trackserver.php:474 ../trackserver.php:715
+msgid "OruxMaps MapMyTracks settings"
+msgstr ""
+
+#: ../trackserver.php:494
+msgid "How to use AutoShare"
+msgstr ""
+
+#: ../trackserver.php:495
+msgid "Download AutoShare"
+msgstr ""
+
+#: ../trackserver.php:496
+msgid "AutoShare settings"
+msgstr ""
+
+#: ../trackserver.php:532
+msgid "Please check with your map tile provider what attribution is required."
+msgstr ""
+
+#: ../trackserver.php:547
+msgid ""
+"The URL slug for the 'gettrack' API, used by Trackserver's shortcode [tsmap]"
+msgstr ""
+
+#: ../trackserver.php:548
+msgid "There is generally no need to change this."
+msgstr ""
+
+#: ../trackserver.php:554 ../trackserver.php:594
+msgid "http://en.wikipedia.org/wiki/Server_Name_Indication"
+msgstr ""
+
+#: ../trackserver.php:565
+msgid "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe"
+msgstr ""
+
+#: ../trackserver.php:566
+msgid "Full URL header"
+msgstr ""
+
+#: ../trackserver.php:567 ../trackserver.php:607
+#, php-format
+msgid ""
+"Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS "
+"connections. If your WordPress install is hosted on a HTTPS URL that depends "
+"on SNI, please use HTTP. This is a problem with %1$s that Trackserver cannot "
+"fix."
+msgstr ""
+
+#: ../trackserver.php:583
+msgid "The Server extension in TrackMe's settings"
+msgstr ""
+
+#: ../trackserver.php:584
+msgid "WARNING"
+msgstr ""
+
+#: ../trackserver.php:585
+msgid ""
+"the default value in TrackMe is 'php', but this will most likely NOT work, "
+"so better change it to something else. Anything will do, as long as the "
+"request is handled by Wordpress' index.php, so it's better to not use any "
+"known file type extension, like 'html' or 'jpg'. A single character like "
+"'z' (the default) should work just fine. Change the 'Server extension' "
+"setting in TrackMe to match the value you put here."
+msgstr ""
+
+#: ../trackserver.php:605
+msgid "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps"
+msgstr ""
+
+#: ../trackserver.php:606
+msgid "Full custom URL"
+msgstr ""
+
+#: ../trackserver.php:623
+msgid "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd"
+msgstr ""
+
+#: ../trackserver.php:641
+msgid ""
+"An access key for online tracking. We do not use WordPress password here for "
+"security reasons. The key should be added, together with your WordPress "
+"username, as a URL parameter to the online tracking URL set in OsmAnd, as "
+"displayed below. Change this regularly."
+msgstr ""
+
+#: ../trackserver.php:644 ../trackserver.php:682
+msgid "Full URL"
+msgstr ""
+
+#: ../trackserver.php:649
+msgid "http://php.net/manual/en/function.strftime.php"
+msgstr ""
+
+#: ../trackserver.php:659
+#, php-format
+msgid ""
+"Generated track name in %1$s format. OsmAnd online tracking does not support "
+"the concept of 'tracks', there are only locations.  Trackserver needs to "
+"group these in tracks and automatically generates new tracks based on the "
+"location's timestamp. The format to use (and thus, how often to start a new "
+"track) can be specified here.  If you specify a constant string, without any "
+"strftime() format placeholders, one and the same track will be used forever "
+"and all locations."
+msgstr ""
+
+#: ../trackserver.php:664
+msgid "year"
+msgstr ""
+
+#: ../trackserver.php:665
+msgid "month"
+msgstr ""
+
+#: ../trackserver.php:666
+msgid "day"
+msgstr ""
+
+#: ../trackserver.php:667
+msgid "hour"
+msgstr ""
+
+#: ../trackserver.php:681
+msgid "The URL slug for upload via HTTP POST"
+msgstr ""
+
+#: ../trackserver.php:716
+msgid "OsmAnd online tracking settings"
+msgstr ""
+
+#: ../trackserver.php:717
+msgid "HTTP upload settings"
+msgstr ""
+
+#: ../trackserver.php:718
+msgid "Shortcode / map settings"
+msgstr ""
+
+#: ../trackserver.php:719
+msgid "Advanced settings"
+msgstr ""
+
+#: ../trackserver.php:722
+msgid "TrackMe URL slug"
+msgstr ""
+
+#: ../trackserver.php:724
+msgid "TrackMe server extension"
+msgstr ""
+
+#: ../trackserver.php:728
+msgid "MapMyTracks URL slug"
+msgstr ""
+
+#: ../trackserver.php:732
+msgid "OsmAnd URL slug"
+msgstr ""
+
+#: ../trackserver.php:734
+msgid "OsmAnd access key"
+msgstr ""
+
+#: ../trackserver.php:736
+msgid "OsmAnd trackname format"
+msgstr ""
+
+#: ../trackserver.php:740
+msgid "HTTP POST URL slug"
+msgstr ""
+
+#: ../trackserver.php:744
+msgid "OSM/Google tile server URL"
+msgstr ""
+
+#: ../trackserver.php:746
+msgid "Tile attribution"
+msgstr ""
+
+#: ../trackserver.php:750
+msgid "Gettrack URL slug"
+msgstr ""
+
+#: ../trackserver.php:761
+msgid "Trackserver"
+msgstr ""
+
+#: ../trackserver.php:764
+msgid "Options"
+msgstr ""
+
+#: ../trackserver.php:766 ../trackserver.php:1944
+msgid "Manage tracks"
+msgstr ""
+
+#: ../trackserver.php:1638
+#, php-format
+msgid "File '%1$s': imported %2$s points from %3$s track(s) in %4$s seconds."
+msgstr ""
+
+#: ../trackserver.php:1647
+#, php-format
+msgid "ERROR: File '%1$s' could not be validated as GPX 1.1"
+msgstr ""
+
+#: ../trackserver.php:1652
+#, php-format
+msgid "ERROR: Upload '%1$s' failed"
+msgstr ""
+
+#: ../trackserver.php:1656
+#, php-format
+msgid "ERROR: Only .gpx files accepted; discarding '%1$s'"
+msgstr ""
+
+#: ../trackserver.php:1891 ../trackserver.php:1917
+msgid "Save"
+msgstr ""
+
+#: ../trackserver.php:1892 ../trackserver.php:1918
+msgid "Cancel"
+msgstr ""
+
+#: ../trackserver.php:1905
+msgid ""
+"Merge all points of multiple tracks into one track. Please specify the name "
+"for the merged track."
+msgstr ""
+
+#: ../trackserver.php:1910
+msgid "Merged track name"
+msgstr ""
+
+#: ../trackserver.php:1915
+msgid "Warning: this action cannot be undone!"
+msgstr ""
+
+#: ../trackserver.php:1929
+msgid "Select files"
+msgstr ""
+
+#: ../trackserver.php:1931
+msgid "Upload"
+msgstr ""
+
+#: ../trackserver.php:1935
+msgid "Selected files"
+msgstr ""
+
+#: ../trackserver.php:2090
+#, php-format
+msgid "Deleted %1$d location(s) in %2$d track(s)."
+msgstr ""
+
+#: ../trackserver.php:2094
+msgid "No tracks deleted"
+msgstr ""
+
+#: ../trackserver.php:2117
+#, php-format
+msgid "Merged %1$d location(s) from %2$d track(s) into '%3$s'."
+msgstr ""
+
+#: ../trackserver.php:2121
+#, php-format
+msgid "Need >= 2 tracks to merge, got only %1$d"
+msgstr ""
+
+#: ../trackserver.php:2137
+#, php-format
+msgid "Recalculated track stats for %1$d track(s) in %2$d seconds"
+msgstr ""
+
+#: ../trackserver.php:2141
+msgid "No tracks found to recalculate"
+msgstr ""
