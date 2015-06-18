@@ -13,6 +13,7 @@ Domain path: /lang
 License: GPL2
 
 === RELEASE NOTES ===
+UNRELEASED -        TrackMe 2.0 compatibily, i18n and bugfixes
 2015-04-29 - v1.6 - Map data / tile attribution and bugfix
 2015-04-15 - v1.5 - Bugfixes
 2015-03-08 - v1.4 - OsmAnd support, other features and bugfixes
@@ -992,6 +993,10 @@ EOF;
 					case 'gettriplist':
 						$this -> handle_trackme_gettriplist( $user_id );
 						break;
+					case 'gettripfull':
+					case 'gettriphighlights':
+						$this -> handle_trackme_gettripfull( $user_id );
+						break;
 					case 'deletetrip':
 						$this -> handle_trackme_deletetrip( $user_id );
 						break;
@@ -1133,6 +1138,54 @@ EOF;
 				}
 				$triplist = substr( $triplist, 0, -1 );
 				$this -> trackme_result( 0, $triplist );
+			}
+
+			/**
+			 * Function to handle the 'gettripfull' action from a TrackMe GET request.
+			 *
+			 * @since 1.7
+			 */
+			function handle_trackme_gettripfull( $user_id ) {
+				global $wpdb;
+
+				$trip_name = urldecode( $_GET['tn'] );
+				if ( $trip_name != '' ) {
+
+					// Try to find the trip
+					$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trip_name );
+					$trip_id = $wpdb -> get_var( $sql );
+
+					if ( $trip_id == null ) {
+						$this -> trackme_result( 7 );   // Trip not found
+					}
+					else {
+
+						$sql = $wpdb -> prepare( 'SELECT id, latitude, longitude, altitude, speed, heading, occurred, comment FROM ' .
+							$this -> tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $trip_id );
+						$res = $wpdb -> get_results( $sql, ARRAY_A );
+
+						$output = '';
+						foreach ( $res as $row ) {
+
+							$output .= $row['latitude'] . "|" .
+								$row['longitude'] . "|" .
+								'|' . // ImageURL
+								$row['comment'] . '|' .
+								'|' . // IconURL
+								$row['occurred'] . '|' .
+								$row['id'] . '|' .
+								$row['altitude'] . '|' .
+								$row['speed'] . '|' .
+								$row['heading'] . '|' .
+								"\n";
+						}
+
+						$this -> trackme_result( 0, $output );
+					}
+				}
+				else {
+					$this -> trackme_result( 6 ); // No trip name specified. This should not happen.
+				}
 			}
 
 			/**
