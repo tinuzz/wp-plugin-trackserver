@@ -22,6 +22,11 @@ A shortcode is provided for displaying your tracks on a map. Maps are displayed
 using the fantastic [Leaflet library](http://leafletjs.com/) and some useful Leaflet plugins
 are included. Maps can be viewed in full-screen on modern browsers.
 
+\[tsmap track=&lt;id&gt;\]
+
+See the FAQ section for more information on the shortcode's supported attributes.
+
+
 # Credits
 
 This plugin was written by Martijn Grendelman. It includes some code and libraries written by other people:
@@ -59,6 +64,23 @@ view is always centered to the most recent trackpoint. A marker is shown in
 that location. Live tracking can be stopped and restarted with a simple control
 button that is shown on the map.
 
+## Can Trackserver support protocol X or device Y?
+
+Trackserver, being a WordPress plugin, can only support HTTP-based protocols for
+tracking. Many tracking devices use TCP- but not HTTP-based protocols for online
+tracking, and as sucht, Trackserver cannot support them, at least not without
+some middleware that translates the device's protocol to HTTP.
+
+If a device or an app does use HTTP as a transport, adding support for it in
+Trackserver should be quite easy. For example, I have been thinking about support
+for the GpsGate Server Protocol. It could be added if there is any demand for it.
+
+If a device or an app uses a different transport, support could be added by
+implementing some sort of middleware. For example, [OwnTracks](http://owntracks.org/)
+uses MQTT and ships with a script ([m2s](https://github.com/owntracks/backend/tree/master/m2s))
+for storing the data. Storage methods in m2s are pluggable, so one could write an
+m2s-plugin for shipping the data to Trackserver.
+
 ## What about security?
 
 The plugin uses a custom Wordpress capability to manage who can use the
@@ -75,7 +97,7 @@ Tracks can only be published in Wordpress posts or pages, and cannot be
 downloaded from outside Wordpress. Requests for downloading tracks need to
 have a cryptographic signature that only Wordpress can generate.
 
-## What GPX namespaces are supported for GPX import (via HTTP POST)?
+## What GPX namespaces are supported for GPX import (via HTTP POST or upload via backend)?
 Only http://www.topografix.com/GPX/1/1 at the moment.
 
 ## Is it free?
