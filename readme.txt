@@ -30,9 +30,15 @@ and protocols are supported for getting tracks into trackserver:
 * [OsmAnd's][osmand] live tracking protocol
 * HTTP POST, for example using [AutoShare][autoshare]
 
-A shortcode is provided for displaying your tracks on a map. Maps are displayed
+A shortcode [tsmap] is provided for displaying your tracks on a map. Maps are displayed
 using the fantastic [Leaflet library][leafletjs] and some useful Leaflet plugins
 are included. Maps can be viewed in full-screen on modern browsers.
+
+To publish a map with a track in a post or a page, just include the shortcode:
+
+[tsmap track=&lt;id&gt;]
+
+See the FAQ section for more information on the shortcode's supported attributes.
 
 [trackme]: http://www.luisespinosa.com/trackme_eng.html
 [mapmytracks]: https://github.com/MapMyTracks/api
@@ -95,6 +101,19 @@ most people. Changing them is usually not necessary.
 Please refer to the [Wordpress Codex](http://codex.wordpress.org/Glossary#Slug) for more information
 about slugs in general.
 
+WARNING: please do not confuse the slugs that you configure in Trackserver
+with the URLs (permalinks) that you use to publish your maps and tracks. Above
+all, make sure there is no conflict between the permalink for a post or page
+and the URLs (slugs) that Trackserver uses for location updates. The slugs in
+Trackerver's configuration are for the location updates only. If you try to
+open them in a browser, you will get errors like 'Illegal request'. Trackserver
+operates on a low level within WordPress, so if there is a conflict between
+Trackserver and a post or a page, Trackserver will win and the page will be
+inaccessible.
+
+To publish your tracks, simply create a page (with a non-conflicting permalink)
+and use the [tsmap] shortcode to add a map.
+
 = What are the available shortcode attributes? =
 
 * track: track id or 'live'
@@ -122,6 +141,23 @@ view is always centered to the most recent trackpoint. A marker is shown in
 that location. Live tracking can be stopped and restarted with a simple control
 button that is shown on the map.
 
+= Can Trackserver support protocol X or device Y? =
+
+Trackserver, being a WordPress plugin, can only support HTTP-based protocols for
+tracking. Many tracking devices use TCP- but not HTTP-based protocols for online
+tracking, and as sucht, Trackserver cannot support them, at least not without
+some middleware that translates the device's protocol to HTTP.
+
+If a device or an app does use HTTP as a transport, adding support for it in
+Trackserver should be quite easy. For example, I have been thinking about support
+for the GpsGate Server Protocol. It could be added if there is any demand for it.
+
+If a device or an app uses a different transport, support could be added by
+implementing some sort of middleware. For example, [OwnTracks](http://owntracks.org/)
+uses MQTT and ships with a script ([m2s](https://github.com/owntracks/backend/tree/master/m2s))
+for storing the data. Storage methods in m2s are pluggable, so one could write an
+m2s-plugin for shipping the data to Trackserver.
+
 = What about security? =
 
 The plugin uses a custom Wordpress capability to manage who can use the
@@ -138,7 +174,7 @@ Tracks can only be published in Wordpress posts or pages, and cannot be
 downloaded from outside Wordpress. Requests for downloading tracks need to
 have a cryptographic signature that only Wordpress can generate.
 
-= What GPX namespaces are supported for GPX import (via HTTP POST)? =
+= What GPX namespaces are supported for GPX import (via HTTP POST or upload via backend)? =
 Only http://www.topografix.com/GPX/1/1 at the moment.
 
 = Is it free? =
