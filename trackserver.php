@@ -1477,7 +1477,7 @@ EOF;
 
 				// Check the points syntax. It should match groups of four items, each containing only
 				// numbers, some also dots and dashes
-				$pattern = '/^([\d.]+ [\d.]+ [\d.-]+ [\d]+ ?)*$/';
+				$pattern = '/^(-?[\d.]+ -?[\d.]+ -?[\d.]+ [\d]+ ?)*$/';
 				$n = preg_match( $pattern, $points );
 
 				if ( $n == 1 ) {
