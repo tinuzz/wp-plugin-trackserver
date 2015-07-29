@@ -189,6 +189,11 @@ for details.
 
 == Changelog ==
 
+= v1.8 =
+* Fix parsing of MapMyTracks points with negative coordinates. Thanks to
+	Michel Boulet for helping me find the problem.
+* Add some more documentation and FAQs
+
 = v1.7 =
 * Add a 'Delete' link in the track edit modal, so you don't have to use a
   bulk action to delete a single track.
