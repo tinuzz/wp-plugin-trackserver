@@ -1604,6 +1604,39 @@ EOF;
 			}
 
 			/**
+			 * Function to convert a human-readable size like '20M' to bytes
+			 *
+			 * @since 1.9
+			 */
+			function size_to_bytes( $val ) {
+				$last = strtolower( $val[ strlen( $val ) - 1 ] );
+				switch ( $last ) {
+					case 'g':
+						$val *= 1024;
+					case 'm':
+						$val *= 1024;
+					case 'k':
+						$val *= 1024;
+				}
+				return $val;
+			}
+
+			/**
+			 * Function to convert bytes to a human-readable size like '20MB'
+			 *
+			 * @since 1.9
+			 */
+			function bytes_to_human( $size ) {
+				if( ($size >= 1<<30))
+					return number_format($size/(1<<30),1)."GB";
+				if( ($size >= 1<<20))
+					return number_format($size/(1<<20),1)."MB";
+				if( ($size >= 1<<10))
+					return number_format($size/(1<<10),1)."KB";
+				return number_format($size)." bytes";
+			}
+
+			/**
 			 * Function to rearrange the $_FILES array. It handles multiple postvars
 			 * and it works with both single and multiple files in a single postvar.
 			 */
@@ -1677,7 +1710,13 @@ EOF;
 					unlink( $filename );
 				}
 				if ( $message == '' ) {
-					$message = "ERROR: No file found\n";
+					$max = $this -> size_to_bytes( ini_get( 'post_max_size' ) );
+					if ( isset( $_SERVER['CONTENT_LENGTH'] ) && $max > 0 && (int) $_SERVER['CONTENT_LENGTH'] > $max ) {
+						$message = "ERROR: File too large, maximum size is " . $this -> bytes_to_human( $max ) . "\n";
+					}
+					else {
+						$message = "ERROR: No file found\n";
+					}
 				}
 				return $message;
 			}
