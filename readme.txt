@@ -268,7 +268,7 @@ for details.
 == Upgrade Notice ==
 
 = 1.9 =
-Review your new Trackserver profile for user-specific settings!
+This release resets the OsmAnd access key! Review your new Trackserver profile for user-specific settings.
 
 = 1.0 =
 This will be the first stable release.
