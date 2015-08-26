@@ -1,8 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Trackserver\n"
-"POT-Creation-Date: 2015-06-10 00:27+0100\n"
-"PO-Revision-Date: 2015-06-10 00:27+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-08-26 15:36+0200\n"
+"PO-Revision-Date: 2015-08-26 15:58+0100\n"
 "Last-Translator: Martijn Grendelman <m@rtijn.net>\n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -20,11 +21,13 @@ msgstr ""
 msgid "Edit track properties"
 msgstr "Track-eigenschappen bewerken"
 
-#: ../tracks-list-table.php:22 ../tracks-list-table.php:57
+#: ../tracks-list-table.php:22
+#: ../tracks-list-table.php:57
 msgid "Edit"
 msgstr "Bewerk"
 
-#: ../tracks-list-table.php:26 ../tracks-list-table.php:56
+#: ../tracks-list-table.php:26
+#: ../tracks-list-table.php:56
 msgid "View"
 msgstr "Bekijk"
 
@@ -32,7 +35,8 @@ msgstr "Bekijk"
 msgid "ID"
 msgstr "ID"
 
-#: ../tracks-list-table.php:49 ../trackserver.php:1878
+#: ../tracks-list-table.php:49
+#: ../trackserver.php:1991
 msgid "Name"
 msgstr "Naam"
 
@@ -52,15 +56,18 @@ msgstr "Punten"
 msgid "Distance"
 msgstr "Afstand"
 
-#: ../tracks-list-table.php:54 ../trackserver.php:1882
+#: ../tracks-list-table.php:54
+#: ../trackserver.php:1995
 msgid "Source"
 msgstr "Bron"
 
-#: ../tracks-list-table.php:55 ../trackserver.php:1886
+#: ../tracks-list-table.php:55
+#: ../trackserver.php:1999
 msgid "Comment"
 msgstr "Opmerking"
 
-#: ../tracks-list-table.php:75 ../trackserver.php:1894
+#: ../tracks-list-table.php:75
+#: ../trackserver.php:2007
 msgid "Delete"
 msgstr "Verwijderen"
 
@@ -76,356 +83,378 @@ msgstr "Herberekenen"
 msgid "Upload tracks"
 msgstr "Tracks uploaden"
 
-#: ../trackserver.php:415 ../trackserver.php:1860 ../trackserver.php:1955
+#: ../trackserver.php:330
+msgid "Are you sure?"
+msgstr "Weet u het zeker?"
+
+#: ../trackserver.php:331
+msgid "deletion"
+msgstr "verwijderen"
+
+#: ../trackserver.php:332
+msgid "merging"
+msgstr "samenvoegen"
+
+#: ../trackserver.php:333
+msgid "recalculation"
+msgstr "herberekenen"
+
+#: ../trackserver.php:334
+msgid "track"
+msgstr "track"
+
+#: ../trackserver.php:335
+msgid "tracks"
+msgstr "tracks"
+
+#: ../trackserver.php:337
+#, php-format
+msgid "For %1$s, select %2$s %3$s at minimum"
+msgstr "Voor %1$s, selecteer minimaal %2$s %3$s"
+
+#: ../trackserver.php:476
+#: ../trackserver.php:1973
+#: ../trackserver.php:2068
+#: ../trackserver.php:2125
 msgid "You do not have sufficient permissions to access this page."
 msgstr "U heeft niet voldoende rechten om deze pagina te raadplegen."
 
-#: ../trackserver.php:419 ../trackserver.php:761 ../trackserver.php:764
+#: ../trackserver.php:480
+#: ../trackserver.php:823
+#: ../trackserver.php:827
 msgid "Trackserver Options"
 msgstr "Trackserver Instellingen"
 
-#: ../trackserver.php:423
+#: ../trackserver.php:484
 msgid "Settings updated"
 msgstr "Instellingen opgeslagen"
 
-#: ../trackserver.php:433
+#: ../trackserver.php:494
 msgid "Update options"
 msgstr "Opties bijwerken"
 
-#: ../trackserver.php:446
+#: ../trackserver.php:507
 msgid "Settings"
 msgstr "Instellingen"
 
-#: ../trackserver.php:453
+#: ../trackserver.php:514
 msgid "How to use TrackMe"
 msgstr "TrackMe gebruiken"
 
-#: ../trackserver.php:454
+#: ../trackserver.php:515
 msgid "Download TrackMe"
 msgstr "TrackMe downloaden"
 
-#: ../trackserver.php:455 ../trackserver.php:714
+#: ../trackserver.php:516
+#: ../trackserver.php:776
 msgid "TrackMe settings"
 msgstr "TrackMe instellingen"
 
-#: ../trackserver.php:472
+#: ../trackserver.php:533
 msgid "How to use OruxMaps MapMyTracks"
 msgstr "OruxMaps MapMyTracks gebruiken"
 
-#: ../trackserver.php:473
+#: ../trackserver.php:534
 msgid "Download OruxMaps"
 msgstr "OruxMaps downloaden"
 
-#: ../trackserver.php:474 ../trackserver.php:715
+#: ../trackserver.php:535
+#: ../trackserver.php:777
 msgid "OruxMaps MapMyTracks settings"
 msgstr "OruxMaps MapMyTracks instellingen"
 
-#: ../trackserver.php:494
+#: ../trackserver.php:555
 msgid "How to use AutoShare"
 msgstr "AutoShare gebruiken"
 
-#: ../trackserver.php:495
+#: ../trackserver.php:556
 msgid "Download AutoShare"
 msgstr "AutoShare downloaden"
 
-#: ../trackserver.php:496
+#: ../trackserver.php:557
 msgid "AutoShare settings"
 msgstr "AutoShare instellingen"
 
-#: ../trackserver.php:532
+#: ../trackserver.php:593
 msgid "Please check with your map tile provider what attribution is required."
 msgstr "Ga bij uw kaarten-provider na welke attributie eventueel vereist is."
 
-#: ../trackserver.php:547
-msgid ""
-"The URL slug for the 'gettrack' API, used by Trackserver's shortcode [tsmap]"
-msgstr ""
-"De URL slug voor de 'gettrack' API, die gebruikt wordt door Trackserver's "
-"[tsmap] shortcode"
+#: ../trackserver.php:608
+msgid "The URL slug for the 'gettrack' API, used by Trackserver's shortcode [tsmap]"
+msgstr "De URL slug voor de 'gettrack' API, die gebruikt wordt door Trackserver's [tsmap] shortcode"
 
-#: ../trackserver.php:548
+#: ../trackserver.php:609
 msgid "There is generally no need to change this."
 msgstr "Dit hoeft normaal gesproken niet aangepast te worden."
 
-#: ../trackserver.php:554 ../trackserver.php:594
+#: ../trackserver.php:615
+#: ../trackserver.php:655
 msgid "http://en.wikipedia.org/wiki/Server_Name_Indication"
 msgstr "http://en.wikipedia.org/wiki/Server_Name_Indication"
 
-#: ../trackserver.php:565
+#: ../trackserver.php:626
 msgid "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe"
-msgstr ""
-"De URL slug voor TrackMe, te gebruiken in de 'URL Header' instelling in "
-"TrackMe"
+msgstr "De URL slug voor TrackMe, te gebruiken in de 'URL Header' instelling in TrackMe"
 
-#: ../trackserver.php:566
+#: ../trackserver.php:627
 msgid "Full URL header"
 msgstr "Volledige URL header"
 
 # Please make sure to use placeholders %1$s, %2$s and %3$s in the translated text
-#: ../trackserver.php:567 ../trackserver.php:607
+#: ../trackserver.php:628
+#: ../trackserver.php:668
 #, php-format
-msgid ""
-"Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS "
-"connections. If your WordPress install is hosted on a HTTPS URL that depends "
-"on SNI, please use HTTP. This is a problem with %1$s that Trackserver cannot "
-"fix."
-msgstr ""
-"Opmerking over HTTPS: %1$s per v%2$s ondersteunt geen %3$s voor HTTPS-"
-"verbindingen. Als uw WordPress draait op een HTTPS URL die afhankelijk is "
-"van SNI, gebruik dan HTTP. Dit is een probleem met %1$s dat Trackserver niet "
-"kan oplossen."
+msgid "Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS connections. If your WordPress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a problem with %1$s that Trackserver cannot fix."
+msgstr "Opmerking over HTTPS: %1$s per v%2$s ondersteunt geen %3$s voor HTTPS-verbindingen. Als uw WordPress draait op een HTTPS URL die afhankelijk is van SNI, gebruik dan HTTP. Dit is een probleem met %1$s dat Trackserver niet kan oplossen."
 
-#: ../trackserver.php:583
+#: ../trackserver.php:644
 msgid "The Server extension in TrackMe's settings"
 msgstr "De 'Server extension' in de instellingen van TrackMe"
 
-#: ../trackserver.php:584
+#: ../trackserver.php:645
+#: ../trackserver.php:701
 msgid "WARNING"
 msgstr "WAARSCHUWING"
 
-#: ../trackserver.php:585
-msgid ""
-"the default value in TrackMe is 'php', but this will most likely NOT work, "
-"so better change it to something else. Anything will do, as long as the "
-"request is handled by Wordpress' index.php, so it's better to not use any "
-"known file type extension, like 'html' or 'jpg'. A single character like "
-"'z' (the default) should work just fine. Change the 'Server extension' "
-"setting in TrackMe to match the value you put here."
-msgstr ""
-"de standaard waarde in TrackMe is 'php', maar dat werkt hoogstwaarschijnlijk "
-"NIET, dus het is beter om dit te veranderen. Alles volstaat, zolang de "
-"resulterende URL wordt afgehandeld door WordPress' index.php. Het is dus "
-"beter om geen bestaande extensie zoals 'html' of 'jpg' te gebruiken. Een "
-"enkel karakter zoals 'z' (de standaard) zou goed moeten werken. Verander de "
-"instelling 'Server extension' in TrackMe, zodat die overeenkomt met de hier "
-"ingevulde waarde."
+#: ../trackserver.php:646
+msgid "the default value in TrackMe is 'php', but this will most likely NOT work, so better change it to something else. Anything will do, as long as the request is handled by Wordpress' index.php, so it's better to not use any known file type extension, like 'html' or 'jpg'. A single character like 'z' (the default) should work just fine. Change the 'Server extension' setting in TrackMe to match the value you put here."
+msgstr "de standaard waarde in TrackMe is 'php', maar dat werkt hoogstwaarschijnlijk NIET, dus het is beter om dit te veranderen. Alles volstaat, zolang de resulterende URL wordt afgehandeld door WordPress' index.php. Het is dus beter om geen bestaande extensie zoals 'html' of 'jpg' te gebruiken. Een enkel karakter zoals 'z' (de standaard) zou goed moeten werken. Verander de instelling 'Server extension' in TrackMe, zodat die overeenkomt met de hier ingevulde waarde."
 
-#: ../trackserver.php:605
+#: ../trackserver.php:666
 msgid "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps"
-msgstr ""
-"De URL slug voor MapMyTracks, te gebruiken in de 'Custom Url' instelling in "
-"OruxMaps"
+msgstr "De URL slug voor MapMyTracks, te gebruiken in de 'Custom Url' instelling in OruxMaps"
 
-#: ../trackserver.php:606
+#: ../trackserver.php:667
 msgid "Full custom URL"
 msgstr "Volledige custom URL"
 
-#: ../trackserver.php:623
+#: ../trackserver.php:684
 msgid "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd"
-msgstr ""
-"De URL slug voor OsmAnd, te gebruiken in de 'Online tracking' instellingen "
-"in OsmAnd"
+msgstr "De URL slug voor OsmAnd, te gebruiken in de 'Online tracking' instellingen in OsmAnd"
 
-#: ../trackserver.php:641
-msgid ""
-"An access key for online tracking. We do not use WordPress password here for "
-"security reasons. The key should be added, together with your WordPress "
-"username, as a URL parameter to the online tracking URL set in OsmAnd, as "
-"displayed below. Change this regularly."
-msgstr ""
-"Een toegangscode voor online tracking. Het WordPress wachtwoord wordt niet "
-"gebruikt om veiligheidsredenen. De code moet, samen met uw WordPress "
-"gebruikersnaam, als een parameter aan de URL worden toegevoegd, die zoals "
-"hieronder afgebeeld, in OsmAnd wordt ingesteld voor online tracking. "
-"Verander de code regelmatig."
+#: ../trackserver.php:696
+msgid "your Trackserver profile"
+msgstr "uw Trackserver profiel"
 
-#: ../trackserver.php:644 ../trackserver.php:682
-msgid "Full URL"
-msgstr "Volledige URL"
+#: ../trackserver.php:698
+#, php-format
+msgid "Trackserver needs an access key for online tracking with OsmAnd. We do not use WordPress password here for security reasons. Since version 1.9 of Trackserver, the access key is unique to your user account and it can be configured in %1$s."
+msgstr "Trackserver vereist een toegangscode voor online tracking met OsmAnd . Het WordPress wachtwoord wordt niet gebruikt om veiligheidsredenen. Sinds versie 1.9 van Trackserver is de toegangscode gekopppeld aan uw gebruikersaccount en kan hij worden ingesteld in %1$s."
 
-#: ../trackserver.php:649
+#: ../trackserver.php:702
+#, php-format
+msgid "if you just upgraded to version 1.9 or higher, the OsmAnd access key has been reset to a new random value. Your old key is no longer valid. If you use Trackserver with OsmAnd, please make sure the key matches your settings in OsmAnd. Your current access key is: %1$s. Change it regularly. You can find the full tracking URL in your Trackserver profile."
+msgstr "als u zojuist hebt geupgraded naar versie 1.9 of hoger, dan is de OsmAnd toegangscode opnieuw ingesteld met een willekeurige waarde. De oude code is niet meer geldig. Als u Trackserver met OsmAnd gebruikt, zorg dan dat de code overeenkomt met de instellingen in OsmAnd. Uw huidige toegangscode is: %1$s. Verander deze regelmatig. U kunt de volledige tracking URL vinden in uw Trackserver profiel."
+
+#: ../trackserver.php:711
 msgid "http://php.net/manual/en/function.strftime.php"
 msgstr "http://php.net/manual/en/function.strftime.php"
 
-#: ../trackserver.php:659
+#: ../trackserver.php:721
 #, php-format
-msgid ""
-"Generated track name in %1$s format. OsmAnd online tracking does not support "
-"the concept of 'tracks', there are only locations.  Trackserver needs to "
-"group these in tracks and automatically generates new tracks based on the "
-"location's timestamp. The format to use (and thus, how often to start a new "
-"track) can be specified here.  If you specify a constant string, without any "
-"strftime() format placeholders, one and the same track will be used forever "
-"and all locations."
-msgstr ""
-"Gegenereerde tracknaam in %1$s formaat. OsmAnd online tracking kent geen "
-"'tracks', er zijn alleen locaties. Trackserver kan deze groeperen in tracks "
-"en automatisch nieuwe tracks genereren op basis van het tijdstip van een "
-"locatie-update. Het te gebruiken formaat (en derhalve hoe vaak een nieuwe "
-"track gestart moet worden) kan hier worden opgegeven. Als een constante "
-"string zonder strftime() placeholders wordt opgegeven, dan wordt voor altijd "
-"en alle locatie-updates dezelfde track gebruikt."
+msgid "Generated track name in %1$s format. OsmAnd online tracking does not support the concept of 'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) can be specified here.  If you specify a constant string, without any strftime() format placeholders, one and the same track will be used forever and all locations."
+msgstr "Gegenereerde tracknaam in %1$s formaat. OsmAnd online tracking kent geen 'tracks', er zijn alleen locaties. Trackserver kan deze groeperen in tracks en automatisch nieuwe tracks genereren op basis van het tijdstip van een locatie-update. Het te gebruiken formaat (en derhalve hoe vaak een nieuwe track gestart moet worden) kan hier worden opgegeven. Als een constante string zonder strftime() placeholders wordt opgegeven, dan wordt voor altijd en alle locatie-updates dezelfde track gebruikt."
 
-#: ../trackserver.php:664
+#: ../trackserver.php:726
 msgid "year"
 msgstr "jaar"
 
-#: ../trackserver.php:665
+#: ../trackserver.php:727
 msgid "month"
 msgstr "maand"
 
-#: ../trackserver.php:666
+#: ../trackserver.php:728
 msgid "day"
 msgstr "dag"
 
-#: ../trackserver.php:667
+#: ../trackserver.php:729
 msgid "hour"
 msgstr "uur"
 
-#: ../trackserver.php:681
+#: ../trackserver.php:743
 msgid "The URL slug for upload via HTTP POST"
 msgstr "De URL slug voor uploaden via HTTP POST"
 
-#: ../trackserver.php:716
+#: ../trackserver.php:744
+#: ../trackserver.php:2119
+msgid "Full URL"
+msgstr "Volledige URL"
+
+#: ../trackserver.php:778
 msgid "OsmAnd online tracking settings"
 msgstr "OsmAnd online tracking instellingen"
 
-#: ../trackserver.php:717
+#: ../trackserver.php:779
 msgid "HTTP upload settings"
 msgstr "HTTP upload instellingen"
 
-#: ../trackserver.php:718
+#: ../trackserver.php:780
 msgid "Shortcode / map settings"
 msgstr "Shortcode / kaartinstellingen"
 
-#: ../trackserver.php:719
+#: ../trackserver.php:781
 msgid "Advanced settings"
 msgstr "Geavanceerde instellingen"
 
-#: ../trackserver.php:722
+#: ../trackserver.php:784
 msgid "TrackMe URL slug"
 msgstr "TrackMe URL slug"
 
-#: ../trackserver.php:724
+#: ../trackserver.php:786
 msgid "TrackMe server extension"
 msgstr "TrackMe server extensie"
 
-#: ../trackserver.php:728
+#: ../trackserver.php:790
 msgid "MapMyTracks URL slug"
 msgstr "MapMyTracks URL slug"
 
-#: ../trackserver.php:732
+#: ../trackserver.php:794
 msgid "OsmAnd URL slug"
 msgstr "OsmAnd URL slug"
 
-#: ../trackserver.php:734
+#: ../trackserver.php:796
+#: ../trackserver.php:2082
 msgid "OsmAnd access key"
 msgstr "OsmAnd toegangscode"
 
-#: ../trackserver.php:736
+#: ../trackserver.php:798
 msgid "OsmAnd trackname format"
 msgstr "OsmAnd tracknaam formaat"
 
-#: ../trackserver.php:740
+#: ../trackserver.php:802
 msgid "HTTP POST URL slug"
 msgstr "HTTP POST URL slug"
 
-#: ../trackserver.php:744
+#: ../trackserver.php:806
 msgid "OSM/Google tile server URL"
 msgstr "OSM/Google tile server URL"
 
-#: ../trackserver.php:746
+#: ../trackserver.php:808
 msgid "Tile attribution"
 msgstr "Tile attributie"
 
-#: ../trackserver.php:750
+#: ../trackserver.php:812
 msgid "Gettrack URL slug"
 msgstr "Gettrack URL slug"
 
-#: ../trackserver.php:761
+#: ../trackserver.php:823
 msgid "Trackserver"
 msgstr "Trackserver"
 
-#: ../trackserver.php:764
+#: ../trackserver.php:828
 msgid "Options"
 msgstr "Instellingen"
 
-#: ../trackserver.php:766 ../trackserver.php:1944
+#: ../trackserver.php:831
+#: ../trackserver.php:832
+#: ../trackserver.php:2057
 msgid "Manage tracks"
 msgstr "Tracks beheren"
 
-#: ../trackserver.php:1638
+#: ../trackserver.php:835
+#: ../trackserver.php:836
+msgid "Your profile"
+msgstr "Uw profiel"
+
+#: ../trackserver.php:1742
 #, php-format
 msgid "File '%1$s': imported %2$s points from %3$s track(s) in %4$s seconds."
-msgstr ""
-"File '%1$s': %2$s punten uit %3$s track(s) geimporteerd in %4$s seconden."
+msgstr "File '%1$s': %2$s punten uit %3$s track(s) geimporteerd in %4$s seconden."
 
-#: ../trackserver.php:1647
+#: ../trackserver.php:1751
 #, php-format
 msgid "ERROR: File '%1$s' could not be validated as GPX 1.1"
 msgstr "ERROR: File '%1$s' kon niet als GPX 1.1 gevalideerd worden"
 
-#: ../trackserver.php:1652
+#: ../trackserver.php:1756
 #, php-format
 msgid "ERROR: Upload '%1$s' failed"
 msgstr "ERROR: Upload '%1$s' mislukt"
 
-#: ../trackserver.php:1656
+#: ../trackserver.php:1760
 #, php-format
 msgid "ERROR: Only .gpx files accepted; discarding '%1$s'"
 msgstr "ERROR: Alleen .gpx bestanden toegestaan; '%1$s' wordt verwijderd"
 
-#: ../trackserver.php:1891 ../trackserver.php:1917
+#: ../trackserver.php:2004
+#: ../trackserver.php:2030
 msgid "Save"
 msgstr "Opslaan"
 
-#: ../trackserver.php:1892 ../trackserver.php:1918
+#: ../trackserver.php:2005
+#: ../trackserver.php:2031
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: ../trackserver.php:1905
-msgid ""
-"Merge all points of multiple tracks into one track. Please specify the name "
-"for the merged track."
-msgstr ""
-"Voeg alle punten van meerdere tracks samen in een enkele track. Geef de naam "
-"op voor de samengevoegde track."
+#: ../trackserver.php:2018
+msgid "Merge all points of multiple tracks into one track. Please specify the name for the merged track."
+msgstr "Voeg alle punten van meerdere tracks samen in een enkele track. Geef de naam op voor de samengevoegde track."
 
-#: ../trackserver.php:1910
+#: ../trackserver.php:2023
 msgid "Merged track name"
 msgstr "Naam van samengevoegde track"
 
-#: ../trackserver.php:1915
+#: ../trackserver.php:2028
 msgid "Warning: this action cannot be undone!"
 msgstr "Waarschuwing: deze bewerking kan niet ongedaan worden gemaakt!"
 
-#: ../trackserver.php:1929
+#: ../trackserver.php:2042
 msgid "Select files"
 msgstr "Bestanden selecteren"
 
-#: ../trackserver.php:1931
+#: ../trackserver.php:2044
 msgid "Upload"
 msgstr "Uploaden"
 
-#: ../trackserver.php:1935
+#: ../trackserver.php:2048
 msgid "Selected files"
 msgstr "Geselecteerde bestanden"
 
-#: ../trackserver.php:2090
+#: ../trackserver.php:2073
+msgid "Trackserver profile"
+msgstr "Trackserver profiel"
+
+#: ../trackserver.php:2092
+msgid "Update profile"
+msgstr "Profiel bijwerken"
+
+#: ../trackserver.php:2116
+msgid "An access key for online tracking. We do not use WordPress password here for security reasons. The key should be added, together with your WordPress username, as a URL parameter to the online tracking URL set in OsmAnd, as displayed below. Change this regularly."
+msgstr "Een toegangscode voor online tracking. Het WordPress wachtwoord wordt niet gebruikt om veiligheidsredenen. De code moet, samen met uw WordPress gebruikersnaam, als een parameter aan de URL worden toegevoegd, die zoals hieronder afgebeeld, in OsmAnd wordt ingesteld voor online tracking. Verander de code regelmatig."
+
+#: ../trackserver.php:2235
+msgid "Profile updated"
+msgstr "Profeil bijgewerkt"
+
+#: ../trackserver.php:2238
+msgid "ERROR: could not update user profile"
+msgstr "FOUT: gebruikersprofiel kon niet worden bijgewerkt"
+
+#: ../trackserver.php:2306
 #, php-format
 msgid "Deleted %1$d location(s) in %2$d track(s)."
 msgstr "%1$d locatie(s) in %2$d track(s) verwijderd."
 
-#: ../trackserver.php:2094
+#: ../trackserver.php:2310
 msgid "No tracks deleted"
 msgstr "Geen tracks verwijderd"
 
-#: ../trackserver.php:2117
+#: ../trackserver.php:2333
 #, php-format
 msgid "Merged %1$d location(s) from %2$d track(s) into '%3$s'."
 msgstr "%1$d locatie(s) in %2$d track(s) samengevoegd in '%3$s'."
 
-#: ../trackserver.php:2121
+#: ../trackserver.php:2337
 #, php-format
 msgid "Need >= 2 tracks to merge, got only %1$d"
 msgstr ">= 2 tracks nodig om samen te voegen, kreeg er slechts %1$d"
 
-#: ../trackserver.php:2137
+#: ../trackserver.php:2353
 #, php-format
 msgid "Recalculated track stats for %1$d track(s) in %2$d seconds"
 msgstr "Track stats voor %1$d track(s) herberekend in %2$d seconden"
 
-#: ../trackserver.php:2141
+#: ../trackserver.php:2357
 msgid "No tracks found to recalculate"
 msgstr "Geen tracks gevonden voor herberekenen"
 

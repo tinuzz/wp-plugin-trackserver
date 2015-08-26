@@ -70,6 +70,8 @@ License: GPL2
 				'attribution' => 'Tiles by <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
 			);
 
+			var $user_meta_defaults = array();
+
 			/**
 			 * Class constructor.
 			 *
@@ -81,7 +83,7 @@ License: GPL2
 				$this -> tbl_locations = $wpdb->prefix . "ts_locations";
 				$this -> options = get_option( 'trackserver_options' );
 				$this -> option_defaults['db_version'] = $this -> db_version;
-				$this -> option_defaults['osmand_key'] = substr( uniqid(), 0, 8 );
+				$this -> user_meta_defaults['ts_osmand_key'] = substr( uniqid(), 0, 8 );
 				$this -> shortcode = 'tsmap';
 				$this -> mapdata = array();
 				$this -> tracks_list_table = false;
@@ -97,7 +99,8 @@ License: GPL2
 			}
 
 			/**
-			 * Fill in missing default options.
+			 * Fill in missing default options. Also remove deprecated options.
+			 * WARNING: this function will run on every request, so keep it lean.
 			 *
 			 * @since 1.1
 			 */
@@ -105,6 +108,28 @@ License: GPL2
 				foreach ( $this -> option_defaults as $option => $value ) {
 					if ( ! array_key_exists( $option, $this -> options ) ) {
 						$this -> update_option( $option, $value );
+					}
+				}
+
+				// Remove options that are no longer in use.
+				$this -> delete_option( 'osmand_key' );
+
+			}
+
+			/**
+			 * Add missing default user meta values
+			 * WARNING: this function will run on every request, so keep it lean.
+			 *
+			 * @since 1.9
+			 */
+			function init_user_meta() {
+				// Set default profile values for the currently logged-in user
+				if ( current_user_can( 'use_trackserver' ) ) {
+					$user_id = get_current_user_id();
+					foreach ($this -> user_meta_defaults as $key => $value ) {
+						if ( get_user_meta( $user_id, $key, true ) == '' ) {
+							update_user_meta( $user_id, $key, $value );
+						}
 					}
 				}
 			}
@@ -174,6 +199,8 @@ License: GPL2
 					$this -> url_prefix = '/' . $wp_rewrite -> index;
 				}
 				load_plugin_textdomain( 'trackserver', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
+
+				$this -> init_user_meta();
 			}
 
 			/**
@@ -211,6 +238,22 @@ EOF;
 			function update_option( $option, $value ) {
 				$this -> options[ $option ] = $value;
 				update_option( 'trackserver_options', $this -> options );
+			}
+
+			/**
+			 * Remove an option
+			 *
+			 * Remove a key from the options array and write the array to the database.
+			 *
+			 * @since 1.9
+			 *
+			 * @param string $option Option name
+			 */
+			function delete_option( $option ) {
+				if ( array_key_exists( $option, $this -> options ) ) {
+					unset( $this -> options[ $option ] );
+					update_option( 'trackserver_options', $this -> options );
+				}
 			}
 
 			/**
@@ -641,25 +684,26 @@ EOF;
 					esc_html__( "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd", 'trackserver' ) );
 			}
 
-			function osmand_key_html() {
-				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
-				$key = htmlspecialchars( $this -> options['osmand_key'] );
-				$slug = htmlspecialchars( $this -> options['osmand_slug'] );
-				$current_user = wp_get_current_user();
-				$username = $current_user->user_login;
-				$suffix = htmlspecialchars( "/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=$username&key=$key" );
+			function osmand_key_deprecation_html() {
+				$user_id = get_current_user_id();
+				$osmand_key = '<code>' . htmlspecialchars( get_user_meta( $user_id, 'ts_osmand_key', true ) ) . '</code>';
 
 				$format = <<<EOF
-					%1\$s<br />
-					<input type="text" size="25" name="trackserver_options[osmand_key]" id="trackserver_osmand_key" value="$key" autocomplete="off" /><br /><br />
-					<strong>%2\$s:</strong> $url/$slug$suffix<br />
+					%1\$s<br /><br />
+					<b>%2\$s</b>: %3\$s
 EOF;
-
+				$link = '<a href="admin.php?page=trackserver-yourprofile">' .
+				 	esc_html__( 'your Trackserver profile', 'trackserver' ) . '</a>';
 				printf( $format,
-					esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
-					'The key should be added, together with your WordPress username, as a URL parameter to the online tracking ' .
-					'URL set in OsmAnd, as displayed below. Change this regularly.', 'trackserver' ),
-					esc_html__( "Full URL", 'trackserver' ) );
+					sprintf( esc_html__( 'Trackserver needs an access key for online tracking with OsmAnd. We do not use WordPress ' .
+					'password here for security reasons. Since version 1.9 of Trackserver, the access key is unique to your ' .
+					'user account and it can be configured in %1$s.', 'trackserver' ), $link ),
+					esc_html__( 'WARNING', 'trackserver' ),
+					sprintf( esc_html__( 'if you just upgraded to version 1.9 or higher, the OsmAnd access key has been ' .
+					'reset to a new random value. Your old key is no longer valid. If you use Trackserver with OsmAnd, please ' .
+					'make sure the key matches your settings in OsmAnd. Your current access key is: %1$s. Change it regularly. ' .
+					'You can find the full tracking URL in your Trackserver profile.', 'trackserver' ), $osmand_key )
+				 	);
 			}
 
 			function osmand_trackname_format_html() {
@@ -750,7 +794,7 @@ EOF;
 				add_settings_field( 'trackserver_osmand_slug', esc_html__( 'OsmAnd URL slug', 'trackserver' ),
 						array( &$this, 'osmand_slug_html' ), 'trackserver', 'trackserver-osmand' );
 				add_settings_field( 'trackserver_osmand_key', esc_html__( 'OsmAnd access key', 'trackserver' ),
-						array( &$this, 'osmand_key_html' ), 'trackserver', 'trackserver-osmand' );
+						array( &$this, 'osmand_key_deprecation_html' ), 'trackserver', 'trackserver-osmand' );
 				add_settings_field( 'trackserver_osmand_trackname_format', esc_html__( 'OsmAnd trackname format', 'trackserver' ),
 						array( &$this, 'osmand_trackname_format_html' ), 'trackserver', 'trackserver-osmand' );
 
@@ -770,26 +814,33 @@ EOF;
 			}
 
 			function admin_menu() {
-				$page = add_options_page( 'Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-admin-menu', array( &$this, 'options_page_html' ) );
+- 				$page = add_options_page( 'Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-admin-menu', array( &$this, 'options_page_html' ) );
 				$page = str_replace( 'admin_page_', '', $page );
 				$this -> options_page = str_replace( 'settings_page_', '', $page );
 				$this -> options_page_url = menu_page_url( $this -> options_page, false );
 
 				// A dedicated menu in the main tree
-				add_menu_page( esc_html__( 'Trackserver Options', 'trackserver' ), esc_html__( 'Trackserver', 'trackserver' ), 'manage_options',
-					'trackserver-options', array( &$this, 'options_page_html' ), TRACKSERVER_PLUGIN_URL . 'img/trackserver.png' );
+				add_menu_page( esc_html__( 'Trackserver Options', 'trackserver' ), esc_html__( 'Trackserver', 'trackserver' ),
+					'manage_options', 'trackserver-options', array( &$this, 'options_page_html' ),
+					TRACKSERVER_PLUGIN_URL . 'img/trackserver.png' );
 
-				add_submenu_page( 'trackserver-options', esc_html__( 'Trackserver Options', 'trackserver' ), esc_html__( 'Options', 'trackserver' ),
-					'manage_options', 'trackserver-options', array( &$this, 'options_page_html' ) );
-				$page2 = add_submenu_page( 'trackserver-options', esc_html__( 'Manage tracks', 'trackserver' ), __( 'Manage tracks', 'trackserver' ),
-					 'use_trackserver', 'trackserver-tracks', array( &$this, 'manage_tracks_html' ) );
-				/*
-				add_submenu_page( 'trackserver-options', 'Trackserver profiles', 'Map profiles', 'manage_options', 'trackserver-profiles',
-					array( &$this, 'profiles_html' ) );
-				*/
+				add_submenu_page( 'trackserver-options', esc_html__( 'Trackserver Options', 'trackserver' ),
+					esc_html__( 'Options', 'trackserver' ), 'manage_options', 'trackserver-options',
+					array( &$this, 'options_page_html' ) );
+
+				$page2 = add_submenu_page( 'trackserver-options', esc_html__( 'Manage tracks', 'trackserver' ),
+					esc_html__( 'Manage tracks', 'trackserver' ), 'use_trackserver', 'trackserver-tracks',
+					array( &$this, 'manage_tracks_html' ) );
+
+				$page3 = add_submenu_page( 'trackserver-options', esc_html__( 'Your profile', 'trackserver' ),
+					esc_html__( 'Your profile', 'trackserver' ), 'use_trackserver', 'trackserver-yourprofile',
+					array( &$this, 'yourprofile_html' ) );
 
 				// Early action to set up the 'Manage tracks' page and handle bulk actions.
 				add_action( 'load-' . $page2, array( &$this, 'load_manage_tracks' ) );
+
+				// Early action to set up the 'Your profile' page and handle POST
+				add_action( 'load-' . $page3, array( &$this, 'load_your_profile' ) );
 			}
 
 			function detect_shortcode() {
@@ -1260,10 +1311,6 @@ EOF;
 				$username = urldecode( $_GET['username'] );
 				$key = urldecode( $_GET['key'] );
 
-				if ( $key != $this -> options['osmand_key'] ) {
-					$this -> osmand_terminate();
-				}
-
 				if ( $username == '') {
 					$this -> osmand_terminate();
 				}
@@ -1271,6 +1318,11 @@ EOF;
 				$user = get_user_by( 'login', $username );
 				if ( $user ) {
 					$user_id = intval( $user -> data -> ID );
+					$user_key = get_user_meta( $user_id, 'ts_osmand_key', true );
+
+					if ( $key != $user_key ) {
+						$this -> osmand_terminate();
+					}
 
 					if ( user_can( $user_id, 'use_trackserver' ) ) {
 						return $user_id;
@@ -2010,6 +2062,63 @@ EOF;
 				<?php
 			}
 
+			function yourprofile_html() {
+
+				if ( ! current_user_can( 'use_trackserver' ) ) {
+					wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
+				}
+
+				?>
+				<div class="wrap">
+					<h2><?php esc_html_e( 'Trackserver profile', 'trackserver' ) ?></h2>
+					<?php $this -> notice_bulk_action_result() ?>
+					<form id="trackserver-profile" method="post">
+						<?php wp_nonce_field( 'your-profile' ); ?>
+						<table class="form-table">
+							<tbody>
+								<tr>
+									<th scope="row">
+										<label for="osmand_access_key">
+											<?php esc_html_e( 'OsmAnd access key', 'trackserver' ) ?>
+										</label>
+									</th>
+									<td>
+										<?php $this -> osmand_key_html(); ?>
+									</td>
+								</tr>
+							<tbody>
+						</table>
+						<p class="submit">
+							<input type="submit" value="<?php esc_html_e( 'Update profile', 'trackserver' ); ?>"
+								class="button button-primary" id="submit" name="submit">
+						</p>
+					</form>
+				</div>
+				<?php
+
+			}
+
+			function osmand_key_html() {
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
+				$current_user = wp_get_current_user();
+				$key = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_osmand_key', true ) );
+				$slug = htmlspecialchars( $this -> options['osmand_slug'] );
+				$username = $current_user->user_login;
+				$suffix = htmlspecialchars( "/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=$username&key=$key" );
+
+				$format = <<<EOF
+					%1\$s<br />
+					<input type="text" size="25" name="ts_user_meta[ts_osmand_key]" id="trackserver_osmand_key" value="$key" autocomplete="off" /><br /><br />
+					<strong>%2\$s:</strong> $url/$slug$suffix<br />
+EOF;
+
+				printf( $format,
+					esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
+					'The key should be added, together with your WordPress username, as a URL parameter to the online tracking ' .
+					'URL set in OsmAnd, as displayed below. Change this regularly.', 'trackserver' ),
+					esc_html__( "Full URL", 'trackserver' ) );
+			}
+
 			function profiles_html() {
 
 				if ( ! current_user_can( 'manage_options' ) ) {
@@ -2074,7 +2183,7 @@ EOF;
 				if ( $action = $this -> tracks_list_table -> get_current_action() ) {
 					$this -> process_bulk_action( $action );
 				}
-				// Set it up bulk action result notice
+				// Set up bulk action result notice
 				$this -> setup_bulk_action_result_msg();
 			}
 
@@ -2086,6 +2195,52 @@ EOF;
 					$this -> bulk_action_result_msg = stripslashes( $_COOKIE['ts_bulk_result'] );
 					setcookie( 'ts_bulk_result', '', time() - 3600 );
 				}
+			}
+
+			/**
+			 * Handler for the load-$hook for the 'Trackserver profile' page.
+			 * It handles a POST (profile update) and sets up a result message.
+			 *
+			 * @since 1.9
+			 */
+			function load_your_profile() {
+				// Handle POST from 'Trackserver profile' page
+				// $_POST['ts_user_meta'] holds all the values
+				if ( isset( $_POST['ts_user_meta'] ) ) {
+					check_admin_referer( 'your-profile' );
+					$this -> process_profile_update();
+				}
+
+				// Set up bulk action result notice
+				$this -> setup_bulk_action_result_msg();
+			}
+
+			/**
+			 * Function to handle a profile update for the current user
+			 *
+			 * @since 1.9
+			 */
+			function process_profile_update() {
+				$user_id = get_current_user_id();
+				$data = $_POST['ts_user_meta'];
+				$valid_fields = array( 'ts_osmand_key' );
+
+				// If the data is not an array, do nothing
+				if ( is_array( $data ) ) {
+					foreach ( $data as $meta_key => $meta_value) {
+						if ( in_array( $meta_key, $valid_fields ) ) {
+							update_user_meta( $user_id, $meta_key, $meta_value );
+						}
+					}
+					$message = __( 'Profile updated', 'trackserver' );
+				}
+				else {
+					$message = __( 'ERROR: could not update user profile', 'trackserver' );
+				}
+
+				setcookie( 'ts_bulk_result', $message, time() + 300 );
+				wp_redirect( $_REQUEST['_wp_http_referer'] );
+				exit;
 			}
 
 			/**
