@@ -83,6 +83,7 @@ License: GPL2
 				$this -> tbl_locations = $wpdb->prefix . "ts_locations";
 				$this -> options = get_option( 'trackserver_options' );
 				$this -> option_defaults['db_version'] = $this -> db_version;
+				$this -> user_meta_defaults['ts_trackme_key'] = substr( uniqid(), 0, 8 );
 				$this -> user_meta_defaults['ts_osmand_key'] = substr( uniqid(), 0, 8 );
 				$this -> shortcode = 'tsmap';
 				$this -> mapdata = array();
@@ -649,6 +650,27 @@ EOF;
 					'trackserver' ) );
 			}
 
+			function trackme_accesskey_html() {
+				$format = <<<EOF
+					%1\$s<br /><br />
+					<b>%2\$s</b>: %3\$s
+EOF;
+				$link = '<a href="admin.php?page=trackserver-yourprofile">' .
+					esc_html__( 'your Trackserver profile', 'trackserver' ) . '</a>';
+				$user_id = get_current_user_id();
+				$trackme_key = '<code>' . htmlspecialchars( get_user_meta( $user_id, 'ts_trackme_key', true ) ) . '</code>';
+
+				printf( $format,
+					sprintf( esc_html__( 'Since version 1.9, Trackserver needs an access key for online tracking with TrackMe. We do not use WordPress ' .
+					'password here anymore for security reasons. The access key is unique to your ' .
+					'user account and it can be configured in %1$s. Your current access key is: %2$s. This is what you enter in the Password field '.
+					'in TrackMe\'s settings!!', 'trackserver' ), $link, $trackme_key ),
+					esc_html__( 'WARNING', 'trackserver' ),
+					esc_html__( 'if you just upgraded to version 1.9 or higher and you have been using Trackserver with TrackMe, '.
+					'you should update the password in TrackMe to match the access key in your profile. Trackserver does not check your '.
+					'WordPress password anymore, because the way TrackMe uses your password is not sufficiently secure.', 'trackserver' ) );
+			}
+
 			function mapmytracks_tag_html() {
 				$val = htmlspecialchars( $this -> options['mapmytracks_tag'] );
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
@@ -785,6 +807,8 @@ EOF;
 						array( &$this, 'trackme_slug_html' ), 'trackserver', 'trackserver-trackme' );
 				add_settings_field( 'trackserver_trackme_extension', esc_html__( 'TrackMe server extension', 'trackserver' ),
 						array( &$this, 'trackme_extension_html' ), 'trackserver', 'trackserver-trackme' );
+				add_settings_field( 'trackserver_trackme_accesskey', esc_html__( 'TrackMe access key', 'trackserver' ),
+						array( &$this, 'trackme_accesskey_html' ), 'trackserver', 'trackserver-trackme' );
 
 				// Settings for section 'trackserver-mapmytracks'
 				add_settings_field( 'trackserver_mapmytracks_tag', esc_html__( 'MapMyTracks URL slug', 'trackserver' ),
@@ -1029,10 +1053,10 @@ EOF;
 					$user = get_user_by( 'login', $username );
 
 					if ( $user ) {
-						$hash = $user -> data -> user_pass;
 						$user_id = intval( $user -> data -> ID );
+						$key = get_user_meta( $user_id, 'ts_trackme_key', true );
 
-						if ( wp_check_password( $password, $hash, $user_id ) && user_can( $user_id, 'use_trackserver' ) ) {
+						if ($password == $key && user_can( $user_id, 'use_trackserver' ) ) {
 							return $user_id;
 						}
 						else {
@@ -2078,6 +2102,16 @@ EOF;
 							<tbody>
 								<tr>
 									<th scope="row">
+										<label for="trackme_access_key">
+											<?php esc_html_e( 'TrackMe access key', 'trackserver' ) ?>
+										</label>
+									</th>
+									<td>
+										<?php $this -> trackme_key_html(); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
 										<label for="osmand_access_key">
 											<?php esc_html_e( 'OsmAnd access key', 'trackserver' ) ?>
 										</label>
@@ -2117,6 +2151,28 @@ EOF;
 					'The key should be added, together with your WordPress username, as a URL parameter to the online tracking ' .
 					'URL set in OsmAnd, as displayed below. Change this regularly.', 'trackserver' ),
 					esc_html__( "Full URL", 'trackserver' ) );
+			}
+
+			function trackme_key_html() {
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
+				$current_user = wp_get_current_user();
+				$key = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_trackme_key', true ) );
+				$slug = htmlspecialchars( $this -> options['trackme_slug'] );
+				$extn = htmlspecialchars( $this -> options['trackme_extension'] );
+				$username = $current_user->user_login;
+
+				$format = <<<EOF
+					%1\$s<br />
+					<input type="text" size="25" name="ts_user_meta[ts_trackme_key]" id="trackserver_trackme_key" value="$key" autocomplete="off" /><br /><br />
+					<strong>%2\$s:</strong> $url/$slug<br />
+					<strong>%3\$s:</strong> $extn<br />
+EOF;
+
+				printf( $format,
+					esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
+					'Change this regularly.', 'trackserver' ),
+					esc_html__( "URL header", 'trackserver' ),
+					esc_html__( "Server extension", 'trackserver' ) );
 			}
 
 			function profiles_html() {
@@ -2223,7 +2279,7 @@ EOF;
 			function process_profile_update() {
 				$user_id = get_current_user_id();
 				$data = $_POST['ts_user_meta'];
-				$valid_fields = array( 'ts_osmand_key' );
+				$valid_fields = array( 'ts_osmand_key', 'ts_trackme_key' );
 
 				// If the data is not an array, do nothing
 				if ( is_array( $data ) ) {
