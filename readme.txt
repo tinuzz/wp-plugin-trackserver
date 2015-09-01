@@ -193,6 +193,8 @@ for details.
 * Better error handling and meaningful feedback when uploading a file
   that is too large.
 * Fix viewing tracks in admin in recent versions of WordPress
+* Add Trackserver user profile for per-user options like access codes
+* Move the OsmAnd access key to the user profile
 
 = v1.8 =
 * Fix parsing of MapMyTracks points with negative coordinates. Thanks to
