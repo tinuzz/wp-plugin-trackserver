@@ -189,19 +189,23 @@ for details.
 
 == Changelog ==
 
+= UNRELEASED =
+* Better error handling and meaningful feedback when uploading a file
+  that is too large.
+
 = v1.8 =
 * Fix parsing of MapMyTracks points with negative coordinates. Thanks to
 	Michel Boulet for helping me find the problem.
-* Add some more documentation and FAQs
+* Add some more documentation and FAQs.
 
 = v1.7 =
 * Add a 'Delete' link in the track edit modal, so you don't have to use a
   bulk action to delete a single track.
 * Do not omit tracks with zero locations in track management.
-* Full i18n and Dutch translation
+* Full i18n and Dutch translation.
 * Support the 'getttripfull' action for TrackMe, to allow TrackMe 2.0
   to import your tracks from the server.
-* Use HTTPS in default map tile URL
+* Use HTTPS in default map tile URL.
 
 = v1.6 =
 * Add option for setting the map tile attribution, as required by most tile
