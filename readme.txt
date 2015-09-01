@@ -145,7 +145,7 @@ button that is shown on the map.
 
 Trackserver, being a WordPress plugin, can only support HTTP-based protocols for
 tracking. Many tracking devices use TCP- but not HTTP-based protocols for online
-tracking, and as sucht, Trackserver cannot support them, at least not without
+tracking, and as such, Trackserver cannot support them, at least not without
 some middleware that translates the device's protocol to HTTP.
 
 If a device or an app does use HTTP as a transport, adding support for it in
