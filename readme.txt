@@ -89,6 +89,38 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 
 == Frequently Asked Questions ==
 
+= What is a Trackserver user profile? (since v1.9) =
+
+Before v1.9, all of Trackserver's settings were stored in a single, global place
+in WordPress, meaning they were shared among all users in the same WordPress
+install. This was also the case for the OsmAnd access key that allows OsmAnd
+users to use Trackserver for live tracking. Since Trackserver tries to be
+multi-user, things like access keys do not belong in the global configuration.
+
+In version 1.9, user profile settings were introduced as a place for per-user
+settings, like access keys. There is a separate page in the WordPress admin for
+the Trackserver profile (called 'Your profile' in English), that is accessible
+by all users that have the right (capability) to use Trackerver.
+
+= What changed for TrackMe authentication 1.9? =
+
+TrackMe, like OsmAnd, uses HTTP GET requests for communication with Trackserver.
+This means that all data from the app, including your password, becomes part of
+the URL. Because URLs are not generally considered secret, and may be logged in
+access logs and what not, this is quite insecure, even with HTTPS.
+
+For OsmAnd, that has no built-in authentication, Trackserver has used an access
+key instead of your WordPress password from the very beginning. For TrackMe,
+this was implemented in v1.9. So from version 1.9 onward, every WordPress user
+that is allowed to use Trackserver has its own separate access keys for TrackMe
+and OsmAnd, settable in the Trackme user profile.
+
+If you have been using Trackserver with TrackMe before v1.9, you should now
+set the password in TrackMe to the access key, instead of your WordPress password.
+Like your password, you should keep your access keys to yourself, but the idea
+is that the security impact of such a key is low, compared to your WordPress
+password, and that you can (and should!) change the keys regularly.
+
 = What is this 'slug' you are talking about? =
 
 Slugs in WordPress are short descriptions of posts and pages, to be used in
@@ -190,11 +222,14 @@ for details.
 == Changelog ==
 
 = UNRELEASED =
+* Add Trackserver user profile for per-user options like access codes. Please
+  see the FAQ section for more information!
+* Move the OsmAnd access key to the user profile.
+* Added an access key for tracking with TrackMe, for use instead of the
+  WordPress password. Please see the FAQ section for more information!
 * Better error handling and meaningful feedback when uploading a file
   that is too large.
-* Fix viewing tracks in admin in recent versions of WordPress
-* Add Trackserver user profile for per-user options like access codes
-* Move the OsmAnd access key to the user profile
+* Fix viewing tracks in admin in recent versions of WordPress.
 
 = v1.8 =
 * Fix parsing of MapMyTracks points with negative coordinates. Thanks to
@@ -270,7 +305,8 @@ for details.
 == Upgrade Notice ==
 
 = 1.9 =
-This release resets the OsmAnd access key! Review your new Trackserver profile for user-specific settings.
+This release resets the OsmAnd access key and changes the TrackMe authentication! Please
+read the changelog and the FAQ, and review your new Trackserver profile for user-specific settings.
 
 = 1.0 =
 This will be the first stable release.
