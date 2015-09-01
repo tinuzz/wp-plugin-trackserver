@@ -46,20 +46,24 @@ var tb_click = function(e)
     if (ts_action == 'edit') {
         // http://stackoverflow.com/questions/14460421/jquery-get-the-contents-of-a-table-row-with-a-button-click
         jQuery.each(tds, function() {
-            switch (this.className) {
-                case 'id column-id':
-                    jQuery('#track_id').val(jQuery(this).text());
+            col_arr = /column-(\S+)/.exec(this.className);
+            col = col_arr[1];
+            switch (col) {
+                case 'id':
+                    // Strip everything from the first non-numeric character
+                    id_val = jQuery(this).text().replace(/[^0-9].*/, '');
+                    jQuery('#track_id').val(id_val);
                     break;
-                case 'name column-name':
+                case 'name':
                     jQuery('#input-track-name').val(jQuery(this).text());
                     break;
-                case 'source column-source':
+                case 'source':
                     jQuery('#input-track-source').val(jQuery(this).text());
                     break;
-                case 'comment column-comment':
+                case 'comment':
                     jQuery('#input-track-comment').val(jQuery(this).text());
                     break;
-                case 'nonce column-nonce':
+                case 'nonce':
                     jQuery('#_wpnonce').val(jQuery(this).text());
                     break;
             }
