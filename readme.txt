@@ -222,6 +222,10 @@ for details.
 == Changelog ==
 
 = v1.9 =
+IMPORTANT: This release resets the OsmAnd access key and changes the TrackMe
+authentication! Please read the changelog and the FAQ, and review your new
+Trackserver profile for user-specific settings.
+
 * Add Trackserver user profile for per-user options like access codes. Please
   see the FAQ section for more information!
 * Move the OsmAnd access key to the user profile.
