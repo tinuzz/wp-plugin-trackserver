@@ -24,11 +24,13 @@ var tb_click = function(e)
         // track_base_url should come from WP via wp_localize_script()
         track_url = track_base_url + "admin=1";
         jQuery.each(tds, function() {
-            switch (this.className) {
-                case 'id column-id':
+            col_arr = /column-(\S+)/.exec(this.className);
+            col = col_arr[1];
+            switch (col) {
+                case 'id':
                     track_url += "&id="+jQuery(this).text();
                     break;
-                case 'nonce column-nonce':
+                case 'nonce':
                     track_url += "&_wpnonce="+jQuery(this).text();
                     break;
             }
