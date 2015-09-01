@@ -83,8 +83,8 @@ License: GPL2
 				$this -> tbl_locations = $wpdb->prefix . "ts_locations";
 				$this -> options = get_option( 'trackserver_options' );
 				$this -> option_defaults['db_version'] = $this -> db_version;
-				$this -> user_meta_defaults['ts_trackme_key'] = substr( uniqid(), 0, 8 );
-				$this -> user_meta_defaults['ts_osmand_key'] = substr( uniqid(), 0, 8 );
+				$this -> user_meta_defaults['ts_trackme_key'] = substr( md5( uniqid() ), -8 );
+				$this -> user_meta_defaults['ts_osmand_key'] = substr( md5( uniqid() ), -8 );
 				$this -> shortcode = 'tsmap';
 				$this -> mapdata = array();
 				$this -> tracks_list_table = false;
