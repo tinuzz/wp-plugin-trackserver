@@ -1609,6 +1609,7 @@ EOF;
 			 */
 			function rearrange( $files ) {
 				$j = 0;
+				$new = array();
 				foreach ( $files as $postvar => $arr ) {
 					foreach ( $arr as $key => $list ) {
 						if ( is_array( $list ) ) {               // name="userfile[]"
