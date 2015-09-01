@@ -230,6 +230,7 @@ for details.
 * Better error handling and meaningful feedback when uploading a file
   that is too large.
 * Fix viewing tracks in admin in recent versions of WordPress.
+* Update Leaflet to version 0.7.4.
 
 = v1.8 =
 * Fix parsing of MapMyTracks points with negative coordinates. Thanks to
