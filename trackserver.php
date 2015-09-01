@@ -1673,8 +1673,11 @@ EOF;
 					}
 					else {
 						$message .= sprintf( __( "ERROR: Only .gpx files accepted; discarding '%1\$s'", 'trackserver' ), $f['name'] ) . "\n";
-				}
+					}
 					unlink( $filename );
+				}
+				if ( $message == '' ) {
+					$message = "ERROR: No file found\n";
 				}
 				return $message;
 			}
