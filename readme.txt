@@ -221,7 +221,7 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= v1.9 =
 * Add Trackserver user profile for per-user options like access codes. Please
   see the FAQ section for more information!
 * Move the OsmAnd access key to the user profile.
