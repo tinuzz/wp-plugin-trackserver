@@ -650,7 +650,7 @@ EOF;
 					'trackserver' ) );
 			}
 
-			function trackme_accesskey_html() {
+			function trackme_password_html() {
 				$format = <<<EOF
 					%1\$s<br /><br />
 					<b>%2\$s</b>: %3\$s
@@ -661,13 +661,13 @@ EOF;
 				$trackme_key = '<code>' . htmlspecialchars( get_user_meta( $user_id, 'ts_trackme_key', true ) ) . '</code>';
 
 				printf( $format,
-					sprintf( esc_html__( 'Since version 1.9, Trackserver needs an access key for online tracking with TrackMe. We do not use WordPress ' .
+					sprintf( esc_html__( 'Since version 1.9, Trackserver needs a separate password for online tracking with TrackMe. We do not use the WordPress ' .
 					'password here anymore for security reasons. The access key is unique to your ' .
-					'user account and it can be configured in %1$s. Your current access key is: %2$s. This is what you enter in the Password field '.
+					'user account and it can be configured in %1$s. Your current TrackMe password is: %2$s. This is what you enter in the Password field '.
 					'in TrackMe\'s settings!!', 'trackserver' ), $link, $trackme_key ),
 					esc_html__( 'WARNING', 'trackserver' ),
 					esc_html__( 'if you just upgraded to version 1.9 or higher and you have been using Trackserver with TrackMe, '.
-					'you should update the password in TrackMe to match the access key in your profile. Trackserver does not check your '.
+					'you should update the password in TrackMe to match the password in your profile. Trackserver does not check your '.
 					'WordPress password anymore, because the way TrackMe uses your password is not sufficiently secure.', 'trackserver' ) );
 			}
 
@@ -807,8 +807,8 @@ EOF;
 						array( &$this, 'trackme_slug_html' ), 'trackserver', 'trackserver-trackme' );
 				add_settings_field( 'trackserver_trackme_extension', esc_html__( 'TrackMe server extension', 'trackserver' ),
 						array( &$this, 'trackme_extension_html' ), 'trackserver', 'trackserver-trackme' );
-				add_settings_field( 'trackserver_trackme_accesskey', esc_html__( 'TrackMe access key', 'trackserver' ),
-						array( &$this, 'trackme_accesskey_html' ), 'trackserver', 'trackserver-trackme' );
+				add_settings_field( 'trackserver_trackme_password', esc_html__( 'TrackMe password', 'trackserver' ),
+						array( &$this, 'trackme_password_html' ), 'trackserver', 'trackserver-trackme' );
 
 				// Settings for section 'trackserver-mapmytracks'
 				add_settings_field( 'trackserver_mapmytracks_tag', esc_html__( 'MapMyTracks URL slug', 'trackserver' ),
@@ -2103,11 +2103,11 @@ EOF;
 								<tr>
 									<th scope="row">
 										<label for="trackme_access_key">
-											<?php esc_html_e( 'TrackMe access key', 'trackserver' ) ?>
+											<?php esc_html_e( 'TrackMe password', 'trackserver' ) ?>
 										</label>
 									</th>
 									<td>
-										<?php $this -> trackme_key_html(); ?>
+										<?php $this -> trackme_passwd_html(); ?>
 									</td>
 								</tr>
 								<tr>
@@ -2153,7 +2153,7 @@ EOF;
 					esc_html__( "Full URL", 'trackserver' ) );
 			}
 
-			function trackme_key_html() {
+			function trackme_passwd_html() {
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
 				$current_user = wp_get_current_user();
 				$key = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_trackme_key', true ) );
@@ -2169,7 +2169,7 @@ EOF;
 EOF;
 
 				printf( $format,
-					esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
+					esc_html__( 'A password for online tracking. We do not use WordPress password here for security reasons. ' .
 					'Change this regularly.', 'trackserver' ),
 					esc_html__( "URL header", 'trackserver' ),
 					esc_html__( "Server extension", 'trackserver' ) );

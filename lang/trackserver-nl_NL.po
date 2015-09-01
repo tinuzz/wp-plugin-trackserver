@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackserver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-28 23:35+0200\n"
-"PO-Revision-Date: 2015-08-28 23:47+0100\n"
+"POT-Creation-Date: 2015-09-01 20:46+0200\n"
+"PO-Revision-Date: 2015-09-01 20:49+0100\n"
 "Last-Translator: Martijn Grendelman <m@rtijn.net>\n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -228,12 +228,12 @@ msgstr "uw Trackserver profiel"
 
 #: ../trackserver.php:664
 #, php-format
-msgid "Since version 1.9, Trackserver needs an access key for online tracking with TrackMe. We do not use WordPress password here anymore for security reasons. The access key is unique to your user account and it can be configured in %1$s. Your current access key is: %2$s. This is what you enter in the Password field in TrackMe's settings!!"
-msgstr "Sinds versie 1.9 vereist Trackserver een toegangscode voor online tracking met TrackMe. Het WordPress wachtwoord wordt niet meer gebruikt om veiligheidsredenen. De toegangscode is gekoppeld aan uw gebruikersaccount en hij kan worden ingesteld in %1$s. Uw huidige toegangscode is: %2$s. Dit is wat u invult in het Password-veld in de instellingen van TrackMe!!"
+msgid "Since version 1.9, Trackserver needs a separate password for online tracking with TrackMe. We do not use the WordPress password here anymore for security reasons. The access key is unique to your user account and it can be configured in %1$s. Your current TrackMe password is: %2$s. This is what you enter in the Password field in TrackMe's settings!!"
+msgstr "Sinds versie 1.9 vereist Trackserver een eigen password voor online tracking met TrackMe. Het WordPress wachtwoord wordt niet meer gebruikt om veiligheidsredenen. De toegangscode is gekoppeld aan uw gebruikersaccount en hij kan worden ingesteld in %1$s. Uw huidige TrackMe password is: %2$s. Dit is wat u invult in het Password-veld in de instellingen van TrackMe!!"
 
 #: ../trackserver.php:669
-msgid "if you just upgraded to version 1.9 or higher and you have been using Trackserver with TrackMe, you should update the password in TrackMe to match the access key in your profile. Trackserver does not check your WordPress password anymore, because the way TrackMe uses your password is not sufficiently secure."
-msgstr "als u zojuist hebt geupgraded naar versie 1.9 of hoger, en u gebruikt Trackserver met TrackMe, dan moet u het wachtwoord in TrackMe instellen op de toegangscode in uw profiel. Trackserver kijkt niet meer naar uw WordPress wachtwoord, omdat de manier waarop TrackMe uw wachtwoord gebruikt niet voldoende veilig is. "
+msgid "if you just upgraded to version 1.9 or higher and you have been using Trackserver with TrackMe, you should update the password in TrackMe to match the password in your profile. Trackserver does not check your WordPress password anymore, because the way TrackMe uses your password is not sufficiently secure."
+msgstr "als u zojuist hebt geupgraded naar versie 1.9 of hoger, en u gebruikt Trackserver met TrackMe, dan moet u het wachtwoord in TrackMe instellen op het wachtwoord in uw profiel. Trackserver kijkt niet meer naar uw WordPress wachtwoord, omdat de manier waarop TrackMe uw wachtwoord gebruikt niet voldoende veilig is. "
 
 #: ../trackserver.php:688
 msgid "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps"
@@ -317,8 +317,8 @@ msgstr "TrackMe server extensie"
 
 #: ../trackserver.php:810
 #: ../trackserver.php:2106
-msgid "TrackMe access key"
-msgstr "TrackMe toegangscode"
+msgid "TrackMe password"
+msgstr "TrackMe wachtwoord"
 
 #: ../trackserver.php:814
 msgid "MapMyTracks URL slug"
@@ -439,8 +439,8 @@ msgid "An access key for online tracking. We do not use WordPress password here 
 msgstr "Een toegangscode voor online tracking. Het WordPress wachtwoord wordt niet gebruikt om veiligheidsredenen. De code moet, samen met uw WordPress gebruikersnaam, als een parameter aan de URL worden toegevoegd, die zoals hieronder afgebeeld, in OsmAnd wordt ingesteld voor online tracking. Verander de code regelmatig."
 
 #: ../trackserver.php:2172
-msgid "An access key for online tracking. We do not use WordPress password here for security reasons. Change this regularly."
-msgstr "Een toegangscode voor online tracking. Het WordPress wachtwoord wordt niet gebruikt om veiligheidsredenen. Verander de code regelmatig."
+msgid "A password for online tracking. We do not use WordPress password here for security reasons. Change this regularly."
+msgstr "Een wachtwoord voor online tracking. Het WordPress wachtwoord wordt niet gebruikt om veiligheidsredenen. Verander de code regelmatig."
 
 #: ../trackserver.php:2174
 msgid "URL header"

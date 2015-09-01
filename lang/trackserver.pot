@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackserver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-28 23:35+0200\n"
+"POT-Creation-Date: 2015-09-01 20:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -221,18 +221,18 @@ msgstr ""
 #: ../trackserver.php:664
 #, php-format
 msgid ""
-"Since version 1.9, Trackserver needs an access key for online tracking with "
-"TrackMe. We do not use WordPress password here anymore for security reasons. "
-"The access key is unique to your user account and it can be configured in "
-"%1$s. Your current access key is: %2$s. This is what you enter in the "
-"Password field in TrackMe's settings!!"
+"Since version 1.9, Trackserver needs a separate password for online tracking "
+"with TrackMe. We do not use the WordPress password here anymore for security "
+"reasons. The access key is unique to your user account and it can be "
+"configured in %1$s. Your current TrackMe password is: %2$s. This is what you "
+"enter in the Password field in TrackMe's settings!!"
 msgstr ""
 
 #: ../trackserver.php:669
 msgid ""
 "if you just upgraded to version 1.9 or higher and you have been using "
 "Trackserver with TrackMe, you should update the password in TrackMe to match "
-"the access key in your profile. Trackserver does not check your WordPress "
+"the password in your profile. Trackserver does not check your WordPress "
 "password anymore, because the way TrackMe uses your password is not "
 "sufficiently secure."
 msgstr ""
@@ -333,7 +333,7 @@ msgid "TrackMe server extension"
 msgstr ""
 
 #: ../trackserver.php:810 ../trackserver.php:2106
-msgid "TrackMe access key"
+msgid "TrackMe password"
 msgstr ""
 
 #: ../trackserver.php:814
@@ -456,7 +456,7 @@ msgstr ""
 
 #: ../trackserver.php:2172
 msgid ""
-"An access key for online tracking. We do not use WordPress password here for "
+"A password for online tracking. We do not use WordPress password here for "
 "security reasons. Change this regularly."
 msgstr ""
 
