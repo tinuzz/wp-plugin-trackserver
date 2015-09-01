@@ -112,14 +112,14 @@ access logs and what not, this is quite insecure, even with HTTPS.
 For OsmAnd, that has no built-in authentication, Trackserver has used an access
 key instead of your WordPress password from the very beginning. For TrackMe,
 this was implemented in v1.9. So from version 1.9 onward, every WordPress user
-that is allowed to use Trackserver has its own separate access keys for TrackMe
-and OsmAnd, settable in the Trackme user profile.
+that is allowed to use Trackserver has its own separate access key for OsmAnd
+and a separate password for TrackMe, settable in the Trackme user profile.
 
-If you have been using Trackserver with TrackMe before v1.9, you should now
-set the password in TrackMe to the access key, instead of your WordPress password.
-Like your password, you should keep your access keys to yourself, but the idea
-is that the security impact of such a key is low, compared to your WordPress
-password, and that you can (and should!) change the keys regularly.
+If you have been using Trackserver with TrackMe before v1.9, you should now set
+the password in TrackMe to this new password, instead of your WordPress
+password.  Like your password, you should keep your access keys to yourself,
+but the idea is that the security impact of such a key is low, compared to your
+WordPress password, and that you can (and should!) change the keys regularly.
 
 = What is this 'slug' you are talking about? =
 
@@ -225,7 +225,7 @@ for details.
 * Add Trackserver user profile for per-user options like access codes. Please
   see the FAQ section for more information!
 * Move the OsmAnd access key to the user profile.
-* Added an access key for tracking with TrackMe, for use instead of the
+* Added a separate password for tracking with TrackMe, for use instead of the
   WordPress password. Please see the FAQ section for more information!
 * Better error handling and meaningful feedback when uploading a file
   that is too large.
