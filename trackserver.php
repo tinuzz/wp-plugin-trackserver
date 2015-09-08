@@ -1956,8 +1956,6 @@ EOF;
 						}
 						$encoded = Polyline::Encode( $points );
 						$metadata = array(
-							'first_trkpt' => $points[0],
-							'last_trkpt' => $p,
 							'last_trkpt_time' => $row['occurred']
 						);
 						$data = array( 'track' => $encoded, 'metadata' => $metadata );
