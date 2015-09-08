@@ -92,6 +92,7 @@ License: GPL2
 				$this -> bulk_action_result_msg = false;
 				$this -> url_prefix = '';
 				$this -> trackserver_update();
+				$this -> track_format = 'polyline';  // 'polyline' or 'geojson'. GeoJSON is 10 x bigger.
 
 				// Bootstrap
 				$this -> add_actions();
@@ -938,8 +939,8 @@ EOF;
 						// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
 						// https://core.trac.wordpress.org/ticket/4221
 						$nonce = wp_create_nonce( 'gettrack_' . $validated_id . "_p" . $post_id );
-						$track_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . "/?id=$validated_id&p=$post_id&_wpnonce=$nonce" );
-						$track_type = 'polyline';
+						$track_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . "/?id=$validated_id&p=$post_id&format=" . $this -> track_format . "&_wpnonce=$nonce" );
+						$track_type = $this -> track_format;
 					}
 				}
 				elseif ( $atts['gpx'] ) {
@@ -1916,6 +1917,7 @@ EOF;
 
 				$post_id = intval( $_REQUEST['p'] );
 				$track_id = $_REQUEST['id'];
+				$format = $_REQUEST['format'];
 
 				if ( $track_id != 'live' ) {
 					$track_id = intval( $track_id );
@@ -1950,11 +1952,23 @@ EOF;
 						$res = $wpdb -> get_results( $sql, ARRAY_A );
 
 						$points = array();
-						foreach ( $res as $row ) {
-							$p = array( $row['latitude'], $row['longitude'] );  // We need this below
-							$points[] = $p;
+
+						// GeoJSON and Polyline have different lat/lon order requirements
+						if ( $format == 'geojson' ) {
+							foreach ( $res as $row ) {
+								$points[] = array( $row['longitude'], $row['latitude'] );
+							}
+							$encoded = array(
+								'type' => 'LineString',
+								'coordinates' => $points
+							);
 						}
-						$encoded = Polyline::Encode( $points );
+						else { // default to 'polyline'
+							foreach ( $res as $row ) {
+								$points[] = array( $row['latitude'], $row['longitude'] );
+							}
+							$encoded = Polyline::Encode( $points );
+						}
 						$metadata = array(
 							'last_trkpt_time' => $row['occurred']
 						);
