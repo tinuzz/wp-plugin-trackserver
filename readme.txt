@@ -314,10 +314,5 @@ Trackserver profile for user-specific settings.
 
 == Upgrade Notice ==
 
-= 1.9 =
-This release resets the OsmAnd access key and changes the TrackMe authentication! Please
+1.9 - This release resets the OsmAnd access key and changes the TrackMe authentication! Please
 read the changelog and the FAQ, and review your new Trackserver profile for user-specific settings.
-
-= 1.0 =
-This will be the first stable release.
-
