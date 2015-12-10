@@ -1744,6 +1744,10 @@ EOF;
 				if ( $xml -> schemaValidate( $schema ) ) {
 					return $xml;
 				}
+				$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.0.xsd';
+				if ( $xml -> schemaValidate( $schema ) ) {
+					return $xml;
+				}
 				return false;
 			}
 
