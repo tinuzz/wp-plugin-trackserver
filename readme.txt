@@ -207,7 +207,7 @@ downloaded from outside Wordpress. Requests for downloading tracks need to
 have a cryptographic signature that only Wordpress can generate.
 
 = What GPX namespaces are supported for GPX import (via HTTP POST or upload via backend)? =
-Only http://www.topografix.com/GPX/1/1 at the moment.
+GPX 1.1 (http://www.topografix.com/GPX/1/1) and GPX 1.0 (http://www.topografix.com/GPX/1/0).
 
 = Is it free? =
 Yes. Donations are welcome. Please visit
