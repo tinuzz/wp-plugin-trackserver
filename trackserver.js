@@ -77,6 +77,10 @@ var Trackserver = (function () {
                 var track_function = omnivore.polyline;
                 var track_options = { 'ondata': L.bind( this.process_data, this ), 'div_id': div_id };
 
+                if ( mymapdata.track_type == 'geojson' ) {
+                    track_function = omnivore.geojson;
+                }
+
                 if ( mymapdata.track_type == 'gpx' ) {
                     track_function = omnivore.gpx;
                     track_options = { 'div_id': div_id };

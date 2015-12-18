@@ -221,6 +221,11 @@ for details.
 
 == Changelog ==
 
+= UNRELEASED =
+
+* Support (wrapped) GeoJSON as a format for serving tracks. Polyline is still
+  the default, because GeoJSON is 10 times as big.
+
 = v1.9 =
 IMPORTANT: This release resets the OsmAnd access key and changes the TrackMe
 authentication! Please read the changelog and the FAQ, and review your new
