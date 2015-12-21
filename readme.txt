@@ -3,7 +3,7 @@ Contributors: tinuzz
 Donate link: http://www.grendelman.net/wp/trackserver-wordpress-plugin/
 Tags: gps, gpx, map, leaflet, track, mobile, tracking
 Requires at least: 4.0
-Tested up to: 4.3
+Tested up to: 4.4
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -66,10 +66,10 @@ It includes some code and libraries written by other people:
 
 = TODO =
 
+* Support [SendLocation](https://itunes.apple.com/nl/app/sendlocation/id377724446) iOS app
 * Support [GpsGate](http://gpsgate.com/) tracking protocol
 * Better permissions/authorization system
 * More shortcode parameters and map options
-* Multiple tracks per map
 * More track management features, like folders/collections and editing / splitting tracks
 * A shortcode for downloading a track in GPX or other formats
 * Track statistics, like distance, average speed, etc.
@@ -91,20 +91,34 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 
 = What are the available shortcode attributes? =
 
-* track: track id or 'live'
-* width: map width
-* height: map height
-* align: 'left', 'center' or 'right'
-* class: a CSS class to add to the map div for customization
+* track: one or more track IDs, separated by commas, or 'live'.
+* width: map width, default: 100%.
+* height: map height, default: 480px.
+* align: 'left', 'center' or 'right', default: not set.
+* class: a CSS class to add to the map div for customization, default: not set.
 * markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end
-  markers on the track
+  markers on the track.
+* continuous: true (default) or false (or 'f', 'no' or 'n'), for lack of a
+  better word, to indicate whether multiple tracks should be considered as
+  one continuous track. The only effect this has, at the moment, is that
+  intermediate start markers are yellow instead of green.
 * gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
-  precedence over 'gpx'. Markers are disabled for GPX files.
-* color: the color of the track on the map, default comes from Leaflet
-* weight: the weight of the track on the map, default comes from Leaflet
-* opacity: the opacity of the track on the map, default comes from Leaflet
+  precedence over 'gpx'.
+* color: the color of the track on the map, default comes from Leaflet.
+* weight: the weight of the track on the map, default comes from Leaflet.
+* opacity: the opacity of the track on the map, default comes from Leaflet.
 
-Example: [tsmap track=39 align=center class=mymap markers=n color=#ff0000]
+Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
+
+= I used the shortcode but the map doesn't show =
+
+Trackserver tries to detect the usage of the [tsmap] shortcode to prevent
+unnecessary loading of the plugin's JavaScript. In some circumstances, for
+example, if your page setup is complex and uses multiple loops, the detection
+could fail. In such a case, use this shortcode in the main post or page to
+force loading the JavaScript:
+
+[tsscripts]
 
 = What is live tracking? =
 
@@ -207,6 +221,7 @@ downloaded from outside Wordpress. Requests for downloading tracks need to
 have a cryptographic signature that only Wordpress can generate.
 
 = What GPX namespaces are supported for GPX import (via HTTP POST or upload via backend)? =
+
 GPX 1.1 (http://www.topografix.com/GPX/1/1) and GPX 1.0 (http://www.topografix.com/GPX/1/0).
 
 = Is it free? =
@@ -223,8 +238,14 @@ for details.
 
 = UNRELEASED =
 
+* Support mutiple tracks in a single map. Use a comma-separated list of track
+  IDs (and/or 'live') in the 'track' parameter to show multiple tracks.
 * Support (wrapped) GeoJSON as a format for serving tracks. Polyline is still
   the default, because GeoJSON is 10 times as big.
+* Fix a bug with the OsmAnd timestamp calculation on 32-bit systems.
+* Support upload of GPX 1.0 files in addition to GPX 1.1.
+* Add a [tsscipts] shortcode to force-load the plugin's JavaScript in case
+  the main shortcode usage detection fails.
 
 = v1.9 =
 IMPORTANT: This release resets the OsmAnd access key and changes the TrackMe

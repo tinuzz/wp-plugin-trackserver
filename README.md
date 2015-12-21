@@ -41,18 +41,34 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 
 ## What are the available shortcode attributes?
 
-* track: track id or 'live'
-* width: map width
-* height: map height
-* align: 'left', 'center' or 'right'
-* class: a CSS class to add to the map div for customization
-* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end markers on the track
-* gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes precedence over 'gpx'. Markers are disabled for GPX files.
-* color: the color of the track on the map, default comes from Leaflet
-* weight: the weight of the track on the map, default comes from Leaflet
-* opacity: the opacity of the track on the map, default comes from Leaflet
+* track: one or more track IDs, separated by commas, or 'live'.
+* width: map width, default: 100%.
+* height: map height, default: 480px.
+* align: 'left', 'center' or 'right', default: not set.
+* class: a CSS class to add to the map div for customization, default: not set.
+* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end
+  markers on the track.
+* continuous: true (default) or false (or 'f', 'no' or 'n'), for lack of a
+  better word, to indicate whether multiple tracks should be considered as
+  one continuous track. The only effect this has, at the moment, is that
+  intermediate start markers are yellow instead of green.
+* gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
+  precedence over 'gpx'.
+* color: the color of the track on the map, default comes from Leaflet.
+* weight: the weight of the track on the map, default comes from Leaflet.
+* opacity: the opacity of the track on the map, default comes from Leaflet.
 
-Example: [tsmap track=39 align=center class=mymap markers=n color=#ff0000]
+Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
+
+## I used the shortcode but the map doesn't show
+
+Trackserver tries to detect the usage of the [tsmap] shortcode to prevent
+unnecessary loading of the plugin's JavaScript. In some circumstances, for
+example, if your page setup is complex and uses multiple loops, the detection
+could fail. In such a case, use this shortcode in the main post or page to
+force loading the JavaScript:
+
+[tsscripts]
 
 ## What is live tracking?
 
@@ -64,11 +80,68 @@ view is always centered to the most recent trackpoint. A marker is shown in
 that location. Live tracking can be stopped and restarted with a simple control
 button that is shown on the map.
 
+## What is a Trackserver user profile? (since v1.9)
+
+Before v1.9, all of Trackserver's settings were stored in a single, global place
+in WordPress, meaning they were shared among all users in the same WordPress
+install. This was also the case for the OsmAnd access key that allows OsmAnd
+users to use Trackserver for live tracking. Since Trackserver tries to be
+multi-user, things like access keys do not belong in the global configuration.
+
+In version 1.9, user profile settings were introduced as a place for per-user
+settings, like access keys. There is a separate page in the WordPress admin for
+the Trackserver profile (called 'Your profile' in English), that is accessible
+by all users that have the right (capability) to use Trackerver.
+
+## What changed for TrackMe authentication 1.9?
+
+TrackMe, like OsmAnd, uses HTTP GET requests for communication with Trackserver.
+This means that all data from the app, including your password, becomes part of
+the URL. Because URLs are not generally considered secret, and may be logged in
+access logs and what not, this is quite insecure, even with HTTPS.
+
+For OsmAnd, that has no built-in authentication, Trackserver has used an access
+key instead of your WordPress password from the very beginning. For TrackMe,
+this was implemented in v1.9. So from version 1.9 onward, every WordPress user
+that is allowed to use Trackserver has its own separate access key for OsmAnd
+and a separate password for TrackMe, settable in the Trackme user profile.
+
+If you have been using Trackserver with TrackMe before v1.9, you should now set
+the password in TrackMe to this new password, instead of your WordPress
+password.  Like your password, you should keep your access keys to yourself,
+but the idea is that the security impact of such a key is low, compared to your
+WordPress password, and that you can (and should!) change the keys regularly.
+
+## What is this 'slug' you are talking about?
+
+Slugs in WordPress are short descriptions of posts and pages, to be used in
+URLs (permalinks). They are the part of the URL that makes WordPress serve
+a particular page. Trackserver uses slugs to 'listen' for tracking requests
+from mobile apps, and you can configure these slugs to be anything you want.
+Trackserver comes with default values for these slugs, that should work for
+most people. Changing them is usually not necessary.
+
+Please refer to the [Wordpress Codex](http://codex.wordpress.org/Glossary#Slug) for more information
+about slugs in general.
+
+WARNING: please do not confuse the slugs that you configure in Trackserver
+with the URLs (permalinks) that you use to publish your maps and tracks. Above
+all, make sure there is no conflict between the permalink for a post or page
+and the URLs (slugs) that Trackserver uses for location updates. The slugs in
+Trackerver's configuration are for the location updates only. If you try to
+open them in a browser, you will get errors like 'Illegal request'. Trackserver
+operates on a low level within WordPress, so if there is a conflict between
+Trackserver and a post or a page, Trackserver will win and the page will be
+inaccessible.
+
+To publish your tracks, simply create a page (with a non-conflicting permalink)
+and use the [tsmap] shortcode to add a map.
+
 ## Can Trackserver support protocol X or device Y?
 
 Trackserver, being a WordPress plugin, can only support HTTP-based protocols for
 tracking. Many tracking devices use TCP- but not HTTP-based protocols for online
-tracking, and as sucht, Trackserver cannot support them, at least not without
+tracking, and as such, Trackserver cannot support them, at least not without
 some middleware that translates the device's protocol to HTTP.
 
 If a device or an app does use HTTP as a transport, adding support for it in
@@ -98,7 +171,8 @@ downloaded from outside Wordpress. Requests for downloading tracks need to
 have a cryptographic signature that only Wordpress can generate.
 
 ## What GPX namespaces are supported for GPX import (via HTTP POST or upload via backend)?
-Only http://www.topografix.com/GPX/1/1 at the moment.
+
+GPX 1.1 (http://www.topografix.com/GPX/1/1) and GPX 1.0 (http://www.topografix.com/GPX/1/0).
 
 ## Is it free?
 Yes. Donations are welcome. Please visit
