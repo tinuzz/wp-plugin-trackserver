@@ -1387,12 +1387,14 @@ EOF;
 				// If this function returns, we're OK
 				$user_id = $this -> validate_osmand_login();
 
-				// Timestamp is sent in milliseconds, and in UTC
-				$ts = round( (int) urldecode( $_GET["timestamp"] ) / 1000 );
-				$ts += $this -> utc_to_local_offset( $ts );
-				$occurred = date( 'Y-m-d H:i:s', $ts );
+				// Timestamp is sent in milliseconds, and in UTC. Use substr() to truncate the timestamp,
+				// because dividing by 1000 causes an integer overflow on 32-bit systems.
+				$ts = intval( substr( urldecode( $_GET["timestamp"] ), 0, -3 ) );
 
 				if ( $ts > 0 ) {
+
+					$ts += $this -> utc_to_local_offset( $ts );
+					$occurred = date( 'Y-m-d H:i:s', $ts );
 
 					// Get track name from strftime format string
 					$trackname = strftime( $this -> options['osmand_trackname_format'], $ts );
@@ -1447,7 +1449,7 @@ EOF;
 
 							if ($wpdb -> insert( $this -> tbl_locations, $data, $format ) ) {
 								$this -> calculate_distance( $track_id );
-								$this -> osmand_terminate( 200, 'OK, track ID = ' . $track_id );
+								$this -> osmand_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" );
 							}
 							else {
 								$this -> osmand_terminate( 500, $wpdb -> last_error );
