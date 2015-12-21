@@ -901,7 +901,7 @@ EOF;
 				global $wpdb;
 
 				$defaults = array(
-					'width'      => '640px',
+					'width'      => '100%',
 					'height'     => '480px',
 					'align'      => '',
 					'class'      => '',

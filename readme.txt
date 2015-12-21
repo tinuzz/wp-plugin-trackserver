@@ -246,6 +246,7 @@ for details.
 * Support upload of GPX 1.0 files in addition to GPX 1.1.
 * Add a [tsscipts] shortcode to force-load the plugin's JavaScript in case
   the main shortcode usage detection fails.
+* Map width is now 100% by default.
 
 = v1.9 =
 IMPORTANT: This release resets the OsmAnd access key and changes the TrackMe
