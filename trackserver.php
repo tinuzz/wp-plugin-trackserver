@@ -49,7 +49,7 @@ UNRELEASED - v2.0 - multiple tracks support, other features
 			 * @access private
 			 * @var int $db_version
 			 */
-			var $db_version = 8;
+			var $db_version = 11;
 
 			/**
 			 * Default values for options. See class constructor for more.
@@ -377,7 +377,9 @@ EOF;
 					`created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 					`occurred` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 					`comment` varchar(255) NOT NULL,
-					PRIMARY KEY (`id`)
+					PRIMARY KEY (`id`),
+					KEY `occurred` (`occurred`),
+					KEY `trip_id` (`trip_id`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
 				$wpdb->query( $sql );
@@ -391,7 +393,8 @@ EOF;
 					`source` varchar(255) NOT NULL,
 					`comment` varchar(255) NOT NULL,
 					`distance` int(11) NOT NULL,
-					PRIMARY KEY (`id`)
+					PRIMARY KEY (`id`),
+					KEY `user_id` (`user_id`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
 				$wpdb->query( $sql );
@@ -434,6 +437,9 @@ EOF;
 				$upgrade_sql[6] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `created` TIMESTAMP NOT NULL AFTER `updated`";
 				$upgrade_sql[7] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `source` VARCHAR( 255 ) NOT NULL AFTER `created`";
 				$upgrade_sql[8] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `distance` INT( 11 ) NOT NULL AFTER `comment`";
+				$upgrade_sql[9] = "ALTER TABLE " . $this -> tbl_tracks . " ADD INDEX ( `user_id` )";
+				$upgrade_sql[10] = "ALTER TABLE " . $this -> tbl_locations . " ADD INDEX ( `trip_id` )";
+				$upgrade_sql[11] = "ALTER TABLE " . $this -> tbl_locations . " ADD INDEX ( `occurred` )";
 
 				$installed_version = (int) $this -> options['db_version'];
 				if ( $installed_version != $this -> db_version ) {
