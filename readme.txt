@@ -248,6 +248,7 @@ for details.
   the main shortcode usage detection fails.
 * Map width is now 100% by default.
 * Improve performance of the track management page by adding some DB indexes
+* Update Leaflet to version 0.7.7
 
 = v1.9 =
 IMPORTANT: This release resets the OsmAnd access key and changes the TrackMe
