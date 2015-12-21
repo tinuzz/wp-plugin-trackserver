@@ -1205,10 +1205,7 @@ EOF;
 				$occurred = urldecode( $_GET["do"] );
 
 				if ( $trip_name != '' ) {
-
-					// Try to find the trip
-					$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trip_name );
-					$trip_id = $wpdb -> get_var( $sql );
+					$trip_id = $this -> get_track_by_name( $user_id, $trip_name );
 
 					if ( $trip_id == null ) {
 
@@ -1416,6 +1413,12 @@ EOF;
 				$this -> osmand_terminate();
 			}
 
+			function get_track_by_name( $user_id, $trackname ) {
+				global $wpdb;
+				$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trackname );
+				return $wpdb -> get_var( $sql );
+			}
+
 			/*
 			 * Sample request:
 			 * /wp/osmand/?lat=51.448334&lon=5.4725113&timestamp=1425238292902&hdop=11.0&altitude=80.0&speed=0.0
@@ -1439,11 +1442,7 @@ EOF;
 					$trackname = strftime( $this -> options['osmand_trackname_format'], $ts );
 
 					if ( $trackname != '' ) {
-
-						// Try to find the trip
-						$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trackname );
-						$track_id = $wpdb -> get_var( $sql );
-
+						$track_id = $this -> get_track_by_name( $user_id, $trackname );
 						if ( $track_id == null ) {
 							$data = array( 'user_id' => $user_id, 'name' => $trackname, 'created' => $occurred, 'source' => 'OsmAnd' );
 							$format = array( '%d', '%s', '%s', '%s' );
