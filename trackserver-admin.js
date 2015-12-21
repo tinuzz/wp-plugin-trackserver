@@ -35,7 +35,7 @@ var tb_click = function(e)
                     break;
             }
         });
-        trackserver_mapdata = [{"div_id":"tsadminmap","track_url":track_url,"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"markers":true}];
+        trackserver_mapdata = [{"div_id":"tsadminmap","tracks":[{"track_id":"0","track_url":track_url,"track_type":"polyline"}],"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"markers":true,"continuous":false}];
     }
     if (ts_action == 'howto') {
 

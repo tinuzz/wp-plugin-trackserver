@@ -13,6 +13,7 @@ Domain path: /lang
 License: GPL2
 
 === RELEASE NOTES ===
+UNRELEASED - v2.0 - multiple tracks support, other features
 2015-09-01 - v1.9 - fixes, user profiles, leaflet 0.7.4, FAQs
 2015-07-29 - v1.8 - a critical bugfix for MapMyTracks protocol
 2015-06-15 - v1.7 - TrackMe 2.0 compatibility, i18n and bugfixes
@@ -900,16 +901,17 @@ EOF;
 				global $wpdb;
 
 				$defaults = array(
-					'width'   => '640px',
-					'height'  => '480px',
-					'align'   => '',
-					'class'   => '',
-					'track'   => false,
-					'gpx'     => false,
-					'markers' => true,
-					'color'   => false,
-					'weight'  => false,
-					'opacity' => false
+					'width'      => '640px',
+					'height'     => '480px',
+					'align'      => '',
+					'class'      => '',
+					'track'      => false,
+					'gpx'        => false,
+					'markers'    => true,
+					'continuous' => true,
+					'color'      => false,
+					'weight'     => false,
+					'opacity'    => false
 				);
 
 				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
@@ -930,47 +932,76 @@ EOF;
 					$class_str = 'class="' . implode( ' ', $classes ) . '"';
 				}
 
-				$track_url = null;
+				$tracks = array();
+				$default_lat = '51.443168';
+				$default_lon = '5.447200';
+				$is_live = false;
+
 				if ( $atts['track'] ) {
 
 					// Check if the author of the current post is the ower of the track
 					$author_id = get_the_author_meta( 'ID' );
 					$post_id = get_the_ID();
 
-					if ( $atts['track'] == 'live' ) {
+					$track_ids = explode( ',', $atts['track'] );
+					if ( in_array( 'live', $track_ids ) ) {
 						$is_live = true;
-						$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d ORDER BY created DESC LIMIT 0,1', $author_id );
 					}
-					else {
-						$is_live = false;
-						$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id=%d AND user_id=%d;', $atts['track'], $author_id );
-					}
-					$validated_id = $wpdb -> get_var( $sql );
-					if ( $validated_id ) {
-						// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
-						// https://core.trac.wordpress.org/ticket/4221
-						$nonce = wp_create_nonce( 'gettrack_' . $validated_id . "_p" . $post_id );
-						$track_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . "/?id=$validated_id&p=$post_id&format=" . $this -> track_format . "&_wpnonce=$nonce" );
-						$track_type = $this -> track_format;
+					// Remove all non-numeric values from the tracks array and prepare query
+					$track_ids = array_map( 'intval', array_filter( $track_ids, 'is_numeric' ) );
+					$sql_in = "('" . implode("','", $track_ids) . "')";
+					$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id IN ' . $sql_in .
+						' AND user_id=%d;', $author_id );
+
+					if ( $is_live || count( $track_ids ) ) {
+						$validated_ids = $wpdb -> get_col( $sql );
+						if ( $is_live ) {
+							$validated_ids[] = 'live';
+						}
+
+						foreach ($validated_ids as $validated_id) {
+							// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
+							// https://core.trac.wordpress.org/ticket/4221
+							$nonce = wp_create_nonce( 'gettrack_' . $validated_id . "_p" . $post_id );
+							$track_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . "/?id=$validated_id&p=$post_id&format=" . $this -> track_format . "&_wpnonce=$nonce" );
+							$track_type = $this -> track_format;
+
+							$tracks[] = array(
+								'track_id'   => $validated_id,
+								'track_url'  => $track_url,
+								'track_type' => $track_type
+							);
+						}
+
+						if ( count( $validated_ids ) ) {
+							$sql_in = "('" . implode("','", $validated_ids) . "')";
+							$sql = $wpdb -> prepare( 'SELECT AVG(latitude) FROM ' . $this -> tbl_locations . ' WHERE trip_id IN ' . $sql_in );
+							$default_lat = $wpdb -> get_var( $sql );
+							$sql = $wpdb -> prepare( 'SELECT AVG(longitude) FROM ' . $this -> tbl_locations . ' WHERE trip_id IN ' . $sql_in );
+							$default_lon = $wpdb -> get_var( $sql );
+						}
 					}
 				}
 				elseif ( $atts['gpx'] ) {
-					$track_url = $atts['gpx'];
-					$track_type = 'gpx';
+					$tracks[] = array(
+						'track_url'  => $atts['gpx'],
+						'track_type' => 'gpx'
+					);
 				}
 
-				$markers = ( in_array( $atts['markers'], array( 'false', 'f', 'no', 'n' ), true ) ? false : true );
+				$markers    = ( in_array( $atts['markers'],    array( 'false', 'f', 'no', 'n' ), true ) ? false : true );
+				$continuous = ( in_array( $atts['continuous'], array( 'false', 'f', 'no', 'n' ), true ) ? false : true );
 
 				$mapdata = array(
 					'div_id'       => $div_id,
-					'track_url'    => $track_url,
-					'track_type'   => $track_type,
-					'default_lat'  => '51.443168',
-					'default_lon'  => '5.447200',
-					'default_zoom' => '16',
+					'tracks'       => $tracks,
+					'default_lat'  => $default_lat,
+					'default_lon'  => $default_lon,
+					'default_zoom' => '12',
 					'fullscreen'   => true,
 					'is_live'      => $is_live,
 					'markers'      => $markers,
+					'continuous'   => $continuous,
 				);
 
 				$style = array();
@@ -999,9 +1030,11 @@ EOF;
 			/**
 			 * Function to enqueue the localized JavaScript that initializes the map(s)
 			 */
-			function loop_end() {
-				wp_localize_script( 'trackserver', 'trackserver_mapdata', $this -> mapdata );
-				wp_enqueue_script( 'trackserver' );
+			function loop_end( $query ) {
+				if ( $query -> is_main_query() ) {
+					wp_localize_script( 'trackserver', 'trackserver_mapdata', $this -> mapdata );
+					wp_enqueue_script( 'trackserver' );
+				}
 			}
 
 			/**
@@ -1944,10 +1977,10 @@ EOF;
 				$post_id = intval( $_REQUEST['p'] );
 				$track_id = $_REQUEST['id'];
 				$format = $_REQUEST['format'];
+				$author_id = $this -> get_author( $post_id );
 
 				if ( $track_id != 'live' ) {
 					$track_id = intval( $track_id );
-					$author_id = $this -> get_author( $post_id );
 				}
 
 				// Refuse to serve the track without a valid nonce. Admin screen uses a different nonce.
