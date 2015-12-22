@@ -54,6 +54,9 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
   intermediate start markers are yellow instead of green.
 * gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
   precedence over 'gpx'.
+* infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether
+  an information bar should be shown on the map, when live tracking is active.
+  This only works with 'track=live', and has no effect in other cases.
 * color: the color of the track on the map, default comes from Leaflet.
 * weight: the weight of the track on the map, default comes from Leaflet.
 * opacity: the opacity of the track on the map, default comes from Leaflet.

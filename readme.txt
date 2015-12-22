@@ -104,6 +104,9 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
   intermediate start markers are yellow instead of green.
 * gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
   precedence over 'gpx'.
+* infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether
+  an information bar should be shown on the map, when live tracking is active.
+	This only works with 'track=live', and has no effect in other cases.
 * color: the color of the track on the map, default comes from Leaflet.
 * weight: the weight of the track on the map, default comes from Leaflet.
 * opacity: the opacity of the track on the map, default comes from Leaflet.
@@ -240,17 +243,23 @@ for details.
 
 * Support mutiple tracks in a single map. Use a comma-separated list of track
   IDs (and/or 'live') in the 'track' parameter to show multiple tracks.
-* Support (wrapped) GeoJSON as a format for serving tracks. Polyline is still
-  the default, because GeoJSON is 10 times as big.
-* Fix a bug with the OsmAnd timestamp calculation on 32-bit systems.
+* New shortcode parameter 'infobar' (default false) for displaying an
+  information bar with some information about the latest trackpoint during live
+	tracking. The information bar can be formatted via the Trackserver user
+	profile.
 * Support upload of GPX 1.0 files in addition to GPX 1.1.
-* Add a [tsscipts] shortcode to force-load the plugin's JavaScript in case
-  the main shortcode usage detection fails.
 * Map width is now 100% by default.
 * Experimental support for SendLocation iOS app
-  (https://itunes.apple.com/nl/app/sendlocation/id377724446)
-* Improve performance of the track management page by adding some DB indexes
-* Update Leaflet to version 0.7.7
+  (https://itunes.apple.com/nl/app/sendlocation/id377724446).
+* Fix a bug with the OsmAnd timestamp calculation on 32-bit systems.
+* Improve performance of the track management page by adding some DB indexes.
+* Update Leaflet to version 0.7.7.
+* Support (wrapped) GeoJSON as a format for serving tracks. Polyline is still
+  the default, because GeoJSON is 10 times as big.
+* Add a [tsscipts] shortcode to force-load the plugin's JavaScript in case
+  the main shortcode usage detection fails.
+* Rework the loading and customizing of external JavaScript, to fix some cases
+  where the main shortcode detection would fail.
 
 = v1.9 =
 IMPORTANT: This release resets the OsmAnd access key and changes the TrackMe
