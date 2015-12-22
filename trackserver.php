@@ -321,7 +321,7 @@ EOF;
 
 			/**
 			 * Handler for 'admin_enqueue_scripts'. Load javascript and stylesheets
-			 * in the admin panel.
+			 * for the admin panel.
 			 *
 			 * @since 1.0
 			 *
