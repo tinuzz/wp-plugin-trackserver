@@ -63,7 +63,7 @@ UNRELEASED - v2.0 - multiple tracks support, other features
 				'trackme_extension' => 'z',
 				'mapmytracks_tag' => 'mapmytracks',
 				'osmand_slug' => 'osmand',
-				'osmand_trackname_format' => '%F %H',
+				'osmand_trackname_format' => 'OsmAnd %F %H',
 				'upload_tag' => 'tsupload',
 				'gettrack_slug' => 'trackserver/gettrack',
 				'normalize_tripnames' => 'yes',
