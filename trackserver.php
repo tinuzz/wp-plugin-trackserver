@@ -1395,10 +1395,19 @@ EOF;
 				die();
 			}
 
-			function validate_osmand_login() {
+			/**
+			 * Function to validate credentials for OsmAnd and SendLocation. It checks the
+			 * WordPress username and the access key from the user profile against the values
+			 * specified in the request (OsmAnd) or given in the function parameters (SendLocation).
+			 *
+			 * @since 2.0
+			 */
+			function validate_user_meta_key( $username = false, $key = false, $meta_key = 'ts_osmand_key' ) {
 
-				$username = urldecode( $_GET['username'] );
-				$key = urldecode( $_GET['key'] );
+				if ( ! $username ) {
+					$username = urldecode( $_GET['username'] );
+					$key = urldecode( $_GET['key'] );
+				}
 
 				if ( $username == '') {
 					$this -> http_terminate();
@@ -1407,7 +1416,7 @@ EOF;
 				$user = get_user_by( 'login', $username );
 				if ( $user ) {
 					$user_id = intval( $user -> data -> ID );
-					$user_key = get_user_meta( $user_id, 'ts_osmand_key', true );
+					$user_key = get_user_meta( $user_id, $meta_key, true );
 
 					if ( $key != $user_key ) {
 						$this -> http_terminate();
@@ -1434,7 +1443,7 @@ EOF;
 				global $wpdb;
 
 				// If this function returns, we're OK
-				$user_id = $this -> validate_osmand_login();
+				$user_id = $this -> validate_user_meta_key();
 
 				// Timestamp is sent in milliseconds, and in UTC. Use substr() to truncate the timestamp,
 				// because dividing by 1000 causes an integer overflow on 32-bit systems.
