@@ -843,7 +843,7 @@ EOF;
 			}
 
 			function admin_menu() {
-- 				$page = add_options_page( 'Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-admin-menu', array( &$this, 'options_page_html' ) );
+ 				$page = add_options_page( 'Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-admin-menu', array( &$this, 'options_page_html' ) );
 				$page = str_replace( 'admin_page_', '', $page );
 				$this -> options_page = str_replace( 'settings_page_', '', $page );
 				$this -> options_page_url = menu_page_url( $this -> options_page, false );
