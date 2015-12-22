@@ -247,6 +247,8 @@ for details.
 * Add a [tsscipts] shortcode to force-load the plugin's JavaScript in case
   the main shortcode usage detection fails.
 * Map width is now 100% by default.
+* Experimental support for SendLocation iOS app
+  (https://itunes.apple.com/nl/app/sendlocation/id377724446)
 * Improve performance of the track management page by adding some DB indexes
 * Update Leaflet to version 0.7.7
 

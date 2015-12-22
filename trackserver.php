@@ -64,6 +64,8 @@ UNRELEASED - v2.0 - multiple tracks support, other features
 				'mapmytracks_tag' => 'mapmytracks',
 				'osmand_slug' => 'osmand',
 				'osmand_trackname_format' => 'OsmAnd %F %H',
+				'sendlocation_slug' => 'sendlocation',
+				'sendlocation_trackname_format' => 'SendLocation %F %H',
 				'upload_tag' => 'tsupload',
 				'gettrack_slug' => 'trackserver/gettrack',
 				'normalize_tripnames' => 'yes',
@@ -87,6 +89,7 @@ UNRELEASED - v2.0 - multiple tracks support, other features
 				$this -> option_defaults['db_version'] = $this -> db_version;
 				$this -> user_meta_defaults['ts_trackme_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_osmand_key'] = substr( md5( uniqid() ), -8 );
+				$this -> user_meta_defaults['ts_sendlocation_key'] = substr( md5( uniqid() ), -8 );
 				$this -> shortcode = 'tsmap';
 				$this -> shortcode2 = 'tsscripts';
 				$this -> mapdata = array();
@@ -562,6 +565,9 @@ EOF;
 			function osmand_settings_html() {
 			}
 
+			function sendlocation_settings_html() {
+			}
+
 			function httppost_settings_html() {
 				$autoshare_settings_img = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
 				$howto = esc_html__( 'How to use AutoShare', 'trackserver' );
@@ -762,6 +768,42 @@ EOF;
 					esc_html__( 'hour', 'trackserver' ) );
 			}
 
+			function sendlocation_slug_html() {
+				$val = htmlspecialchars( $this -> options['sendlocation_slug'] );
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
+
+				$format = <<<EOF
+					%1\$s ($url/<b>&lt;slug&gt;/&lt;username&gt;/&lt;access key&gt;</b>/) <br />
+					<input type="text" size="25" name="trackserver_options[sendlocation_slug]" id="trackserver_sendlocation_slug" value="$val" autocomplete="off" /><br /><br />
+EOF;
+
+				printf( $format,
+					esc_html__( "The URL slug for SendLocation, used in SendLocation's settings", 'trackserver' ) );
+			}
+
+			function sendlocation_trackname_format_html() {
+				$val = htmlspecialchars( str_replace( '%', '%%', $this -> options['sendlocation_trackname_format'] ) );
+				$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
+
+				$format = <<<EOF
+					%1\$s<br /><br />
+					<input type="text" size="25" name="trackserver_options[sendlocation_trackname_format]" id="trackserver_sendlocation_trackname_format" value="$val" autocomplete="off" /><br />
+					%%Y = %2\$s, %%m = %3\$s, %%d = %4\$s, %%H = %5\$s, %%F = %%Y-%%m-%%d
+					<br />
+EOF;
+
+				printf( $format,
+					sprintf( esc_html__( 'Generated track name in %1$s format. SendLocation online tracking does not support the concept of ' .
+					"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
+					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
+					"can be specified here.  If you specify a constant string, without any strftime() format placeholders, one " .
+					"and the same track will be used forever and all locations.", 'trackserver' ), $link ),
+					esc_html__( 'year', 'trackserver' ),
+					esc_html__( 'month', 'trackserver' ),
+					esc_html__( 'day', 'trackserver' ),
+					esc_html__( 'hour', 'trackserver' ) );
+			}
+
 			function upload_tag_html() {
 				$val = htmlspecialchars( $this -> options['upload_tag'] );
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
@@ -809,6 +851,7 @@ EOF;
 				add_settings_section( 'trackserver-trackme', esc_html__( 'TrackMe settings', 'trackserver' ), array( &$this, 'trackme_settings_html' ), 'trackserver' );
 				add_settings_section( 'trackserver-mapmytracks', esc_html__( 'OruxMaps MapMyTracks settings', 'trackserver' ), array( &$this, 'mapmytracks_settings_html' ), 'trackserver' );
 				add_settings_section( 'trackserver-osmand', esc_html__( 'OsmAnd online tracking settings', 'trackserver' ), array( &$this, 'osmand_settings_html' ),  'trackserver' );
+				add_settings_section( 'trackserver-sendlocation', esc_html__( 'SendLocation settings', 'trackserver' ), array( &$this, 'sendlocation_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-httppost', esc_html__( 'HTTP upload settings', 'trackserver' ), array( &$this, 'httppost_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-shortcode', esc_html__( 'Shortcode / map settings', 'trackserver' ), array( &$this, 'shortcode_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-advanced', esc_html__( 'Advanced settings', 'trackserver' ), array( &$this, 'advanced_settings_html' ),  'trackserver' );
@@ -832,6 +875,12 @@ EOF;
 						array( &$this, 'osmand_key_deprecation_html' ), 'trackserver', 'trackserver-osmand' );
 				add_settings_field( 'trackserver_osmand_trackname_format', esc_html__( 'OsmAnd trackname format', 'trackserver' ),
 						array( &$this, 'osmand_trackname_format_html' ), 'trackserver', 'trackserver-osmand' );
+
+				// Settings for section 'trackserver-sendlocation'
+				add_settings_field( 'trackserver_sendlocation_slug', esc_html__( 'SendLocation URL slug', 'trackserver' ),
+						array( &$this, 'sendlocation_slug_html' ), 'trackserver', 'trackserver-sendlocation' );
+				add_settings_field( 'trackserver_sendlocation_trackname_format', esc_html__( 'SendLocation trackname format', 'trackserver' ),
+						array( &$this, 'sendlocation_trackname_format_html' ), 'trackserver', 'trackserver-sendlocation' );
 
 				// Settings for section 'trackserver-httppost'
 				add_settings_field( 'trackserver_upload_tag', esc_html__( 'HTTP POST URL slug', 'trackserver' ),
@@ -1080,6 +1129,20 @@ EOF;
 
 				if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
 					$this -> handle_osmand_request();
+					die();
+				}
+
+				$slug = $this -> options['sendlocation_slug'];
+				$base_esc = str_replace( '/', '\\/', $base_uri );
+
+				// <base uri>/<slug>/<username>/<access key>
+				$uri_pattern = '/^' . $base_esc . '\/' . $slug . '\/([^\/]+)\/([^\/]+)/';
+
+				$n = preg_match( $uri_pattern, $request_uri, $matches );
+				if ( $n == 1 ) {
+					$username = $matches[1];
+					$key = $matches[2];
+					$this -> handle_sendlocation_request( $username, $key );
 					die();
 				}
 
@@ -1511,6 +1574,77 @@ EOF;
 						}
 					}
 				}
+				$this -> http_terminate( 400, 'Bad request' );
+			}
+
+			function handle_sendlocation_request( $username, $key ) {
+				global $wpdb;
+
+				// If this function returns, we're OK. We use the same function as OsmAnd.
+				$user_id = $this -> validate_user_meta_key( $username, $key, 'ts_sendlocation_key' );
+
+				// SendLocation doesn't send a timestamp
+				$ts = current_time( 'timestamp' );
+				$occurred = date( 'Y-m-d H:i:s', $ts );
+
+				// Get track name from strftime format string
+				$trackname = strftime( $this -> options['sendlocation_trackname_format'], $ts );
+
+				if ( $trackname != '' ) {
+					$track_id = $this -> get_track_by_name( $user_id, $trackname );
+
+					if ( $track_id == null ) {
+						$data = array( 'user_id' => $user_id, 'name' => $trackname, 'created' => $occurred, 'source' => 'SendLocation' );
+						$format = array( '%d', '%s', '%s', '%s' );
+
+						if ( $wpdb -> insert( $this -> tbl_tracks, $data, $format ) ) {
+							$track_id = $wpdb -> insert_id;
+						}
+						else {
+							$this -> http_terminate( 501, 'Database error' );
+						}
+					}
+
+					$latitude = $_GET['lat'];
+					$longitude = $_GET['lon'];
+					$altitude = urldecode( $_GET['altitude'] );
+					$speed = urldecode( $_GET['speed'] );
+					$heading = urldecode( $_GET['heading'] );
+					$now = $occurred;
+
+					if ( $latitude != '' && $longitude != '' ) {
+						$data = array(
+							'trip_id' => $track_id,
+							'latitude' => $latitude,
+							'longitude' => $longitude,
+							'created' => $now,
+							'occurred' => $occurred,
+						);
+						$format = array( '%d', '%s', '%s', '%s', '%s' );
+
+						if ( $altitude != '' ) {
+							$data['altitude'] = $altitude;
+							$format[] = '%s';
+						}
+						if ( $speed != '' ) {
+							$data['speed'] = $speed;
+							$format[] = '%s';
+						}
+						if ( $heading != '' ) {
+							$data['heading'] = $heading;
+							$format[] = '%s';
+						}
+
+						if ($wpdb -> insert( $this -> tbl_locations, $data, $format ) ) {
+							$this -> calculate_distance( $track_id );
+							$this -> http_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" );
+						}
+						else {
+							$this -> http_terminate( 500, $wpdb -> last_error );
+						}
+					}
+				}
+
 				$this -> http_terminate( 400, 'Bad request' );
 			}
 
@@ -2213,6 +2347,16 @@ EOF;
 										<?php $this -> osmand_key_html(); ?>
 									</td>
 								</tr>
+								<tr>
+									<th scope="row">
+										<label for="sendlocation_access_key">
+											<?php esc_html_e( 'SendLocation access key', 'trackserver' ) ?>
+										</label>
+									</th>
+									<td>
+										<?php $this -> sendlocation_key_html(); ?>
+									</td>
+								</tr>
 							<tbody>
 						</table>
 						<p class="submit">
@@ -2244,6 +2388,27 @@ EOF;
 					'The key should be added, together with your WordPress username, as a URL parameter to the online tracking ' .
 					'URL set in OsmAnd, as displayed below. Change this regularly.', 'trackserver' ),
 					esc_html__( "Full URL", 'trackserver' ) );
+			}
+
+			function sendlocation_key_html() {
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
+				$current_user = wp_get_current_user();
+				$key = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_sendlocation_key', true ) );
+				$slug = htmlspecialchars( $this -> options['sendlocation_slug'] );
+				$username = $current_user->user_login;
+				$suffix = htmlspecialchars( "/$username/$key/" );
+
+				$format = <<<EOF
+					%1\$s<br />
+					<input type="text" size="25" name="ts_user_meta[ts_sendlocation_key]" id="trackserver_sendlocation_key" value="$key" autocomplete="off" /><br /><br />
+					<strong>%2\$s:</strong> $url/$slug$suffix<br />
+EOF;
+
+				printf( $format,
+					esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
+					'The key should be added, together with your WordPress username, as a URL component in the tracking ' .
+					'URL set in SendLocation, as displayed below. Change this regularly.', 'trackserver' ),
+					esc_html__( "Your personal server and script", 'trackserver' ) );
 			}
 
 			function trackme_passwd_html() {
@@ -2372,7 +2537,7 @@ EOF;
 			function process_profile_update() {
 				$user_id = get_current_user_id();
 				$data = $_POST['ts_user_meta'];
-				$valid_fields = array( 'ts_osmand_key', 'ts_trackme_key' );
+				$valid_fields = array( 'ts_osmand_key', 'ts_trackme_key', 'ts_sendlocation_key' );
 
 				// If the data is not an array, do nothing
 				if ( is_array( $data ) ) {
