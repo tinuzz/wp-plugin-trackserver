@@ -90,6 +90,7 @@ UNRELEASED - v2.0 - multiple tracks support, other features
 				$this -> user_meta_defaults['ts_trackme_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_osmand_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_sendlocation_key'] = substr( md5( uniqid() ), -8 );
+				$this -> user_meta_defaults['ts_infobar_template'] = '{lat},{lon} - {timestamp}';
 				$this -> shortcode = 'tsmap';
 				$this -> shortcode2 = 'tsscripts';
 				$this -> mapdata = array();
@@ -281,6 +282,7 @@ EOF;
 				wp_enqueue_style( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.css' );
 				wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.min.js', array(), false, true );
 				wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), false, true );
+				wp_enqueue_style( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.css' );
 
 				// To be localized in wp_footer() with data from the shortcode(s). Enqueued last, in wp_enqueue_scripts.
 				// Also localized and enqueued in admin_enqueue_scripts
@@ -1005,7 +1007,8 @@ EOF;
 					'continuous' => true,
 					'color'      => false,
 					'weight'     => false,
-					'opacity'    => false
+					'opacity'    => false,
+					'infobar'    => false,
 				);
 
 				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
@@ -1083,8 +1086,10 @@ EOF;
 					);
 				}
 
-				$markers    = ( in_array( $atts['markers'],    array( 'false', 'f', 'no', 'n' ), true ) ? false : true );
-				$continuous = ( in_array( $atts['continuous'], array( 'false', 'f', 'no', 'n' ), true ) ? false : true );
+				$markers     = ( in_array( $atts['markers'],    array( 'false', 'f', 'no',  'n' ), true ) ? false : true  );
+				$continuous  = ( in_array( $atts['continuous'], array( 'false', 'f', 'no',  'n' ), true ) ? false : true  );
+				$infobar     = ( in_array( $atts['infobar'],    array( 'true',  't', 'yes', 'y' ), true ) ? true  : false );
+				$infobar_tpl = get_user_meta( $author_id, 'ts_infobar_template', true );
 
 				$mapdata = array(
 					'div_id'       => $div_id,
@@ -1096,6 +1101,8 @@ EOF;
 					'is_live'      => $is_live,
 					'markers'      => $markers,
 					'continuous'   => $continuous,
+					'infobar'      => $infobar,
+					'infobar_tpl'  => $infobar_tpl
 				);
 
 				$style = array();
@@ -2396,6 +2403,16 @@ EOF;
 										<?php $this -> sendlocation_key_html(); ?>
 									</td>
 								</tr>
+								<tr>
+									<th scope="row">
+										<label for="infobar_template">
+											<?php esc_html_e( 'Shortcode infobar template', 'trackserver' ) ?>
+										</label>
+									</th>
+									<td>
+										<?php $this -> infobar_template_html(); ?>
+									</td>
+								</tr>
 							<tbody>
 						</table>
 						<p class="submit">
@@ -2470,6 +2487,18 @@ EOF;
 					'Change this regularly.', 'trackserver' ),
 					esc_html__( "URL header", 'trackserver' ),
 					esc_html__( "Server extension", 'trackserver' ) );
+			}
+
+			function infobar_template_html() {
+				$current_user = wp_get_current_user();
+				$template = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_infobar_template', true ) );
+				$format = <<<EOF
+					%1\$s<br />
+					<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="$template" autocomplete="off" /><br /><br />
+EOF;
+				printf( $format,
+					esc_html__( 'With live tracking, an information bar can be shown on the map, displaying some data from the latest trackpoint. ' .
+					'Here you can format the content of the infobar. Possible replacement tags are {lat}, {lon}, {timestamp}.', 'trackserver' ) );
 			}
 
 			function profiles_html() {
@@ -2576,7 +2605,7 @@ EOF;
 			function process_profile_update() {
 				$user_id = get_current_user_id();
 				$data = $_POST['ts_user_meta'];
-				$valid_fields = array( 'ts_osmand_key', 'ts_trackme_key', 'ts_sendlocation_key' );
+				$valid_fields = array( 'ts_osmand_key', 'ts_trackme_key', 'ts_sendlocation_key', 'ts_infobar_template' );
 
 				// If the data is not an array, do nothing
 				if ( is_array( $data ) ) {

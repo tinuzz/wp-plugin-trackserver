@@ -75,11 +75,11 @@ var Trackserver = (function () {
 
                     var _this = this;
 
-                    // Values that are needed for drawing the track can be passed via layer_options
+                    // Values that are needed for drawing the track can be passed via layer_options.
+                    // Remember that 'mymapdata' is also available within the layer's on(ready) handler.
                     var layer_options = {
                         'track_id': track_id,
                         'track_index': i,
-                        'continuous': mymapdata.continuous,
                         'old_track': this.get_mydata(div_id, track_id, 'track'),
                         'old_markers': this.get_mydata(div_id, track_id, 'markers')
                     }
@@ -114,7 +114,6 @@ var Trackserver = (function () {
                             var track_index = this.options.track_index;
                             var old_track   = this.options.old_track;
                             var old_markers = this.options.old_markers;
-                            var continuous  = this.options.continuous;
 
                             // ...and then delete the old one, to prevent flickering
                             if (old_track) {
@@ -134,7 +133,7 @@ var Trackserver = (function () {
                                 end_latlng   = layer._latlngs[ layer._latlngs.length - 1 ];
 
                                 if (mymapdata.markers) {
-                                    if (track_index == 0 || !continuous) {
+                                    if (track_index == 0 || !mymapdata.continuous) {
                                         start_icon = green_icon;
                                         zIndexOffset = 2000;
                                     } else {
@@ -163,6 +162,14 @@ var Trackserver = (function () {
                             if (e.target.options.track_id == 'live') {
                                 // Then, center the map on the last point / current position
                                 this._map.setView(end_latlng, this._map.getZoom());
+
+                                if (mymapdata.infobar) {
+                                    infobar_text = mymapdata.infobar_tpl;
+                                    infobar_text = infobar_text.replace(/\{lat\}/gi, end_latlng.lat);
+                                    infobar_text = infobar_text.replace(/\{lon\}/gi, end_latlng.lng);
+                                    infobar_text = infobar_text.replace(/\{timestamp\}/gi, end_title);
+                                    mymapdata.infobar_div.innerHTML = infobar_text;
+                                }
                             }
                             else {
                                 if (!mymapdata.is_live && num_ready == mymapdata.tracks.length) {
@@ -251,6 +258,9 @@ var Trackserver = (function () {
 
                 // Load and display the tracks. Use the liveupdate control to do it when appropriate.
                 if (mymapdata.is_live) {
+                    var mapdivelement = L.DomUtil.get(mymapdata.div_id);
+                    var infobar_container = L.DomUtil.create('div', 'trackserver-infobar-container', mapdivelement);
+                    mymapdata.infobar_div = L.DomUtil.create('div', 'trackserver-infobar', infobar_container);
                     L.control.liveupdate ({
                         mymapdata: mymapdata,
                         featuregroup: featuregroup,
