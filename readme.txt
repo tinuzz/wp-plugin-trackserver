@@ -239,7 +239,8 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= v2.0 =
+Release date: 22 December 2015
 
 * Support mutiple tracks in a single map. Use a comma-separated list of track
   IDs (and/or 'live') in the 'track' parameter to show multiple tracks.
@@ -262,6 +263,8 @@ for details.
   where the main shortcode detection would fail.
 
 = v1.9 =
+Release date: 1 September 2015
+
 IMPORTANT: This release resets the OsmAnd access key and changes the TrackMe
 authentication! Please read the changelog and the FAQ, and review your new
 Trackserver profile for user-specific settings.
@@ -277,11 +280,15 @@ Trackserver profile for user-specific settings.
 * Update Leaflet to version 0.7.4.
 
 = v1.8 =
+Release date: 29 July 2015
+
 * Fix parsing of MapMyTracks points with negative coordinates. Thanks to
 	Michel Boulet for helping me find the problem.
 * Add some more documentation and FAQs.
 
 = v1.7 =
+Release date: 15 June 2015
+
 * Add a 'Delete' link in the track edit modal, so you don't have to use a
   bulk action to delete a single track.
 * Do not omit tracks with zero locations in track management.
@@ -291,18 +298,24 @@ Trackserver profile for user-specific settings.
 * Use HTTPS in default map tile URL.
 
 = v1.6 =
+Release date: 29 April 2015
+
 * Add option for setting the map tile attribution, as required by most tile
   services and data providers like OSM. If non-empty, the attribution is
   displayed on every map.
 * Properly escape option values on the options page.
 
 = v1.5 =
+Release date: 15 April 2015
+
 * Make plugin run a cheap 'update' routine on every request, because we cannot
   assume that the activation hook is run every time the plugin is updated.
 * Fix a bug where tracks management would not show any tracks due to a broken
   SQL query.
 
 = v1.4 =
+Release date: 8 March 2015
+
 * Add OsmAnd live tracking support.
 * Fix buggy timezone offset calculation, that would break during DST.
 * Draw a start/end marker for each track on a map. Loading tracks from a
@@ -311,6 +324,8 @@ Trackserver profile for user-specific settings.
 * Fix a bug with viewing tracks in WP admin without pretty permalinks
 
 = v1.3 =
+Release date: 28 February 2015
+
 * Fix a grave bug, that made Trackserver usable ONLY on WP installs using
   mod-rewrite and Pretty Permalinks.
 * Add 'use_trackserver' capability for authors, editors and admins and use it
@@ -325,6 +340,8 @@ Trackserver profile for user-specific settings.
 * Code cleanup and inline documentation.
 
 = v1.2 =
+Release date: 20 February 2015
+
 * Allow GPX files to be uploaded and added to posts/pages via the WP media manager.
 * Drastically improve performance of importing GPX files (via WP admin or HTTP POST).
 * Fix UTC to local time conversion for GPX imports, correct for DST in most cases.
@@ -334,17 +351,23 @@ Trackserver profile for user-specific settings.
 * Bugfixes.
 
 = v1.1 =
+Release date: 12 February 2015
+
 * Implement 'markers' shortcode to disable start/end markers on tracks.
 * Make tile server URL a configurable option.
 * Bugfixes.
 
 = v1.0 =
+Release date: 10 February 2015
+
 * Implement 'delete' bulk-action in track management.
 * Implement 'merge' bulk-action in track management.
 * Implement 'Upload tracks' from track management.
 * Code cleanups.
 
 = v0.9 =
+Release date: 2 January 2015
+
 * Initial release, with tracking supoort, simple shortcode and track management interface.
 
 == Upgrade Notice ==
