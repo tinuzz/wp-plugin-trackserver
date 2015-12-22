@@ -87,6 +87,7 @@ License: GPL2
 				$this -> user_meta_defaults['ts_trackme_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_osmand_key'] = substr( md5( uniqid() ), -8 );
 				$this -> shortcode = 'tsmap';
+				$this -> shortcode2 = 'tsscripts';
 				$this -> mapdata = array();
 				$this -> tracks_list_table = false;
 				$this -> bulk_action_result_msg = false;
@@ -160,8 +161,9 @@ License: GPL2
 				// Front-end JavaScript and CSS
 				add_action( 'wp_enqueue_scripts', array( &$this, 'wp_enqueue_scripts' ) );
 
-				// Shortcode
-				add_shortcode( 'tsmap', array( &$this, 'handle_shortcode' ) );
+				// Shortcodes
+				add_shortcode( $this -> shortcode, array( &$this, 'handle_shortcode' ) );
+				add_shortcode( $this -> shortcode2, array( &$this, 'handle_shortcode2' ) );
 				add_action( 'loop_end', array( &$this, 'loop_end' ) );
 
 				// Media upload
@@ -869,6 +871,15 @@ EOF;
 				add_action( 'load-' . $page3, array( &$this, 'load_your_profile' ) );
 			}
 
+			/**
+			 * Detect shortcode
+			 *
+			 * This function tries to detect Trackserver's shortcodes [tsmap] or [tsscripts]
+			 * in the current query's output and returns true if it is found.
+			 *
+			 * @since 1.0
+			 */
+
 			function detect_shortcode() {
 				global $wp_query;
 				$posts = $wp_query -> posts;
@@ -877,7 +888,7 @@ EOF;
 				foreach ( $posts as $post ){
 					if ( preg_match_all( '/' . $pattern . '/s', $post -> post_content, $matches )
 						&& array_key_exists( 2, $matches )
-						&& in_array( $this -> shortcode, $matches[2] ) )
+						&& ( in_array( $this -> shortcode, $matches[2] ) || in_array( $this -> shortcode2, $matches[2] ) ) )
 					{
 						return true;
 					}
@@ -974,6 +985,15 @@ EOF;
 				$out = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . $atts['width'] . '; height: ' . $atts['height'] . '; max-width: 100%"></div>';
 
 				return $out;
+			}
+
+			/**
+			 * Stub function for the 'tsscripts' shortcode. It doesn't do anything
+			 *
+			 * @since 2.0
+			 */
+			function handle_shortcode2( $atts ) {
+				// do nothing
 			}
 
 			/**
