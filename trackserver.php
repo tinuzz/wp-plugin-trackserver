@@ -98,6 +98,8 @@ UNRELEASED - v2.0 - multiple tracks support, other features
 				$this -> url_prefix = '';
 				$this -> trackserver_update();
 				$this -> track_format = 'polyline';  // 'polyline' or 'geojson'. GeoJSON is 10 x bigger.
+				$this -> have_scripts = false;
+				$this -> need_scripts = false;
 
 				// Bootstrap
 				$this -> add_actions();
@@ -164,11 +166,12 @@ UNRELEASED - v2.0 - multiple tracks support, other features
 
 				// Front-end JavaScript and CSS
 				add_action( 'wp_enqueue_scripts', array( &$this, 'wp_enqueue_scripts' ) );
+				add_action( 'the_post', array( &$this, 'the_post' ) );
+				add_action( 'wp_footer', array( &$this, 'wp_footer' ) );
 
 				// Shortcodes
 				add_shortcode( $this -> shortcode, array( &$this, 'handle_shortcode' ) );
 				add_shortcode( $this -> shortcode2, array( &$this, 'handle_shortcode2' ) );
-				add_action( 'loop_end', array( &$this, 'loop_end' ) );
 
 				// Media upload
 				add_filter( 'upload_mimes', array( &$this, 'upload_mimes' ) );
@@ -266,7 +269,8 @@ EOF;
 			}
 
 			/**
-			 * Handler for 'wp_print_scripts'. Load scripts.
+			 * Function to load scripts for both front-end and admin. It is called from the
+			 * 'wp_enqueue_scripts' and 'admin_enqueue_scripts' handlers.
 			 *
 			 * @since 1.0
 			 */
@@ -278,9 +282,9 @@ EOF;
 				wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.min.js', array(), false, true );
 				wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), false, true );
 
-				// To be localized in the shortcode and enqueued in loop_end
+				// To be localized in wp_footer() with data from the shortcode(s). Enqueued last, in wp_enqueue_scripts.
 				// Also localized and enqueued in admin_enqueue_scripts
-				wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js' );
+				wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js', array(), false, true );
 
 				$settings = array(
 						'iconpath' => TRACKSERVER_PLUGIN_URL . 'img/',
@@ -297,8 +301,8 @@ EOF;
 			 *
 			 * @since 1.0
 			 */
-			function wp_enqueue_scripts() {
-				if ( $this -> detect_shortcode() ) {
+			function wp_enqueue_scripts( $force = false ) {
+				if ( $force || $this -> detect_shortcode() ) {
 					$this -> load_common_scripts();
 
 					// Live-update only on the front-end, not in admin
@@ -306,6 +310,12 @@ EOF;
 					wp_enqueue_script( 'leaflet-messagebox', TRACKSERVER_JSLIB .'leaflet-messagebox-1.0/leaflet-messagebox.js', array(), false, true );
 					wp_enqueue_style( 'leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.0/leaflet-liveupdate.css' );
 					wp_enqueue_script( 'leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.0/leaflet-liveupdate.js', array(), false, true );
+
+					// Enqueue the main script last
+					wp_enqueue_script( 'trackserver' );
+
+					// Instruct wp_footer() that we already have the scripts.
+					$this -> have_scripts = true;
 				}
 			}
 
@@ -327,7 +337,9 @@ EOF;
 						// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
 						$track_base_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . "/?", ( is_ssl()  ? 'https' : 'http' ) );
 						wp_localize_script( 'trackserver', 'track_base_url', $track_base_url );
-						wp_enqueue_script( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.js', array(), false, true );
+
+						// Enqueue the main script last
+						wp_enqueue_script( 'trackserver' );
 
 						// No break! The following goes for both hooks.
 						// The options page only has 'trackserver-admin.js'.
@@ -939,15 +951,42 @@ EOF;
 			function detect_shortcode() {
 				global $wp_query;
 				$posts = $wp_query -> posts;
-				$pattern = get_shortcode_regex();
 
 				foreach ( $posts as $post ){
-					if ( preg_match_all( '/' . $pattern . '/s', $post -> post_content, $matches )
-						&& array_key_exists( 2, $matches )
-						&& ( in_array( $this -> shortcode, $matches[2] ) || in_array( $this -> shortcode2, $matches[2] ) ) )
-					{
+					if ($this -> has_shortcode( $post ) ) {
 						return true;
 					}
+				}
+				return false;
+			}
+
+			/**
+			 * Handler for 'the_post'.
+			 *
+			 * This function tries to find Trackserver's shortcodes in the content of
+			 * the post that is currently being processed, and if it does, sets a
+			 * flag for loading the scripts in wp_footer(). The flag is only set once.
+			 *
+			 * @since 2.0
+			 */
+			function the_post( $post ) {
+				if ( ! $this -> need_scripts ) {
+					$this -> need_scripts = $this -> has_shortcode( $post );
+				}
+			}
+
+			/**
+			 * Function to find the Trackserver shortcodes in the content of a post or page
+			 *
+			 * @since 2.0
+			 */
+			function has_shortcode( $post ) {
+				$pattern = get_shortcode_regex();
+				if ( preg_match_all( '/' . $pattern . '/s', $post -> post_content, $matches )
+					&& array_key_exists( 2, $matches )
+					&& ( in_array( $this -> shortcode, $matches[2] ) || in_array( $this -> shortcode2, $matches[2] ) ) )
+				{
+					return true;
 				}
 				return false;
 			}
@@ -1083,13 +1122,13 @@ EOF;
 			}
 
 			/**
-			 * Function to enqueue the localized JavaScript that initializes the map(s)
+			 * Function to localize the JavaScript that initializes the map(s)
 			 */
-			function loop_end( $query ) {
-				//if ( $query -> is_main_query() ) {
-					wp_localize_script( 'trackserver', 'trackserver_mapdata', $this -> mapdata );
-					wp_enqueue_script( 'trackserver' );
-				//}
+			function wp_footer() {
+				if ( $this -> need_scripts && ! $this -> have_scripts ) {
+					$this -> wp_enqueue_scripts( true );
+				}
+				wp_localize_script( 'trackserver', 'trackserver_mapdata', $this -> mapdata );
 			}
 
 			/**
