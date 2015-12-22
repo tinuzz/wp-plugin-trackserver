@@ -1086,10 +1086,10 @@ EOF;
 			 * Function to enqueue the localized JavaScript that initializes the map(s)
 			 */
 			function loop_end( $query ) {
-				if ( $query -> is_main_query() ) {
+				//if ( $query -> is_main_query() ) {
 					wp_localize_script( 'trackserver', 'trackserver_mapdata', $this -> mapdata );
 					wp_enqueue_script( 'trackserver' );
-				}
+				//}
 			}
 
 			/**
