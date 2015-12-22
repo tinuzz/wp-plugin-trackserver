@@ -1381,7 +1381,14 @@ EOF;
 				die();
 			}
 
-			function osmand_terminate( $http = '403', $message = 'Access denied' ) {
+			/**
+			 * Function to terminate the current script, sending a HTTP status code and
+			 * a message. To be used for protocols that do not require a specific
+			 * response, like OsmAnd and SendLocation, but unlike Trackme, for example.
+			 *
+			 * @since 2.0
+			 */
+			function http_terminate( $http = '403', $message = 'Access denied' ) {
 				http_response_code( $http );
 				header( 'Content-Type: text/plain' );
 				echo $message . "\n";
@@ -1394,7 +1401,7 @@ EOF;
 				$key = urldecode( $_GET['key'] );
 
 				if ( $username == '') {
-					$this -> osmand_terminate();
+					$this -> http_terminate();
 				}
 
 				$user = get_user_by( 'login', $username );
@@ -1403,14 +1410,14 @@ EOF;
 					$user_key = get_user_meta( $user_id, 'ts_osmand_key', true );
 
 					if ( $key != $user_key ) {
-						$this -> osmand_terminate();
+						$this -> http_terminate();
 					}
 
 					if ( user_can( $user_id, 'use_trackserver' ) ) {
 						return $user_id;
 					}
 				}
-				$this -> osmand_terminate();
+				$this -> http_terminate();
 			}
 
 			function get_track_by_name( $user_id, $trackname ) {
@@ -1451,7 +1458,7 @@ EOF;
 								$track_id = $wpdb -> insert_id;
 							}
 							else {
-								$this -> osmand_terminate( 501, 'Database error' );
+								$this -> http_terminate( 501, 'Database error' );
 							}
 						}
 
@@ -1487,15 +1494,15 @@ EOF;
 
 							if ($wpdb -> insert( $this -> tbl_locations, $data, $format ) ) {
 								$this -> calculate_distance( $track_id );
-								$this -> osmand_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" );
+								$this -> http_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" );
 							}
 							else {
-								$this -> osmand_terminate( 500, $wpdb -> last_error );
+								$this -> http_terminate( 500, $wpdb -> last_error );
 							}
 						}
 					}
 				}
-				$this -> osmand_terminate( 400, 'Bad request' );
+				$this -> http_terminate( 400, 'Bad request' );
 			}
 
 			/**
