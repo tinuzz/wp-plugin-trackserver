@@ -89,6 +89,33 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 
 == Frequently Asked Questions ==
 
+= What are the available shortcode attributes? =
+
+* track: track id or 'live'
+* width: map width
+* height: map height
+* align: 'left', 'center' or 'right'
+* class: a CSS class to add to the map div for customization
+* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end
+  markers on the track
+* gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
+  precedence over 'gpx'. Markers are disabled for GPX files.
+* color: the color of the track on the map, default comes from Leaflet
+* weight: the weight of the track on the map, default comes from Leaflet
+* opacity: the opacity of the track on the map, default comes from Leaflet
+
+Example: [tsmap track=39 align=center class=mymap markers=n color=#ff0000]
+
+= What is live tracking? =
+
+By using the shortcode with the 'track=live' parameter, the most recently updated track
+belonging to the author of the current post/page is published on the map.
+
+The track is updated with the latest trackpoints every 10 seconds and the map
+view is always centered to the most recent trackpoint. A marker is shown in
+that location. Live tracking can be stopped and restarted with a simple control
+button that is shown on the map.
+
 = What is a Trackserver user profile? (since v1.9) =
 
 Before v1.9, all of Trackserver's settings were stored in a single, global place
@@ -145,33 +172,6 @@ inaccessible.
 
 To publish your tracks, simply create a page (with a non-conflicting permalink)
 and use the [tsmap] shortcode to add a map.
-
-= What are the available shortcode attributes? =
-
-* track: track id or 'live'
-* width: map width
-* height: map height
-* align: 'left', 'center' or 'right'
-* class: a CSS class to add to the map div for customization
-* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end
-  markers on the track
-* gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
-  precedence over 'gpx'. Markers are disabled for GPX files.
-* color: the color of the track on the map, default comes from Leaflet
-* weight: the weight of the track on the map, default comes from Leaflet
-* opacity: the opacity of the track on the map, default comes from Leaflet
-
-Example: [tsmap track=39 align=center class=mymap markers=n color=#ff0000]
-
-= What is live tracking? =
-
-By using the shortcode with the 'track=live' parameter, the most recently updated track
-belonging to the author of the current post/page is published on the map.
-
-The track is updated with the latest trackpoints every 10 seconds and the map
-view is always centered to the most recent trackpoint. A marker is shown in
-that location. Live tracking can be stopped and restarted with a simple control
-button that is shown on the map.
 
 = Can Trackserver support protocol X or device Y? =
 
