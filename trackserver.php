@@ -1096,7 +1096,7 @@ EOF;
 					'tracks'       => $tracks,
 					'default_lat'  => $default_lat,
 					'default_lon'  => $default_lon,
-					'default_zoom' => '12',
+					'default_zoom' => ( $is_live ? '16' : '12' ),
 					'fullscreen'   => true,
 					'is_live'      => $is_live,
 					'markers'      => $markers,
