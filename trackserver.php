@@ -1071,9 +1071,9 @@ EOF;
 
 						if ( count( $validated_ids ) ) {
 							$sql_in = "('" . implode("','", $validated_ids) . "')";
-							$sql = $wpdb -> prepare( 'SELECT AVG(latitude) FROM ' . $this -> tbl_locations . ' WHERE trip_id IN ' . $sql_in );
+							$sql = 'SELECT AVG(latitude) FROM ' . $this -> tbl_locations . ' WHERE trip_id IN ' . $sql_in;
 							$default_lat = $wpdb -> get_var( $sql );
-							$sql = $wpdb -> prepare( 'SELECT AVG(longitude) FROM ' . $this -> tbl_locations . ' WHERE trip_id IN ' . $sql_in );
+							$sql = 'SELECT AVG(longitude) FROM ' . $this -> tbl_locations . ' WHERE trip_id IN ' . $sql_in;
 							$default_lon = $wpdb -> get_var( $sql );
 						}
 					}
