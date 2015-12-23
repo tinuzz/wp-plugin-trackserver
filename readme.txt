@@ -242,7 +242,7 @@ for details.
 = v2.0.1 =
 Release date: 23 December 2015
 
-* Fix bug with incorrect use of $wpdb->prepare
+* Fix bug with incorrect use of $wpdb->prepare. Thanks to eHc for finding it.
 
 = v2.0 =
 Release date: 22 December 2015
