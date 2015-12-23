@@ -239,6 +239,11 @@ for details.
 
 == Changelog ==
 
+= v2.0.1 =
+Release date: 23 December 2015
+
+* Fix bug with incorrect use of $wpdb->prepare
+
 = v2.0 =
 Release date: 22 December 2015
 
