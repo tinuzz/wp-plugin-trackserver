@@ -26,7 +26,6 @@ are included. Maps can be viewed in full-screen on modern browsers.
 
 See the FAQ section for more information on the shortcode's supported attributes.
 
-
 # Credits
 
 This plugin was written by Martijn Grendelman. It includes some code and libraries written by other people:
