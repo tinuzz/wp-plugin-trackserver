@@ -239,6 +239,11 @@ for details.
 
 == Changelog ==
 
+= v2.0.2 =
+Release date: 23 December 2015
+
+* Previous bugfix was incomplete. Thanks to eHc for another report.
+
 = v2.0.1 =
 Release date: 23 December 2015
 
