@@ -1,24 +1,25 @@
 TODO:
 
 Server:
+- Fix default map center for live map
 - implement TrackMe export to KML/GPX. How? Create blog post?
 - implement tripname normalization; find a way around Trackme using the name as the PK
 - reverse geocoding for trip names
 - maybe use export button to trigger tripame normalization
 - add columns to trip (& location?) tables to store remote IP
 - logging requests to MySQL
-- use geoJSON instead of Polyline, if callbacks are feasable for extracting metadata
+- DONE: use geoJSON instead of Polyline, if callbacks are feasable for extracting metadata
   or use a second HTTP request for the metadata
 - implement GPSgate protocol
 - DONE: implement OSMand protocol
-- don't use the WP password for TrackMe tracking, it is insecure. Use a secret like with OsmAnd.
+- DONE: don't use the WP password for TrackMe tracking, it is insecure. Use a secret like with OsmAnd.
 
 Frontend:
 - DONE: Leaflet shortcode / map view.
 - DONE: Icons for start/finish
 - DONE: Media manager integration
 - DONE: autoupdate (live tracking) toggle button
-- ability to show multiple tracks per map
+- DONE: ability to show multiple tracks per map
 
 Admin backend:
 - DONE: Manage trips (name, comment, delete)
@@ -26,7 +27,7 @@ Admin backend:
 - DONE: Add HOWTO screens for all clients
 - DONE: Add columns for nr. of points and distance to table with tracks
 - file tracks in folders/collections
-- make secrets for TrackMe / OsmAnd a per-user setting
+- DONE: make secrets for TrackMe / OsmAnd a per-user setting
 
 Javascript:
 - DONE: move the thickbox manipulation to its own file
