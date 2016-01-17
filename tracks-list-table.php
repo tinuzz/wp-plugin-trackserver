@@ -88,8 +88,8 @@
 			}
 
 			function extra_tablenav( $where ) {
-				echo '<div class="alignleft actions bulkactions">';
-				echo '<input id="addtrack-button" class="button action" type="submit" value="' . esc_attr__( 'Upload tracks', 'trackserver' ) . '" name="">';
+				echo '<div class="alignleft actions" style="padding-bottom: 1px">';
+				echo '<input id="addtrack-button" class="button action" style="margin-top: 1px" type="button" value="' . esc_attr__( 'Upload tracks', 'trackserver' ) . '" name="">';
 				echo '</div>';
 			}
 
