@@ -46,7 +46,8 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 * align: 'left', 'center' or 'right', default: not set.
 * class: a CSS class to add to the map div for customization, default: not set.
 * markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end
-  markers on the track.
+  markers on the track. The value can also be 'start', 's', 'end' or 'e', to
+  draw markers only for the start or the end of a track respectively.
 * continuous: true (default) or false (or 'f', 'no' or 'n'), for lack of a
   better word, to indicate whether multiple tracks should be considered as
   one continuous track. The only effect this has, at the moment, is that
@@ -61,6 +62,12 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 * opacity: the opacity of the track on the map, default comes from Leaflet.
 
 Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
+
+In a feature request I was asked to make it possible to draw just a marker on the
+last known location, and not draw a track at all. Use 'markers' and 'opacity' to
+accomplish this:
+
+Example: [tsmap track=live markers=e opacity=0.0]
 
 ## I used the shortcode but the map doesn't show
 
