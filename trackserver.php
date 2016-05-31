@@ -486,13 +486,18 @@ EOF;
 			 * @since 1.3
 			 */
 			function set_capabilities() {
-				$roles = array( 'administrator', 'editor', 'author' );
-				foreach ( $roles as $rolename ) {
+				$roles = array(
+					 'administrator' => array( 'use_trackserver', 'trackserver_admin' ),
+					 'editor' => array( 'use_trackserver' ),
+					 'author'  => array( 'use_trackserver' ) );
+
+				foreach ( $roles as $rolename => $capnames ) {
 					$role = get_role( $rolename );
-					if ( $role -> has_cap( 'use_trackserver' ) ) {
-						break;
+					foreach ($capnames as $cap) {
+						if ( !( $role -> has_cap( $cap ) ) ) {
+							$role -> add_cap( $cap );
+						}
 					}
-					$role -> add_cap( 'use_trackserver' );
 				}
 			}
 
