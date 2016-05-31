@@ -98,7 +98,7 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 * class: a CSS class to add to the map div for customization, default: not set.
 * markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end
   markers on the track. The value can also be 'start', 's', 'end' or 'e', to
-  disable markers only for the start or the end of a track respectively.
+  draw markers only for the start or the end of a track respectively.
 * continuous: true (default) or false (or 'f', 'no' or 'n'), for lack of a
   better word, to indicate whether multiple tracks should be considered as
   one continuous track. The only effect this has, at the moment, is that
