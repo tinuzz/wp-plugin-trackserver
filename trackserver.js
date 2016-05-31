@@ -140,10 +140,15 @@ var Trackserver = (function () {
                                         start_icon = yellow_icon;
                                         zIndexOffset = 1000;
                                     }
-                                    start_marker = new L.marker(start_latlng, { icon: start_icon, zIndexOffset: zIndexOffset }).addTo(featuregroup);
-                                    end_marker   = new L.marker(end_latlng, { icon: red_icon, title: end_title }).addTo(featuregroup);
-                                    markers.push(start_marker);
-                                    markers.push(end_marker);
+
+                                    if (mymapdata.markers === true || mymapdata.markers == 'start') {
+                                        start_marker = new L.marker(start_latlng, { icon: start_icon, zIndexOffset: zIndexOffset }).addTo(featuregroup);
+                                        markers.push(start_marker);
+                                    }
+                                    if (mymapdata.markers === true || mymapdata.markers == 'end') {
+                                        end_marker   = new L.marker(end_latlng, { icon: red_icon, title: end_title }).addTo(featuregroup);
+                                        markers.push(end_marker);
+                                    }
                                     _this.set_mydata(div_id, track_id, 'markers', markers);
                                 }
                             }
