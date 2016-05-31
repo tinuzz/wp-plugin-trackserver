@@ -2283,21 +2283,21 @@ EOF;
 					<div id="ts-edit-modal" style="display:none;">
 						<p>
 							<form id="trackserver-edit-track" method="post" action="<?=$url?>">
-								<table>
+								<table style="width: 100%">
 									<?php wp_nonce_field( 'manage_track' ); ?>
 									<input type="hidden" name="action" value="trackserver_save_track" />
 									<input type="hidden" id="track_id" name="track_id" value="" />
 									<tr>
 										<th style="width: 150px;"><?php esc_html_e( 'Name', 'trackserver' ); ?></th>
-										<td><input id="input-track-name" name="name" type="text" style="width: 400px" /></td>
+										<td><input id="input-track-name" name="name" type="text" style="width: 100%" /></td>
 									</tr>
 									<tr>
 										<th><?php esc_html_e( 'Source', 'trackserver' ); ?></th>
-										<td><input id="input-track-source" name="source" type="text" style="width: 400px" /></td>
+										<td><input id="input-track-source" name="source" type="text" style="width: 100%" /></td>
 									</tr>
 									<tr>
 										<th><?php esc_html_e( 'Comment', 'trackserver' ); ?></th>
-										<td><textarea id="input-track-comment" name="comment" rows="3" style="width: 400px; resize: none;"></textarea></td>
+										<td><textarea id="input-track-comment" name="comment" rows="3" style="width: 100%; resize: none;"></textarea></td>
 									</tr>
 								</table>
 								<br />
@@ -2317,11 +2317,11 @@ EOF;
 						<p>
 							<?php esc_html__( 'Merge all points of multiple tracks into one track. Please specify the name for the merged track.', 'trackserver' ); ?>
 							<form method="post" action="<?=$url?>">
-								<table>
+								<table style="width: 100%">
 									<?php wp_nonce_field( 'manage_track' ); ?>
 									<tr>
 										<th style="width: 150px;"><?php esc_html_e( 'Merged track name', 'trackserver' ); ?></th>
-										<td><input id="input-merged-name" name="name" type="text" style="width: 400px" /></td>
+										<td><input id="input-merged-name" name="name" type="text" style="width: 100%" /></td>
 									</tr>
 								</table>
 								<br />

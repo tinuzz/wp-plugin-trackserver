@@ -239,6 +239,10 @@ for details.
 
 == Changelog ==
 
+= UNRELEASED =
+
+* CSS fixes for track management on small screens.
+
 = v2.0.2 =
 Release date: 23 December 2015
 

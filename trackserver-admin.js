@@ -80,9 +80,17 @@ var tb_show = function(c, u, i)
 {
     old_tb_show(c, u, i);
     margin = '-' + parseInt((tb_window_width / 2),10) + 'px';
-    jQuery("#TB_window").css({"width": tb_window_width + 'px', "height": tb_window_height + 'px', "marginleft": margin});
-    jQuery("#TB_ajaxContent").css({"width": (tb_window_width - 30) + 'px', "height": (tb_window_height - 45) + 'px'});
-    jQuery("#tsadminmapcontainer").css({"width": (tb_window_width - 32) + 'px', "height": (tb_window_height - 60)});
+    jQuery("#TB_window").css({"width": tb_window_width + 'px', "height": tb_window_height + 'px', "margin-left": margin, "max-width": "100%", "max-height": "100%"});
+    w = jQuery("#TB_window").width();
+    h = jQuery("#TB_window").height();
+    if (w < tb_window_width) {
+        jQuery("#TB_window").css({"left": "0", "margin-left": "0"});
+    }
+    if (h < tb_window_height) {
+        jQuery("#TB_window").css({"top": "0", "margin-top": "0"});
+    }
+    jQuery("#TB_ajaxContent").css({"width": (w - 30) + 'px', "height": (h - 45) + 'px'});
+    jQuery("#tsadminmapcontainer").css({"width": (w - 32) + 'px', "height": (h - 60)});
     if (trackserver_mapdata) {
         Trackserver.init( trackserver_mapdata );
     }
