@@ -248,6 +248,8 @@ for details.
 
 = UNRELEASED =
 
+* Implement MapMyTracks 'upload_activity' request. You can now upload tracks to
+  trackserver directly from OruxMaps without the use of AutoShare.
 * CSS fixes for track management on small screens.
 * Support values 'start', 's', 'end' and 'e' for the 'markers' attribute, to
   restrict drawing markers to start or end point only.

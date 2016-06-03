@@ -1299,6 +1299,9 @@ EOF;
 					case 'stop_activity':
 						$this -> handle_mapmytracks_stop_activity( $user_id );
 						break;
+					case 'upload_activity':
+						$this -> handle_mapmytracks_upload_activity( $user_id );
+						break;
 					case 'get_activities':
 						break;
 					case 'get_activity':
@@ -1818,6 +1821,37 @@ EOF;
 				echo $xml -> asXML();
 			}
 
+			/**
+			 * Function to handle 'upload_activity' request for the MapMyTracks protocol. It validates
+			 * and processes the input as GPX data, and returns an appropriate XML message.
+			 */
+			function handle_mapmytracks_upload_activity( $user_id ) {
+				global $wpdb;
+
+				$_POST = stripslashes_deep( $_POST );
+				if ( isset( $_POST['gpx_file'] ) ) {
+					if ( $xml = $this -> validate_gpx_string( $_POST['gpx_file'] ) ) {
+						$result = $this -> process_gpx( $xml, $user_id );
+
+						// If a description was given, put it in the comment field.
+						if ( isset( $_POST['description'] ) ) {
+							$track_ids = $result['track_ids'];
+							if ( count( $track_ids ) > 0 ) {
+								$in = '(' . implode( ',', $track_ids ) . ')';
+								$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in",
+									$_POST['description'], $user_id );
+								$wpdb -> query( $sql );
+							}
+						}
+
+						// Output a success message
+						$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
+						$xml -> addChild( 'type', 'success' );
+						echo $xml -> asXML();
+					}
+				}
+			}
+
 			function mapmytracks_parse_points( $points ) {
 
 				// Check the points syntax. It should match groups of four items, each containing only
@@ -2003,10 +2037,20 @@ EOF;
 				return $new;
 			}
 
-			function validate_gpx( $filename ) {
-				$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.1.xsd';
+			function validate_gpx_file( $filename ) {
 				$xml = new DOMDocument();
 				$xml -> load( $filename );
+				return $this -> validate_gpx_data( $xml );
+			}
+
+			function validate_gpx_string( $data ) {
+				$xml = new DOMDocument();
+				$xml -> loadXML( $data );
+				return $this -> validate_gpx_data( $xml );
+			}
+
+			function validate_gpx_data( $xml ) {
+				$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.1.xsd';
 				if ( $xml -> schemaValidate( $schema ) ) {
 					return $xml;
 				}
@@ -2020,7 +2064,6 @@ EOF;
 			function handle_uploaded_files( $user_id ) {
 
 				$tmp = $this -> get_temp_dir();
-				$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.1.xsd';
 
 				$message = '';
 				$files = $this -> rearrange( $_FILES );
@@ -2031,7 +2074,7 @@ EOF;
 					// Check the filename extension case-insensitively
 					if ( strcasecmp( substr( $f['name'], -4 ), '.gpx' ) == 0 ) {
 						if ( $f['error'] == 0 && move_uploaded_file( $f['tmp_name'], $filename ) ) {
-							if ( $xml = $this -> validate_gpx( $filename ) ) {
+							if ( $xml = $this -> validate_gpx_file( $filename ) ) {
 								$result = $this -> process_gpx( $xml, $user_id );
 
 								// No need to HTML-escape the message here
@@ -2794,7 +2837,7 @@ EOF;
 				if ( $type == 'application/gpx+xml' ) {
 					$user_id = $this -> get_author( $id );
 					$filename = get_attached_file( $id );
-					if ( $xml = $this -> validate_gpx( $filename ) ) {
+					if ( $xml = $this -> validate_gpx_file( $filename ) ) {
 
 						// Call 'process_gpx' with 'skip_existing' == true, to prevent
 						// uploaded files being processed more than once
