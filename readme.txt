@@ -254,7 +254,7 @@ for details.
 * Support values 'start', 's', 'end' and 'e' for the 'markers' attribute, to
   restrict drawing markers to start or end point only.
 * Introduce new capability 'trackserver_admin' and grant it to administrators.
-* Allow admins to manage other users' tracks.
+* Allow admins to manage and publish other users' tracks, using the new capability.
 
 = v2.0.2 =
 Release date: 23 December 2015

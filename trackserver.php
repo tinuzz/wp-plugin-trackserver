@@ -1055,8 +1055,14 @@ EOF;
 					// Remove all non-numeric values from the tracks array and prepare query
 					$track_ids = array_map( 'intval', array_filter( $track_ids, 'is_numeric' ) );
 					$sql_in = "('" . implode("','", $track_ids) . "')";
-					$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id IN ' . $sql_in .
-						' AND user_id=%d;', $author_id );
+
+					if ( user_can( $author_id, 'trackserver_admin' ) ) {
+						$sql = 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id IN ' . $sql_in;
+					}
+					else {
+						$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id IN ' . $sql_in .
+							' AND user_id=%d;', $author_id );
+					}
 
 					if ( $is_live || count( $track_ids ) ) {
 						$validated_ids = $wpdb -> get_col( $sql );
