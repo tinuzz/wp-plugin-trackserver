@@ -212,6 +212,17 @@ var TrackserverAdmin = (function () {
                 .submit();
             });
 
+            jQuery('#author-select-top,#author-select-bottom').change( function () {
+                var author = jQuery('#' + this.id).val();
+                jQuery('#trackserver-tracks').append(
+                    jQuery('<input>').attr({
+                        type: 'hidden',
+                        name: 'author',
+                        value: author
+                    }))
+                .submit();
+            });
+
             jQuery('#addtrack-button').click( function () {
                 ts_tb_show('ts-upload-modal', 'Upload GPX files', 600, 400);
                 return false;

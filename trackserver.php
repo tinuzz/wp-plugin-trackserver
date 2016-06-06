@@ -93,6 +93,7 @@ License: GPL2
 				$this -> user_meta_defaults['ts_osmand_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_sendlocation_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_infobar_template'] = '{lat},{lon} - {timestamp}';
+				$this -> user_meta_defaults['ts_tracks_admin_view'] = '0';
 				$this -> shortcode = 'tsmap';
 				$this -> shortcode2 = 'tsscripts';
 				$this -> mapdata = array();
@@ -226,6 +227,7 @@ License: GPL2
 				echo <<<EOF
 					<style type="text/css">
 						.wp-list-table .column-id { width: 50px; }
+						.wp-list-table .column-user_id { width: 100px; }
 						.wp-list-table .column-tstart { width: 150px; }
 						.wp-list-table .column-tend { width: 150px; }
 						.wp-list-table .column-numpoints { width: 50px; }
@@ -2296,6 +2298,17 @@ EOF;
 				}
 			}
 
+			/**
+			 * Function to check if a given user ID has any tracks in the database.
+			 */
+			function user_has_tracks( $user_id ) {
+				global $wpdb;
+				$sql = $wpdb -> prepare( 'SELECT count(id) FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d', $user_id );
+				$n = (int) $wpdb -> get_var( $sql );
+				if ( $n > 0 ) return true;
+				return false;
+			}
+
 			function setup_tracks_list_table() {
 
 				// Do this only once.
@@ -2309,9 +2322,24 @@ EOF;
 				}
 				require_once( TRACKSERVER_PLUGIN_DIR . 'tracks-list-table.php' );
 
+				$user_id = get_current_user_id();
+				$view = $user_id;
+				if ( current_user_can( 'trackserver_admin' ) ) {
+					$view = (int) get_user_meta( $user_id, 'ts_tracks_admin_view', true );
+					if ( isset( $_REQUEST['author'] ) ) {
+						$view = (int) $_REQUEST['author'];
+					}
+					if ( ! $this -> user_has_tracks( $view ) ) {
+						$view = 0;
+					}
+					// if ( $old_view != $view ) ?
+					update_user_meta( $user_id, 'ts_tracks_admin_view', $view );
+				}
+
 				$list_table_options = array(
 					'tbl_tracks' => $this -> tbl_tracks,
 					'tbl_locations' => $this -> tbl_locations,
+					'view' => $view,
 				);
 
 				$this -> tracks_list_table = new Tracks_List_Table( $list_table_options );
@@ -2693,9 +2721,15 @@ EOF;
 				$user_id = get_current_user_id();
 				// Convert to int, remove value '0'.
 				$track_ids = array_diff( array_map( 'intval', (array) $track_ids ), array( 0 ) );
+
 				if ( count( $track_ids ) > 0 ) {
+
 					$in = '(' . implode( ',', $track_ids ) . ')';
 					$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id );
+
+					if ( current_user_can( 'trackserver_admin' ) ) {
+						$sql = 'SELECT id FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
+					}
 					return $wpdb -> get_col( $sql );
 				}
 				return array();
@@ -2731,9 +2765,9 @@ EOF;
 
 				// The action name is 'bulk-' + plural form of items in WP_List_Table
 				check_admin_referer( 'bulk-tracks' );
+				$track_ids = $this -> filter_current_user_tracks( $_REQUEST['track'] );
 
 				if ( $action === 'delete' ) {
-					$track_ids = $this -> filter_current_user_tracks( $_REQUEST['track'] );
 					if ( count( $track_ids ) > 0 ) {
 						$result = $this -> wpdb_delete_tracks( $track_ids );
 						$nl = $result['locations'];
@@ -2750,7 +2784,6 @@ EOF;
 				}
 
 				if ( $action === 'merge' ) {
-					$track_ids = $this -> filter_current_user_tracks( $_REQUEST['track'] );
 					// Need at least 2 tracks
 					if ( ( $n = count( $track_ids ) ) > 1 ) {
 						$id = min( $track_ids );
@@ -2778,7 +2811,6 @@ EOF;
 				}
 
 				if ( $action === 'recalc' ) {
-					$track_ids = $this -> filter_current_user_tracks( $_REQUEST['track'] );
 					if ( count( $track_ids ) > 0 ) {
 						$exec_t0 = microtime( true );
 						foreach ( $track_ids as $id ) {
