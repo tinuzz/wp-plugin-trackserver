@@ -120,6 +120,8 @@ the password in TrackMe to this new password, instead of your WordPress
 password.  Like your password, you should keep your access keys to yourself,
 but the idea is that the security impact of such a key is low, compared to your
 WordPress password, and that you can (and should!) change the keys regularly.
+No real effort is made to keep the keys secure (they are stored in the database
+unhashed, for example), so in any case, try not to use a sensitive password.
 
 ## What is this 'slug' you are talking about?
 
@@ -165,19 +167,22 @@ m2s-plugin for shipping the data to Trackserver.
 
 ## What about security?
 
-The plugin uses a custom Wordpress capability to manage who can use the
-tracking features and manage their own tracks. The capability is granted to
-authors, editors and administrators, but not to subscribers. This is hardcoded
-for now, and (re)activation of the plugin will re-grant the capability to
-the three listed roles.
+The plugin uses a custom Wordpress capability ('use_trackserver') to manage who
+can use the tracking features and manage their own tracks. The capability is
+granted to authors, editors and administrators, but not to subscribers. This is
+hardcoded for now, and (re)activation of the plugin will re-grant the
+capability to the three listed roles.
 
-Users who can create/edit posts can also use the [tsmap] shortcode
-and publish maps with their own tracks. It is not possible for users (not even
-admins) to publish (or manage) other people's tracks.
+Users who can create/edit posts can also use the [tsmap] shortcode and publish
+maps with their own tracks. In addition, administrators (and anyone else with
+the 'trackserver_admin' capability) can manage and publish other users' tracks.
 
 Tracks can only be published in Wordpress posts or pages, and cannot be
 downloaded from outside Wordpress. Requests for downloading tracks need to
 have a cryptographic signature that only Wordpress can generate.
+
+Regarding the use of apps for live tracking and uploading to Wordpress, please
+read the considerations about authentication above.
 
 ## What GPX namespaces are supported for GPX import (via HTTP POST or upload via backend)?
 
