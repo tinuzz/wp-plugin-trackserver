@@ -1295,8 +1295,13 @@ EOF;
 			}
 
 			function handle_mapmytracks_request() {
-				// If this function returns, we're OK
-				$user_id = $this -> validate_http_basicauth();
+
+				// Validate with '$return = true' so we can handle the auth failure.
+				$user_id = $this -> validate_http_basicauth( true );
+
+				if ( $user_id === false ) {
+					return $this -> mapmytracks_invalid_auth();
+				}
 
 				switch ( $_POST['request'] ) {
 					case 'start_activity':
@@ -1727,9 +1732,10 @@ EOF;
 
 			/**
 			 * Function to validate Wordpress credentials for basic HTTP authentication. If no crededtials are received,
-			 * we send a 401 status code. If the username or password are incorrect, we terminate.
+			 * we send a 401 status code. If the username or password are incorrect, we terminate (default) or return
+			 * false if so requested.
 			 */
-			function validate_http_basicauth() {
+			function validate_http_basicauth( $return = false) {
 
 				if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) ) {
 					header( 'WWW-Authenticate: Basic realm="Authentication Required"' );
@@ -1748,10 +1754,12 @@ EOF;
 							return $user_id;
 						}
 						else {
+							if ( $return ) return false;
 							die( "User has insufficient permissions\n" );
 						}
 					}
 				}
+				if ( $return ) return false;
 				die( "Username or password incorrect\n" );
 			}
 
@@ -1788,7 +1796,7 @@ EOF;
 							$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
 							$xml -> addChild( 'type', 'activity_started' );
 							$xml -> addChild( 'activity_id', (string) $trip_id );
-							echo $xml -> asXML();
+							echo str_replace( array( "\r", "\n" ), '', $xml -> asXML() );
 						}
 					}
 				}
@@ -1813,7 +1821,8 @@ EOF;
 						if ( $this -> mapmytracks_insert_points( $points, $trip_id ) ) {
 							$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
 							$xml -> addChild( 'type', 'activity_updated' );
-							echo $xml -> asXML();
+							//echo $xml -> asXML();
+							echo str_replace( array( "\r", "\n" ), '', $xml -> asXML() );
 						}
 						// Absence of a valid XML response causes OruxMaps to re-send the data in a subsequent request
 					}
@@ -1827,7 +1836,17 @@ EOF;
 			function handle_mapmytracks_stop_activity( $user_id ) {
 				$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
 				$xml -> addChild( 'type', 'activity_stopped' );
-				echo $xml -> asXML();
+				echo str_replace( array( "\r", "\n" ), '', $xml -> asXML() );
+			}
+
+			/**
+			 * Function to send an XML message to the client in case of failed authentication or authorization.
+			 */
+			function mapmytracks_invalid_auth() {
+				$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
+				$xml -> addChild( 'type', 'error' );
+				$xml -> addChild( 'reason', 'unauthorised' );
+				echo str_replace( array( "\r", "\n" ), '', $xml -> asXML() );
 			}
 
 			/**
@@ -1856,7 +1875,7 @@ EOF;
 						// Output a success message
 						$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
 						$xml -> addChild( 'type', 'success' );
-						echo $xml -> asXML();
+						echo str_replace( array( "\r", "\n" ), '', $xml -> asXML() );
 					}
 				}
 			}
