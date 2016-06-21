@@ -251,6 +251,10 @@ for details.
 
 == Changelog ==
 
+= UNRELEASED =
+
+* Calculate and update speed per trackpoint when calculating the track distance.
+
 = v2.1 =
 Release date: 6 June 2016
 

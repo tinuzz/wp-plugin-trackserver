@@ -2931,9 +2931,13 @@ EOF;
 			}
 
 			function calculate_distance( $track_id ) {
+				$this -> calculate_distance_speed( $track_id );
+			}
+
+			function calculate_distance_speed( $track_id ) {
 				global $wpdb;
 
-				$sql = $wpdb -> prepare( 'SELECT latitude, longitude FROM ' . $this -> tbl_locations .
+				$sql = $wpdb -> prepare( 'SELECT id, latitude, longitude, speed, occurred FROM ' . $this -> tbl_locations .
 					' WHERE trip_id=%d ORDER BY occurred', $track_id );
 				$res = $wpdb -> get_results( $sql, ARRAY_A );
 
@@ -2941,10 +2945,22 @@ EOF;
 				$distance = 0;
 				foreach ( $res as $row ) {
 					if ($oldlat) {
-						$distance += $this -> distance( $oldlat, $oldlon, $row['latitude'], $row['longitude'] );
+						$delta_distance = $this -> distance( $oldlat, $oldlon, $row['latitude'], $row['longitude'] );
+						$distance += $delta_distance;
+
+						if ( $row['speed'] == '0' ) {
+							$oldtime = new DateTime( $oldocc );
+							$newtime = new DateTime( $row['occurred'] );
+							$delta_time = $newtime -> getTimestamp() - $oldtime -> getTimestamp();
+							$speed = $delta_distance / $delta_time; // in m/s
+
+							// Update the speed column in the database for this location
+							$wpdb -> update( $this -> tbl_locations, array( 'speed' => $speed ), array( 'id' => $row['id'] ), '%f', '%d' );
+						}
 					}
 					$oldlat = $row['latitude'];
 					$oldlon = $row['longitude'];
+					$oldocc = $row['occurred'];
 				}
 
 				if ( $distance > 0 ) {
