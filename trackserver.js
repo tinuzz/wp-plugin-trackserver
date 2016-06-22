@@ -43,8 +43,11 @@ var Trackserver = (function () {
 
         process_data: function (data, options) {
             var o = typeof data === 'string' ?  JSON.parse(data) : data;
-            var title = o.metadata.last_trkpt_time;
-            this.set_mydata(options.div_id, options.track_id, 'title', title);
+            this.set_mydata(options.div_id, options.track_id, 'timestamp', o.metadata.last_trkpt_time);
+            this.set_mydata(options.div_id, options.track_id, 'altitude', o.metadata.last_trkpt_altitude);
+            this.set_mydata(options.div_id, options.track_id, 'speed_ms', o.metadata.last_trkpt_speed_ms);
+            this.set_mydata(options.div_id, options.track_id, 'speed_kmh', o.metadata.last_trkpt_speed_kmh);
+            this.set_mydata(options.div_id, options.track_id, 'speed_mph', o.metadata.last_trkpt_speed_mph);
             return o.track;
         },
 
@@ -121,7 +124,11 @@ var Trackserver = (function () {
                             }
 
                             var layer_ids = _this.get_sorted_keys( this._layers );
-                            var end_title = _this.get_mydata(div_id, track_id, 'title');
+                            var timestamp = _this.get_mydata(div_id, track_id, 'timestamp');
+                            var altitude = _this.get_mydata(div_id, track_id, 'altitude');
+                            var speed_ms = _this.get_mydata(div_id, track_id, 'speed_ms');
+                            var speed_kmh = _this.get_mydata(div_id, track_id, 'speed_kmh');
+                            var speed_mph = _this.get_mydata(div_id, track_id, 'speed_mph');
                             var id, layer, start_latlng, end_latlng, start_marker, end_marker;
                             var markers = [];
 
@@ -146,7 +153,7 @@ var Trackserver = (function () {
                                         markers.push(start_marker);
                                     }
                                     if (mymapdata.markers === true || mymapdata.markers == 'end') {
-                                        end_marker   = new L.marker(end_latlng, { icon: red_icon, title: end_title }).addTo(featuregroup);
+                                        end_marker   = new L.marker(end_latlng, { icon: red_icon, title: timestamp }).addTo(featuregroup);
                                         markers.push(end_marker);
                                     }
                                     _this.set_mydata(div_id, track_id, 'markers', markers);
@@ -172,7 +179,11 @@ var Trackserver = (function () {
                                     infobar_text = mymapdata.infobar_tpl;
                                     infobar_text = infobar_text.replace(/\{lat\}/gi, end_latlng.lat);
                                     infobar_text = infobar_text.replace(/\{lon\}/gi, end_latlng.lng);
-                                    infobar_text = infobar_text.replace(/\{timestamp\}/gi, end_title);
+                                    infobar_text = infobar_text.replace(/\{timestamp\}/gi, timestamp);
+                                    infobar_text = infobar_text.replace(/\{altitude\}/gi, altitude);
+                                    infobar_text = infobar_text.replace(/\{speedms\}/gi, speed_ms);
+                                    infobar_text = infobar_text.replace(/\{speedkmh\}/gi, speed_kmh);
+                                    infobar_text = infobar_text.replace(/\{speedmph\}/gi, speed_mph);
                                     mymapdata.infobar_div.innerHTML = infobar_text;
                                 }
                             }

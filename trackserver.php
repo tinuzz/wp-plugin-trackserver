@@ -2288,7 +2288,7 @@ EOF;
 					$trip_id = $wpdb -> get_var( $sql );
 
 					if ( $trip_id ) {
-						$sql = $wpdb -> prepare( 'SELECT latitude, longitude, occurred FROM ' . $this -> tbl_locations .
+						$sql = $wpdb -> prepare( 'SELECT latitude, longitude, altitude, speed, occurred FROM ' . $this -> tbl_locations .
 							' WHERE trip_id=%d ORDER BY occurred', $trip_id );
 						$res = $wpdb -> get_results( $sql, ARRAY_A );
 
@@ -2311,7 +2311,11 @@ EOF;
 							$encoded = Polyline::Encode( $points );
 						}
 						$metadata = array(
-							'last_trkpt_time' => $row['occurred']
+							'last_trkpt_time' => $row['occurred'],
+							'last_trkpt_altitude' => $row['altitude'],
+							'last_trkpt_speed_ms' => number_format( $row['speed'], 2 ),
+							'last_trkpt_speed_kmh' => number_format( (float) $row['speed'] * 3.6, 2 ),
+							'last_trkpt_speed_mph' => number_format( (float) $row['speed'] * 2.23693629, 2 ),
 						);
 						$data = array( 'track' => $encoded, 'metadata' => $metadata );
 
@@ -2605,7 +2609,7 @@ EOF;
 EOF;
 				printf( $format,
 					esc_html__( 'With live tracking, an information bar can be shown on the map, displaying some data from the latest trackpoint. ' .
-					'Here you can format the content of the infobar. Possible replacement tags are {lat}, {lon}, {timestamp}.', 'trackserver' ) );
+					'Here you can format the content of the infobar. Possible replacement tags are {lat}, {lon}, {timestamp}, {altitude}, {speedms}, {speedkmh}, {speedmph}.', 'trackserver' ) );
 			}
 
 			function profiles_html() {
