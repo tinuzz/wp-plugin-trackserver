@@ -81,10 +81,10 @@ var Trackserver = (function () {
                     // Values that are needed for drawing the track can be passed via layer_options.
                     // Remember that 'mymapdata' is also available within the layer's on(ready) handler.
                     var layer_options = {
-                        'track_id': track_id,
-                        'track_index': i,
-                        'old_track': this.get_mydata(div_id, track_id, 'track'),
-                        'old_markers': this.get_mydata(div_id, track_id, 'markers')
+                        track_id: track_id,
+                        track_index: i,
+                        old_track: this.get_mydata(div_id, track_id, 'track'),
+                        old_markers: this.get_mydata(div_id, track_id, 'markers'),
                     }
 
                     if (mymapdata.style) {
@@ -95,9 +95,9 @@ var Trackserver = (function () {
 
                     // Values that are needed in the process_data method can be passed via track_options
                     var track_options = {
-                        'ondata': L.bind( this.process_data, this ),
-                        'div_id': div_id,
-                        'track_id': track_id,
+                        ondata: L.bind( this.process_data, this ),
+                        div_id: div_id,
+                        track_id: track_id,
                     };
 
                     if ( mymapdata.tracks[i].track_type == 'geojson' ) {
@@ -153,7 +153,7 @@ var Trackserver = (function () {
                                         markers.push(start_marker);
                                     }
                                     if (mymapdata.markers === true || mymapdata.markers == 'end') {
-                                        end_marker   = new L.marker(end_latlng, { icon: red_icon, title: timestamp }).addTo(featuregroup);
+                                        end_marker = new L.marker(end_latlng, { icon: red_icon, title: timestamp }).addTo(featuregroup);
                                         markers.push(end_marker);
                                     }
                                     _this.set_mydata(div_id, track_id, 'markers', markers);
