@@ -87,11 +87,9 @@ var Trackserver = (function () {
                         old_markers: this.get_mydata(div_id, track_id, 'markers'),
                     }
 
-                    if (mymapdata.style) {
+                    if (mymapdata.style && !mymapdata.points) {
                         layer_options.style = mymapdata.style;
                     }
-                    var customLayer = L.geoJson(null, layer_options);
-                    var track_function = omnivore.polyline;
 
                     // Values that are needed in the process_data method can be passed via track_options
                     var track_options = {
@@ -99,6 +97,27 @@ var Trackserver = (function () {
                         div_id: div_id,
                         track_id: track_id,
                     };
+
+                    if (mymapdata.points) {
+
+                        var geojsonMarkerOptions = {
+                            radius: 5,
+                            fillColor: "#ffcf00",
+                            color: "#ffffff",
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        };
+
+                        track_options.geometry = 'points';
+                        layer_options.pointToLayer = function(feature, latlng) {
+                            return L.circleMarker(latlng, geojsonMarkerOptions);
+                            //return L.marker(latlng, { icon: yellow_icon, zIndexOffset: -1000 });
+                        }
+                    }
+
+                    var customLayer = L.geoJson(null, layer_options);
+                    var track_function = omnivore.polyline;
 
                     if ( mymapdata.tracks[i].track_type == 'geojson' ) {
                         track_function = omnivore.geojson;
@@ -129,15 +148,36 @@ var Trackserver = (function () {
                             var speed_ms = _this.get_mydata(div_id, track_id, 'speed_ms');
                             var speed_kmh = _this.get_mydata(div_id, track_id, 'speed_kmh');
                             var speed_mph = _this.get_mydata(div_id, track_id, 'speed_mph');
-                            var id, layer, start_latlng, end_latlng, start_marker, end_marker;
+                            var id, layer, start_latlng, end_latlng, start_marker, end_marker, point_layer;
                             var markers = [];
 
                             for ( var i = 0; i < layer_ids.length; ++i ) {
 
                                 id = layer_ids[i];
                                 layer = this._layers[id];
-                                start_latlng = layer._latlngs[0];
-                                end_latlng   = layer._latlngs[ layer._latlngs.length - 1 ];
+                                if ('_latlngs' in layer) {
+                                    start_latlng = layer._latlngs[0];
+                                    end_latlng   = layer._latlngs[ layer._latlngs.length - 1 ];
+                                }
+                                else if (mymapdata.points && '_layers' in layer) {
+                                    // Iterate over the _layers object, in which every layer, each containing a
+                                    // point, has a numeric key. We need the first one and the last one.
+                                    var j=0;
+                                    for (var layerid in layer._layers) {
+                                        if (layer._layers.hasOwnProperty(layerid)) {
+                                            point_layer = layer._layers[layerid];
+                                            if (j == 0) {
+                                                start_latlng = point_layer._latlng;
+                                                j++;
+                                            }
+                                        }
+                                    }
+                                    end_latlng = point_layer._latlng;
+                                }
+                                else {
+                                    //  No tracks, no points? No markers.
+                                    continue;
+                                }
 
                                 if (mymapdata.markers) {
                                     if (track_index == 0 || !mymapdata.continuous) {

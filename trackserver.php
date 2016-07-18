@@ -1018,6 +1018,7 @@ EOF;
 					'weight'     => false,
 					'opacity'    => false,
 					'infobar'    => false,
+					'points'     => false,
 				);
 
 				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
@@ -1108,6 +1109,7 @@ EOF;
 				$markers     = ( in_array( $atts['markers'],    array( 'end', 'e' ), true ) ? 'end' : $markers  );
 				$continuous  = ( in_array( $atts['continuous'], array( 'false', 'f', 'no',  'n' ), true ) ? false : true  );
 				$infobar     = ( in_array( $atts['infobar'],    array( 'true',  't', 'yes', 'y' ), true ) ? true  : false );
+				$points      = ( in_array( $atts['points'],     array( 'true',  't', 'yes', 'y' ), true ) ? true  : false );
 				$infobar_tpl = get_user_meta( $author_id, 'ts_infobar_template', true );
 
 				$mapdata = array(
@@ -1121,7 +1123,8 @@ EOF;
 					'markers'      => $markers,
 					'continuous'   => $continuous,
 					'infobar'      => $infobar,
-					'infobar_tpl'  => $infobar_tpl
+					'infobar_tpl'  => $infobar_tpl,
+					'points'       => $points
 				);
 
 				$style = array();

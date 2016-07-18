@@ -237,7 +237,11 @@ function polylineParse(txt, options, layer) {
     layer = layer || L.geoJson();
     options = options || {};
     var coords = polyline.decode(txt, options.precision);
-    var geojson = { type: 'LineString', coordinates: [] };
+    var geo_type = 'LineString'
+    if ('geometry' in options && options.geometry == 'points') {
+        geo_type = 'MultiPoint'
+    }
+    var geojson = { type: geo_type, coordinates: [] };
     for (var i = 0; i < coords.length; i++) {
         // polyline returns coords in lat, lng order, so flip for geojson
         geojson.coordinates[i] = [coords[i][1], coords[i][0]];
