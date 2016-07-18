@@ -256,6 +256,10 @@ for details.
 * Calculate and update speed per trackpoint when calculating the track distance.
 * New replacement tags for a live track's infobar: altitude and speed in m/s,
   km/h and mph.
+* Add shortcode parameter 'points=y|n', to draw a track as a collection of
+  points instead of a line. The 'color' parameter applies to the fill of the
+  points in this case. Be careful with too many points (thousands).
+* Change the default tile server URL to the basic OpenStreetMap
 
 = v2.1 =
 Release date: 6 June 2016
