@@ -109,6 +109,10 @@ var Trackserver = (function () {
                             fillOpacity: 0.8
                         };
 
+                        if (mymapdata.style && mymapdata.style.color) {
+                            geojsonMarkerOptions.fillColor = mymapdata.style.color;
+                        }
+
                         track_options.geometry = 'points';
                         layer_options.pointToLayer = function(feature, latlng) {
                             return L.circleMarker(latlng, geojsonMarkerOptions);
