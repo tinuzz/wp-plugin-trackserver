@@ -2295,40 +2295,78 @@ EOF;
 							' WHERE trip_id=%d ORDER BY occurred', $trip_id );
 						$res = $wpdb -> get_results( $sql, ARRAY_A );
 
-						$points = array();
-
-						// GeoJSON and Polyline have different lat/lon order requirements
 						if ( $format == 'geojson' ) {
-							foreach ( $res as $row ) {
-								$points[] = array( $row['longitude'], $row['latitude'] );
-							}
-							$encoded = array(
-								'type' => 'LineString',
-								'coordinates' => $points
-							);
+							$this -> send_as_geojson( $res );
 						}
 						else { // default to 'polyline'
-							foreach ( $res as $row ) {
-								$points[] = array( $row['latitude'], $row['longitude'] );
-							}
-							$encoded = Polyline::Encode( $points );
+							$this -> send_as_polyline( $res );
 						}
-						$metadata = array(
-							'last_trkpt_time' => $row['occurred'],
-							'last_trkpt_altitude' => $row['altitude'],
-							'last_trkpt_speed_ms' => number_format( $row['speed'], 2 ),
-							'last_trkpt_speed_kmh' => number_format( (float) $row['speed'] * 3.6, 2 ),
-							'last_trkpt_speed_mph' => number_format( (float) $row['speed'] * 2.23693629, 2 ),
-						);
-						$data = array( 'track' => $encoded, 'metadata' => $metadata );
-
-						header( 'Content-Type: application/json' );
-						echo json_encode( $data );
 					}
 				}
 				else {
 					echo "ENOID\n";
 				}
+			}
+
+			/**
+			 * Function to output a track with metadata as GeoJSON. Takes a $wpdb result set as input.
+			 *
+			 * @since 2.2
+			 */
+			function send_as_geojson( $res ) {
+				$points = array();
+				foreach ( $res as $row ) {
+					$points[] = array( $row['longitude'], $row['latitude'] );
+				}
+				$encoded = array(
+					'type' => 'LineString',
+					'coordinates' => $points
+				);
+				$metadata = $this -> get_metadata( $row );
+				$this -> send_as_json( $encoded, $metadata );
+			}
+
+			/**
+			 * Function to output a track as Polyline, with metadata, encoded in JSON.
+			 * Takes a $wpdb result set as input.
+			 *
+			 * @since 2.2
+			 */
+			function send_as_polyline( $res ) {
+				$points = array();
+				foreach ( $res as $row ) {
+					$points[] = array( $row['latitude'], $row['longitude'] );
+				}
+				$encoded = Polyline::Encode( $points );
+				$metadata = $this -> get_metadata( $row );
+				$this -> send_as_json( $encoded, $metadata );
+			}
+
+			/**
+			 * Function to actually output data as JSON. Takes encoded location points and metadata
+			 * (both arrays) as input.
+			 *
+			 * @since 2.2
+			 */
+			function send_as_json( $encoded, $metadata ) {
+				$data = array( 'track' => $encoded, 'metadata' => $metadata );
+				header( 'Content-Type: application/json' );
+				echo json_encode( $data );
+			}
+
+			/**
+			 * Function to construct a metadata array from a $wpdb row.
+			 *
+			 * @since 2.2
+			 */
+			function get_metadata( $row ) {
+				return array(
+					'last_trkpt_time' => $row['occurred'],
+					'last_trkpt_altitude' => $row['altitude'],
+					'last_trkpt_speed_ms' => number_format( $row['speed'], 2 ),
+					'last_trkpt_speed_kmh' => number_format( (float) $row['speed'] * 3.6, 2 ),
+					'last_trkpt_speed_mph' => number_format( (float) $row['speed'] * 2.23693629, 2 ),
+				);
 			}
 
 			/**
