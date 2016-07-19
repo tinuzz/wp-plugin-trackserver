@@ -253,7 +253,8 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= v2.2 =
+Release date: 19 July 2016
 
 * Calculate and update speed per trackpoint when calculating the track distance.
 * New replacement tags for a live track's infobar: altitude and speed in m/s,
