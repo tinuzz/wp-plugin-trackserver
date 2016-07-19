@@ -60,6 +60,8 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 * color: the color of the track on the map, default comes from Leaflet.
 * weight: the weight of the track on the map, default comes from Leaflet.
 * opacity: the opacity of the track on the map, default comes from Leaflet.
+* points: true (or 't', 'yes' or 'y'), or false (default), to specify whether
+  the track should be displayed as a line or a collection of points.
 
 Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
 

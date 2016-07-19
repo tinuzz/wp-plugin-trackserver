@@ -111,6 +111,8 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 * color: the color of the track on the map, default comes from Leaflet.
 * weight: the weight of the track on the map, default comes from Leaflet.
 * opacity: the opacity of the track on the map, default comes from Leaflet.
+* points: true (or 't', 'yes' or 'y'), or false (default), to specify whether
+  the track should be displayed as a line or a collection of points.
 
 Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
 
