@@ -223,7 +223,7 @@ var TrackserverAdmin = (function () {
                 .submit();
             });
 
-            jQuery('#addtrack-button').click( function () {
+            jQuery('#addtrack-button-top,#addtrack-button-bottom').click( function () {
                 ts_tb_show('ts-upload-modal', 'Upload GPX files', 600, 400);
                 return false;
             });

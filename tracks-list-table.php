@@ -111,9 +111,10 @@
 				$view = $this -> options['view'];
 				$author_select_name = "author-$which";
 				$author_select_id = "author-select-$which";
+				$addtrack_button_id = "addtrack-button-$which";
 
 				echo '<div class="alignleft actions" style="padding-bottom: 1px; line-height: 32px">';
-				echo '<input id="addtrack-button" class="button action" style="margin: 1px 8px 0 0" type="button" value="' . esc_attr__( 'Upload tracks', 'trackserver' ) . '" name="">';
+				echo '<input id="' . $addtrack_button_id . '" class="button action" style="margin: 1px 8px 0 0" type="button" value="' . esc_attr__( 'Upload tracks', 'trackserver' ) . '" name="">';
 				if ( current_user_can( 'trackserver_admin' ) ) {
 					echo '<select name="' . $author_select_name . '" id="' . $author_select_id . '" class="postform">';
 					echo '<option value="0">All users</option>';
