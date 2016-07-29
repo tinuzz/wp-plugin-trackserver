@@ -132,6 +132,11 @@ var Trackserver = (function () {
                         track_options = { 'div_id': div_id };
                     }
 
+                    if ( mymapdata.tracks[i].track_type == 'kml' ) {
+                        track_function = omnivore.kml;
+                        track_options = { 'div_id': div_id };
+                    }
+
                     // First draw the new track...
                     var runLayer = track_function(mymapdata.tracks[i].track_url, track_options, customLayer )
                         .on ('ready', function (e) {

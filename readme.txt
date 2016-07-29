@@ -105,6 +105,8 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
   intermediate start markers are yellow instead of green.
 * gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
   precedence over 'gpx'.
+* kml: the URL to a KML file to be plotted on the map. 'track' and 'gpx'
+  attributes take precedence over 'kml'.
 * infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether
   an information bar should be shown on the map, when live tracking is active.
   This only works with 'track=live', and has no effect in other cases.
@@ -252,6 +254,11 @@ for details.
 2. Configuration of OruxMaps for use with Trackserver / WordPress
 
 == Changelog ==
+
+= UNRELEASED =
+
+* Fix a bug with the 'Upload tracks' buttons in the admin
+* Support loading KML files just like GPX, introducing a new shortcode parameter 'kml'
 
 = v2.2 =
 Release date: 19 July 2016

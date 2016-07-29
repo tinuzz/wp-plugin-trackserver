@@ -1013,6 +1013,7 @@ EOF;
 					'class'      => '',
 					'track'      => false,
 					'gpx'        => false,
+					'kml'        => false,
 					'markers'    => true,
 					'continuous' => true,
 					'color'      => false,
@@ -1102,6 +1103,12 @@ EOF;
 					$tracks[] = array(
 						'track_url'  => $atts['gpx'],
 						'track_type' => 'gpx'
+					);
+				}
+				elseif ( $atts['kml'] ) {
+					$tracks[] = array(
+						'track_url'  => $atts['kml'],
+						'track_type' => 'kml'
 					);
 				}
 
