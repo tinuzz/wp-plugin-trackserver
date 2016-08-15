@@ -26,6 +26,11 @@ are included. Maps can be viewed in full-screen on modern browsers.
 
 See the FAQ section for more information on the shortcode's supported attributes.
 
+= Requirements =
+
+Trackserver requires PHP 5.3 or newer and it needs both DOMDocument and
+SimpleXML extensions installed.
+
 # Credits
 
 This plugin was written by Martijn Grendelman. It includes some code and libraries written by other people:
@@ -54,6 +59,8 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
   intermediate start markers are yellow instead of green.
 * gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
   precedence over 'gpx'.
+* kml: the URL to a KML file to be plotted on the map. 'track' and 'gpx'
+  attributes take precedence over 'kml'.
 * infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether
   an information bar should be shown on the map, when live tracking is active.
   This only works with 'track=live', and has no effect in other cases.

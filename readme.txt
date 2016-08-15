@@ -49,7 +49,8 @@ See the FAQ section for more information on the shortcode's supported attributes
 
 = Requirements =
 
-Trackserver requires PHP 5.3 or newer.
+Trackserver requires PHP 5.3 or newer and it needs both DOMDocument and
+SimpleXML extensions installed.
 
 = Credits =
 
