@@ -260,6 +260,7 @@ for details.
 
 * Fix a bug with the 'Upload tracks' buttons in the admin
 * Support loading KML files just like GPX, introducing a new shortcode parameter 'kml'
+* Fix long standing bug with missing Thickbox on the options page
 
 = v2.2 =
 Release date: 19 July 2016

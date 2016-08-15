@@ -515,6 +515,8 @@ EOF;
 					wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 				}
 
+				add_thickbox();
+
 				echo '<div class="wrap"><h2>';
 				esc_html_e( 'Trackserver Options', 'trackserver' );
 				echo '</h2>';
