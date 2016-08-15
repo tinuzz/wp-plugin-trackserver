@@ -79,10 +79,14 @@ var old_tb_show = window.tb_show;
 var tb_show = function(c, u, i)
 {
     old_tb_show(c, u, i);
-    margin = '-' + parseInt((tb_window_width / 2),10) + 'px';
-    jQuery("#TB_window").css({"width": tb_window_width + 'px', "height": tb_window_height + 'px', "margin-left": margin, "max-width": "100%", "max-height": "100%"});
+    jQuery("#TB_window").css({"width": tb_window_width + 'px', "height": tb_window_height + 'px', "max-width": "100%", "max-height": "100%"});
     w = jQuery("#TB_window").width();
     h = jQuery("#TB_window").height();
+
+    // Reposition using actual size
+    jQuery("#TB_window").css({"margin-left": '-' + parseInt((w / 2),10) + 'px'});
+    jQuery("#TB_window").css({"margin-top": '-' + parseInt((h / 2),10) + 'px'});
+
     if (w < tb_window_width) {
         jQuery("#TB_window").css({"left": "0", "margin-left": "0"});
     }
