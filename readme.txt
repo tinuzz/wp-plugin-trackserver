@@ -181,12 +181,14 @@ unhashed, for example), so in any case, try not to use a sensitive password.
 
 = What is this 'slug' you are talking about? =
 
-Slugs in WordPress are short descriptions of posts and pages, to be used in
-URLs (permalinks). They are the part of the URL that makes WordPress serve
-a particular page. Trackserver uses slugs to 'listen' for tracking requests
-from mobile apps, and you can configure these slugs to be anything you want.
+Slugs are generally defined as URL-friendly and unique versions of a name or
+title. In WordPress, they are short descriptions of posts and pages, to be used
+in URLs (permalinks). They are the part of the URL that makes WordPress serve a
+particular page. Trackserver uses slugs to 'listen' for tracking requests from
+mobile apps, and you can configure these slugs to be anything you want.
 Trackserver comes with default values for these slugs, that should work for
-most people. Changing them is usually not necessary.
+most people. Changing them is usually not necessary nor recommended. Please
+read the WARNING blow before changing them.
 
 Please refer to the [Wordpress Codex](http://codex.wordpress.org/Glossary#Slug) for more information
 about slugs in general.
@@ -194,8 +196,8 @@ about slugs in general.
 WARNING: please do not confuse the slugs that you configure in Trackserver
 with the URLs (permalinks) that you use to publish your maps and tracks. Above
 all, make sure there is no conflict between the permalink for a post or page
-and the URLs (slugs) that Trackserver uses for location updates. The slugs in
-Trackerver's configuration are for the location updates only. If you try to
+and the slugs that Trackserver uses for location updates. The slugs in
+Trackerver's configuration are for the location updates ONLY. If you try to
 open them in a browser, you will get errors like 'Illegal request'. Trackserver
 operates on a low level within WordPress, so if there is a conflict between
 Trackserver and a post or a page, Trackserver will win and the page will be
