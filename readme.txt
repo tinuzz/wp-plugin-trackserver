@@ -258,7 +258,10 @@ for details.
 
 == Changelog ==
 
-= UNRELEASED =
+= v2.3 =
+Release date: 23 December 2016
+
+This release is long overdue; most of these changes were made months ago, and I apologize.
 
 * Fix a bug with the 'Upload tracks' buttons in the admin
 * Support loading KML files just like GPX, introducing a new shortcode parameter 'kml'
