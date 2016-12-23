@@ -12,27 +12,18 @@ GPS Track Server for TrackMe, OruxMaps and others
 
 == Description ==
 
-Getting your GPS tracks into Wordpress and publishing them has never been
-easier!
+Getting your GPS tracks into Wordpress and publishing them has never been easier!
 
-Trackserver is a plugin for storing and publishing GPS routes. It is a server
-companion to several mobile apps for location tracking, and it can display maps
-with your tracks on them by using a shortcode. It can also be used for live
-tracking, where your visitors can follow you or your users on a map.
+Trackserver is a plugin for storing and publishing GPS routes. It is a server companion to several mobile apps for location tracking, and it can display maps with your tracks on them by using a shortcode. It can also be used for live tracking, where your visitors can follow you or your users on a map.
 
-Unlike other plugins that are about maps and tracks, Trackserver's main focus
-is not the publishing, but rather the collection and storing of tracks and
-locations. It's all about keeping your data to yourself. Several mobile apps
-and protocols are supported for getting tracks into trackserver:
+Unlike other plugins that are about maps and tracks, Trackserver's main focus is not the publishing, but rather the collection and storing of tracks and locations. It's all about keeping your data to yourself. Several mobile apps and protocols are supported for getting tracks into trackserver:
 
 * [TrackMe][trackme]
 * [MapMyTracks protocol][mapmytracks], for example using [OruxMaps][oruxmaps], including upload functionality
 * [OsmAnd's][osmand] live tracking protocol
 * HTTP POST, for example using [AutoShare][autoshare]
 
-A shortcode [tsmap] is provided for displaying your tracks on a map. Maps are displayed
-using the fantastic [Leaflet library][leafletjs] and some useful Leaflet plugins
-are included. Maps can be viewed in full-screen on modern browsers.
+A shortcode [tsmap] is provided for displaying your tracks on a map. Maps are displayed using the fantastic [Leaflet library][leafletjs] and some useful Leaflet plugins are included. Maps can be viewed in full-screen on modern browsers.
 
 To publish a map with a track in a post or a page, just include the shortcode:
 
@@ -49,13 +40,11 @@ See the FAQ section for more information on the shortcode's supported attributes
 
 = Requirements =
 
-Trackserver requires PHP 5.3 or newer and it needs both DOMDocument and
-SimpleXML extensions installed.
+Trackserver requires PHP 5.3 or newer and it needs both DOMDocument and SimpleXML extensions installed.
 
 = Credits =
 
-This plugin was written by Martijn Grendelman. Development is tracked on Github:
-https://github.com/tinuzz/wp-plugin-trackserver
+This plugin was written by Martijn Grendelman. Development is tracked on Github: https://github.com/tinuzz/wp-plugin-trackserver
 
 It includes some code and libraries written by other people:
 
@@ -81,8 +70,7 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 
 == Installation ==
 
-1. Use Wordpress' built-in plugin installer, or copy the folder from the plugin
-   archive to the `/wp-content/plugins/` directory.
+1. Use Wordpress' built-in plugin installer, or copy the folder from the plugin archive to the `/wp-content/plugins/` directory.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 1. Configure the slugs that the plugin will listen on for location updates.
 1. Configure your mobile apps and start tracking!
@@ -97,159 +85,83 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 * height: map height, default: 480px.
 * align: 'left', 'center' or 'right', default: not set.
 * class: a CSS class to add to the map div for customization, default: not set.
-* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end
-  markers on the track. The value can also be 'start', 's', 'end' or 'e', to
-  draw markers only for the start or the end of a track respectively.
-* continuous: true (default) or false (or 'f', 'no' or 'n'), for lack of a
-  better word, to indicate whether multiple tracks should be considered as
-  one continuous track. The only effect this has, at the moment, is that
-  intermediate start markers are yellow instead of green.
-* gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
-  precedence over 'gpx'.
-* kml: the URL to a KML file to be plotted on the map. 'track' and 'gpx'
-  attributes take precedence over 'kml'.
-* infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether
-  an information bar should be shown on the map, when live tracking is active.
-  This only works with 'track=live', and has no effect in other cases.
+* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end markers on the track. The value can also be 'start', 's', 'end' or 'e', to draw markers only for the start or the end of a track respectively.
+* continuous: true (default) or false (or 'f', 'no' or 'n'), for lack of a better word, to indicate whether multiple tracks should be considered as one continuous track. The only effect this has, at the moment, is that intermediate start markers are yellow instead of green.
+* gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes precedence over 'gpx'.
+* kml: the URL to a KML file to be plotted on the map. 'track' and 'gpx' attributes take precedence over 'kml'.
+* infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether an information bar should be shown on the map, when live tracking is active.  This only works with 'track=live', and has no effect in other cases.
 * color: the color of the track on the map, default comes from Leaflet.
 * weight: the weight of the track on the map, default comes from Leaflet.
 * opacity: the opacity of the track on the map, default comes from Leaflet.
-* points: true (or 't', 'yes' or 'y'), or false (default), to specify whether
-  the track should be displayed as a line or a collection of points.
+* points: true (or 't', 'yes' or 'y'), or false (default), to specify whether the track should be displayed as a line or a collection of points.
 
 Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
 
-In a feature request I was asked to make it possible to draw just a marker on the
-last known location, and not draw a track at all. Use 'markers' and 'opacity' to
-accomplish this:
+In a feature request I was asked to make it possible to draw just a marker on the last known location, and not draw a track at all. Use 'markers' and 'opacity' to accomplish this:
 
 Example: [tsmap track=live markers=e opacity=0.0]
 
 = I used the shortcode but the map doesn't show =
 
-Trackserver tries to detect the usage of the [tsmap] shortcode to prevent
-unnecessary loading of the plugin's JavaScript. In some circumstances, for
-example, if your page setup is complex and uses multiple loops, the detection
-could fail. In such a case, use this shortcode in the main post or page to
-force loading the JavaScript:
+Trackserver tries to detect the usage of the [tsmap] shortcode to prevent unnecessary loading of the plugin's JavaScript. In some circumstances, for example, if your page setup is complex and uses multiple loops, the detection could fail. In such a case, use this shortcode in the main post or page to force loading the JavaScript:
 
 [tsscripts]
 
 = What is live tracking? =
 
-By using the shortcode with the 'track=live' parameter, the most recently updated track
-belonging to the author of the current post/page is published on the map.
+By using the shortcode with the 'track=live' parameter, the most recently updated track belonging to the author of the current post/page is published on the map.
 
-The track is updated with the latest trackpoints every 10 seconds and the map
-view is always centered to the most recent trackpoint. A marker is shown in
-that location. Live tracking can be stopped and restarted with a simple control
-button that is shown on the map.
+The track is updated with the latest trackpoints every 10 seconds and the map view is always centered to the most recent trackpoint. A marker is shown in that location. Live tracking can be stopped and restarted with a simple control button that is shown on the map.
 
 = What is a Trackserver user profile? (since v1.9) =
 
-Before v1.9, all of Trackserver's settings were stored in a single, global place
-in WordPress, meaning they were shared among all users in the same WordPress
-install. This was also the case for the OsmAnd access key that allows OsmAnd
-users to use Trackserver for live tracking. Since Trackserver tries to be
-multi-user, things like access keys do not belong in the global configuration.
+Before v1.9, all of Trackserver's settings were stored in a single, global place in WordPress, meaning they were shared among all users in the same WordPress install. This was also the case for the OsmAnd access key that allows OsmAnd users to use Trackserver for live tracking. Since Trackserver tries to be multi-user, things like access keys do not belong in the global configuration.
 
-In version 1.9, user profile settings were introduced as a place for per-user
-settings, like access keys. There is a separate page in the WordPress admin for
-the Trackserver profile (called 'Your profile' in English), that is accessible
-by all users that have the right (capability) to use Trackerver.
+In version 1.9, user profile settings were introduced as a place for per-user settings, like access keys. There is a separate page in the WordPress admin for the Trackserver profile (called 'Your profile' in English), that is accessible by all users that have the right (capability) to use Trackerver.
 
 = What changed for TrackMe authentication 1.9? =
 
-TrackMe, like OsmAnd, uses HTTP GET requests for communication with Trackserver.
-This means that all data from the app, including your password, becomes part of
-the URL. Because URLs are not generally considered secret, and may be logged in
-access logs and what not, this is quite insecure, even with HTTPS.
+TrackMe, like OsmAnd, uses HTTP GET requests for communication with Trackserver.  This means that all data from the app, including your password, becomes part of the URL. Because URLs are not generally considered secret, and may be logged in access logs and what not, this is quite insecure, even with HTTPS.
 
-For OsmAnd, that has no built-in authentication, Trackserver has used an access
-key instead of your WordPress password from the very beginning. For TrackMe,
-this was implemented in v1.9. So from version 1.9 onward, every WordPress user
-that is allowed to use Trackserver has its own separate access key for OsmAnd
-and a separate password for TrackMe, settable in the Trackme user profile.
+For OsmAnd, that has no built-in authentication, Trackserver has used an access key instead of your WordPress password from the very beginning. For TrackMe, this was implemented in v1.9. So from version 1.9 onward, every WordPress user that is allowed to use Trackserver has its own separate access key for OsmAnd and a separate password for TrackMe, settable in the Trackme user profile.
 
-If you have been using Trackserver with TrackMe before v1.9, you should now set
-the password in TrackMe to this new password, instead of your WordPress
-password.  Like your password, you should keep your access keys to yourself,
-but the idea is that the security impact of such a key is low, compared to your
-WordPress password, and that you can (and should!) change the keys regularly.
-No real effort is made to keep the keys secure (they are stored in the database
-unhashed, for example), so in any case, try not to use a sensitive password.
+If you have been using Trackserver with TrackMe before v1.9, you should now set the password in TrackMe to this new password, instead of your WordPress password.  Like your password, you should keep your access keys to yourself, but the idea is that the security impact of such a key is low, compared to your WordPress password, and that you can (and should!) change the keys regularly.  No real effort is made to keep the keys secure (they are stored in the database unhashed, for example), so in any case, try not to use a sensitive password.
 
 = What is this 'slug' you are talking about? =
 
-Slugs are generally defined as URL-friendly and unique versions of a name or
-title. In WordPress, they are short descriptions of posts and pages, to be used
-in URLs (permalinks). They are the part of the URL that makes WordPress serve a
-particular page. Trackserver uses slugs to 'listen' for tracking requests from
-mobile apps, and you can configure these slugs to be anything you want.
-Trackserver comes with default values for these slugs, that should work for
-most people. Changing them is usually not necessary nor recommended. Please
+Slugs are generally defined as URL-friendly and unique versions of a name or title. In WordPress, they are short descriptions of posts and pages, to be used in URLs (permalinks). They are the part of the URL that makes WordPress serve a particular page. Trackserver uses slugs to 'listen' for tracking requests from mobile apps, and you can configure these slugs to be anything you want.  Trackserver comes with default values for these slugs, that should work for most people. Changing them is usually not necessary nor recommended. Please
 read the WARNING blow before changing them.
 
-Please refer to the [Wordpress Codex](http://codex.wordpress.org/Glossary#Slug) for more information
-about slugs in general.
+Please refer to the [Wordpress Codex](http://codex.wordpress.org/Glossary#Slug) for more information about slugs in general.
 
-WARNING: please do not confuse the slugs that you configure in Trackserver
-with the URLs (permalinks) that you use to publish your maps and tracks. Above
-all, make sure there is no conflict between the permalink for a post or page
-and the slugs that Trackserver uses for location updates. The slugs in
-Trackerver's configuration are for the location updates ONLY. If you try to
-open them in a browser, you will get errors like 'Illegal request'. Trackserver
-operates on a low level within WordPress, so if there is a conflict between
-Trackserver and a post or a page, Trackserver will win and the page will be
-inaccessible.
+WARNING: please do not confuse the slugs that you configure in Trackserver with the URLs (permalinks) that you use to publish your maps and tracks. Above all, make sure there is no conflict between the permalink for a post or page and the slugs that Trackserver uses for location updates. The slugs in Trackerver's configuration are for the location updates ONLY. If you try to open them in a browser, you will get errors like 'Illegal request'. Trackserver operates on a low level within WordPress, so if there is a conflict between Trackserver and a post or a page, Trackserver will win and the page will be inaccessible.
 
-To publish your tracks, simply create a page (with a non-conflicting permalink)
-and use the [tsmap] shortcode to add a map.
+To publish your tracks, simply create a page (with a non-conflicting permalink) and use the [tsmap] shortcode to add a map.
 
 = Can Trackserver support protocol X or device Y? =
 
-Trackserver, being a WordPress plugin, can only support HTTP-based protocols for
-tracking. Many tracking devices use TCP- but not HTTP-based protocols for online
-tracking, and as such, Trackserver cannot support them, at least not without
-some middleware that translates the device's protocol to HTTP.
+Trackserver, being a WordPress plugin, can only support HTTP-based protocols for tracking. Many tracking devices use TCP- but not HTTP-based protocols for online tracking, and as such, Trackserver cannot support them, at least not without some middleware that translates the device's protocol to HTTP.
 
-If a device or an app does use HTTP as a transport, adding support for it in
-Trackserver should be quite easy. For example, I have been thinking about support
-for the GpsGate Server Protocol. It could be added if there is any demand for it.
+If a device or an app does use HTTP as a transport, adding support for it in Trackserver should be quite easy. For example, I have been thinking about support for the GpsGate Server Protocol. It could be added if there is any demand for it.
 
-If a device or an app uses a different transport, support could be added by
-implementing some sort of middleware. For example, [OwnTracks](http://owntracks.org/)
-uses MQTT and ships with a script ([m2s](https://github.com/owntracks/backend/tree/master/m2s))
-for storing the data. Storage methods in m2s are pluggable, so one could write an
-m2s-plugin for shipping the data to Trackserver.
+If a device or an app uses a different transport, support could be added by implementing some sort of middleware. For example, [OwnTracks](http://owntracks.org/) uses MQTT and ships with a script ([m2s](https://github.com/owntracks/backend/tree/master/m2s)) for storing the data. Storage methods in m2s are pluggable, so one could write an m2s-plugin for shipping the data to Trackserver.
 
 = What about security? =
 
-The plugin uses a custom Wordpress capability ('use_trackserver') to manage who
-can use the tracking features and manage their own tracks. The capability is
-granted to authors, editors and administrators, but not to subscribers. This is
-hardcoded for now, and (re)activation of the plugin will re-grant the
-capability to the three listed roles.
+The plugin uses a custom Wordpress capability ('use_trackserver') to manage who can use the tracking features and manage their own tracks. The capability is granted to authors, editors and administrators, but not to subscribers. This is hardcoded for now, and (re)activation of the plugin will re-grant the capability to the three listed roles.
 
-Users who can create/edit posts can also use the [tsmap] shortcode and publish
-maps with their own tracks. In addition, administrators (and anyone else with
-the 'trackserver_admin' capability) can manage and publish other users' tracks.
+Users who can create/edit posts can also use the [tsmap] shortcode and publish maps with their own tracks. In addition, administrators (and anyone else with the 'trackserver_admin' capability) can manage and publish other users' tracks.
 
-Tracks can only be published in Wordpress posts or pages, and cannot be
-downloaded from outside Wordpress. Requests for downloading tracks need to
-have a cryptographic signature that only Wordpress can generate.
+Tracks can only be published in Wordpress posts or pages, and cannot be downloaded from outside Wordpress. Requests for downloading tracks need to have a cryptographic signature that only Wordpress can generate.
 
-Regarding the use of apps for live tracking and uploading to Wordpress, please
-read the considerations about authentication above.
+Regarding the use of apps for live tracking and uploading to Wordpress, please read the considerations about authentication above.
 
 = What GPX namespaces are supported for GPX import (via HTTP POST or upload via backend)? =
 
 GPX 1.1 (http://www.topografix.com/GPX/1/1) and GPX 1.0 (http://www.topografix.com/GPX/1/0).
 
 = Is it free? =
-Yes. Donations are welcome. Please visit
-http://www.grendelman.net/wp/trackserver-wordpress-plugin/
-for details.
+Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserver-wordpress-plugin/ for details.
 
 == Screenshots ==
 
@@ -272,20 +184,15 @@ This release is long overdue; most of these changes were made months ago, and I 
 Release date: 19 July 2016
 
 * Calculate and update speed per trackpoint when calculating the track distance.
-* New replacement tags for a live track's infobar: altitude and speed in m/s,
-  km/h and mph.
-* Add shortcode parameter 'points=y|n', to draw a track as a collection of
-  points instead of a line. The 'color' parameter applies to the fill of the
-  points in this case. Be careful with too many points (thousands).
+* New replacement tags for a live track's infobar: altitude and speed in m/s, km/h and mph.
+* Add shortcode parameter 'points=y|n', to draw a track as a collection of points instead of a line. The 'color' parameter applies to the fill of the points in this case. Be careful with too many points (thousands).
 * Change the default tile server URL to the basic OpenStreetMap
 
 = v2.1 =
 Release date: 6 June 2016
 
-* Implement MapMyTracks 'upload_activity' request. You can now upload tracks to
-  trackserver directly from OruxMaps without the use of AutoShare.
-* Support values 'start', 's', 'end' and 'e' for the 'markers' attribute, to
-  restrict drawing markers to start or end point only.
+* Implement MapMyTracks 'upload_activity' request. You can now upload tracks to trackserver directly from OruxMaps without the use of AutoShare.
+* Support values 'start', 's', 'end' and 'e' for the 'markers' attribute, to restrict drawing markers to start or end point only.
 * Introduce new capability 'trackserver_admin' and grant it to administrators.
 * Allow admins to manage and publish other users' tracks, using the new capability.
 * CSS fixes for track management on small screens.
@@ -303,97 +210,72 @@ Release date: 23 December 2015
 = v2.0 =
 Release date: 22 December 2015
 
-* Support mutiple tracks in a single map. Use a comma-separated list of track
-  IDs (and/or 'live') in the 'track' parameter to show multiple tracks.
-* New shortcode parameter 'infobar' (default false) for displaying an
-  information bar with some information about the latest trackpoint during live
-	tracking. The information bar can be formatted via the Trackserver user
-	profile.
+* Support mutiple tracks in a single map. Use a comma-separated list of track IDs (and/or 'live') in the 'track' parameter to show multiple tracks.
+* New shortcode parameter 'infobar' (default false) for displaying an information bar with some information about the latest trackpoint during live tracking. The information bar can be formatted via the Trackserver user profile.
 * Support upload of GPX 1.0 files in addition to GPX 1.1.
 * Map width is now 100% by default.
-* Experimental support for SendLocation iOS app
-  (https://itunes.apple.com/nl/app/sendlocation/id377724446).
+* Experimental support for SendLocation iOS app (https://itunes.apple.com/nl/app/sendlocation/id377724446).
 * Fix a bug with the OsmAnd timestamp calculation on 32-bit systems.
 * Improve performance of the track management page by adding some DB indexes.
 * Update Leaflet to version 0.7.7.
-* Support (wrapped) GeoJSON as a format for serving tracks. Polyline is still
-  the default, because GeoJSON is 10 times as big.
-* Add a [tsscipts] shortcode to force-load the plugin's JavaScript in case
-  the main shortcode usage detection fails.
-* Rework the loading and customizing of external JavaScript, to fix some cases
-  where the main shortcode detection would fail.
+* Support (wrapped) GeoJSON as a format for serving tracks. Polyline is still the default, because GeoJSON is 10 times as big.
+* Add a [tsscipts] shortcode to force-load the plugin's JavaScript in case the main shortcode usage detection fails.
+* Rework the loading and customizing of external JavaScript, to fix some cases where the main shortcode detection would fail.
 
 = v1.9 =
 Release date: 1 September 2015
 
-IMPORTANT: This release resets the OsmAnd access key and changes the TrackMe
-authentication! Please read the changelog and the FAQ, and review your new
-Trackserver profile for user-specific settings.
+IMPORTANT: This release resets the OsmAnd access key and changes the TrackMe authentication! Please read the changelog and the FAQ, and review your new Trackserver profile for user-specific settings.
 
-* Add Trackserver user profile for per-user options like access codes. Please
-  see the FAQ section for more information!
+* Add Trackserver user profile for per-user options like access codes. Please see the FAQ section for more information!
 * Move the OsmAnd access key to the user profile.
-* Added a separate password for tracking with TrackMe, for use instead of the
-  WordPress password. Please see the FAQ section for more information!
-* Better error handling and meaningful feedback when uploading a file
-  that is too large.
+* Added a separate password for tracking with TrackMe, for use instead of the WordPress password. Please see the FAQ section for more information!
+* Better error handling and meaningful feedback when uploading a file that is too large.
 * Fix viewing tracks in admin in recent versions of WordPress.
 * Update Leaflet to version 0.7.4.
 
 = v1.8 =
 Release date: 29 July 2015
 
-* Fix parsing of MapMyTracks points with negative coordinates. Thanks to
-	Michel Boulet for helping me find the problem.
+* Fix parsing of MapMyTracks points with negative coordinates. Thanks to Michel Boulet for helping me find the problem.
 * Add some more documentation and FAQs.
 
 = v1.7 =
 Release date: 15 June 2015
 
-* Add a 'Delete' link in the track edit modal, so you don't have to use a
-  bulk action to delete a single track.
+* Add a 'Delete' link in the track edit modal, so you don't have to use a bulk action to delete a single track.
 * Do not omit tracks with zero locations in track management.
 * Full i18n and Dutch translation.
-* Support the 'getttripfull' action for TrackMe, to allow TrackMe 2.0
-  to import your tracks from the server.
+* Support the 'getttripfull' action for TrackMe, to allow TrackMe 2.0 to import your tracks from the server.
 * Use HTTPS in default map tile URL.
 
 = v1.6 =
 Release date: 29 April 2015
 
-* Add option for setting the map tile attribution, as required by most tile
-  services and data providers like OSM. If non-empty, the attribution is
-  displayed on every map.
+* Add option for setting the map tile attribution, as required by most tile services and data providers like OSM. If non-empty, the attribution is displayed on every map.
 * Properly escape option values on the options page.
 
 = v1.5 =
 Release date: 15 April 2015
 
-* Make plugin run a cheap 'update' routine on every request, because we cannot
-  assume that the activation hook is run every time the plugin is updated.
-* Fix a bug where tracks management would not show any tracks due to a broken
-  SQL query.
+* Make plugin run a cheap 'update' routine on every request, because we cannot assume that the activation hook is run every time the plugin is updated.
+* Fix a bug where tracks management would not show any tracks due to a broken SQL query.
 
 = v1.4 =
 Release date: 8 March 2015
 
 * Add OsmAnd live tracking support.
 * Fix buggy timezone offset calculation, that would break during DST.
-* Draw a start/end marker for each track on a map. Loading tracks from a
-  GPX URL already supports multiple tracks.
+* Draw a start/end marker for each track on a map. Loading tracks from a GPX URL already supports multiple tracks.
 * Add a compatibility fix for PHP < 5.4
 * Fix a bug with viewing tracks in WP admin without pretty permalinks
 
 = v1.3 =
 Release date: 28 February 2015
 
-* Fix a grave bug, that made Trackserver usable ONLY on WP installs using
-  mod-rewrite and Pretty Permalinks.
-* Add 'use_trackserver' capability for authors, editors and admins and use it
-  to restrict tracking to those roles, while at the same time allowing non-
-  admins to manage their own tracks.
-* Add shortcode attribute 'gpx' for loading a GPX file directly from an
-  external URL.
+* Fix a grave bug, that made Trackserver usable ONLY on WP installs using mod-rewrite and Pretty Permalinks.
+* Add 'use_trackserver' capability for authors, editors and admins and use it to restrict tracking to those roles, while at the same time allowing non- admins to manage their own tracks.
+* Add shortcode attribute 'gpx' for loading a GPX file directly from an external URL.
 * Calculate and store the total distance of a track at the time of upload.
 * Add bulk action to recalculate track distances.
 * Add shortcode attributes: color, weight, opacity, for controlling track display style.
@@ -433,5 +315,4 @@ Release date: 2 January 2015
 
 == Upgrade Notice ==
 
-1.9 - This release resets the OsmAnd access key and changes the TrackMe authentication! Please
-read the changelog and the FAQ, and review your new Trackserver profile for user-specific settings.
+1.9 - This release resets the OsmAnd access key and changes the TrackMe authentication! Please read the changelog and the FAQ, and review your new Trackserver profile for user-specific settings.
