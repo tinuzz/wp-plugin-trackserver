@@ -13,6 +13,10 @@ Server:
 - implement GPSgate protocol
 - DONE: implement OSMand protocol
 - DONE: don't use the WP password for TrackMe tracking, it is insecure. Use a secret like with OsmAnd.
+- implement shortcode to display TrackMe/OsmAnd password (feature request through WP forum)
+- implement live tracking multiple users (feature request)
+- multi-site support - http://rabinshrestha.com/make-wordpress-plugin-compatible-with-multisite/
+- implement generic HTTP GET interface and/or CelltracGTS/Free support
 
 Frontend:
 - DONE: Leaflet shortcode / map view.
