@@ -3008,6 +3008,11 @@ EOF;
 							$oldtime = new DateTime( $oldocc );
 							$newtime = new DateTime( $row['occurred'] );
 							$delta_time = $newtime -> getTimestamp() - $oldtime -> getTimestamp();
+
+							// On duplicate timestamps, we assume the delta was 1 second
+							if ( $delta_time < 1 ) {
+								$delta_time = 1;
+							}
 							$speed = $delta_distance / $delta_time; // in m/s
 
 							// Update the speed column in the database for this location
