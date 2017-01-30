@@ -2213,17 +2213,19 @@ EOF;
 					}
 					else {
 
-						foreach ( $trk -> trkseg -> trkpt as $trkpt ) {
-							if ( ! $trip_start ) {
-								$trip_start = date( 'Y-m-d H:i:s', $this -> parse_iso_date( (string) $trkpt -> time ) );
+						foreach ( $trk -> trkseg as $trkseg ) {
+							foreach ( $trkseg -> trkpt as $trkpt ) {
+								if ( ! $trip_start ) {
+									$trip_start = date( 'Y-m-d H:i:s', $this -> parse_iso_date( (string) $trkpt -> time ) );
+								}
+								$points[] = array(
+									'latitude' => $trkpt['lat'],
+									'longitude' => $trkpt['lon'],
+									'altitude' => (string) $trkpt -> ele,
+									'timestamp' => $this -> parse_iso_date( (string) $trkpt -> time )
+								);
+								$ntrkpt++;
 							}
-							$points[] = array(
-								'latitude' => $trkpt['lat'],
-								'longitude' => $trkpt['lon'],
-								'altitude' => (string) $trkpt -> ele,
-								'timestamp' => $this -> parse_iso_date( (string) $trkpt -> time )
-							);
-							$ntrkpt++;
 						}
 
 						$data = array( 'user_id' => $user_id, 'name' => $trip_name, 'created' => $trip_start, 'source' => $source );
