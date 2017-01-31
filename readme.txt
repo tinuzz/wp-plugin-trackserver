@@ -172,7 +172,8 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 = UNRELEASED =
 
-* Fix a bug where Trackserver would only import the first segment of a track from GPX.
+* Fix a bug where Trackserver would only import the first segment of a track from GPX
+* Get rid of suboptimal shortcode detection fallback mechanism
 
 = v2.3 =
 Release date: 23 December 2016
