@@ -173,7 +173,6 @@ License: GPL2
 
 				// Front-end JavaScript and CSS
 				add_action( 'wp_enqueue_scripts', array( &$this, 'wp_enqueue_scripts' ) );
-				add_action( 'the_post', array( &$this, 'the_post' ) );
 				add_action( 'wp_footer', array( &$this, 'wp_footer' ) );
 
 				// Shortcodes
@@ -976,21 +975,6 @@ EOF;
 			}
 
 			/**
-			 * Handler for 'the_post'.
-			 *
-			 * This function tries to find Trackserver's shortcodes in the content of
-			 * the post that is currently being processed, and if it does, sets a
-			 * flag for loading the scripts in wp_footer(). The flag is only set once.
-			 *
-			 * @since 2.0
-			 */
-			function the_post( $post ) {
-				if ( ! $this -> need_scripts ) {
-					$this -> need_scripts = $this -> has_shortcode( $post );
-				}
-			}
-
-			/**
 			 * Function to find the Trackserver shortcodes in the content of a post or page
 			 *
 			 * @since 2.0
@@ -1148,6 +1132,8 @@ EOF;
 
 				$this -> mapdata[] = $mapdata;
 				$out = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . $atts['width'] . '; height: ' . $atts['height'] . '; max-width: 100%"></div>';
+
+				$this -> need_scripts = true;
 
 				return $out;
 			}
