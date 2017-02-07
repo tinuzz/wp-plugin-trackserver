@@ -26,6 +26,8 @@ module.exports.kml.parse = kmlParse;
 module.exports.wkt = wktLoad;
 module.exports.wkt.parse = wktParse;
 
+module.exports.xhr = xhr;
+
 function addData(l, d) {
     if ('setGeoJSON' in l) {
         l.setGeoJSON(d);
