@@ -1196,6 +1196,7 @@ EOF;
 					'height'     => '480px',
 					'align'      => '',
 					'class'      => '',
+					'id'         => false,
 					'track'      => false,
 					'user'       => false,
 					'live'       => false,
@@ -1231,6 +1232,9 @@ EOF;
 					$class_str = 'class="' . implode( ' ', $classes ) . '"';
 				}
 
+				if ( !$atts['track'] ) {
+					$atts['track'] = $atts['id'];
+				}
 				$style  = $this -> get_style( $atts, false );
 				$points = $this -> get_points( $atts, false );
 
