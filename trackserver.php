@@ -1297,11 +1297,11 @@ EOF;
 					);
 				}
 
-				$markers     = ( in_array( $atts['markers'],    array( 'false', 'f', 'no',  'n' ), true ) ? false : true  );
+				$markers     = ( in_array( $atts['markers'],    array( 'false', 'f', 'no',  'n' ), true ) ? false : true  ); // default true
 				$markers     = ( in_array( $atts['markers'],    array( 'start', 's' ), true ) ? 'start' : $markers  );
 				$markers     = ( in_array( $atts['markers'],    array( 'end', 'e' ), true ) ? 'end' : $markers  );
-				$continuous  = ( in_array( $atts['continuous'], array( 'false', 'f', 'no',  'n' ), true ) ? false : true  );
-				$infobar     = ( in_array( $atts['infobar'],    array( 'true',  't', 'yes', 'y' ), true ) ? true  : false );
+				$continuous  = ( in_array( $atts['continuous'], array( 'false', 'f', 'no',  'n' ), true ) ? false : true  ); // default true
+				$infobar     = ( in_array( $atts['infobar'],    array( 'true',  't', 'yes', 'y' ), true ) ? true  : false ); // default false
 				$points      = ( in_array( $atts['points'],     array( 'true',  't', 'yes', 'y' ), true ) ? true  : false );
 				$infobar_tpl = get_user_meta( $author_id, 'ts_infobar_template', true );
 
