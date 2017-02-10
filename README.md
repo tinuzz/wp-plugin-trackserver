@@ -46,6 +46,12 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 ## What are the available shortcode attributes?
 
 * track: one or more track IDs, separated by commas, or 'live'.
+* id: an alias for 'track'
+* user: one or more user IDs, separated by commas, who's latest track to follow
+  'live'. When viewing the map, the liveupdate feature will follow the track of
+  the first user specified.
+* live: true (or 't', 'yes' or 'y'), or false (default), to force live tracking
+  for this map. This can be used for example with an externally updated GPX or KML file.
 * width: map width, default: 100%.
 * height: map height, default: 480px.
 * align: 'left', 'center' or 'right', default: not set.
@@ -54,21 +60,24 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
   markers on the track. The value can also be 'start', 's', 'end' or 'e', to
   draw markers only for the start or the end of a track respectively.
 * continuous: true (default) or false (or 'f', 'no' or 'n'), for lack of a
-  better word, to indicate whether multiple tracks should be considered as
-  one continuous track. The only effect this has, at the moment, is that
-  intermediate start markers are yellow instead of green.
-* gpx: the URL to a GPX file to be plotted on the map. 'track' attribute takes
-  precedence over 'gpx'.
-* kml: the URL to a KML file to be plotted on the map. 'track' and 'gpx'
-  attributes take precedence over 'kml'.
+  better word, to indicate whether multiple tracks should be considered as one
+  continuous track. The only effect this has, at the moment, is that intermediate
+  start markers are yellow instead of green.
+* gpx: the URL to a GPX file to be plotted on the map.
+* kml: the URL to a KML file to be plotted on the map.
 * infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether
   an information bar should be shown on the map, when live tracking is active.
-  This only works with 'track=live', and has no effect in other cases.
-* color: the color of the track on the map, default comes from Leaflet.
-* weight: the weight of the track on the map, default comes from Leaflet.
-* opacity: the opacity of the track on the map, default comes from Leaflet.
+  This only works with 'track=live' or the 'user' parameter, and has no effect in
+  other cases.
+* color: one or more colors, separated by commas, to use for the tracks on the
+  map. Default comes from Leaflet. Multiple values correspond to multiple tracks.
+* weight: one or more weights, separated by commas, to use for the tracks on
+  the map. Default comes from Leaflet. Multiple values correspond to multiple tracks.
+* opacity: one or more opacities, separated by commas, to use for the tracks on
+  the map. Default comes from Leaflet. Multiple values correspond to multiple tracks.
 * points: true (or 't', 'yes' or 'y'), or false (default), to specify whether
-  the track should be displayed as a line or a collection of points.
+  the track should be displayed as a line or a collection of points. Multiple
+  values, separated by commas, correspond to multiple tracks.
 
 Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
 
@@ -77,6 +86,17 @@ last known location, and not draw a track at all. Use 'markers' and 'opacity' to
 accomplish this:
 
 Example: [tsmap track=live markers=e opacity=0.0]
+
+For the [tslink] shortcode:
+
+* track: see above
+* id: alias for 'track'
+* user: see above
+* text: the text to render insde the &lt;a&gt;...&lt;/a&gt; tags
+* class: a CSS class to apply to the 'a' element
+* format: the format in which to download the tracks. Only 'gpx' (the default) is supported at this time. Other formats like KML may follow. Send a feature request if you need a specific format.
+
+Example: [tslink track=1,2,3,4 text="Download the tracks of our 4-day hike in GPX format"]
 
 ## I used the shortcode but the map doesn't show
 
