@@ -28,7 +28,11 @@ var tb_click = function(e)
             col = col_arr[1];
             switch (col) {
                 case 'id':
-                    track_url += "&id="+jQuery(this).text();
+                    // http://stackoverflow.com/questions/3442394/using-text-to-retrieve-only-text-not-nested-in-child-tags
+                    track_id = jQuery(this).contents().filter(function(){
+                        return this.nodeType == Node.TEXT_NODE;
+                    })[0].nodeValue;
+                    track_url += "&id=" + track_id;
                     break;
                 case 'nonce':
                     track_url += "&_wpnonce="+jQuery(this).text();
