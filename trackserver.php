@@ -2690,6 +2690,61 @@ EOF;
 				echo json_encode( $data );
 			}
 
+			function send_as_gpx( $res ) {
+
+				$dom = new DOMDocument('1.0', 'utf-8');
+				$dom->preserveWhiteSpace = false;
+				$dom->formatOutput = true;
+				$dom->appendChild( $gpx = $dom->createElementNS( 'http://www.topografix.com/GPX/1/1', 'gpx' ) );
+				$gpx->setAttributeNS( 'http://www.w3.org/2000/xmlns/', 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance' );
+				$gpx->setAttribute( 'creator', 'Trackserver ' . TRACKSERVER_VERSION );
+				$gpx->setAttribute( 'version', '1.1' );
+				$gpx->setAttributeNS( 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', 'http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd' );
+				$gpx->appendChild( $metadata = $dom->createElement( 'metadata' ) );
+				$metadata->appendChild( $author = $dom->createElement( 'author' ) );
+				$author->appendChild( $authorname = $dom->createElement( 'name' ) );
+				$home_url = get_home_url( null, '/', ( is_ssl()  ? 'https' : 'http' ) );
+				$metadata->appendChild( $link = $dom->createElement( 'link' ) );
+				$link->setAttribute( 'href', $home_url );
+
+				$first = true;
+				$last_track_id = false;
+				foreach ( $res as $row ) {
+
+					// Once, for the first record. Add stuff to the <gpx> element, using the database results
+					if (  $first ) {
+						$authorname->appendChild( $dom->createCDATASection( $this -> get_user_id( (int) $row['user_id'], 'display_name' ) ) );
+						$first_track_id = $row['trip_id'];
+						$first = false;
+					}
+
+					// For every track
+					if ( $row['trip_id'] != $last_track_id ) {
+						$gpx->appendChild( $trk = $dom->createElement( 'trk' ) );
+						$trk->appendChild( $name = $dom->createElement( 'name' ) );
+						$name->appendChild( $dom->createCDATASection( $row['name'] ) );
+						if ( $row['comment'] ) {
+							$trk->appendChild( $desc = $dom->createElement( 'desc' ) );
+							$desc->appendChild( $dom->createCDATASection( $row['comment'] ) );
+						}
+						$trk->appendChild( $trkseg = $dom->createElement( 'trkseg' ) );
+						$last_track_id = $row['trip_id'];
+					}
+
+					$trkseg->appendChild( $trkpt = $dom->createElement( 'trkpt' ) );
+					$trkpt->setAttribute( 'lat', $row['latitude'] );
+					$trkpt->setAttribute( 'lon', $row['longitude'] );
+
+					$occurred = new DateTime( $row['occurred'] );  // A DateTime object in local time
+					$occ_iso = $occurred -> format( 'c' );
+					$trkpt->appendChild( $dom->createElement( 'time', $occ_iso ) );
+				}
+
+				header( 'Content-Type: application/gpx+xml' );
+				header('Content-Disposition: filename="trackserver-'. $first_track_id .'.gpx"');
+				echo $dom->saveXML();
+			}
+
 			/**
 			 * Function to construct a metadata array from a $wpdb row.
 			 *
