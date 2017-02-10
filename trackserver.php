@@ -100,6 +100,7 @@ License: GPL2
 				$this -> user_meta_defaults['ts_tracks_admin_view'] = '0';
 				$this -> shortcode = 'tsmap';
 				$this -> shortcode2 = 'tsscripts';
+				$this -> shortcode3 = 'tslink';
 				$this -> mapdata = array();
 				$this -> tracks_list_table = false;
 				$this -> bulk_action_result_msg = false;
@@ -179,6 +180,7 @@ License: GPL2
 				// Shortcodes
 				add_shortcode( $this -> shortcode, array( &$this, 'handle_shortcode' ) );
 				add_shortcode( $this -> shortcode2, array( &$this, 'handle_shortcode2' ) );
+				add_shortcode( $this -> shortcode3, array( &$this, 'handle_shortcode3' ) );
 
 				// Media upload
 				add_filter( 'upload_mimes', array( &$this, 'upload_mimes' ) );
@@ -1235,6 +1237,7 @@ EOF;
 				if ( !$atts['track'] ) {
 					$atts['track'] = $atts['id'];
 				}
+
 				$style  = $this -> get_style( $atts, false );
 				$points = $this -> get_points( $atts, false );
 
@@ -1362,6 +1365,62 @@ EOF;
 			 */
 			function handle_shortcode2( $atts ) {
 				// do nothing
+			}
+
+			/**
+			 * Handle the [tslink] shortcode
+			 *
+			 * Handler for the 'tslink' shortcode. It returns a link to the specified track(s).
+			 * Like the 'tsmap' shortcode, it supports both 'track' and 'user' attributes and
+			 * creates the same type of query, to be processed by the 'gettrack' handler.
+			 *
+			 * @since 3.0
+			 */
+			function handle_shortcode3( $atts ) {
+				global $wpdb;
+
+				$defaults = array(
+					'text'       => 'download',
+					'class'      => '',
+					'id'         => false,
+					'track'      => false,
+					'user'       => false,
+					'format'     => 'gpx',
+				);
+
+				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
+
+				$class_str = '';
+				if ( $atts['class'] ) {
+					$class_str = 'class="' . htmlspecialchars( $atts['class'] ) . '"';
+				}
+
+				$out = 'ERROR';
+
+				if ( !$atts['track'] ) {
+					$atts['track'] = $atts['id'];
+				}
+
+				list( $validated_track_ids, $validated_user_ids ) = $this -> validate_ids( $atts );
+
+				if ( count( $validated_track_ids ) > 0 || count( $validated_user_ids ) > 0 ) {
+
+					$post_id = get_the_ID();
+
+					$track_format = 'gpx';
+					if ( $atts['format'] && in_array( $atts['format'], array( 'gpx' ) ) ) {
+						$track_format = $atts['format'];
+					}
+
+					$query = json_encode( array( 'id' => $validated_track_ids, 'live' => $validated_user_ids ) );
+					$query = base64_encode( $query );
+					$query_nonce = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
+					$alltracks_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&_wpnonce=$query_nonce" );
+
+					$out = '<a href="' . $alltracks_url . '" ' . $class_str .'>' . htmlspecialchars( $atts['text'] ) . '</a>';
+				}
+
+				return $out;
 			}
 
 			/**
