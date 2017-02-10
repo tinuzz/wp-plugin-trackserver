@@ -105,7 +105,7 @@ License: GPL2
 				$this -> bulk_action_result_msg = false;
 				$this -> url_prefix = '';
 				$this -> trackserver_update();
-				$this -> track_format = 'polyline';  // 'polyline' or 'geojson'. GeoJSON is 10 x bigger.
+				$this -> track_format = 'polyline';  // 'polyline'. 'geojson' is no longer supported.
 				$this -> have_scripts = false;
 				$this -> need_scripts = false;
 
@@ -1197,6 +1197,8 @@ EOF;
 					'align'      => '',
 					'class'      => '',
 					'track'      => false,
+					'user'       => false,
+					'live'       => false,
 					'gpx'        => false,
 					'kml'        => false,
 					'markers'    => true,
@@ -1209,6 +1211,9 @@ EOF;
 				);
 
 				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
+				$author_id = get_the_author_meta( 'ID' );
+				$post_id = get_the_ID();
+				$is_live = false;
 
 				static $num_maps = 0;
 				$div_id = 'tsmap_' . ++$num_maps;
@@ -1226,75 +1231,85 @@ EOF;
 					$class_str = 'class="' . implode( ' ', $classes ) . '"';
 				}
 
+				$style  = $this -> get_style( $atts, false );
+				$points = $this -> get_points( $atts, false );
+
+				list( $validated_track_ids, $validated_user_ids ) = $this -> validate_ids( $atts );
+
+				if ( count( $validated_user_ids ) > 0 ) {
+					$is_live = true;
+				}
+
 				$tracks = array();
 				$default_lat = '51.443168';
 				$default_lon = '5.447200';
-				$is_live = false;
 
-				if ( $atts['track'] ) {
+				if ( count( $validated_track_ids ) > 0 || count( $validated_user_ids ) > 0 ) {
 
-					// Check if the author of the current post is the ower of the track
-					$author_id = get_the_author_meta( 'ID' );
-					$post_id = get_the_ID();
+					$query = json_encode( array( 'id' => $validated_track_ids, 'live' => $validated_user_ids ) );
+					$query = base64_encode( $query );
+					$query_nonce = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
+					$alltracks_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=" . $this -> track_format . "&_wpnonce=$query_nonce" );
 
-					$track_ids = explode( ',', $atts['track'] );
-					if ( in_array( 'live', $track_ids ) ) {
-						$is_live = true;
+					foreach ($validated_track_ids as $validated_id) {
+
+						// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
+						// https://core.trac.wordpress.org/ticket/4221
+						$nonce = wp_create_nonce( 'gettrack_' . $validated_id . "_p" . $post_id );
+						$track_type = $this -> track_format;
+
+						$tracks[] = array(
+							'track_id'   => $validated_id,
+							'track_type' => $track_type,
+							'style'      => $this -> get_style(),
+							'points'     => $this -> get_points(),
+						);
 					}
-					// Remove all non-numeric values from the tracks array and prepare query
-					$track_ids = array_map( 'intval', array_filter( $track_ids, 'is_numeric' ) );
-					$sql_in = "('" . implode("','", $track_ids) . "')";
 
-					if ( user_can( $author_id, 'trackserver_admin' ) ) {
-						$sql = 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id IN ' . $sql_in;
+					$live_tracks = $this -> get_live_tracks($validated_user_ids);
+					foreach ($live_tracks as $validated_id) {
+						$tracks[] = array(
+							'track_id'   => $validated_id,
+							'track_type' => $this -> track_format,
+							'style'      => $this -> get_style(),
+							'points'     => $this -> get_points(),
+						);
 					}
-					else {
-						$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id IN ' . $sql_in .
-							' AND user_id=%d;', $author_id );
+
+					$all_track_ids = array_merge( $validated_track_ids, $live_tracks );
+					if ( count( $all_track_ids ) ) {
+						$sql_in = "('" . implode("','", $all_track_ids) . "')";
+						$sql = 'SELECT AVG(latitude) FROM ' . $this -> tbl_locations . ' WHERE trip_id IN ' . $sql_in;
+						$result = $wpdb -> get_var( $sql );
+						if ( $result ) $default_lat = $result;
+						$sql = 'SELECT AVG(longitude) FROM ' . $this -> tbl_locations . ' WHERE trip_id IN ' . $sql_in;
+						$result = $wpdb -> get_var( $sql );
+						if ( $result ) $default_lon = $result;
 					}
+				}
 
-					if ( $is_live || count( $track_ids ) ) {
-						$validated_ids = $wpdb -> get_col( $sql );
-						if ( $is_live ) {
-							$validated_ids[] = 'live';
-						}
-
-						foreach ($validated_ids as $validated_id) {
-							// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
-							// https://core.trac.wordpress.org/ticket/4221
-							$nonce = wp_create_nonce( 'gettrack_' . $validated_id . "_p" . $post_id );
-							$track_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . "/?id=$validated_id&p=$post_id&format=" . $this -> track_format . "&_wpnonce=$nonce" );
-							$track_type = $this -> track_format;
-
+				if ( $atts['gpx'] ) {
+					$urls = explode(' ', $atts['gpx'] );
+					foreach ($urls as $u) {
+						if ( ! empty( $u ) ) {
 							$tracks[] = array(
-								'track_id'   => $validated_id,
-								'track_url'  => $track_url,
-								'track_type' => $track_type
+								'track_url'  => $u,
+								'track_type' => 'gpx'
 							);
 						}
-
-						if ( count( $validated_ids ) ) {
-							$sql_in = "('" . implode("','", $validated_ids) . "')";
-							$sql = 'SELECT AVG(latitude) FROM ' . $this -> tbl_locations . ' WHERE trip_id IN ' . $sql_in;
-							$result = $wpdb -> get_var( $sql );
-							if ( $result ) $default_lat = $result;
-							$sql = 'SELECT AVG(longitude) FROM ' . $this -> tbl_locations . ' WHERE trip_id IN ' . $sql_in;
-							$result = $wpdb -> get_var( $sql );
-							if ( $result ) $default_lon = $result;
-						}
 					}
 				}
-				elseif ( $atts['gpx'] ) {
-					$tracks[] = array(
-						'track_url'  => $atts['gpx'],
-						'track_type' => 'gpx'
-					);
-				}
-				elseif ( $atts['kml'] ) {
-					$tracks[] = array(
-						'track_url'  => $atts['kml'],
-						'track_type' => 'kml'
-					);
+
+				if ( $atts['kml'] ) {
+					$urls = explode(' ', $atts['kml'] );
+					foreach ($urls as $u) {
+						if ( ! empty( $u ) ) {
+							$tracks[] = array(
+								'track_url'  => $u,
+								'track_type' => 'kml'
+							);
+						}
+					}
 				}
 
 				$markers     = ( in_array( $atts['markers'],    array( 'false', 'f', 'no',  'n' ), true ) ? false : true  ); // default true
@@ -1302,7 +1317,7 @@ EOF;
 				$markers     = ( in_array( $atts['markers'],    array( 'end', 'e' ), true ) ? 'end' : $markers  );
 				$continuous  = ( in_array( $atts['continuous'], array( 'false', 'f', 'no',  'n' ), true ) ? false : true  ); // default true
 				$infobar     = ( in_array( $atts['infobar'],    array( 'true',  't', 'yes', 'y' ), true ) ? true  : false ); // default false
-				$points      = ( in_array( $atts['points'],     array( 'true',  't', 'yes', 'y' ), true ) ? true  : false );
+				$is_live     = ( in_array( $atts['live'],       array( 'true',  't', 'yes', 'y' ), true ) ? true  : $is_live );   // force override
 				$infobar_tpl = get_user_meta( $author_id, 'ts_infobar_template', true );
 
 				$mapdata = array(
@@ -1316,14 +1331,14 @@ EOF;
 					'markers'      => $markers,
 					'continuous'   => $continuous,
 					'infobar'      => $infobar,
-					'infobar_tpl'  => $infobar_tpl,
-					'points'       => $points
+					'points'       => $points,
+					'alltracks'    => $alltracks_url
 				);
 
-				$style = array();
-				if ( $atts['color'] )   { $style['color']   = (string) $atts['color']; }
-				if ( $atts['weight'] )  { $style['weight']  = (int) $atts['weight']; }
-				if ( $atts['opacity'] ) { $style['opacity'] = (float) $atts['opacity']; }
+				if ($infobar) {
+					$mapdata['infobar_tpl'] = $infobar_tpl;
+				}
+
 				if ( count( $style ) > 0 ) {
 					$mapdata['style'] = $style;
 				}
@@ -2569,6 +2584,14 @@ EOF;
 				die();
 			}
 
+			/**
+			 * Handle the 'gettrack' request
+			 *
+			 * This function handles the 'gettrack' request. If a 'query' parameter is found,
+			 * the processing is delegated to handle_gettrack_query(). The rest of this
+			 * function handles the request in case of a single 'id' request, which should
+			 * only happen from the admin. Only numeric IDs are handled.
+			 */
 			function handle_gettrack() {
 
 				// Include polyline encoder
@@ -2577,12 +2600,12 @@ EOF;
 				global $wpdb;
 
 				$post_id = intval( $_REQUEST['p'] );
-				$track_id = $_REQUEST['id'];
+				$track_id = intval( $_REQUEST['id'] );
 				$format = $_REQUEST['format'];
 				$author_id = $this -> get_author( $post_id );
 
-				if ( $track_id != 'live' ) {
-					$track_id = intval( $track_id );
+				if ( isset( $_REQUEST['query'] ) ) {
+					return $this -> handle_gettrack_query();
 				}
 
 				// Refuse to serve the track without a valid nonce. Admin screen uses a different nonce.
@@ -2598,26 +2621,17 @@ EOF;
 				}
 
 				if ( $track_id ) {
-					if ( $track_id == 'live' ) {
-						$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks .
-								' WHERE user_id=%d ORDER BY created DESC LIMIT 0,1', $author_id );
-					}
-					else {
-						$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id=%d', $track_id );
-					}
-					$trip_id = $wpdb -> get_var( $sql );
 
-					if ( $trip_id ) {
-						$sql = $wpdb -> prepare( 'SELECT latitude, longitude, altitude, speed, occurred FROM ' . $this -> tbl_locations .
-							' WHERE trip_id=%d ORDER BY occurred', $trip_id );
-						$res = $wpdb -> get_results( $sql, ARRAY_A );
+					$sql = $wpdb -> prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
+						 $this -> tbl_locations . ' l INNER JOIN ' . $this -> tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id=%d  ORDER BY occurred', $track_id );
 
-						if ( $format == 'geojson' ) {
-							$this -> send_as_geojson( $res );
-						}
-						else { // default to 'polyline'
-							$this -> send_as_polyline( $res );
-						}
+					$res = $wpdb -> get_results( $sql, ARRAY_A );
+
+					if ( $format == 'gpx' ) {
+						$this -> send_as_gpx( $res );
+					}
+					else { // default to 'polyline'
+						$this -> send_as_polyline( $res );
 					}
 				}
 				else {
@@ -2750,14 +2764,20 @@ EOF;
 			 *
 			 * @since 2.2
 			 */
-			function get_metadata( $row ) {
-				return array(
+			function get_metadata( $row, $extra_metadata = array() ) {
+				$metadata = array(
 					'last_trkpt_time' => $row['occurred'],
 					'last_trkpt_altitude' => $row['altitude'],
 					'last_trkpt_speed_ms' => number_format( $row['speed'], 2 ),
 					'last_trkpt_speed_kmh' => number_format( (float) $row['speed'] * 3.6, 2 ),
 					'last_trkpt_speed_mph' => number_format( (float) $row['speed'] * 2.23693629, 2 ),
 				);
+				if ( $row['user_id'] ) {
+					$metadata['userid'] = $row['user_id'];
+					$metadata['userlogin'] = $this -> get_user_id( (int) $row['user_id'], 'user_login' );
+					$metadata['displayname'] = $this -> get_user_id( (int) $row['user_id'], 'display_name' );
+				}
+				return array_merge( $metadata, $extra_metadata );
 			}
 
 			/**
