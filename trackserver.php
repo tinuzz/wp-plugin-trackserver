@@ -492,8 +492,8 @@ EOF;
 			 */
 			function set_capabilities() {
 				$roles = array(
-					 'administrator' => array( 'use_trackserver', 'trackserver_admin' ),
-					 'editor' => array( 'use_trackserver' ),
+					 'administrator' => array( 'use_trackserver', 'trackserver_publish', 'trackserver_admin' ),
+					 'editor' => array( 'use_trackserver', 'trackserver_publish' ),
 					 'author'  => array( 'use_trackserver' ) );
 
 				foreach ( $roles as $rolename => $capnames ) {
@@ -1004,6 +1004,183 @@ EOF;
 					return true;
 				}
 				return false;
+			}
+
+			/**
+			 * Function to validate a list of track IDs against user ID and post ID.
+			 * It tries to leave the given order of IDs unchanged.
+			 *
+			 * @since 3.0
+			 */
+			function validate_track_ids( $track_ids, $author_id ) {
+				global $wpdb;
+
+				if ( count( $track_ids ) == 0 ) return array();
+
+				// Remove all non-numeric values from the tracks array and prepare query
+				$track_ids = array_map( 'intval', array_filter( $track_ids, 'is_numeric' ) );
+				$sql_in = "('" . implode("','", $track_ids) . "')";
+
+				// If the author has the power, don't check the track's owner
+				if ( user_can( $author_id, 'trackserver_publish' ) ) {
+					$sql = 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id IN ' . $sql_in;
+				}
+				// Otherwise, filter the list of posts against the author ID
+				else {
+					$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id IN ' . $sql_in .
+						' AND user_id=%d;', $author_id );
+				}
+				$validated_track_ids = $wpdb -> get_col( $sql );
+
+				// Restore track order as given in the shortcode
+				$trk0 = array();
+				foreach ( $track_ids as $tid ) {
+					if ( in_array( $tid, $validated_track_ids ) ) {
+						$trk0[] = $tid;
+					}
+				}
+				return $trk0;
+			}
+
+			/**
+			 * Function to return a user ID, given a user name or ID. Unknown users return false.
+			 *
+			 * @since 3.0
+			 */
+			function get_user_id( $user, $property = 'ID' ) {
+				if ( is_numeric( $user ) ) {
+					$field = 'id';
+					$user = (int) $user;
+				}
+				else {
+					$field = 'login';
+				}
+				if ( $user = get_user_by( $field, $user ) ) {
+					return ( $property == 'ID' ? (int) $user->$property : $user->$property );
+				}
+				else {
+					return false;
+				}
+			}
+
+			/**
+			 * Validate users against the DB and the author's permission to publish.
+			 *
+			 * It turns user names into numeric IDs.
+			 *
+			 * @since 3.0
+			 */
+			function validate_user_ids( $user_ids, $author_id ) {
+				global $wpdb;
+
+				if ( count( $user_ids ) == 0 ) return array();
+
+				$user_ids = array_map( array( $this, 'get_user_id' ), $user_ids );  // Get numeric IDs
+				$user_ids = array_filter( $user_ids );   // Get rid of the falses.
+
+				if ( !user_can( $author_id, 'trackserver_publish' ) ) {
+					$user_ids = array_intersect( $user_ids, array( $author_id ) );   // array containing 0 or 1 elements
+				}
+
+				if ( count( $user_ids ) > 0 ) {
+					$sql_in = "('" . implode("','", $user_ids) . "')";
+					$sql = 'SELECT DISTINCT(user_id) FROM ' . $this -> tbl_tracks . ' WHERE user_id IN ' . $sql_in;
+					$validated_user_ids = $wpdb -> get_col( $sql );
+
+					// Restore track order as given in the shortcode
+					$usr0 = array();
+					foreach ( $user_ids as $uid ) {
+						if ( in_array( $uid, $validated_user_ids ) ) {
+							$usr0[] = $uid;
+						}
+					}
+					return $usr0;
+				}
+				else {
+					return array();
+				}
+			}
+
+			/**
+			 * Turn shortcode attributes into lists of validated track IDs and user IDs
+			 *
+			 * @since 3.0
+			 **/
+			function validate_ids( $atts ) {
+				$validated_track_ids = array();     // validated array of tracks to display
+				$validated_user_ids = array();      // validated array of user id's whois live track to display
+				$author_id = get_the_author_meta( 'ID' );
+
+				if ( $atts['track'] ) {
+					$track_ids = explode( ',', $atts['track'] );
+					// Backward compatibility
+					if ( in_array( 'live', $track_ids ) ) {
+						$validated_user_ids[] = $author_id;
+					}
+					$validated_track_ids = $this -> validate_track_ids( $track_ids, $author_id );
+				}
+
+				if ( $atts['user'] ) {
+					$user_ids = explode( ',', $atts['user'] );
+					$validated_user_ids = array_merge( $validated_user_ids, $this-> validate_user_ids( $user_ids, $author_id ) );
+				}
+				return array( $validated_track_ids, $validated_user_ids );
+			}
+
+			/**
+			 * Return the value of 'points' for a track based on shortcode attribute
+			 *
+			 * @since 3.0
+			 */
+			function get_points( $atts = false, $shift = true ) {
+
+				// Initialize if argument is given
+				if ( is_array( $atts ) ) {
+					$this -> points  = ( $atts['points'] ? explode( ',', $atts['points'] ) : false );
+				}
+
+				if ( is_array( $this->points ) ) {
+					$p = ( $shift ? array_shift( $this->points ) : $this->points[0] );
+					if ( empty( $this->points ) ) $this->points[] = $p;
+				}
+
+				return ( in_array( $p, array( 'true',  't', 'yes', 'y' ), true ) ? true  : false ); // default false
+			}
+
+			/**
+			 * Return style object for a track based on shortcode attributes
+			 *
+			 * A function to return a style object from 'color', 'weight' and 'opacity' parameters.
+			 * If the $atts array is passed as an argument, the data is initialized. Then the style
+			 * array is created. The default is to shift an element off the beginning of the array.
+			 * When an array is empty (meaning there are more tracks than values in the parameter),
+			 * the last value is restored to be used for subsequent tracks.
+			 *
+			 * @since 3.0
+			 */
+			function get_style( $atts = false, $shift = true ) {
+
+				// Initialize if argument is given
+				if ( is_array( $atts ) ) {
+					$this -> colors    = ( $atts['color'] ? explode( ',', $atts['color'] ) : false );
+					$this -> weights   = ( $atts['weight'] ? explode( ',', $atts['weight'] ) : false );
+					$this -> opacities = ( $atts['opacity'] ? explode( ',', $atts['opacity'] ) : false );
+				}
+
+				$style =array();
+				if ( is_array( $this->colors ) ) {
+					$style['color'] = ( $shift ? array_shift( $this->colors ) : $this->colors[0] );
+					if ( empty( $this->colors ) ) $this->colors[] = $style['color'];
+				}
+				if ( is_array( $this->weights ) ) {
+					$style['weight'] = ( $shift ? array_shift( $this->weights ) : $this->weights[0] );
+					if ( empty( $this->weights ) ) $this->weights[] = $style['weight'];
+				}
+				if ( is_array( $this->opacities ) ) {
+					$style['opacity'] = ( $shift ? array_shift( $this->opacities ) : $this->opacities[0] );
+					if ( empty( $this->opacities ) ) $this->opacities[] = $style['opacity'];
+				}
+				return $style;
 			}
 
 			/**
@@ -2317,6 +2494,81 @@ EOF;
 				return $post -> post_author;
 			}
 
+			function get_live_tracks( $user_ids )  {
+				global $wpdb;
+
+				if ( empty( $user_ids ) ) return array();
+				$user_ids = array_unique( $user_ids );
+
+				$sql_in = "('" . implode("','", $user_ids) . "')";
+				$sql = 'SELECT t0.user_id, t0.id FROM ' . $this -> tbl_tracks . ' t0 INNER JOIN ( ' .
+					'SELECT user_id, MAX(updated) AS latest FROM ' . $this -> tbl_tracks .
+					' GROUP BY user_id ) t1 ON t0.user_id = t1.user_id AND t0.updated = latest '.
+					'WHERE t0.user_id IN ' . $sql_in;
+
+				$res = $wpdb -> get_results( $sql, OBJECT_K );
+				$track_ids = array();
+				foreach ($user_ids as $uid) {
+					if ( array_key_exists( $uid, $res ) ) {
+						$track_ids[] = $res[$uid]->id;
+					}
+				}
+				return $track_ids;
+			}
+
+			/**
+			 * Function to handle a 'gettrack' query
+			 *
+			 * @since 3.0
+			 */
+			function handle_gettrack_query() {
+				global $wpdb;
+
+				$query_string = stripslashes( $_REQUEST['query'] );
+				$post_id = intval( $_REQUEST['p'] );
+				$track_id = $_REQUEST['id'];
+				$format = $_REQUEST['format'];
+				$author_id = $this -> get_author( $post_id );
+
+				if ( wp_verify_nonce( $_REQUEST['_wpnonce'], 'gettrack_' . $query_string . "_p" . $post_id ) ) {
+					$query = base64_decode( $query_string );
+					$query = json_decode( $query );
+					$track_ids = $query -> id;
+					$user_ids = $query -> live;
+					$validated_track_ids = $this -> validate_track_ids( $track_ids, $author_id );
+					$validated_user_ids = $this-> validate_user_ids( $user_ids, $author_id );
+					$user_track_ids = $this -> get_live_tracks( $validated_user_ids );
+					$track_ids = array_merge( $validated_track_ids, $user_track_ids );
+
+					$follow = false;
+					if ( count( $user_track_ids ) > 0 ) {
+						$follow = $user_track_ids[0];
+					}
+
+					$extra_metadata = array(
+							'follow' => $follow
+					);
+
+					$sql_in = "('" . implode("','", $track_ids) . "')";
+					$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this -> tbl_locations .
+						' l INNER JOIN ' . $this -> tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' ORDER BY trip_id, occurred';
+					$res = $wpdb -> get_results( $sql, ARRAY_A );
+
+					if ( $format == 'gpx' ) {
+						$this -> send_as_gpx( $res );
+					}
+					else { // default to 'alltracks' internal format
+						$this -> send_alltracks( $res, $extra_metadata );
+					}
+
+				}
+				else {
+					header( 'HTTP/1.1 403 Forbidden' );
+					echo "Access denied.\n";
+				}
+				die();
+			}
+
 			function handle_gettrack() {
 
 				// Include polyline encoder
@@ -2405,6 +2657,25 @@ EOF;
 				$encoded = Polyline::Encode( $points );
 				$metadata = $this -> get_metadata( $row );
 				$this -> send_as_json( $encoded, $metadata );
+			}
+
+			function send_alltracks( $res, $extra_metadata ) {
+				$tracks = array();
+				foreach ( $res as $row ) {
+					$id = $row['trip_id'];
+					if ( ! array_key_exists( $id, $tracks ) ) {
+						$tracks[$id] = array( 'points' => array() );
+					}
+					$tracks[$id]['points'][] = array( $row['latitude'], $row['longitude'] );
+					$tracks[$id]['metadata'] = $this -> get_metadata( $row, $extra_metadata );
+				}
+				// Convert points to Polyline
+				foreach ( $tracks as $id => $values ) {
+					$tracks[$id]['track'] = Polyline::Encode( $values['points'] );
+					unset( $tracks[$id]['points'] );
+				}
+				header( 'Content-Type: application/json' );
+				echo json_encode( $tracks );
 			}
 
 			/**
