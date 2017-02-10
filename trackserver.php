@@ -41,6 +41,7 @@ License: GPL2
 		define( 'TRACKSERVER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 		define( 'TRACKSERVER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 		define( 'TRACKSERVER_JSLIB', TRACKSERVER_PLUGIN_URL . 'lib/' );
+		define( 'TRACKSERVER_VERSION', '3.0 (20170210)' );
 
 		/**
 		 * The main plugin class.
