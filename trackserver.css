@@ -1,6 +1,6 @@
 .trackserver-infobar-container {
 	background: rgba(0,0,0, 0.4);
-	z-index: 7;
+	z-index: 1000;
 	position: absolute;
 	width: 100%;
 	max-width: 100%;
