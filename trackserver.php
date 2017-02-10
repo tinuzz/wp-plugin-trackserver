@@ -551,6 +551,11 @@ EOF;
 				return $links;
 			}
 
+			/**
+			 * Output HTML for the Trackme settings section.
+			 *
+			 * @since 1.0
+			 */
 			function trackme_settings_html() {
 				$trackme_settings_img = TRACKSERVER_PLUGIN_URL . 'img/trackme-settings.png';
 				$howto = esc_html__( 'How to use TrackMe', 'trackserver' );
@@ -570,6 +575,11 @@ EOF;
 EOF;
 			}
 
+			/**
+			 * Output HTML for the Mapmytracks settings section.
+			 *
+			 * @since 1.0
+			 */
 			function mapmytracks_settings_html() {
 				$mapmytracks_settings_img = TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png';
 				$howto = esc_html__( 'How to use OruxMaps MapMyTracks', 'trackserver' );
@@ -595,6 +605,11 @@ EOF;
 			function sendlocation_settings_html() {
 			}
 
+			/**
+			 * Output HTML for the HTTP POST settings section.
+			 *
+			 * @since 1.0
+			 */
 			function httppost_settings_html() {
 				$autoshare_settings_img = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
 				$howto = esc_html__( 'How to use AutoShare', 'trackserver' );
@@ -991,6 +1006,11 @@ EOF;
 				return false;
 			}
 
+			/**
+			 * Handle the main [tsmap] shortcode
+			 *
+			 * @since 1.0
+			 **/
 			function handle_shortcode( $atts ) {
 				global $wpdb;
 
@@ -1140,7 +1160,7 @@ EOF;
 			}
 
 			/**
-			 * Stub function for the 'tsscripts' shortcode. It doesn't do anything
+			 * Stub function for the 'tsscripts' shortcode. It doesn't do anything.
 			 *
 			 * @since 2.0
 			 */
@@ -1149,7 +1169,9 @@ EOF;
 			}
 
 			/**
-			 * Function to localize the JavaScript that initializes the map(s)
+			 * Provision the JavaScript that initializes the map(s) with settings and data
+			 *
+			 * @since 2.0
 			 */
 			function wp_footer() {
 				if ( $this -> need_scripts && ! $this -> have_scripts ) {
@@ -1159,8 +1181,10 @@ EOF;
 			}
 
 			/**
-			 * Function to handle the request. This does a simple string comparison on the request URI to see
+			 * Handle the request. This does a simple string comparison on the request URI to see
 			 * if we need to handle the request. If so, it does. If not, it passes on the request.
+			 *
+			 * @since 1.0
 			 */
 			function parse_request( $wp ) {
 
@@ -1231,6 +1255,11 @@ EOF;
 				return $wp;
 			}
 
+			/**
+			 * Validate the credentials in a Trackme request aginast the user's key
+			 *
+			 * @since 1.0
+			 */
 			function validate_trackme_login() {
 
 				$username = urldecode( $_GET['u'] );
@@ -1260,7 +1289,7 @@ EOF;
 			}
 
 			/**
-			 * Function to handle TrackMe GET requests. It validates the user and password and
+			 * Handle TrackMe GET requests. It validates the user and password and
 			 * delegates the requested action to a dedicated function
 			 */
 			function handle_trackme_request() {
@@ -1287,7 +1316,9 @@ EOF;
 			}
 
 			/**
-			 * Function to handle TrackMe export requests. Not currently implemented.
+			 * Handle TrackMe export requests. Not currently implemented.
+			 *
+			 * @since 1.0
 			 */
 			function handle_trackme_export() {
 				http_response_code( 501 );
@@ -1295,6 +1326,11 @@ EOF;
 
 			}
 
+			/**
+			 * Handle Mapmytracks requests.
+			 *
+			 * @since 1.0
+			 */
 			function handle_mapmytracks_request() {
 
 				// Validate with '$return = true' so we can handle the auth failure.
@@ -1328,12 +1364,14 @@ EOF;
 			}
 
 			/**
-			 * Function to handle the 'upload' action from a TrackMe GET request. It tries to get the trip ID
+			 * Handle the 'upload' action from a TrackMe GET request. It tries to get the trip ID
 			 * for the specified trip name, and if that is not found, it creates a new trip. When a minimal
 			 * set of parameters is present, it inserts the location into the database.
 			 *
 			 * Sample request:
 			 * /wp/trackme/requests.z?a=upload&u=martijn&p=xxx&lat=51.44820629&long=5.47286778&do=2015-01-03%2022:22:15&db=8&tn=Auto_2015.01.03_10.22.06&sp=0.000&alt=55.000
+			 *
+			 * @since 1.0
 			 */
 			function handle_trackme_upload( $user_id ) {
 				global $wpdb;
@@ -1412,8 +1450,10 @@ EOF;
 			}
 
 			/**
-			 * Function to handle the 'gettriplist' action from a TrackMe GET request. It prints a list of all trips
+			 * Handle the 'gettriplist' action from a TrackMe GET request. It prints a list of all trips
 			 * currently in the database, containing name and creation timestamp
+			 *
+			 * @since 1.0
 			 */
 			function handle_trackme_gettriplist( $user_id ) {
 				global $wpdb;
@@ -1477,8 +1517,10 @@ EOF;
 			}
 
 			/**
-			 * Function to handle the 'deletetrip' action from a TrackMe GET request. If a trip ID can be found from the
+			 * Handle the 'deletetrip' action from a TrackMe GET request. If a trip ID can be found from the
 			 * supplied name, all locations and the trip record for the ID are deleted from the database.
+			 *
+			 * @since 1.0
 			 */
 			function handle_trackme_deletetrip( $user_id ) {
 				global $wpdb;
@@ -1508,7 +1550,9 @@ EOF;
 			}
 
 			/**
-			 * Function to print a result for the TrackMe client. It prints a result code and optionally a message.
+			 * Print a result for the TrackMe client. It prints a result code and optionally a message.
+			 *
+			 * @since 1.0
 			 */
 			function trackme_result( $rc, $message = false ) {
 				echo "Result:$rc";
@@ -1519,7 +1563,7 @@ EOF;
 			}
 
 			/**
-			 * Function to terminate the current script, sending a HTTP status code and
+			 * Terminate the current script, sending a HTTP status code and
 			 * a message. To be used for protocols that do not require a specific
 			 * response, like OsmAnd and SendLocation, but unlike Trackme, for example.
 			 *
@@ -1533,7 +1577,7 @@ EOF;
 			}
 
 			/**
-			 * Function to validate credentials for OsmAnd and SendLocation. It checks the
+			 * Validate credentials for OsmAnd and SendLocation. It checks the
 			 * WordPress username and the access key from the user profile against the values
 			 * specified in the request (OsmAnd) or given in the function parameters (SendLocation).
 			 *
@@ -1566,15 +1610,24 @@ EOF;
 				$this -> http_terminate();
 			}
 
+			/**
+			 * Get a track ID from the database given its name and a user ID
+			 *
+			 * @since 2.0
+			 */
 			function get_track_by_name( $user_id, $trackname ) {
 				global $wpdb;
 				$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trackname );
 				return $wpdb -> get_var( $sql );
 			}
 
-			/*
+			/**
+			 * Handle OsmAnd request
+			 *
 			 * Sample request:
 			 * /wp/osmand/?lat=51.448334&lon=5.4725113&timestamp=1425238292902&hdop=11.0&altitude=80.0&speed=0.0
+			 *
+			 * @since 1.4
 			 */
 			function handle_osmand_request() {
 				global $wpdb;
@@ -1651,6 +1704,11 @@ EOF;
 				$this -> http_terminate( 400, 'Bad request' );
 			}
 
+			/**
+			 * Handle SendLocation request
+			 *
+			 * @since 2.0
+			 */
 			function handle_sendlocation_request( $username, $key ) {
 				global $wpdb;
 
@@ -1723,8 +1781,10 @@ EOF;
 			}
 
 			/**
-			 * Function to validate a timestamp supplied by a client. It checks if the timestamp is in the required
+			 * Validate a timestamp supplied by a client. It checks if the timestamp is in the required
 			 * format and if the timestamp is unchanged after parsing.
+			 *
+			 * @since 1.0
 			 */
 			function validate_timestamp( $ts ) {
 			    $d = DateTime::createFromFormat( 'Y-m-d H:i:s', $ts );
@@ -1732,9 +1792,11 @@ EOF;
 			}
 
 			/**
-			 * Function to validate Wordpress credentials for basic HTTP authentication. If no crededtials are received,
+			 * Validate Wordpress credentials for basic HTTP authentication. If no crededtials are received,
 			 * we send a 401 status code. If the username or password are incorrect, we terminate (default) or return
 			 * false if so requested.
+			 *
+			 * @since 1.0
 			 */
 			function validate_http_basicauth( $return = false) {
 
@@ -1765,11 +1827,14 @@ EOF;
 			}
 
 			/**
-			 * Function to handle the 'start_activity' request for the MapMyTracks protocol. If no
-			 * title / trip name is received, nothing is done. Received points are validated. Trip
-			 * is inserted with the first point's timstamp as start time, or the current time if no
-			 * valid points are received. Valid points are inserted and and the new trip ID is
-			 * returned in an XML message.
+			 * Handle the 'start_activity' request for the MapMyTracks protocol. If
+			 * no title / trip name is received, nothing is done. Received points are
+			 * validated. Trip is inserted with the first point's timstamp as start
+			 * time, or the current time if no valid points are received. Valid
+			 * points are inserted and and the new trip ID is returned in an XML
+			 * message.
+			 *
+			 * @since 1.0
 			 */
 			function handle_mapmytracks_start_activity( $user_id ) {
 				global $wpdb;
