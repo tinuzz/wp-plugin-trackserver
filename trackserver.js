@@ -98,7 +98,7 @@ var Trackserver = (function () {
                 old_markers: this.get_mydata(div_id, track_id, 'markers'),
             }
 
-            if (mymapdata.tracks[i].style && !mymapdata.points) {
+            if (mymapdata.tracks[i].style && !mymapdata.tracks[i].points) {
                 layer_options.style = mymapdata.tracks[i].style;
             }
             else if (mymapdata.style && !mymapdata.points) {
@@ -169,6 +169,7 @@ var Trackserver = (function () {
                     var track_index = this.options.track_index;
                     var old_track   = this.options.old_track;
                     var old_markers = this.options.old_markers;
+                    var do_points   = mymapdata.tracks[track_index].points;
 
                     // ...and then delete the old one, to prevent flickering
                     if (old_track) {
@@ -213,7 +214,7 @@ var Trackserver = (function () {
                             end_latlng   = layer._latlngs[ layer._latlngs.length - 1 ];
                             layer_index++;
                         }
-                        else if (mymapdata.points && '_layers' in layer) {
+                        else if (do_points && '_layers' in layer) {
                             // Iterate over the _layers object, in which every layer, each containing a
                             // point, has a numeric key. We need the first one and the last one.
                             var j=0;
