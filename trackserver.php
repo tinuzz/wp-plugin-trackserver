@@ -1264,9 +1264,9 @@ EOF;
 					$atts['track'] = $atts['id'];
 				}
 
-				$style  = $this -> get_style( $atts, false );
-				$points = $this -> get_points( $atts, false );
-				$markers = $this -> get_markers( $atts, false );
+				$style  = $this -> get_style( $atts, false );     // result is not used
+				$points = $this -> get_points( $atts, false );    // result is not used
+				$markers = $this -> get_markers( $atts, false );  // result is not used
 
 				list( $validated_track_ids, $validated_user_ids ) = $this -> validate_ids( $atts );
 
@@ -1370,20 +1370,14 @@ EOF;
 					'default_zoom' => $zoom,
 					'fullscreen'   => true,
 					'is_live'      => $is_live,
-					'markers'      => $markers,
 					'continuous'   => $continuous,
 					'infobar'      => $infobar,
-					'points'       => $points,
 					'alltracks'    => $alltracks_url,
 					'fit'          => $fit
 				);
 
 				if ($infobar) {
 					$mapdata['infobar_tpl'] = $infobar_tpl;
-				}
-
-				if ( count( $style ) > 0 ) {
-					$mapdata['style'] = $style;
 				}
 
 				$this -> mapdata[] = $mapdata;

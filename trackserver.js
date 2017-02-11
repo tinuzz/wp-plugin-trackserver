@@ -101,9 +101,6 @@ var Trackserver = (function () {
             if (mymapdata.tracks[i].style && !mymapdata.tracks[i].points) {
                 layer_options.style = mymapdata.tracks[i].style;
             }
-            else if (mymapdata.style && !mymapdata.points) {
-                layer_options.style = mymapdata.style;
-            }
 
             // Values that are needed in the process_data method can be passed via track_options
             var track_options = {
@@ -116,9 +113,6 @@ var Trackserver = (function () {
 
                 if (mymapdata.tracks[i].style && mymapdata.tracks[i].style.color) {
                     var pointColor = mymapdata.tracks[i].style.color;
-                }
-                else if (mymapdata.style && mymapdata.style.color) {
-                    var pointColor = mymapdata.style.color;
                 }
                 else {
                     pointColor = '#03f';
