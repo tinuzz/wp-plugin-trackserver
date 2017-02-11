@@ -1325,7 +1325,8 @@ EOF;
 				$markers     = ( in_array( $atts['markers'],    array( 'end', 'e' ), true ) ? 'end' : $markers  );
 				$continuous  = ( in_array( $atts['continuous'], array( 'false', 'f', 'no',  'n' ), true ) ? false : true  ); // default true
 				$infobar     = ( in_array( $atts['infobar'],    array( 'true',  't', 'yes', 'y' ), true ) ? true  : false ); // default false
-				$is_live     = ( in_array( $atts['live'],       array( 'true',  't', 'yes', 'y' ), true ) ? true  : $is_live );   // force override
+				$is_not_live = ( in_array( $atts['live'],       array( 'false', 'f', 'no',  'n' ), true ) ? false  : $is_live );   // force override
+				$is_live     = ( in_array( $atts['live'],       array( 'true',  't', 'yes', 'y' ), true ) ? true  : $is_not_live );   // force override
 				$infobar_tpl = get_user_meta( $author_id, 'ts_infobar_template', true );
 				$zoom        = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : ( $is_live ? '16' : '6' ) );
 				$fit         = ( $atts['zoom'] !== false ? false : true ); // zoom is always set, so we need a signal for altering fitBounds() options
