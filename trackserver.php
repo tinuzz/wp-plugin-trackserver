@@ -1141,12 +1141,37 @@ EOF;
 					$this -> points  = ( $atts['points'] ? explode( ',', $atts['points'] ) : false );
 				}
 
+				$p = false;
 				if ( is_array( $this->points ) ) {
 					$p = ( $shift ? array_shift( $this->points ) : $this->points[0] );
 					if ( empty( $this->points ) ) $this->points[] = $p;
 				}
 
 				return ( in_array( $p, array( 'true',  't', 'yes', 'y' ), true ) ? true  : false ); // default false
+			}
+
+			/**
+			 * Return the value of 'markers' for a track based on shortcode attribute
+			 *
+			 * @since 3.0
+			 */
+			function get_markers( $atts = false, $shift = true ) {
+
+				// Initialize if argument is given
+				if ( is_array( $atts ) ) {
+					$this -> markers  = ( $atts['markers'] ? explode( ',', $atts['markers'] ) : false );
+				}
+
+				$p = false;
+				if ( is_array( $this->markers ) ) {
+					$p = ( $shift ? array_shift( $this->markers ) : $this->markers[0] );
+					if ( empty( $this->markers ) ) $this->markers[] = $p;
+				}
+
+				$markers     = ( in_array( $p, array( 'false', 'f', 'no',  'n' ), true ) ? false : true  ); // default true
+				$markers     = ( in_array( $p, array( 'start', 's' ), true ) ? 'start' : $markers  );
+				$markers     = ( in_array( $p, array( 'end', 'e' ), true ) ? 'end' : $markers  );
+				return $markers;
 			}
 
 			/**
@@ -1241,6 +1266,7 @@ EOF;
 
 				$style  = $this -> get_style( $atts, false );
 				$points = $this -> get_points( $atts, false );
+				$markers = $this -> get_markers( $atts, false );
 
 				list( $validated_track_ids, $validated_user_ids ) = $this -> validate_ids( $atts );
 
@@ -1271,6 +1297,7 @@ EOF;
 							'track_type' => $track_type,
 							'style'      => $this -> get_style(),
 							'points'     => $this -> get_points(),
+							'markers'    => $this -> get_markers(),
 						);
 					}
 
@@ -1281,6 +1308,7 @@ EOF;
 							'track_type' => $this -> track_format,
 							'style'      => $this -> get_style(),
 							'points'     => $this -> get_points(),
+							'markers'    => $this -> get_markers(),
 						);
 					}
 
@@ -1302,7 +1330,10 @@ EOF;
 						if ( ! empty( $u ) ) {
 							$tracks[] = array(
 								'track_url'  => $u,
-								'track_type' => 'gpx'
+								'track_type' => 'gpx',
+								'style'      => $this -> get_style(),
+								'points'     => $this -> get_points(),
+								'markers'    => $this -> get_markers(),
 							);
 						}
 					}
@@ -1314,15 +1345,15 @@ EOF;
 						if ( ! empty( $u ) ) {
 							$tracks[] = array(
 								'track_url'  => $u,
-								'track_type' => 'kml'
+								'track_type' => 'kml',
+								'style'      => $this -> get_style(),
+								'points'     => $this -> get_points(),
+								'markers'    => $this -> get_markers(),
 							);
 						}
 					}
 				}
 
-				$markers     = ( in_array( $atts['markers'],    array( 'false', 'f', 'no',  'n' ), true ) ? false : true  ); // default true
-				$markers     = ( in_array( $atts['markers'],    array( 'start', 's' ), true ) ? 'start' : $markers  );
-				$markers     = ( in_array( $atts['markers'],    array( 'end', 'e' ), true ) ? 'end' : $markers  );
 				$continuous  = ( in_array( $atts['continuous'], array( 'false', 'f', 'no',  'n' ), true ) ? false : true  ); // default true
 				$infobar     = ( in_array( $atts['infobar'],    array( 'true',  't', 'yes', 'y' ), true ) ? true  : false ); // default false
 				$is_not_live = ( in_array( $atts['live'],       array( 'false', 'f', 'no',  'n' ), true ) ? false  : $is_live );   // force override

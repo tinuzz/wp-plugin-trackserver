@@ -169,6 +169,7 @@ var Trackserver = (function () {
                     var track_index = this.options.track_index;
                     var old_track   = this.options.old_track;
                     var old_markers = this.options.old_markers;
+                    var do_markers  = mymapdata.tracks[track_index].markers;
                     var do_points   = mymapdata.tracks[track_index].points;
 
                     // ...and then delete the old one, to prevent flickering
@@ -235,19 +236,19 @@ var Trackserver = (function () {
                             continue;
                         }
 
-                        if (mymapdata.markers) {
-                            if ((track_index == 0 && layer_index < 2) || !mymapdata.continuous) {
+                        if (do_markers) {
+                            if ((track_index == 0 && layer_index <= 1) || !mymapdata.continuous) {
                                 start_marker_color = '#009c0c';   // green
                             } else {
                                 start_marker_color = '#ffcf00';   // yellow
                             }
                             end_marker_color = '#c30002';         // red
 
-                            if (mymapdata.markers === true || mymapdata.markers == 'start') {
+                            if (do_markers === true || do_markers == 'start') {
                                 start_marker = new _this.Mapicon(start_latlng, { fillColor: start_marker_color }).addTo(featuregroup);
                                 markers.push(start_marker);
                             }
-                            if (mymapdata.markers === true || mymapdata.markers == 'end') {
+                            if (do_markers === true || do_markers == 'end') {
                                 end_marker = new _this.Mapicon(end_latlng, { fillColor: end_marker_color }).addTo(featuregroup).bringToBack();
                                 markers.push(end_marker);
                             }
@@ -276,9 +277,14 @@ var Trackserver = (function () {
                     num_ready++;
                     _this.set_mydata(div_id, 'all', 'num_ready', num_ready);
 
-                    if (mymapdata.markers && num_ready == mymapdata.tracks.length) {
-                        _this.get_mydata(div_id, 'all', 'first_marker').bringToFront();
-                        end_marker.bringToFront();
+                    if (do_markers && num_ready == mymapdata.tracks.length) {
+                        var first_marker = _this.get_mydata(div_id, 'all', 'first_marker');
+                        if (first_marker) {
+                            first_marker.bringToFront();
+                        }
+                        if (end_marker) {
+                            end_marker.bringToFront();
+                        }
                     }
 
                     // For live tracks, set the center of the map to the last
