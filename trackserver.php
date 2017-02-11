@@ -1211,6 +1211,7 @@ EOF;
 					'opacity'    => false,
 					'infobar'    => false,
 					'points'     => false,
+					'zoom'       => false,
 				);
 
 				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
@@ -1326,20 +1327,23 @@ EOF;
 				$infobar     = ( in_array( $atts['infobar'],    array( 'true',  't', 'yes', 'y' ), true ) ? true  : false ); // default false
 				$is_live     = ( in_array( $atts['live'],       array( 'true',  't', 'yes', 'y' ), true ) ? true  : $is_live );   // force override
 				$infobar_tpl = get_user_meta( $author_id, 'ts_infobar_template', true );
+				$zoom        = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : ( $is_live ? '16' : '6' ) );
+				$fit         = ( $atts['zoom'] !== false ? false : true ); // zoom is always set, so we need a signal for altering fitBounds() options
 
 				$mapdata = array(
 					'div_id'       => $div_id,
 					'tracks'       => $tracks,
 					'default_lat'  => $default_lat,
 					'default_lon'  => $default_lon,
-					'default_zoom' => ( $is_live ? '16' : '6' ),
+					'default_zoom' => $zoom,
 					'fullscreen'   => true,
 					'is_live'      => $is_live,
 					'markers'      => $markers,
 					'continuous'   => $continuous,
 					'infobar'      => $infobar,
 					'points'       => $points,
-					'alltracks'    => $alltracks_url
+					'alltracks'    => $alltracks_url,
+					'fit'          => $fit
 				);
 
 				if ($infobar) {

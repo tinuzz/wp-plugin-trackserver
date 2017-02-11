@@ -96,6 +96,7 @@ For the [tsmap] shortcode:
 * weight: one or more weights, separated by commas, to use for the tracks on the map. Default comes from Leaflet. Multiple values correspond to multiple tracks.
 * opacity: one or more opacities, separated by commas, to use for the tracks on the map. Default comes from Leaflet. Multiple values correspond to multiple tracks.
 * points: true (or 't', 'yes' or 'y'), or false (default), to specify whether the track should be displayed as a line or a collection of points. Multiple values, separated by commas, correspond to multiple tracks.
+* zoom: the zoom factor to use for the map, a number between 0 and 18 or so, depending on your tile source. For a map with live tracks, this number is absolute. For a map with only static tracks, this number represents the maximum zoom level, so the map will always fit all the tracks.
 
 Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
 
@@ -195,6 +196,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 * Add {userid}, {userlogin} and {displayname} as possible tags in the infobar template.
 * Add 'user' attribute to 'tsmap' shortcode, for displaying multiple users' live tracks in a map.
 * Add 'live' attribute to force live-update without live tracks, for use with external (gpx/kml) tracks.
+* Add 'zoom' attribute to influence the initial zoom level of the map. Behaves differently for maps with live tracks than for maps with only static tracks.
 * Remove support for GeoJSON as Trackserver's internal trackformat, only polyline remains.
 * Shortcode parameters 'color', 'weight', 'opacity' and 'points' can now contain a comma-separated list of values, which will be applied to respective tracks in the 'track' or 'user' attribute. If less values than tracks are given, the last value is applied to all remaining tracks.
 * It is now possible to mix 'track', 'user', 'gpx' and 'kml' in a single map, but there seems to be an issue in Leaflet or Omnivore with multiple GPX tracks or mixed GPX/KML, where one or more tracks don't get their path drawn.

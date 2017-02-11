@@ -78,6 +78,10 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 * points: true (or 't', 'yes' or 'y'), or false (default), to specify whether
   the track should be displayed as a line or a collection of points. Multiple
   values, separated by commas, correspond to multiple tracks.
+* zoom: the zoom factor to use for the map, a number between 0 and 18 or so,
+  depending on your tile source. For a map with live tracks, this number is
+  absolute. For a map with only static tracks, this number represents the maximum
+  zoom level, so the map will always fit all the tracks.
 
 Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
 

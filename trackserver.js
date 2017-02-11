@@ -309,8 +309,12 @@ var Trackserver = (function () {
                         }
                     } else {
                         if (num_ready == mymapdata.tracks.length) {
+                            var fitOptions = {};
+                            if (!mymapdata.fit) {
+                                fitOptions = { maxZoom: mymapdata.default_zoom }
+                            }
                             // or fit the entire collection of tracks on the map
-                            this._map.fitBounds(featuregroup.getBounds());
+                            this._map.fitBounds(featuregroup.getBounds(), fitOptions);
                         }
                     }
                 })
