@@ -26,7 +26,7 @@ are included. Maps can be viewed in full-screen on modern browsers.
 
 See the FAQ section for more information on the shortcode's supported attributes.
 
-= Requirements =
+# Requirements
 
 Trackserver requires PHP 5.3 or newer and it needs both DOMDocument and
 SimpleXML extensions installed.
