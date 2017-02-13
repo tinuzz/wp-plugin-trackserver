@@ -1,13 +1,14 @@
 .trackserver-infobar-container {
 	background: rgba(0,0,0, 0.4);
-	z-index: 1000;
-	position: absolute;
+	z-index: 900;
+	position: relative;
 	width: 100%;
 	max-width: 100%;
 	text-align: center;
 }
 
 .trackserver-infobar {
+	z-index: 800;
 	margin-left: 50px;
 	margin-right: 20px;
 	color: white;
