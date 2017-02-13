@@ -1326,30 +1326,36 @@ EOF;
 
 				if ( $atts['gpx'] ) {
 					$urls = explode(' ', $atts['gpx'] );
+					$j = 0;
 					foreach ($urls as $u) {
 						if ( ! empty( $u ) ) {
 							$tracks[] = array(
+								'track_id'   => 'gpx' . $j,
 								'track_url'  => $u,
 								'track_type' => 'gpx',
 								'style'      => $this -> get_style(),
 								'points'     => $this -> get_points(),
 								'markers'    => $this -> get_markers(),
 							);
+							$j++;
 						}
 					}
 				}
 
 				if ( $atts['kml'] ) {
 					$urls = explode(' ', $atts['kml'] );
+					$j = 0;
 					foreach ($urls as $u) {
 						if ( ! empty( $u ) ) {
 							$tracks[] = array(
+								'track_id'   => 'kml' . $j,
 								'track_url'  => $u,
 								'track_type' => 'kml',
 								'style'      => $this -> get_style(),
 								'points'     => $this -> get_points(),
 								'markers'    => $this -> get_markers(),
 							);
+							$j++;
 						}
 					}
 				}
