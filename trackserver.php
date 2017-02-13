@@ -1050,6 +1050,9 @@ EOF;
 			 * @since 3.0
 			 */
 			function get_user_id( $user, $property = 'ID' ) {
+				if ($user == '@') {
+					$user = get_the_author_meta( 'ID' );
+				}
 				if ( is_numeric( $user ) ) {
 					$field = 'id';
 					$user = (int) $user;

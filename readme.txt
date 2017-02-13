@@ -79,9 +79,9 @@ More TODO-items and feature ideas in the TODO file contained in the plugin archi
 
 For the [tsmap] shortcode:
 
-* track: one or more track IDs, separated by commas, or 'live'.
+* track: one or more track IDs, separated by commas, or 'live' (deprecated, 'user=@' is preferred).
 * id: an alias for 'track'
-* user: one or more user IDs, separated by commas, who's latest track to follow 'live'. When viewing the map, the liveupdate feature will follow the track of the first user specified.
+* user: one or more user IDs, separated by commas, who's latest track to follow 'live'. A literal '@' means the author of the post (you). When viewing the map, the liveupdate feature will follow the track of the first user specified.
 * live: true (or 't', 'yes' or 'y'), or false (default), to force live tracking for this map. This can be used for example with an externally updated GPX or KML file.
 * width: map width, default: 100%.
 * height: map height, default: 480px.
@@ -101,7 +101,7 @@ The following attributes apply to tracks that are drawn on the map. Each of them
 * opacity: one or more opacities, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
 * points: true (or 't', 'yes' or 'y'), or false (default), to specify whether the track should be displayed as a line or a collection of points.
 
-Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
+Example: [tsmap track=39,84 user=@ align=center class=mymap markers=n color=#ff0000]
 
 When you specify multiple values, please be aware of the following. While track order will be preserved within each track type, different track types are evaluated in a specific order, and styling values are applied in that order too. The order is:
 
@@ -118,7 +118,7 @@ In this case, the GPX track will be yellow, Jim's live track will be green and t
 
 In a feature request I was asked to make it possible to draw just a marker on the last known location, and not draw a track at all. Use 'markers' and 'opacity' to accomplish this:
 
-Example: [tsmap track=live markers=e opacity=0.0]
+Example: [tsmap user=@ markers=e opacity=0.0]
 
 Attributes for the [tslink] shortcode:
 

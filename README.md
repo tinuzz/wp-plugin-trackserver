@@ -47,11 +47,12 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 
 For the [tsmap] shortcode:
 
-* track: one or more track IDs, separated by commas, or 'live'.
+* track: one or more track IDs, separated by commas, or 'live' (deprecated,
+  'user=@' is preferred).
 * id: an alias for 'track'
 * user: one or more user IDs, separated by commas, who's latest track to follow
-  'live'. When viewing the map, the liveupdate feature will follow the track of
-  the first user specified.
+  'live'. A literal '@' means the author of the post (you). When viewing the
+  map, the liveupdate feature will follow the track of the first user specified.
 * live: true (or 't', 'yes' or 'y'), or false (default), to force live tracking
   for this map. This can be used for example with an externally updated GPX or
   KML file.
