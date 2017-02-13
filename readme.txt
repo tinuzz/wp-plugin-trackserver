@@ -87,18 +87,34 @@ For the [tsmap] shortcode:
 * height: map height, default: 480px.
 * align: 'left', 'center' or 'right', default: not set.
 * class: a CSS class to add to the map div for customization, default: not set.
-* markers: true (default) or false (or 'f', 'no' or 'n') to disable start/end markers on the track. The value can also be 'start', 's', 'end' or 'e', to draw markers only for the start or the end of a track respectively.
 * continuous: true (default) or false (or 'f', 'no' or 'n'), for lack of a better word, to indicate whether multiple tracks should be considered as one continuous track. The only effect this has, at the moment, is that intermediate start markers are yellow instead of green.
-* gpx: the URL to a GPX file to be plotted on the map.
-* kml: the URL to a KML file to be plotted on the map.
-* infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether an information bar should be shown on the map, when live tracking is active. This only works with 'track=live' or the 'user' parameter, and has no effect in other cases.
-* color: one or more colors, separated by commas, to use for the tracks on the map. Default comes from Leaflet. Multiple values correspond to multiple tracks.
-* weight: one or more weights, separated by commas, to use for the tracks on the map. Default comes from Leaflet. Multiple values correspond to multiple tracks.
-* opacity: one or more opacities, separated by commas, to use for the tracks on the map. Default comes from Leaflet. Multiple values correspond to multiple tracks.
-* points: true (or 't', 'yes' or 'y'), or false (default), to specify whether the track should be displayed as a line or a collection of points. Multiple values, separated by commas, correspond to multiple tracks.
-* zoom: the zoom factor to use for the map, a number between 0 and 18 or so, depending on your tile source. For a map with live tracks, this number is absolute. For a map with only static tracks, this number represents the maximum zoom level, so the map will always fit all the tracks.
+* gpx: one or more URLs to GPX files to be plotted on the map. Multiple URLs should be separated by spaces, and the value as a whole enclosed by double quotes (gpx="http://....gpx http://....gpx")
+* kml: one or more URLs to KML files to be plotted on the map. Multiple URLs should be separated by spaces, and the value as a whole enclosed by double quotes (kml="http://....kml http://....kml")
+* infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether an information bar should be shown on the map, when live tracking is active. This only works with 'track=live' or the 'user' parameter, and has no effect in other cases. When multiple live tracks are requested, the infobar will display the data of the first track only.
+* zoom: the zoom factor to use for the map, a number between 0 and 18. For a map with live tracks, this number is absolute. For a map with only static tracks, this number represents the maximum zoom level, so the map will always fit all the tracks.
+
+The following attributes apply to track that are drawn on the map. Each of them can contain multiple values, separated by commas, to be applied to different tracks in order. If there a are less values than tracks, the last value will be applied to the remaining tracks.
+
+* markers: one or more of the following values: true (default) or false (or 'f', 'no' or 'n') to disable start/end markers on the track. The value can also be 'start', 's', 'end' or 'e', to draw markers only for the start or the end of a track respectively.
+* color: one or more colors, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
+* weight: one or more weights, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
+* opacity: one or more opacities, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
+* points: true (or 't', 'yes' or 'y'), or false (default), to specify whether the track should be displayed as a line or a collection of points.
 
 Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
+
+When you specify multiple values, please be aware of the following. While track order will be preserved within each track type, different track types are evaluated in a specific order, and styling values are applied in that order too. The order is:
+
+1. Static tracks (track=a,b,c)
+2. Live user tracks (user=x,y,z)
+3. GPX tracks (gpx=...)
+4. KML tracks (kml=...)
+
+To prevent confusion, I suggest you specify tracks in this order in your shortcode too.
+
+Example: [tsmap gpx=/url/for/file.gpx user=jim track=10,99 color=red,blue,green,yellow]
+
+In this case, the GPX track will be yellow, Jim's live track will be green and tracks 10 and 99 will be red and blue respectively.
 
 In a feature request I was asked to make it possible to draw just a marker on the last known location, and not draw a track at all. Use 'markers' and 'opacity' to accomplish this:
 
@@ -106,9 +122,9 @@ Example: [tsmap track=live markers=e opacity=0.0]
 
 For the [tslink] shortcode:
 
-* track: see above
-* id: alias for 'track'
-* user: see above
+* track: same as for [tsmap]
+* id: same as for [tsmap]
+* user: same as for [tsmap]
 * text: the text to render insde the &lt;a&gt;...&lt;/a&gt; tags
 * class: a CSS class to apply to the 'a' element
 * format: the format in which to download the tracks. Only 'gpx' (the default) is supported at this time. Other formats like KML may follow. Send a feature request if you need a specific format.
