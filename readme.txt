@@ -141,6 +141,12 @@ Trackserver tries to detect the usage of the [tsmap] shortcode to prevent unnece
 
 [tsscripts]
 
+There is one caveat. Trackserver only works on 'real' posts and pages, in WordPress terms. For example, some WordPress themes (I have seen one) offer the possibility to specify a static homepage right in the theme settings, completely overriding WordPress' internal post logic. In this case, the page lacks an author as well as other properties that a regular WordPress post or page has. Trackserver's [tsmap] shortcode does not work on pages like that.
+
+All that said, Trackserver's shortcode detection should be reasonably fool-proof these days, because if the early detection mechanism fails, the shortcode itself is used to trigger the inclusion of Trackserver's JavaScript and CSS. The only adverse side effect this may have, is that the CSS is loaded in the footer of the page, rather than in the head section. It's hard to say whether this will actually be a problem, but just in case it is, the [tsscripts] shortcode is there.
+
+Beware though: the [tsscripts] shortcode doesn't actually do anything. At all. It is merely an extra shortcode that Trackserver tries to detect. Therefore, it is absolutely useless to include [tsscripts] in the same context as your [tsmap]. I appreciate that this can be hard to understand, so let me illustrate with an example. Take the 'Posts in page' plugin, that allows you to use a shortcode in a post (let's call it A) to include other posts an pages inline (let's call them B and C). If [tsmap] is used in B or C, but the page requested by the user is A, which does not have a [tsmap], Trackserver's shortcode detection used to fail in earlier versions, and the Javascript and CSS would not be loaded. By using the [tsscripts] shortcode in page A, the loading of JS and CSS can be forced. The CSS will then be loaded in the head of the page, instead of in the footer.
+
 = What is live tracking? =
 
 By using the shortcode with the 'track=live' parameter, the most recently updated track belonging to the author of the current post/page is published on the map.
