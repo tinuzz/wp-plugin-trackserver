@@ -3163,7 +3163,8 @@ EOF;
 EOF;
 				printf( $format,
 					esc_html__( 'With live tracking, an information bar can be shown on the map, displaying some data from the latest trackpoint. ' .
-					'Here you can format the content of the infobar. Possible replacement tags are {lat}, {lon}, {timestamp}, {altitude}, {speedms}, {speedkmh}, {speedmph}.', 'trackserver' ) );
+					'Here you can format the content of the infobar. Possible replacement tags are {lat}, {lon}, {timestamp}, {altitude}, ' .
+					'{speedms}, {speedkmh}, {speedmph}, {userid}, {userlogin}, {displayname}.', 'trackserver' ) );
 			}
 
 			function profiles_html() {
