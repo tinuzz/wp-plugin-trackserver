@@ -218,15 +218,18 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 * Sync trackserver-omnivore.js with leaflet-omnivore-0.3.4.
 * Fix a bug in the admin where some superfluous text was included in track URLs.
 * Implement loading all tracks for a map in a single HTTP request.
-* Replace track marker images by L.CircleMarker objects and gain dynamic marker colouring.
+* Replace track marker images by L.CircleMarker objects and gain dynamic marker colouring. The old images are removed from the plugin installation.
 * Add {userid}, {userlogin} and {displayname} as possible tags in the infobar template.
 * Add 'user' attribute to 'tsmap' shortcode, for displaying multiple users' live tracks in a map.
-* Add 'live' attribute to force live-update without live tracks, for use with external (gpx/kml) tracks.
+* Add 'live' attribute to force live-update without live tracks, for use with external (gpx/kml) tracks. It can also be used to force-disable live updates for maps with user tracks.
 * Add 'zoom' attribute to influence the initial zoom level of the map. Behaves differently for maps with live tracks than for maps with only static tracks.
+* Add 'id' attribute as an alias for 'track', because I keep using that for some strange reason.
+* Maps without live tracks now start at zoom level 12 instead of 6, until the tracks are loaded.
 * Remove support for GeoJSON as Trackserver's internal trackformat, only polyline remains.
-* Shortcode parameters 'color', 'weight', 'opacity' and 'points' can now contain a comma-separated list of values, which will be applied to respective tracks in the 'track' or 'user' attribute. If less values than tracks are given, the last value is applied to all remaining tracks.
-* It is now possible to mix 'track', 'user', 'gpx' and 'kml' in a single map, but there seems to be an issue in Leaflet or Omnivore with multiple GPX tracks or mixed GPX/KML, where one or more tracks don't get their path drawn.
+* Shortcode parameters 'markers', 'color', 'weight', 'opacity' and 'points' can now contain a comma-separated list of values, which will be applied to respective tracks in the 'track', 'user', 'gpx' or 'kml' attributes (in that order). If less values than tracks are given, the last value is applied to all remaining tracks.
+* It is now possible to mix 'track', 'user', 'gpx' and 'kml' in a single map.
 * Add a new shortcode called 'tslink', that produces a download link for one or more tracks in a single file. Only GPX is supported at this time.
+* Documentation updates and additions.
 
 = v2.3 =
 Release date: 23 December 2016
