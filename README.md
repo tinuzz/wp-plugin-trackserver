@@ -79,7 +79,7 @@ For the [tsmap] shortcode:
   tracks, this number represents the maximum zoom level, so the map will always
   fit all the tracks.
 
-The following attributes apply to track that are drawn on the map. Each of them can contain multiple values, separated by commas, to be applied to different tracks in order. If there a are less values than tracks, the last value will be applied to the remaining tracks.
+The following attributes apply to tracks that are drawn on the map. Each of them can contain multiple values, separated by commas, to be applied to different tracks in order. If there a are less values than tracks, the last value will be applied to the remaining tracks.
 
 * markers: one or more of the following values: true (default) or false (or
   'f', 'no' or 'n') to disable start/end markers on the track. The value can
@@ -120,7 +120,7 @@ accomplish this:
 
 Example: [tsmap track=live markers=e opacity=0.0]
 
-For the [tslink] shortcode:
+Attributes for the [tslink] shortcode:
 
 * track: same as for [tsmap]
 * id: same as for [tsmap]
