@@ -131,6 +131,10 @@ Attributes for the [tslink] shortcode:
 
 Example: [tslink track=1,2,3,4 text="Download the tracks of our 4-day hike in GPX format"]
 
+Instead of using the 'text' attribute, you can also use shortcode to enclose the text:
+
+Example: [tslink track=1,2,3,4]Download the tracks of our 4-day hike in GPX format[/tslink]
+
 = I used the shortcode but the map doesn't show =
 
 Trackserver tries to detect the usage of the [tsmap] shortcode to prevent unnecessary loading of the plugin's JavaScript. In some circumstances, for example, if your page setup is complex and uses multiple loops, the detection could fail. In such a case, use this shortcode in the main post or page to force loading the JavaScript:

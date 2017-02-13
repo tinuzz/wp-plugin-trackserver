@@ -1412,11 +1412,11 @@ EOF;
 			 *
 			 * @since 3.0
 			 */
-			function handle_shortcode3( $atts ) {
+			function handle_shortcode3( $atts, $content = '' ) {
 				global $wpdb;
 
 				$defaults = array(
-					'text'       => 'download',
+					'text'       => '',
 					'class'      => '',
 					'id'         => false,
 					'track'      => false,
@@ -1453,7 +1453,10 @@ EOF;
 					$query_nonce = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
 					$alltracks_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&_wpnonce=$query_nonce" );
 
-					$out = '<a href="' . $alltracks_url . '" ' . $class_str .'>' . htmlspecialchars( $atts['text'] ) . '</a>';
+					$text = $atts['text'] . $content;
+					if ( $text == '' ) $text = 'download ' . $track_format;
+
+					$out = '<a href="' . $alltracks_url . '" ' . $class_str .'>' . htmlspecialchars( $text ) . '</a>';
 				}
 
 				return $out;
