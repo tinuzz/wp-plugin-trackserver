@@ -117,6 +117,17 @@ License: GPL2
 				}
 			}
 
+			function debug( $log ) {
+				if ( true === WP_DEBUG ) {
+					if ( is_array( $log ) || is_object( $log ) ) {
+						error_log( print_r( $log, true ) );
+					}
+					else {
+						error_log( $log );
+					}
+				}
+			}
+
 			/**
 			 * Fill in missing default options. Also remove deprecated options.
 			 * WARNING: this function will run on every request, so keep it lean.
