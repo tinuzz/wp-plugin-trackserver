@@ -2622,7 +2622,7 @@ EOF;
 			 */
 			function get_author( $post_id ) {
 				$post = get_post( $post_id );
-				return $post -> post_author;
+				return ( is_object( $post ) ? $post -> post_author : false );
 			}
 
 			function get_live_tracks( $user_ids )  {
@@ -2715,10 +2715,9 @@ EOF;
 
 				global $wpdb;
 
-				$post_id = intval( $_REQUEST['p'] );
+				$post_id = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : null );
 				$track_id = intval( $_REQUEST['id'] );
-				$format = $_REQUEST['format'];
-				$author_id = $this -> get_author( $post_id );
+				$format = ( isset( $_REQUEST['format'] ) ? $_REQUEST['format'] : null );
 
 				if ( isset( $_REQUEST['query'] ) ) {
 					return $this -> handle_gettrack_query();
