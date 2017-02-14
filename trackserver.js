@@ -320,6 +320,7 @@ var Trackserver = (function () {
                     }
                 })
                 .on('error', function(err) {
+                    console.log(err);
                     var extra = '';
                     if ( track_type !== 'polyline' ) extra = track_ref;
                     var str = err.error.status + ' ' + err.error.statusText + ' - ' + extra;
