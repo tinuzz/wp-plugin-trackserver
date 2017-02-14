@@ -2741,8 +2741,7 @@ EOF;
 				global $wpdb;
 
 				$query_string = stripslashes( $_REQUEST['query'] );
-				$post_id = intval( $_REQUEST['p'] );
-				$track_id = $_REQUEST['id'];
+				$post_id = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : 0 );
 				$format = $_REQUEST['format'];
 				$author_id = $this -> get_author( $post_id );
 
@@ -2801,7 +2800,7 @@ EOF;
 				global $wpdb;
 
 				$post_id = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : null );
-				$track_id = intval( $_REQUEST['id'] );
+				$track_id = ( isset( $_REQUEST['id'] ) ? intval( $_REQUEST['id'] ) : null );
 				$format = ( isset( $_REQUEST['format'] ) ? $_REQUEST['format'] : null );
 
 				if ( isset( $_REQUEST['query'] ) ) {
