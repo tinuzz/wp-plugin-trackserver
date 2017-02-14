@@ -218,6 +218,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 * Sync trackserver-omnivore.js with leaflet-omnivore-0.3.4.
 * Fix a bug in the admin where some superfluous text was included in track URLs.
 * Implement loading all tracks for a map in a single HTTP request.
+* Add WordPress MultiUser support.
 * Replace track marker images by L.CircleMarker objects and gain dynamic marker colouring. The old images are removed from the plugin installation.
 * Add {userid}, {userlogin} and {displayname} as possible tags in the infobar template.
 * Add 'user' attribute to 'tsmap' shortcode, for displaying multiple users' live tracks in a map.

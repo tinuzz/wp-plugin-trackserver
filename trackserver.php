@@ -212,6 +212,10 @@ License: GPL2
 				add_action( 'admin_post_trackserver_save_track', array( &$this, 'admin_post_save_track' ) );
 				add_action( 'admin_post_trackserver_upload_track', array( &$this, 'admin_post_upload_track' ) );
 				add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
+
+				// WordPress MU
+				add_action( 'wpmu_new_blog', array( &$this, 'wpmu_new_blog' ) );
+				add_filter( 'wpmu_drop_tables', array( &$this, 'wpmu_drop_tables' ) );
 			}
 
 			/**
@@ -389,16 +393,9 @@ EOF;
 			}
 
 			/**
-			 * Installer function.
-			 *
-			 * This runs when the plugin in activated and installs the database table
-			 * and sets default option values
-			 *
-			 * @since 1.0
-			 *
-			 * @global object $wpdb The WordPress database interface
+			 * Create database tables
 			 */
-			function trackserver_install() {
+			function create_tables() {
 				global $wpdb;
 
 				$sql = "CREATE TABLE IF NOT EXISTS " . $this -> tbl_locations . " (
@@ -434,12 +431,100 @@ EOF;
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
 				$wpdb->query( $sql );
+			}
+
+			/**
+			 * Update the DB table properties on $this. Admin actions that can be called
+			 * from the context of a different blog (network admin actions) need to call
+			 * this before using the 'tbl_*' properties
+			 */
+			function set_table_refs() {
+				global $wpdb;
+				$this -> tbl_tracks = $wpdb->prefix . "ts_tracks";
+				$this -> tbl_locations = $wpdb->prefix . "ts_locations";
+			}
+
+			/**
+			/* Wrapper for switch_to_blog() that sets properties on $this
+			 */
+			function switch_to_blog( $blog_id ) {
+				switch_to_blog( $blog_id );
+				$this -> set_table_refs();
+			}
+
+			/**
+			 * Wrapper for restore_current_blog() that sets properties on $this
+			 */
+			function restore_current_blog() {
+				restore_current_blog();
+				$this -> set_table_refs();
+			}
+
+			/**
+			 * Installer function.
+			 *
+			 * This runs when the plugin in activated and installs the database table
+			 * and sets default option values
+			 *
+			 * @since 1.0
+			 *
+			 * @global object $wpdb The WordPress database interface
+			 */
+			function trackserver_install( $network_wide ) {
+				global $wpdb;
+
+				if (function_exists( 'is_multisite' ) && is_multisite() ) {
+					if( $network_wide ) {
+						$old_blog =  $wpdb->blogid;
+						$blogids =  $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
+						foreach ( $blogids as $blog_id ) {
+							$this -> switch_to_blog( $blog_id );
+							$this -> create_tables();
+							$this -> add_options();
+							$this -> trackserver_update();
+						}
+						$this -> switch_to_blog( $old_blog );
+						return;
+					}
+				}
+
+				// Create database tables
+				$this -> set_table_refs();
+				$this -> create_tables();
 
 				// Add options and capabilities to the database
 				$this -> add_options();
 
 				// Run update function
 				$this -> trackserver_update();
+			}
+
+			/**
+			 * Handler for 'wpmu_new_blog'
+			 *
+			 * @since 3.0
+			 */
+			function wpmu_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+				$plugins = get_site_option( 'active_sitewide_plugins');
+				if ( is_plugin_active_for_network( 'trackserver/trackserver.php' ) ) {
+					$this->switch_to_blog( $blog_id );
+					$this->create_tables();
+					$this->add_options();
+					$this->trackserver_update();
+					$this->restore_current_blog();
+				}
+			}
+
+			/**
+			 * Handler for 'wpmu_drop_tables'
+			 *
+			 * @since 3.0
+			 */
+			function wpmu_drop_tables( $tables ) {
+				$this -> set_table_refs();
+				$tables[] = $this -> tbl_tracks;
+				$tables[] = $this -> tbl_locations;
+				return $tables;
 			}
 
 			/**
