@@ -1374,6 +1374,7 @@ EOF;
 				}
 
 				$tracks = array();
+				$alltracks_url = false;
 				$default_lat = '51.443168';
 				$default_lon = '5.447200';
 
