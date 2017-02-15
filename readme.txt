@@ -147,11 +147,17 @@ All that said, Trackserver's shortcode detection should be reasonably fool-proof
 
 Beware though: the [tsscripts] shortcode doesn't actually do anything. At all. It is merely an extra shortcode that Trackserver tries to detect. Therefore, it is absolutely useless to include [tsscripts] in the same context as your [tsmap]. I appreciate that this can be hard to understand, so let me illustrate with an example. Take the 'Posts in page' plugin, that allows you to use a shortcode in a post (let's call it A) to include other posts an pages inline (let's call them B and C). If [tsmap] is used in B or C, but the page requested by the user is A, which does not have a [tsmap], Trackserver's shortcode detection used to fail in earlier versions, and the Javascript and CSS would not be loaded. By using the [tsscripts] shortcode in page A, the loading of JS and CSS can be forced. The CSS will then be loaded in the head of the page, instead of in the footer.
 
+= Trying to show a GPX or KML file shows an error popup: "Track could not be loaded: undefined undefined" =
+
+This will happen when you try to load a file from a different domain than your site is running on, and the remote server doesn't serve a 'Access-Control-Allow-Origin' header that allows acces to the file. Your webbrowser refuses to process the file. Check the console in your developer tools for an error message. Please read up on [Cross-Origin Resource Sharing (CORS)](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) for more information. This is not something that Trackserver can fix.
+
 = What is live tracking? =
 
-By using the shortcode with the 'track=live' parameter, the most recently updated track belonging to the author of the current post/page is published on the map.
+By using the shortcode with the 'user=...' or 'track=live' parameter, the most recently updated track belonging to the specified user(s) or the author of the current post/page is published on the map.
 
 The track is updated with the latest trackpoints every 10 seconds and the map view is always centered to the most recent trackpoint. A marker is shown in that location. Live tracking can be stopped and restarted with a simple control button that is shown on the map.
+
+To publish other users' tracks, the author of the page needs the 'trackserver_publish' capability, which is by default only granted to administrators and editors.
 
 = What is a Trackserver user profile? (since v1.9) =
 
