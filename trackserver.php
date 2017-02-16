@@ -333,8 +333,8 @@ EOF;
 					// Live-update only on the front-end, not in admin
 					wp_enqueue_style( 'leaflet-messagebox', TRACKSERVER_JSLIB .'leaflet-messagebox-1.0/leaflet-messagebox.css' );
 					wp_enqueue_script( 'leaflet-messagebox', TRACKSERVER_JSLIB .'leaflet-messagebox-1.0/leaflet-messagebox.js', array(), false, true );
-					wp_enqueue_style( 'leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.0/leaflet-liveupdate.css' );
-					wp_enqueue_script( 'leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.0/leaflet-liveupdate.js', array(), false, true );
+					wp_enqueue_style( 'leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.1/leaflet-liveupdate.css' );
+					wp_enqueue_script( 'leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.1/leaflet-liveupdate.js', array(), false, true );
 
 					// Enqueue the main script last
 					wp_enqueue_script( 'trackserver' );
