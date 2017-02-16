@@ -2962,7 +2962,9 @@ EOF;
 					$trkpt->setAttribute( 'lat', $row['latitude'] );
 					$trkpt->setAttribute( 'lon', $row['longitude'] );
 
+					$timezone_offset = new DateInterval( 'PT' . ( (int) get_option( 'gmt_offset' ) * 3600 ). 'S' );
 					$occurred = new DateTime( $row['occurred'] );  // A DateTime object in local time
+					$occurred = $occurred -> sub( $timezone_offset );
 					$occ_iso = $occurred -> format( 'c' );
 					$trkpt->appendChild( $dom->createElement( 'time', $occ_iso ) );
 				}
