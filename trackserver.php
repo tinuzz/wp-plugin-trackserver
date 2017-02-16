@@ -55,7 +55,7 @@ License: GPL2
 			 * @access private
 			 * @var int $db_version
 			 */
-			var $db_version = 11;
+			var $db_version = 12;
 
 			/**
 			 * Default values for options. See class constructor for more.
@@ -421,7 +421,7 @@ EOF;
 					`id` int(11) NOT NULL AUTO_INCREMENT,
 					`user_id` int(11) NOT NULL,
 					`name` varchar(255) NOT NULL,
-					`update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					`created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 					`source` varchar(255) NOT NULL,
 					`comment` varchar(255) NOT NULL,
@@ -561,6 +561,7 @@ EOF;
 				$upgrade_sql[9] = "ALTER TABLE " . $this -> tbl_tracks . " ADD INDEX ( `user_id` )";
 				$upgrade_sql[10] = "ALTER TABLE " . $this -> tbl_locations . " ADD INDEX ( `trip_id` )";
 				$upgrade_sql[11] = "ALTER TABLE " . $this -> tbl_locations . " ADD INDEX ( `occurred` )";
+				$upgrade_sql[12] = "ALTER TABLE " . $this -> tbl_tracks . " CHANGE `update` `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP();";
 
 				$installed_version = (int) $this -> options['db_version'];
 				if ( $installed_version != $this -> db_version ) {
