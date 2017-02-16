@@ -2673,9 +2673,6 @@ EOF;
 										$fake_time = true;
 									}
 								}
-								$this->debug((string)$trkpt->time);
-								$point_ts = ( $fake_time ? ( $last_ts + 1 ) : $this -> parse_iso_date( (string) $trkpt -> time ) );
-								$this->debug($point_ts);
 								$points[] = array(
 									'latitude' => $trkpt['lat'],
 									'longitude' => $trkpt['lon'],
