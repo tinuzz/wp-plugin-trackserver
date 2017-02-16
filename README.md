@@ -53,6 +53,10 @@ For the [tsmap] shortcode:
 * user: one or more user IDs, separated by commas, who's latest track to follow
   'live'. A literal '@' means the author of the post (you). When viewing the
   map, the liveupdate feature will follow the track of the first user specified.
+  When the end-marker is enabled for a live track (and why shouldn't it?),
+  clicking it will change the focus of the liveupdate to that track. The map view
+  will follow the latest location and the infobar (if present) will display its
+  information.
 * live: true (or 't', 'yes' or 'y'), or false (default), to force live tracking
   for this map. This can be used for example with an externally updated GPX or
   KML file.

@@ -81,7 +81,7 @@ For the [tsmap] shortcode:
 
 * track: one or more track IDs, separated by commas, or 'live' (deprecated, 'user=@' is preferred).
 * id: an alias for 'track'
-* user: one or more user IDs, separated by commas, who's latest track to follow 'live'. A literal '@' means the author of the post (you). When viewing the map, the liveupdate feature will follow the track of the first user specified.
+* user: one or more user IDs, separated by commas, who's latest track to follow 'live'. A literal '@' means the author of the post (you). When viewing the map, the liveupdate feature will follow the track of the first user specified. When the end-marker is enabled for a live track (and why shouldn't it?), clicking it will change the focus of the liveupdate to that track. The map view will follow the latest location and the infobar (if present) will display its information.
 * live: true (or 't', 'yes' or 'y'), or false (default), to force live tracking for this map. This can be used for example with an externally updated GPX or KML file.
 * width: map width, default: 100%.
 * height: map height, default: 480px.
@@ -217,6 +217,8 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 == Changelog ==
 
 = UNRELEASED =
+
+This is a BIG update. Please read https://www.grendelman.net/wp/trackserver-v3-0-released/ for the full story!
 
 * Fix a bug where Trackserver would only import the first segment of a track from GPX.
 * Get rid of suboptimal shortcode detection fallback mechanism.
