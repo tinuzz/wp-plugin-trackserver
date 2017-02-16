@@ -2646,6 +2646,7 @@ EOF;
 				$gpx = simplexml_import_dom( $dom );
 				$source = $gpx['creator'];
 				$trip_start = false;
+				$fake_time = false;
 				$ntrk = 0;
 				$ntrkpt = 0;
 				$track_ids = array();
@@ -2662,16 +2663,27 @@ EOF;
 
 						foreach ( $trk -> trkseg as $trkseg ) {
 							foreach ( $trkseg -> trkpt as $trkpt ) {
+
+								$trkpt_ts = $this -> parse_iso_date( (string) $trkpt -> time );
+
 								if ( ! $trip_start ) {
-									$trip_start = date( 'Y-m-d H:i:s', $this -> parse_iso_date( (string) $trkpt -> time ) );
+									$trip_start = date( 'Y-m-d H:i:s', $trkpt_ts );
+									$last_ts = (int) $trkpt_ts - 1;
+									if ( empty( (string) $trkpt -> time ) ) {
+										$fake_time = true;
+									}
 								}
+								$this->debug((string)$trkpt->time);
+								$point_ts = ( $fake_time ? ( $last_ts + 1 ) : $this -> parse_iso_date( (string) $trkpt -> time ) );
+								$this->debug($point_ts);
 								$points[] = array(
 									'latitude' => $trkpt['lat'],
 									'longitude' => $trkpt['lon'],
 									'altitude' => (string) $trkpt -> ele,
-									'timestamp' => $this -> parse_iso_date( (string) $trkpt -> time )
+									'timestamp' => ( $fake_time ? ( $last_ts + 1 ) : $this -> parse_iso_date( (string) $trkpt -> time ) )
 								);
 								$ntrkpt++;
+								$last_ts++;
 							}
 						}
 
