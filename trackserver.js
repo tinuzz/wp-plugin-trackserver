@@ -187,6 +187,11 @@ var Trackserver = (function () {
                         var userlogin   = _this.alltracksdata[track_id].metadata.userlogin;
                         var displayname = _this.alltracksdata[track_id].metadata.displayname;
                         var follow_id   = _this.alltracksdata[track_id].metadata.follow;
+
+                        var stored_follow_id = _this.get_mydata(div_id, 'all', 'follow_id');
+                        if (stored_follow_id ) {
+                            follow_id = stored_follow_id;
+                        }
                     }
 
                     var id, layer, start_latlng, end_latlng, start_marker, end_marker, point_layer;
@@ -247,7 +252,13 @@ var Trackserver = (function () {
                                 markers.push(start_marker);
                             }
                             if (do_markers === true || do_markers == 'end') {
-                                end_marker = new _this.Mapicon(end_latlng, { fillColor: end_marker_color }).addTo(featuregroup).bringToBack();
+                                end_marker = new _this.Mapicon(end_latlng, { fillColor: end_marker_color, track_id: track_id }).addTo(featuregroup).bringToBack()
+                                    .on('click', function(e) {
+                                        if (mymapdata.is_live) {
+                                            _this.set_mydata(div_id, 'all', 'follow_id', this.options.track_id);
+                                            map.liveUpdateControl.updateNow();
+                                        }
+                                    });
                                 markers.push(end_marker);
                             }
                             _this.set_mydata(div_id, track_id, 'markers', markers);
