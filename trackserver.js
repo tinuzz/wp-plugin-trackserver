@@ -120,7 +120,11 @@ var Trackserver = (function () {
 
                 track_options.geometry = 'points';
                 layer_options.pointToLayer = function(feature, latlng) {
-                    return new _this.Trackpoint(latlng, { fillColor: pointColor });
+                    var pointOptions = { fillColor: pointColor };
+                    if ( mymapdata.tracks[i].style && mymapdata.tracks[i].style.weight ) {
+                        pointOptions.radius = mymapdata.tracks[i].style.weight;
+                    }
+                    return new _this.Trackpoint(latlng, pointOptions);
                 }
             }
 
