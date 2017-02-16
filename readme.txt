@@ -222,6 +222,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 * Get rid of suboptimal shortcode detection fallback mechanism.
 * Upgrade Leaflet to version 1.0.3.
 * Sync trackserver-omnivore.js with leaflet-omnivore-0.3.4.
+* Update leaflet-liveupdate to version 1.1
 * Fix a bug in the admin where some superfluous text was included in track URLs.
 * Implement loading all tracks for a map in a single HTTP request.
 * Add WordPress MultiUser support.
@@ -234,9 +235,15 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 * Maps without live tracks now start at zoom level 12 instead of 6, until the tracks are loaded.
 * Remove support for GeoJSON as Trackserver's internal trackformat, only polyline remains.
 * Shortcode parameters 'markers', 'color', 'weight', 'opacity' and 'points' can now contain a comma-separated list of values, which will be applied to respective tracks in the 'track', 'user', 'gpx' or 'kml' attributes (in that order). If less values than tracks are given, the last value is applied to all remaining tracks.
+* Make the 'weight' parameter control the point radius when 'points=y'
 * It is now possible to mix 'track', 'user', 'gpx' and 'kml' in a single map.
 * Add a new shortcode called 'tslink', that produces a download link for one or more tracks in a single file. Only GPX is supported at this time.
 * Documentation updates and additions.
+* Make end-markers on a live-map clickable to make liveupdate follow that track.
+* Rename a column in the tracks table, it has been misnamed since v1.0.
+* Add an uninstall.php file that removes database tables and options.
+* Add WordPress MultiUser support.
+* Add a debug function for writing stuff to debug.log.
 
 = v2.3 =
 Release date: 23 December 2016
