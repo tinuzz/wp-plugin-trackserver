@@ -1798,9 +1798,9 @@ EOF;
 
 						$latitude = $_GET['lat'];
 						$longitude = $_GET['long'];
-						$altitude = urldecode( $_GET['alt'] );
-						$speed = urldecode( $_GET['sp'] );
-						$heading = urldecode( $_GET['ang'] );
+						$altitude = ( isset( $_GET['alt'] ) ? urldecode( $_GET['alt'] ) : '' );
+						$speed = ( isset( $_GET['sp'] ) ? urldecode( $_GET['sp'] ) : '' );
+						$heading = ( isset( $_GET['ang'] ) ? urldecode( $_GET['ang'] ) : '' );
 						//$comment = urldecode( $_GET['comments'] );
 						//$batterystatus = urldecode( $_GET['bs'] );
 						$now = current_time( 'Y-m-d H:i:s' );
