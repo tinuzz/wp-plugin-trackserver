@@ -52,6 +52,7 @@ It includes some code and libraries written by other people:
 * [Leaflet.js][leafletjs] by Vladimir Agafonkin and others
 * [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) by John Firebaugh and others
 * [Leaflet-omnivore](https://github.com/mapbox/leaflet-omnivore) by Mapbox
+* [Promise-polyfill](https://github.com/taylorhakes/promise-polyfill) by Taylor Hakes
 * [GPXpress](https://wordpress.org/support/plugin/gpxpress) by David Keen was an inspiration sometimes
 
 = TODO =
@@ -246,6 +247,7 @@ This is a BIG update. Please read https://www.grendelman.net/wp/trackserver-v3-0
 * Add an uninstall.php file that removes database tables and options.
 * Add WordPress MultiUser support.
 * Add a debug function for writing stuff to debug.log.
+* Add Promise-polyfill by Taylor Hakes, to support older browsers (most notably IE 9-11).
 
 = v2.3 =
 Release date: 23 December 2016

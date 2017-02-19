@@ -39,6 +39,7 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 * [Leaflet.js](http://leafletjs.com/) by Vladimir Agafonkin and others
 * [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) by John Firebaugh and others
 * [Leaflet-omnivore](https://github.com/mapbox/leaflet-omnivore) by Mapbox
+* [Promise-polyfill](https://github.com/taylorhakes/promise-polyfill) by Taylor Hakes
 * [GPXpress](https://wordpress.org/support/plugin/gpxpress) by David Keen was an inspiration sometimes
 
 # Frequently Asked Questions
