@@ -96,7 +96,7 @@ License: GPL2
 				$this -> user_meta_defaults['ts_trackme_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_osmand_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_sendlocation_key'] = substr( md5( uniqid() ), -8 );
-				$this -> user_meta_defaults['ts_infobar_template'] = '{lat},{lon} - {timestamp}';
+				$this -> user_meta_defaults['ts_infobar_template'] = '{displayname} - {lat},{lon} - {timestamp}';
 				$this -> user_meta_defaults['ts_tracks_admin_view'] = '0';
 				$this -> shortcode = 'tsmap';
 				$this -> shortcode2 = 'tsscripts';
