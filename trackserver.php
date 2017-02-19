@@ -80,7 +80,14 @@ License: GPL2
 				'attribution' => '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 			);
 
-			var $user_meta_defaults = array();
+			var $user_meta_defaults = array(
+				'ts_infobar_template' => '{displayname} - {lat},{lon} - {timestamp}'
+			);
+
+			var $shortcode  = 'tsmap';
+			var $shortcode2 = 'tsscripts';
+			var $shortcode3 = 'tslink';
+			var $track_format = 'polyline';  // 'polyline'. 'geojson' is no longer supported.
 
 			/**
 			 * Class constructor.
@@ -96,16 +103,11 @@ License: GPL2
 				$this -> user_meta_defaults['ts_trackme_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_osmand_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_sendlocation_key'] = substr( md5( uniqid() ), -8 );
-				$this -> user_meta_defaults['ts_infobar_template'] = '{displayname} - {lat},{lon} - {timestamp}';
 				$this -> user_meta_defaults['ts_tracks_admin_view'] = '0';
-				$this -> shortcode = 'tsmap';
-				$this -> shortcode2 = 'tsscripts';
-				$this -> shortcode3 = 'tslink';
 				$this -> mapdata = array();
 				$this -> tracks_list_table = false;
 				$this -> bulk_action_result_msg = false;
 				$this -> url_prefix = '';
-				$this -> track_format = 'polyline';  // 'polyline'. 'geojson' is no longer supported.
 				$this -> have_scripts = false;
 				$this -> need_scripts = false;
 
