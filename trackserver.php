@@ -105,7 +105,6 @@ License: GPL2
 				$this -> tracks_list_table = false;
 				$this -> bulk_action_result_msg = false;
 				$this -> url_prefix = '';
-				$this -> trackserver_update();
 				$this -> track_format = 'polyline';  // 'polyline'. 'geojson' is no longer supported.
 				$this -> have_scripts = false;
 				$this -> need_scripts = false;
