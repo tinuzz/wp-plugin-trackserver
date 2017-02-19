@@ -2669,7 +2669,7 @@ EOF;
 								if ( ! $trip_start ) {
 									$trip_start = date( 'Y-m-d H:i:s', $trkpt_ts );
 									$last_ts = (int) $trkpt_ts - 1;
-									if ( empty( (string) $trkpt -> time ) ) {
+									if ( empty( $trkpt -> time ) ) {
 										$fake_time = true;
 									}
 								}
