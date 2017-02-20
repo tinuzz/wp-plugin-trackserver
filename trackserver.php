@@ -77,7 +77,8 @@ License: GPL2
 				'normalize_tripnames' => 'yes',
 				'tripnames_format' => '%F %T',
 				'tile_url' => 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-				'attribution' => '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+				'attribution' => '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				'db_version' => false
 			);
 
 			var $user_meta_defaults = array(
@@ -99,7 +100,6 @@ License: GPL2
 				$this -> tbl_tracks = $wpdb->prefix . "ts_tracks";
 				$this -> tbl_locations = $wpdb->prefix . "ts_locations";
 				$this -> options = get_option( 'trackserver_options' );
-				$this -> option_defaults['db_version'] = $this -> db_version;
 				$this -> user_meta_defaults['ts_trackme_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_osmand_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_sendlocation_key'] = substr( md5( uniqid() ), -8 );
@@ -400,39 +400,44 @@ EOF;
 			function create_tables() {
 				global $wpdb;
 
-				$sql = "CREATE TABLE IF NOT EXISTS " . $this -> tbl_locations . " (
-					`id` int(11) NOT NULL AUTO_INCREMENT,
-					`trip_id` int(11) NOT NULL,
-					`latitude` double NOT NULL,
-					`longitude` double NOT NULL,
-					`altitude` double NOT NULL,
-					`speed` double NOT NULL,
-					`heading` double NOT NULL,
-					`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-					`created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-					`occurred` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-					`comment` varchar(255) NOT NULL,
-					PRIMARY KEY (`id`),
-					KEY `occurred` (`occurred`),
-					KEY `trip_id` (`trip_id`)
-					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+				if ( ! $this -> options['db_version'] ) {
 
-				$wpdb->query( $sql );
+					$sql = "CREATE TABLE IF NOT EXISTS " . $this -> tbl_locations . " (
+						`id` int(11) NOT NULL AUTO_INCREMENT,
+						`trip_id` int(11) NOT NULL,
+						`latitude` double NOT NULL,
+						`longitude` double NOT NULL,
+						`altitude` double NOT NULL,
+						`speed` double NOT NULL,
+						`heading` double NOT NULL,
+						`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+						`created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+						`occurred` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+						`comment` varchar(255) NOT NULL,
+						PRIMARY KEY (`id`),
+						KEY `occurred` (`occurred`),
+						KEY `trip_id` (`trip_id`)
+						) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-				$sql = "CREATE TABLE IF NOT EXISTS " . $this -> tbl_tracks . " (
-					`id` int(11) NOT NULL AUTO_INCREMENT,
-					`user_id` int(11) NOT NULL,
-					`name` varchar(255) NOT NULL,
-					`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-					`created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-					`source` varchar(255) NOT NULL,
-					`comment` varchar(255) NOT NULL,
-					`distance` int(11) NOT NULL,
-					PRIMARY KEY (`id`),
-					KEY `user_id` (`user_id`)
-					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+					$wpdb->query( $sql );
 
-				$wpdb->query( $sql );
+					$sql = "CREATE TABLE IF NOT EXISTS " . $this -> tbl_tracks . " (
+						`id` int(11) NOT NULL AUTO_INCREMENT,
+						`user_id` int(11) NOT NULL,
+						`name` varchar(255) NOT NULL,
+						`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+						`created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+						`source` varchar(255) NOT NULL,
+						`comment` varchar(255) NOT NULL,
+						`distance` int(11) NOT NULL,
+						PRIMARY KEY (`id`),
+						KEY `user_id` (`user_id`)
+						) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+
+					$wpdb->query( $sql );
+
+					$this->update_option( 'db_version', $this -> db_version );
+				}
 			}
 
 			/**
