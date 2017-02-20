@@ -55,7 +55,7 @@ License: GPL2
 			 * @access private
 			 * @var int $db_version
 			 */
-			var $db_version = 12;
+			var $db_version = 15;
 
 			/**
 			 * Default values for options. See class constructor for more.
@@ -558,26 +558,42 @@ EOF;
 			function check_update_db() {
 				global $wpdb;
 
-				// Upgrade table if necessary. Add upgrade SQL statements here, and
-				// update $db_version at the top of the file
-				$upgrade_sql = array();
-				$upgrade_sql[5] = "ALTER TABLE " . $this -> tbl_tracks . " CHANGE `created` `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP";
-				$upgrade_sql[6] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `created` TIMESTAMP NOT NULL AFTER `updated`";
-				$upgrade_sql[7] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `source` VARCHAR( 255 ) NOT NULL AFTER `created`";
-				$upgrade_sql[8] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `distance` INT( 11 ) NOT NULL AFTER `comment`";
-				$upgrade_sql[9] = "ALTER TABLE " . $this -> tbl_tracks . " ADD INDEX ( `user_id` )";
-				$upgrade_sql[10] = "ALTER TABLE " . $this -> tbl_locations . " ADD INDEX ( `trip_id` )";
-				$upgrade_sql[11] = "ALTER TABLE " . $this -> tbl_locations . " ADD INDEX ( `occurred` )";
-				$upgrade_sql[12] = "ALTER TABLE " . $this -> tbl_tracks . " CHANGE `update` `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP();";
-
 				$installed_version = (int) $this -> options['db_version'];
-				if ( $installed_version != $this -> db_version ) {
-					for ($i = $installed_version + 1; $i <= $this -> db_version; $i++ ) {
-						if ( array_key_exists( $i, $upgrade_sql ) ) {
-							$wpdb -> query( $upgrade_sql[ $i ] );
-						}
+				if ( $installed_version > 0 ) {
+
+					// Get a list of column names for the tracks table
+					$sql = 'SELECT * FROM ' . $this -> tbl_tracks . ' LIMIT 0,1';
+					$wpdb->query( $sql );
+					$colnames = $wpdb->get_col_info( 'name' );
+
+					// Upgrade table if necessary. Add upgrade SQL statements here, and
+					// update $db_version at the top of the file
+					$upgrade_sql = array();
+					$upgrade_sql[5] = "ALTER TABLE " . $this -> tbl_tracks . " CHANGE `created` `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP";
+					$upgrade_sql[6] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `created` TIMESTAMP NOT NULL AFTER `updated`";
+					$upgrade_sql[7] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `source` VARCHAR( 255 ) NOT NULL AFTER `created`";
+					$upgrade_sql[8] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `distance` INT( 11 ) NOT NULL AFTER `comment`";
+					$upgrade_sql[9] = "ALTER TABLE " . $this -> tbl_tracks . " ADD INDEX ( `user_id` )";
+					$upgrade_sql[10] = "ALTER TABLE " . $this -> tbl_locations . " ADD INDEX ( `trip_id` )";
+					$upgrade_sql[11] = "ALTER TABLE " . $this -> tbl_locations . " ADD INDEX ( `occurred` )";
+
+					// Fix the 'update'/'updated' mess in the tracks table
+					if ( in_array( 'update', $colnames ) ) {
+						$upgrade_sql[13] = 'ALTER TABLE ' . $this -> tbl_tracks . ' DROP `update`';
 					}
-					$this -> update_option( 'db_version', $this -> db_version );
+					if ( ! in_array( 'updated', $colnames ) ) {
+						$upgrade_sql[14] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() AFTER `name`";
+					}
+					$upgrade_sql[15] = 'UPDATE ' . $this -> tbl_tracks . ' t SET t.updated=(SELECT max(occurred) FROM `' . $this -> tbl_locations . '` WHERE trip_id = t.id)';
+
+					if ( $installed_version != $this -> db_version ) {
+						for ($i = $installed_version + 1; $i <= $this -> db_version; $i++ ) {
+							if ( array_key_exists( $i, $upgrade_sql ) ) {
+								$wpdb -> query( $upgrade_sql[ $i ] );
+							}
+						}
+						$this -> update_option( 'db_version', $this -> db_version );
+					}
 				}
 			}
 
