@@ -529,7 +529,7 @@ EOF;
 				global $wpdb;
 
 				$installed_version = (int) $this -> options['db_version'];
-				if ( $installed_version > 0 ) {
+				if ( $installed_version > 0 && $installed_version != $this -> db_version ) {
 
 					// Get a list of column names for the tracks table
 					$sql = 'SELECT * FROM ' . $this -> tbl_tracks . ' LIMIT 0,1';
@@ -556,14 +556,12 @@ EOF;
 					}
 					$upgrade_sql[15] = 'UPDATE ' . $this -> tbl_tracks . ' t SET t.updated=(SELECT max(occurred) FROM `' . $this -> tbl_locations . '` WHERE trip_id = t.id)';
 
-					if ( $installed_version != $this -> db_version ) {
-						for ($i = $installed_version + 1; $i <= $this -> db_version; $i++ ) {
-							if ( array_key_exists( $i, $upgrade_sql ) ) {
-								$wpdb -> query( $upgrade_sql[ $i ] );
-							}
+					for ($i = $installed_version + 1; $i <= $this -> db_version; $i++ ) {
+						if ( array_key_exists( $i, $upgrade_sql ) ) {
+							$wpdb -> query( $upgrade_sql[ $i ] );
 						}
-						$this -> update_option( 'db_version', $this -> db_version );
 					}
+					$this -> update_option( 'db_version', $this -> db_version );
 				}
 			}
 
