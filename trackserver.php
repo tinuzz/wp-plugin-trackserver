@@ -506,6 +506,9 @@ EOF;
 			/**
 			 * Handler for 'wpmu_drop_tables'
 			 *
+			 * This filter adds Trackserver's database tables to the list of tables
+			 * to be dropped when a blog is deleted from a WordPress network.
+			 *
 			 * @since 3.0
 			 */
 			function wpmu_drop_tables( $tables ) {
