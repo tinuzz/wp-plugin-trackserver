@@ -99,7 +99,7 @@ License: GPL2
 				global $wpdb;
 				$this -> tbl_tracks = $wpdb->prefix . "ts_tracks";
 				$this -> tbl_locations = $wpdb->prefix . "ts_locations";
-				$this -> options = get_option( 'trackserver_options' );
+				$this -> init_options();
 				$this -> user_meta_defaults['ts_trackme_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_osmand_key'] = substr( md5( uniqid() ), -8 );
 				$this -> user_meta_defaults['ts_sendlocation_key'] = substr( md5( uniqid() ), -8 );
@@ -119,6 +119,21 @@ License: GPL2
 			}
 
 			/**
+			 * Initialize Trackserver options, merging new options on the fly.
+			 *
+			 * @since 3.0
+			 */
+			function init_options() {
+				$options = get_option( 'trackserver_options' );
+				if ( ! $options ) $options = array();
+				$this -> options = array_merge( $this -> option_defaults, $options );
+				update_option( 'trackserver_options', $this -> options );
+
+				// Remove options that are no longer in use.
+				$this -> delete_option( 'osmand_key' );
+			}
+
+			/**
 			 * Write a line to the PHP error log, trying to be smart about complex values
 			 *
 			 * @since 3.0
@@ -132,24 +147,6 @@ License: GPL2
 						error_log( $log );
 					}
 				}
-			}
-
-			/**
-			 * Fill in missing default options. Also remove deprecated options.
-			 * WARNING: this function will run on every request, so keep it lean.
-			 *
-			 * @since 1.1
-			 */
-			function add_missing_options() {
-				foreach ( $this -> option_defaults as $option => $value ) {
-					if ( ! array_key_exists( $option, $this -> options ) ) {
-						$this -> update_option( $option, $value );
-					}
-				}
-
-				// Remove options that are no longer in use.
-				$this -> delete_option( 'osmand_key' );
-
 			}
 
 			/**
@@ -176,9 +173,6 @@ License: GPL2
 			 * @since 1.0
 			 */
 			function add_actions() {
-
-				// This hook is called upon activation of the plugin
-				register_activation_hook( __FILE__, array( &$this, 'trackserver_install' ) );
 
 				// Set up permalink-related values
 				add_action( 'wp_loaded', array( &$this, 'wp_loaded' ) );
@@ -211,8 +205,8 @@ License: GPL2
 			 */
 			function add_admin_actions() {
 
-				add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
 				add_action( 'admin_init', array( &$this, 'admin_init' ) );
+				add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
 				add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'add_settings_link' ) );
 				add_action( 'admin_head', array( &$this, 'admin_head' ) );  // CSS for table styling
 				add_action( 'admin_post_trackserver_save_track', array( &$this, 'admin_post_save_track' ) );
@@ -475,54 +469,36 @@ EOF;
 			/**
 			 * Installer function.
 			 *
-			 * This runs when the plugin in activated and installs the database table
-			 * and sets default option values
+			 * This runs on every admin request. It installs/update the database
+			 * tables and sets capabilities for user roles.
 			 *
 			 * @since 1.0
 			 *
 			 * @global object $wpdb The WordPress database interface
 			 */
-			function trackserver_install( $network_wide ) {
+			function trackserver_install() {
 				global $wpdb;
 
-				if (function_exists( 'is_multisite' ) && is_multisite() ) {
-					if( $network_wide ) {
-						$old_blog =  $wpdb->blogid;
-						$blogids =  $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
-						foreach ( $blogids as $blog_id ) {
-							$this -> switch_to_blog( $blog_id );
-							$this -> create_tables();
-							$this -> add_options();
-							$this -> trackserver_update();
-						}
-						$this -> switch_to_blog( $old_blog );
-						return;
-					}
-				}
-
-				// Create database tables
-				$this -> set_table_refs();
-				$this -> create_tables();
-
-				// Add options and capabilities to the database
-				$this -> add_options();
-
-				// Run update function
-				$this -> trackserver_update();
+				$this->create_tables();
+				$this->check_update_db();
+				$this->set_capabilities();
 			}
 
 			/**
-			 * Handler for 'wpmu_new_blog'
+			 * Handler for 'wpmu_new_blog'. Only accepts one argument.
+			 *
+			 * This action is called when a new blog is created in a WordPress
+			 * network. This function switches to the new blog, stores options with
+			 * default values and calls the installer function to create the database
+			 * tables and set user capabilities.
 			 *
 			 * @since 3.0
 			 */
-			function wpmu_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
-				$plugins = get_site_option( 'active_sitewide_plugins');
+			function wpmu_new_blog( $blog_id) {
 				if ( is_plugin_active_for_network( 'trackserver/trackserver.php' ) ) {
 					$this->switch_to_blog( $blog_id );
-					$this->create_tables();
-					$this->add_options();
-					$this->trackserver_update();
+					$this->init_options();
+					$this->trackserver_install();
 					$this->restore_current_blog();
 				}
 			}
@@ -537,20 +513,6 @@ EOF;
 				$tables[] = $this -> tbl_tracks;
 				$tables[] = $this -> tbl_locations;
 				return $tables;
-			}
-
-			/**
-			 * Update function.
-			 *
-			 * This function updates the database, sets default values for new options and
-			 * resets the capabilities
-			 *
-			 * @since 1.5
-			 */
-			function trackserver_update() {
-				$this -> check_update_db();
-				$this -> add_missing_options();
-				$this -> set_capabilities();
 			}
 
 			/**
@@ -600,16 +562,6 @@ EOF;
 						$this -> update_option( 'db_version', $this -> db_version );
 					}
 				}
-			}
-
-			/**
-			 * Add the Trackserver options array to the database and read it back.
-			 *
-			 * @since 1.0
-			 */
-			function add_options() {
-				add_option( 'trackserver_options', $this -> option_defaults );
-				$this -> options = get_option( 'trackserver_options' );
 			}
 
 			/**
@@ -1008,8 +960,14 @@ EOF;
 EOF;
 			}
 
+			/**
+			 * Handler for 'admin_init'. Calls trackserver_install() and registers settings.
+			 *
+			 * @since 3.0
+			 */
 			function admin_init() {
-				$this -> register_settings();
+				$this->trackserver_install();
+				$this->register_settings();
 			}
 
 			function register_settings () {
