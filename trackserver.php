@@ -118,6 +118,11 @@ License: GPL2
 				}
 			}
 
+			/**
+			 * Write a line to the PHP error log, trying to be smart about complex values
+			 *
+			 * @since 3.0
+			 */
 			function debug( $log ) {
 				if ( true === WP_DEBUG ) {
 					if ( is_array( $log ) || is_object( $log ) ) {
