@@ -1276,9 +1276,10 @@ EOF;
 
 				// Initialize if argument is given
 				if ( is_array( $atts ) ) {
-					$this -> colors    = ( $atts['color'] ? explode( ',', $atts['color'] ) : false );
-					$this -> weights   = ( $atts['weight'] ? explode( ',', $atts['weight'] ) : false );
-					$this -> opacities = ( $atts['opacity'] ? explode( ',', $atts['opacity'] ) : false );
+					$this->colors    = ( $atts['color'] ? explode( ',', $atts['color'] ) : false );
+					$this->weights   = ( $atts['weight'] ? explode( ',', $atts['weight'] ) : false );
+					$this->opacities = ( $atts['opacity'] ? explode( ',', $atts['opacity'] ) : false );
+					$this->dashes    = ( $atts['dash'] ? explode( ':', $atts['dash'] ) : false );
 				}
 
 				$style =array();
@@ -1293,6 +1294,10 @@ EOF;
 				if ( is_array( $this->opacities ) ) {
 					$style['opacity'] = ( $shift ? array_shift( $this->opacities ) : $this->opacities[0] );
 					if ( empty( $this->opacities ) ) $this->opacities[] = $style['opacity'];
+				}
+				if ( is_array( $this->dashes ) ) {
+					$style['dashArray'] = ( $shift ? array_shift( $this->dashes ) : $this->dashes[0] );
+					if ( empty( $this->dashes ) ) $this->dashes[] = $style['dashArray'];
 				}
 				return $style;
 			}
@@ -1321,6 +1326,7 @@ EOF;
 					'color'      => false,
 					'weight'     => false,
 					'opacity'    => false,
+					'dash'       => false,
 					'infobar'    => false,
 					'points'     => false,
 					'zoom'       => false,

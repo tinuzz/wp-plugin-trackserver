@@ -85,7 +85,10 @@ For the [tsmap] shortcode:
   tracks, this number represents the maximum zoom level, so the map will always
   fit all the tracks.
 
-The following attributes apply to tracks that are drawn on the map. Each of them can contain multiple values, separated by commas, to be applied to different tracks in order. If there a are less values than tracks, the last value will be applied to the remaining tracks.
+The following attributes apply to tracks that are drawn on the map. Each of
+them can contain multiple values, separated by commas (or colons, in the case
+of 'dash'), to be applied to different tracks in order. If there a are less
+values than tracks, the last value will be applied to the remaining tracks.
 
 * markers: one or more of the following values: true (default) or false (or
   'f', 'no' or 'n') to disable start/end markers on the track. The value can
@@ -97,6 +100,8 @@ The following attributes apply to tracks that are drawn on the map. Each of them
   the map. Default comes from Leaflet.
 * opacity: one or more opacities, separated by commas, to use for the tracks on
   the map. Default comes from Leaflet.
+* dash: one or more [dashArrays](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray),
+  seperated by colons (:), to use for the tracks on the map. Default is no dashes.
 * points: true (or 't', 'yes' or 'y'), or false (default), to specify whether
   the track should be displayed as a line or a collection of points.
 

@@ -94,13 +94,16 @@ For the [tsmap] shortcode:
 * infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether an information bar should be shown on the map, when live tracking is active. This only works with 'track=live' or the 'user' parameter, and has no effect in other cases. When multiple live tracks are requested, the infobar will display the data of the first track only.
 * zoom: the zoom factor to use for the map, a number between 0 and 18. For a map with live tracks, this number is absolute. For a map with only static tracks, this number represents the maximum zoom level, so the map will always fit all the tracks.
 
-The following attributes apply to tracks that are drawn on the map. Each of them can contain multiple values, separated by commas, to be applied to different tracks in order. If there a are less values than tracks, the last value will be applied to the remaining tracks.
+The following attributes apply to tracks that are drawn on the map. Each of them can contain multiple values, separated by commas (or colons, in the case of 'dash'), to be applied to different tracks in order. If there a are less values than tracks, the last value will be applied to the remaining tracks.
 
 * markers: one or more of the following values: true (default) or false (or 'f', 'no' or 'n') to disable start/end markers on the track. The value can also be 'start', 's', 'end' or 'e', to draw markers only for the start or the end of a track respectively.
 * color: one or more colors, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
 * weight: one or more weights, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
 * opacity: one or more opacities, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
+* dash: one or more [dashArrays][dasharray], seperated by colons (:), to use for the tracks on the map. Default is no dashes.
 * points: true (or 't', 'yes' or 'y'), or false (default), to specify whether the track should be displayed as a line or a collection of points.
+
+[dasharray]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
 
 Example: [tsmap track=39,84 user=@ align=center class=mymap markers=n color=#ff0000]
 
@@ -238,6 +241,7 @@ This is a BIG update. Please read https://www.grendelman.net/wp/trackserver-v3-0
 * Maps without live tracks now start at zoom level 12 instead of 6, until the tracks are loaded.
 * Remove support for GeoJSON as Trackserver's internal trackformat, only polyline remains.
 * Shortcode parameters 'markers', 'color', 'weight', 'opacity' and 'points' can now contain a comma-separated list of values, which will be applied to respective tracks in the 'track', 'user', 'gpx' or 'kml' attributes (in that order). If less values than tracks are given, the last value is applied to all remaining tracks.
+* Add 'dash' attribute, behaving the same as 'markers', 'color', etc. to specify a 'dashArray' to use for the track(s).
 * Make the 'weight' parameter control the point radius when 'points=y'
 * It is now possible to mix 'track', 'user', 'gpx' and 'kml' in a single map.
 * Add a new shortcode called 'tslink', that produces a download link for one or more tracks in a single file. Only GPX is supported at this time.
