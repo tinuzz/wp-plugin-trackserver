@@ -2715,10 +2715,12 @@ EOF;
 				$user_ids = array_unique( $user_ids );
 
 				$sql_in = "('" . implode("','", $user_ids) . "')";
-				$sql = 'SELECT t0.user_id, t0.id FROM ' . $this -> tbl_tracks . ' t0 INNER JOIN ( ' .
-					'SELECT user_id, MAX(updated) AS latest FROM ' . $this -> tbl_tracks .
-					' GROUP BY user_id ) t1 ON t0.user_id = t1.user_id AND t0.updated = latest '.
-					'WHERE t0.user_id IN ' . $sql_in;
+				$sql = 'SELECT DISTINCT tracks.user_id, tracks.id FROM ' . $this -> tbl_locations . ' loc INNER JOIN (' .
+					' SELECT t0.user_id, MAX(track_endts.endts) as endts FROM ' . $this -> tbl_tracks . ' t0' .
+					' INNER JOIN ( SELECT l0.trip_id, MAX(l0.occurred) AS endts FROM ' . $this -> tbl_locations . ' l0' .
+					' GROUP BY l0.trip_id ) track_endts ON t0.id = track_endts.trip_id GROUP BY t0.user_id ) user_latest' .
+					' ON loc.occurred = user_latest.endts INNER JOIN ' . $this -> tbl_tracks . ' tracks' .
+					' ON user_latest.user_id = tracks.user_id AND loc.trip_id = tracks.id WHERE tracks.user_id IN ' . $sql_in;
 
 				$res = $wpdb -> get_results( $sql, OBJECT_K );
 				$track_ids = array();
