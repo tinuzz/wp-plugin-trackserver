@@ -220,7 +220,8 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
-= UNRELEASED =
+= v3.0 =
+Release date: 27 February 2017
 
 This is a BIG update. Please read https://www.grendelman.net/wp/trackserver-v3-0-released/ for the full story!
 
