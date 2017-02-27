@@ -313,7 +313,6 @@ EOF;
 				wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js', array(), false, true );
 
 				$settings = array(
-						'iconpath' => TRACKSERVER_PLUGIN_URL . 'img/',
 						'tile_url' => $this -> options['tile_url'],
 						'attribution' => $this -> options['attribution'],
 				);
