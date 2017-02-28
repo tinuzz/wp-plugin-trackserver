@@ -4,7 +4,6 @@ var Trackserver = (function () {
 
         mapdata: {},
         mydata: {},
-        alltracksdata: null,
         timer: false,
         adminmap: false,
 
@@ -80,10 +79,11 @@ var Trackserver = (function () {
         },
 
         do_draw: function(i, mymapdata) {
-            alltracks = this.alltracksdata;
+
             var map = mymapdata.map;
             var featuregroup = mymapdata.featuregroup;
             var div_id = mymapdata.div_id;
+            var alltracks = this.get_mydata(div_id, 'all', 'alltracksdata');
             var track_id;
             var _this = this;
 
@@ -177,16 +177,16 @@ var Trackserver = (function () {
 
                     var layer_ids = _this.get_sorted_keys( this._layers );
 
-                    if (_this.alltracksdata && _this.alltracksdata[track_id]) {
-                        var timestamp   = _this.alltracksdata[track_id].metadata.last_trkpt_time;
-                        var altitude    = _this.alltracksdata[track_id].metadata.last_trkpt_altitude;
-                        var speed_ms    = _this.alltracksdata[track_id].metadata.last_trkpt_speed_ms;
-                        var speed_kmh   = _this.alltracksdata[track_id].metadata.last_trkpt_speed_kmh;
-                        var speed_mph   = _this.alltracksdata[track_id].metadata.last_trkpt_speed_mph;
-                        var userid      = _this.alltracksdata[track_id].metadata.userid;
-                        var userlogin   = _this.alltracksdata[track_id].metadata.userlogin;
-                        var displayname = _this.alltracksdata[track_id].metadata.displayname;
-                        var follow_id   = _this.alltracksdata[track_id].metadata.follow;
+                    if (alltracks && alltracks[track_id]) {
+                        var timestamp   = alltracks[track_id].metadata.last_trkpt_time;
+                        var altitude    = alltracks[track_id].metadata.last_trkpt_altitude;
+                        var speed_ms    = alltracks[track_id].metadata.last_trkpt_speed_ms;
+                        var speed_kmh   = alltracks[track_id].metadata.last_trkpt_speed_kmh;
+                        var speed_mph   = alltracks[track_id].metadata.last_trkpt_speed_mph;
+                        var userid      = alltracks[track_id].metadata.userid;
+                        var userlogin   = alltracks[track_id].metadata.userlogin;
+                        var displayname = alltracks[track_id].metadata.displayname;
+                        var follow_id   = alltracks[track_id].metadata.follow;
 
                         var stored_follow_id = _this.get_mydata(div_id, 'all', 'follow_id');
                         if (stored_follow_id ) {
@@ -377,7 +377,7 @@ var Trackserver = (function () {
                 });
 
                 alltracksPromise.then(function(alltracks) {
-                    _this.alltracksdata = alltracks;
+                    _this.set_mydata(mymapdata.div_id, 'all', 'alltracksdata', alltracks);
                     if (mymapdata.tracks && mymapdata.tracks.length > 0) {
                         for (var i = 0; i < mymapdata.tracks.length; i++) {
                             if ( mymapdata.tracks[i].track_type == 'polyline' ) {
