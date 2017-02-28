@@ -220,6 +220,11 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
+= v3.0.1 =
+Release date: 28 February 2017
+
+* Add cache busters for JavaScript files
+
 = v3.0 =
 Release date: 27 February 2017
 
