@@ -305,13 +305,13 @@ EOF;
 				wp_enqueue_script( 'leaflet', TRACKSERVER_JSLIB . 'leaflet-1.0.3/leaflet.js', array(), false, true );
 				wp_enqueue_style( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.css' );
 				wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.min.js', array(), false, true );
-				wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), false, true );
+				wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), TRACKSERVER_VERSION, true );
 				wp_enqueue_style( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.css' );
 				wp_enqueue_script( 'promise-polyfill', TRACKSERVER_JSLIB . 'promise-polyfill-6.0.2/promise.min.js', array(), false, true );
 
 				// To be localized in wp_footer() with data from the shortcode(s). Enqueued last, in wp_enqueue_scripts.
 				// Also localized and enqueued in admin_enqueue_scripts
-				wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js', array(), false, true );
+				wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js', array(), TRACKSERVER_VERSION, true );
 
 				$settings = array(
 						'tile_url' => $this -> options['tile_url'],
@@ -386,9 +386,9 @@ EOF;
 						);
 
 						// Enqueue the admin js (Thickbox overrides) in the footer
-						wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL .'trackserver-admin.js' );
+						wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL .'trackserver-admin.js', array( 'thickbox' ), TRACKSERVER_VERSION, true );
 						wp_localize_script( 'trackserver-admin', 'trackserver_admin_settings', $settings );
-						wp_enqueue_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox' ), null, true );
+						wp_enqueue_script( 'trackserver-admin' );
 						break;
 				}
 			}
