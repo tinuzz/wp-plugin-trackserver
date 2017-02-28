@@ -381,7 +381,21 @@ var Trackserver = (function () {
                     if (mymapdata.tracks && mymapdata.tracks.length > 0) {
                         for (var i = 0; i < mymapdata.tracks.length; i++) {
                             if ( mymapdata.tracks[i].track_type == 'polyline' ) {
-                                _this.do_draw(i, mymapdata);
+
+                                // Workaround for https://github.com/tinuzz/wp-plugin-trackserver/issues/7
+                                if ( mymapdata.tracks[i].track_id in alltracks ) {
+                                    _this.do_draw(i, mymapdata);
+                                }
+                                else {
+                                    // Draw an error-popup once and store it for later checking
+                                    if ( _this.get_mydata(mymapdata.div_id, 'all', 'errorpopup') === false ) {
+                                        var popup = L.popup()
+                                            .setLatLng(mymapdata.map.getCenter())
+                                            .setContent("Track missing from server response.<br />Please reload the page.")
+                                            .openOn(mymapdata.map);
+                                        _this.set_mydata(mymapdata.div_id, 'all', 'errorpopup', popup);
+                                    }
+                                }
                             }
                         }
                     }
@@ -389,8 +403,9 @@ var Trackserver = (function () {
                 }, function(err) {
                     var str = err.status + ' ' + err.statusText + ' - ' + err.responseText;
                     var popup = L.popup()
-                        .setLatLng(mymapdata.center)
-                        .setContent("Tracks could not be loaded:<br />" + str).openOn(mymapdata.map);
+                        .setLatLng(mymapdata.map.getCenter())
+                        .setContent("Tracks could not be loaded:<br />" + str)
+                        .openOn(mymapdata.map);
                 });
             }
 
