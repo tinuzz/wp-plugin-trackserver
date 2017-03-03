@@ -75,11 +75,15 @@ For the [tsmap] shortcode:
 * kml: one or more URLs to KML files to be plotted on the map. Multiple URLs
   should be separated by spaces, and the value as a whole enclosed by double
   quotes (kml="http://....kml http://....kml")
-* infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether
-  an information bar should be shown on the map, when live tracking is active.
-  This only works with 'track=live' or the 'user' parameter, and has no effect in
-  other cases. When multiple live tracks are requested, the infobar will display
-  the data of the first track only.
+* infobar: true (or 't', 'yes' or 'y'), false (default), or a template string,
+  to specify whether an information bar should be shown on the map, when live
+  tracking is active. This only works with 'track=live' or the 'user' parameter,
+  and has no effect in other cases. When multiple live tracks are requested, the
+  infobar will display the data of the first track only. Instead of 'true' or
+  'yes', a template string containing one or more placeholders (like {lat},
+  {lon}, {speedkmh}, etc.) can be given to the attribute, in which case it
+  overrides the value specified in the user profile. Please check the Trackserver
+  user profile page in the WordPress backend for which placeholders are supported.
 * zoom: the zoom factor to use for the map, a number between 0 and 18. For a
   map with live tracks, this number is absolute. For a map with only static
   tracks, this number represents the maximum zoom level, so the map will always

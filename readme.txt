@@ -91,7 +91,7 @@ For the [tsmap] shortcode:
 * continuous: true (default) or false (or 'f', 'no' or 'n'), for lack of a better word, to indicate whether multiple tracks should be considered as one continuous track. The only effect this has, at the moment, is that intermediate start markers are yellow instead of green.
 * gpx: one or more URLs to GPX files to be plotted on the map. Multiple URLs should be separated by spaces, and the value as a whole enclosed by double quotes (gpx="http://....gpx http://....gpx")
 * kml: one or more URLs to KML files to be plotted on the map. Multiple URLs should be separated by spaces, and the value as a whole enclosed by double quotes (kml="http://....kml http://....kml")
-* infobar: true (or 't', 'yes' or 'y'), or false (default), to specify whether an information bar should be shown on the map, when live tracking is active. This only works with 'track=live' or the 'user' parameter, and has no effect in other cases. When multiple live tracks are requested, the infobar will display the data of the first track only.
+* infobar: true (or 't', 'yes' or 'y'), false (default), or a template string, to specify whether an information bar should be shown on the map, when live tracking is active. This only works with 'track=live' or the 'user' parameter, and has no effect in other cases. When multiple live tracks are requested, the infobar will display the data of the first track only. Instead of 'true' or 'yes', a template string containing one or more placeholders (like {lat}, {lon}, {speedkmh}, etc.) can be given to the attribute, in which case it overrides the value specified in the user profile. Please check the Trackserver user profile page in the WordPress backend for which placeholders are supported.
 * zoom: the zoom factor to use for the map, a number between 0 and 18. For a map with live tracks, this number is absolute. For a map with only static tracks, this number represents the maximum zoom level, so the map will always fit all the tracks.
 
 The following attributes apply to tracks that are drawn on the map. Each of them can contain multiple values, separated by commas (or colons, in the case of 'dash'), to be applied to different tracks in order. If there a are less values than tracks, the last value will be applied to the remaining tracks.
@@ -219,6 +219,12 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 2. Configuration of OruxMaps for use with Trackserver / WordPress
 
 == Changelog ==
+
+= UNRELEASED =
+
+* In JavaScript, store track information from the server more reliably.
+* When a (live) track that is currently shown on the map is no longer present in the server response, show a nice popup, suggesting a page reload.
+* Make the 'infobar' shortcode attribute accept a string, to override the template set in the user profile.
 
 = v3.0.1 =
 Release date: 28 February 2017

@@ -1456,7 +1456,7 @@ EOF;
 				}
 
 				$continuous  = ( in_array( $atts['continuous'], array( 'false', 'f', 'no',  'n' ), true ) ? false : true  ); // default true
-				$infobar     = ( in_array( $atts['infobar'],    array( 'true',  't', 'yes', 'y' ), true ) ? true  : false ); // default false
+				$infobar     = ( in_array( $atts['infobar'],    array( 'false', 'f', 'no',  'n', false ), true ) ? false  : true );  // default false, any value is true
 				$is_not_live = ( in_array( $atts['live'],       array( 'false', 'f', 'no',  'n' ), true ) ? false  : $is_live );   // force override
 				$is_live     = ( in_array( $atts['live'],       array( 'true',  't', 'yes', 'y' ), true ) ? true  : $is_not_live );   // force override
 				$infobar_tpl = get_user_meta( $author_id, 'ts_infobar_template', true );
@@ -1478,7 +1478,12 @@ EOF;
 				);
 
 				if ($infobar) {
-					$mapdata['infobar_tpl'] = $infobar_tpl;
+					if ( in_array( $atts['infobar'], array( 't', 'true', 'y', 'yes' ) ) ) {
+						$mapdata['infobar_tpl'] = htmlspecialchars( $infobar_tpl );
+					}
+					else {
+						$mapdata['infobar_tpl'] = htmlspecialchars( $atts['infobar'] );
+					}
 				}
 
 				$this -> mapdata[] = $mapdata;
