@@ -71,10 +71,14 @@ For the [tsmap] shortcode:
   start markers are yellow instead of green.
 * gpx: one or more URLs to GPX files to be plotted on the map. Multiple URLs
   should be separated by spaces, and the value as a whole enclosed by double
-  quotes (gpx="http://....gpx http://....gpx")
+  quotes (gpx="http://....gpx http://....gpx"). If enabled in the settings, when
+  a url is prefixed with the string 'proxy:', the request is proxied through
+  Trackserver.
 * kml: one or more URLs to KML files to be plotted on the map. Multiple URLs
   should be separated by spaces, and the value as a whole enclosed by double
-  quotes (kml="http://....kml http://....kml")
+  quotes (kml="http://....kml http://....kml"). If enabled in the settings, when
+  a url is prefixed with the string 'proxy:', the request is proxied through
+  Trackserver.
 * infobar: true (or 't', 'yes' or 'y'), false (default), or a template string,
   to specify whether an information bar should be shown on the map, when live
   tracking is active. This only works with 'track=live' or the 'user' parameter,
@@ -316,6 +320,30 @@ a cryptographic signature (called a 'nonce') that only Wordpress can generate.
 
 Regarding the use of apps for live tracking and uploading to Wordpress, please
 read the considerations about authentication above.
+
+### External tracks proxy
+
+Trackserver contains code that can proxy requests to- and serve content from
+remote 3rd-party servers. This allows authors to work around CORS restrictions.
+Instead of letting the visitor's browser get the GPX or KML from the remote
+server (which only works if the server implements CORS headers to allow the
+request), the request is sent to WordPress, where Trackserver will fetch the
+track from the remote server and send it to the browser.
+
+This opens all kinds of interesting possibilities, but it is also a security
+risk. Your authors can use the proxy function to invoke HTTP requests to remote
+servers, which now originate from your server, and the response of which will
+be processed by your WordPress installation. This could have different adverse
+effects, ranging from legal liability to denial-of-service on your server.
+
+Therefore, the proxy function is disabled by default. It can be enabled in the
+'advanced' section of Trackserver's settings, but I recommend to only enable it
+if you need it, and if you trust your authors not to use it on harmful URLs.
+
+The proxy code can be invoked via a 'gettrack' request, but like all requests
+for tracks, it has to be signed with a valid nonce, so it should be impossible
+to abuse the proxy from outside WordPress.
+
 
 ## What GPX namespaces are supported for GPX import (via HTTP POST or upload via backend)?
 

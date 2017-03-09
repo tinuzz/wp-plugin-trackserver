@@ -76,6 +76,7 @@ License: GPL2
 				'sendlocation_trackname_format' => 'SendLocation %F %H',
 				'upload_tag' => 'tsupload',
 				'gettrack_slug' => 'trackserver/gettrack',
+				'enable_proxy' => false,
 				'normalize_tripnames' => 'yes',
 				'tripnames_format' => '%F %T',
 				'tile_url' => 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -750,6 +751,23 @@ EOF;
 					esc_html__( 'There is generally no need to change this.', 'trackserver' ) );
 			}
 
+			function enable_proxy_html() {
+				$checked = ( $this->options['enable_proxy'] ? 'checked' : '' );
+				$linkurl = esc_attr__( 'https://wordpress.org/plugins/trackserver/faq/', 'trackserver' );
+				$linktext = esc_html__( 'FAQ about security' );
+				$link = "<a href=\"$linkurl\">$linktext</a>";
+
+				$format = <<<EOF
+					<input type="checkbox" name="trackserver_options[enable_proxy]" id="trackserver_enable_proxy" $checked> %1\$s<br />
+					%2\$s<br />
+EOF;
+				printf( $format,
+					esc_html__( "Check this to enable the proxy for external tracks, which can be used by prefixing their URL with 'proxy:'" ),
+					sprintf( esc_html__( "This will enable your authors to invoke HTTP requests originating from your server. " .
+						"Only enable this when you need it and if you trust your authors not to use harmful URLs. " .
+						'Please see the %1$s for more information.'	), $link ) );
+			}
+
 			function trackme_slug_html() {
 				$val = htmlspecialchars( $this -> options['trackme_slug'] );
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
@@ -972,9 +990,14 @@ EOF;
 				$this->register_settings();
 			}
 
+			function sanitize_option_values( $options ) {
+				$options['enable_proxy'] = (bool) $options['enable_proxy'];
+				return $options;
+			}
+
 			function register_settings () {
 				// All options in one array
-				register_setting( 'trackserver-options', 'trackserver_options' );
+				register_setting( 'trackserver-options', 'trackserver_options', array( &$this, 'sanitize_option_values' ) );
 
 				// Add sections
 				add_settings_section( 'trackserver-trackme', esc_html__( 'TrackMe settings', 'trackserver' ), array( &$this, 'trackme_settings_html' ), 'trackserver' );
@@ -1024,6 +1047,8 @@ EOF;
 				// Settings for section 'trackserver-advanced'
 				add_settings_field( 'trackserver_gettrack_slug', esc_html__( 'Gettrack URL slug', 'trackserver' ),
 						array( &$this, 'gettrack_slug_html' ), 'trackserver', 'trackserver-advanced' );
+				add_settings_field( 'trackserver_enable_proxy', esc_html__( 'Enable proxy', 'trackserver' ),
+						array( &$this, 'enable_proxy_html' ), 'trackserver', 'trackserver-advanced' );
 			}
 
 			function admin_menu() {
@@ -1424,6 +1449,7 @@ EOF;
 					$j = 0;
 					foreach ($urls as $u) {
 						if ( ! empty( $u ) ) {
+							$u = $this->proxy_url( $u, $post_id );
 							$tracks[] = array(
 								'track_id'   => 'gpx' . $j,
 								'track_url'  => $u,
@@ -1442,6 +1468,7 @@ EOF;
 					$j = 0;
 					foreach ($urls as $u) {
 						if ( ! empty( $u ) ) {
+							$u = $this->proxy_url( $u, $post_id );
 							$tracks[] = array(
 								'track_id'   => 'kml' . $j,
 								'track_url'  => $u,
@@ -1492,6 +1519,16 @@ EOF;
 				$this -> need_scripts = true;
 
 				return $out;
+			}
+
+			function proxy_url( $url, $post_id ) {
+				if ( substr( $url, 0, 6) == 'proxy:' ) {
+					$track_base_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . "/?", ( is_ssl()  ? 'https' : 'http' ) );
+					$proxy = base64_encode( substr( $url, 6 ) );
+					$proxy_nonce = wp_create_nonce( 'proxy_' . $proxy . '_p' . $post_id );
+					$url = $track_base_url . "proxy=" . rawurlencode( $proxy ) . "&p=$post_id&_wpnonce=$proxy_nonce";
+				}
+				return $url;
 			}
 
 			/**
@@ -2796,6 +2833,53 @@ EOF;
 			}
 
 			/**
+			 * Handle a gettrack proxy request
+			 *
+			 * This function is called when a 'gettrack' request has a 'proxy'
+			 * parameter and the proxy function is enabled. If the supplied nonce
+			 * checks out, the requested URL is fetched with wp_remote_get() and sent
+			 * to the client. If the nonce check fails, a 403 is returned; in case of
+			 * an error, we send a 500 status. A good request is always sent as
+			 * application/xml. This may have to change once we start supporting
+			 * GeoJSON.
+			 *
+			 * @since 3.1
+			 */
+			function handle_gettrack_proxy() {
+				$proxy_string = stripslashes( $_REQUEST['proxy'] );
+				$post_id = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : 0 );
+
+				if ( wp_verify_nonce( $_REQUEST['_wpnonce'], 'proxy_' . $proxy_string . "_p" . $post_id ) ) {
+					$url = base64_decode( $proxy_string );
+					$options = array(
+						'httpversion' => '1.1',
+						'user-agent'  => 'WordPress/Trackserver ' . TRACKSERVER_VERSION . '; https://github.com/tinuzz/wp-plugin-trackserver'
+					);
+					$response = wp_remote_get( $url, $options );
+					if ( is_array( $response ) ) {
+						if ( ( $rc = (int) wp_remote_retrieve_response_code( $response ) ) != 200 ) {
+							header( 'HTTP/1.1 ' . $rc . ' ' . wp_remote_retrieve_response_message( $response ) );
+							if ( ( $ct = wp_remote_retrieve_header( $response, 'content-type') ) != '' ) {
+								header( 'Content-Type: ' . $ct );
+							}
+						}
+						else {
+							header( 'Content-Type: application/xml');
+						}
+						print( wp_remote_retrieve_body( $response ) );
+					}
+					else {
+						$this -> http_terminate( '500', $response->get_error_message() );
+					}
+				}
+				else {
+					header( 'HTTP/1.1 403 Forbidden' );
+					echo "Access denied.\n";
+				}
+				die();
+			}
+
+			/**
 			 * Handle the 'gettrack' request
 			 *
 			 * This function handles the 'gettrack' request. If a 'query' parameter is found,
@@ -2816,6 +2900,14 @@ EOF;
 
 				if ( isset( $_REQUEST['query'] ) ) {
 					return $this -> handle_gettrack_query();
+				}
+				if ( isset( $_REQUEST['proxy'] ) ) {
+					if ( $this->options['enable_proxy'] ) {
+						return $this -> handle_gettrack_proxy();
+					}
+					else {
+						$this -> http_terminate( '403', 'Proxy disabled' );
+					}
 				}
 
 				// Refuse to serve the track without a valid nonce. Admin screen uses a different nonce.
