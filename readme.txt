@@ -198,11 +198,17 @@ If a device or an app uses a different transport, support could be added by impl
 
 = What about security? =
 
-The plugin uses a custom Wordpress capability ('use_trackserver') to manage who can use the tracking features and manage their own tracks. The capability is granted to authors, editors and administrators, but not to subscribers. This is hardcoded for now, and (re)activation of the plugin will re-grant the capability to the three listed roles.
+== Using Trackserver ==
 
-Users who can create/edit posts can also use the [tsmap] shortcode and publish maps with their own tracks. In addition, administrators (and anyone else with the 'trackserver_admin' capability) can manage and publish other users' tracks.
+The plugin uses a few custom Wordpress capabilities ('use_trackserver', 'trackserver_publish' and 'trackserver_admin') to manage the various levels of access within Trackserver:
 
-Tracks can only be published in Wordpress posts or pages, and cannot be downloaded from outside Wordpress. Requests for downloading tracks need to have a cryptographic signature that only Wordpress can generate.
+* To use the tracking features and manage and publish ones own tracks, the 'use_trackserver' capability is required. It is granted to authors, editors and administrators, but not to subscribers.
+* To publish other people's tracks, the 'trackserver_publish' capability is required. It is granted to editors and administrators.
+* To manage Trackserver's options, the 'trackserver_admin' capability is required. Only admins get this capability by default.
+
+If you remove one or more capabilities from the listed roles, they will be re-granted on (re)activation of the plugin.
+
+Tracks can only be published in Wordpress posts or pages, and cannot be downloaded from outside Wordpress. Requests for downloading tracks need to have a cryptographic signature (called a 'nonce') that only Wordpress can generate.
 
 Regarding the use of apps for live tracking and uploading to Wordpress, please read the considerations about authentication above.
 
