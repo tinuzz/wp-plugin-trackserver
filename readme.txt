@@ -242,6 +242,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 * When a (live) track that is currently shown on the map is no longer present in the server response, show a nice popup, suggesting a page reload.
 * Make the 'infobar' shortcode attribute accept a string, to override the template set in the user profile.
 * Implement a proxy for external KML and GPX tracks, to work around CORS restrictions.
+* Show a popup on the map with an internationalized message when there are not tracks to display.
 
 = v3.0.1 =
 Release date: 28 February 2017

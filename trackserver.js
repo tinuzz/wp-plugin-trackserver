@@ -473,24 +473,32 @@ var Trackserver = (function () {
                     L.control.fullscreen().addTo(map);
                 }
 
-                // Add a featuregroup to hold the track layers
-                var featuregroup = L.featureGroup().addTo(map);
-                mymapdata.featuregroup = featuregroup;
+                if (mymapdata.tracks && mymapdata.tracks.length > 0) {
 
-                // Load and display the tracks. Use the liveupdate control to do it when appropriate.
-                if (mymapdata.is_live) {
-                    var mapdivelement = L.DomUtil.get(mymapdata.div_id);
-                    var infobar_container = L.DomUtil.create('div', 'trackserver-infobar-container', mapdivelement);
-                    mymapdata.infobar_div = L.DomUtil.create('div', 'trackserver-infobar', infobar_container);
-                    L.control.liveupdate ({
-                        mymapdata: mymapdata,
-                        update_map: L.bind(this.update_tracks, this)
-                    })
-                    .addTo( map )
-                    .startUpdating();
+                    // Add a featuregroup to hold the track layers
+                    var featuregroup = L.featureGroup().addTo(map);
+                    mymapdata.featuregroup = featuregroup;
+
+                    // Load and display the tracks. Use the liveupdate control to do it when appropriate.
+                    if (mymapdata.is_live) {
+                        var mapdivelement = L.DomUtil.get(mymapdata.div_id);
+                        var infobar_container = L.DomUtil.create('div', 'trackserver-infobar-container', mapdivelement);
+                        mymapdata.infobar_div = L.DomUtil.create('div', 'trackserver-infobar', infobar_container);
+                        L.control.liveupdate ({
+                            mymapdata: mymapdata,
+                            update_map: L.bind(this.update_tracks, this)
+                        })
+                        .addTo( map )
+                        .startUpdating();
+                    }
+                    else {
+                        this.draw_tracks(mymapdata);
+                    }
                 }
                 else {
-                    this.draw_tracks(mymapdata);
+                    var popup = L.popup()
+                        .setLatLng(mymapdata.center)
+                        .setContent(trackserver_i18n['no_tracks_to_display']).openOn(map);
                 }
             }
         }

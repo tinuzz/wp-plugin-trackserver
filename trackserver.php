@@ -319,8 +319,12 @@ EOF;
 						'tile_url' => $this -> options['tile_url'],
 						'attribution' => $this -> options['attribution'],
 				);
-
 				wp_localize_script( 'trackserver', 'trackserver_settings', $settings );
+
+				$i18n = array(
+					'no_tracks_to_display' => __( 'No tracks to display.', 'trackserver' ),
+				);
+				wp_localize_script( 'trackserver', 'trackserver_i18n', $i18n );
 			}
 
 			/**
