@@ -1918,7 +1918,7 @@ EOF;
 			function handle_trackme_gettriplist( $user_id ) {
 				global $wpdb;
 
-				$sql = $wpdb -> prepare( 'SELECT name,created FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d ORDER BY name', $user_id );
+				$sql = $wpdb -> prepare( 'SELECT name,created FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d ORDER BY created DESC LIMIT 0,25', $user_id );
 				$trips = $wpdb -> get_results( $sql, ARRAY_A );
 				$triplist = '';
 				foreach ( $trips as $row ) {

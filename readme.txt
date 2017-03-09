@@ -245,6 +245,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 * Implement a proxy for external KML and GPX tracks, to work around CORS restrictions.
 * Show a popup on the map with an internationalized message when there are not tracks to display.
 * Implement 'maxage' shortcode parameter to impose time-based limit on live tracks.
+* Limit the TrackMe 'gettriplist' command to the 25 latest tracks, serve them in reverse order.
 
 = v3.0.1 =
 Release date: 28 February 2017
