@@ -61,6 +61,11 @@ For the [tsmap] shortcode:
 * live: true (or 't', 'yes' or 'y'), or false (default), to force live tracking
   for this map. This can be used for example with an externally updated GPX or
   KML file.
+* maxage: the maximum age of a live track for it to be included
+  on the map. If this parameter is given, all user tracks that
+  have not been updated in the last X amount of time, will not be
+  displayed. The value is a time expression in the form of a
+  number and a unit, for example: '120s', '30m', '2h', '3d'.
 * width: map width, default: 100%.
 * height: map height, default: 480px.
 * align: 'left', 'center' or 'right', default: not set.

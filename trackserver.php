@@ -1333,6 +1333,26 @@ EOF;
 			}
 
 			/**
+			 * Return maxage in seconds for a time expression
+			 *
+			 * Takes an expression like 120s, 5m, 3h, 7d and turns it into seconds. No unit equals seconds.
+			 *
+			 * @since 3.1
+			 */
+			function get_maxage( $str ) {
+				if ( $str === false ) return 0;
+				preg_match_all('/^(\d+)\s*(\w)?$/', $str, $matches);
+				$n = (int) $matches[1][0];
+				$u = strtolower( $matches[2][0] );
+				if ( $u == '' ) return $n;
+				$map = array( 's' => 1, 'm' => 60, 'h' => 3600, 'd' => 86400 );
+				if ( array_key_exists( $u, $map ) ) {
+					return $n * $map[$u];
+				}
+				return $n;
+			}
+
+			/**
 			 * Handle the main [tsmap] shortcode
 			 *
 			 * @since 1.0
@@ -1360,6 +1380,7 @@ EOF;
 					'infobar'    => false,
 					'points'     => false,
 					'zoom'       => false,
+					'maxage'     => false,
 				);
 
 				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
@@ -1387,9 +1408,10 @@ EOF;
 					$atts['track'] = $atts['id'];
 				}
 
-				$style  = $this -> get_style( $atts, false );     // result is not used
-				$points = $this -> get_points( $atts, false );    // result is not used
-				$markers = $this -> get_markers( $atts, false );  // result is not used
+				$style  = $this->get_style( $atts, false );     // result is not used
+				$points = $this->get_points( $atts, false );    // result is not used
+				$markers = $this->get_markers( $atts, false );  // result is not used
+				$maxage = $this->get_maxage( $atts['maxage'] );
 
 				list( $validated_track_ids, $validated_user_ids ) = $this -> validate_ids( $atts );
 
@@ -1407,7 +1429,7 @@ EOF;
 					$query = json_encode( array( 'id' => $validated_track_ids, 'live' => $validated_user_ids ) );
 					$query = base64_encode( $query );
 					$query_nonce = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
-					$alltracks_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=" . $this -> track_format . "&_wpnonce=$query_nonce" );
+					$alltracks_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=" . $this -> track_format . "&maxage=$maxage&_wpnonce=$query_nonce" );
 
 					foreach ($validated_track_ids as $validated_id) {
 
@@ -1425,7 +1447,7 @@ EOF;
 						);
 					}
 
-					$live_tracks = $this -> get_live_tracks($validated_user_ids);
+					$live_tracks = $this->get_live_tracks( $validated_user_ids, $maxage );
 					foreach ($live_tracks as $validated_id) {
 						$tracks[] = array(
 							'track_id'   => $validated_id,
@@ -1505,7 +1527,7 @@ EOF;
 					'continuous'   => $continuous,
 					'infobar'      => $infobar,
 					'alltracks'    => $alltracks_url,
-					'fit'          => $fit
+					'fit'          => $fit,
 				);
 
 				if ($infobar) {
@@ -1563,6 +1585,7 @@ EOF;
 					'track'      => false,
 					'user'       => false,
 					'format'     => 'gpx',
+					'maxage'     => false,
 				);
 
 				$atts = shortcode_atts( $defaults, $atts, $this -> shortcode );
@@ -1578,6 +1601,8 @@ EOF;
 					$atts['track'] = $atts['id'];
 				}
 
+				$maxage = $this->get_maxage( $atts['maxage'] );
+
 				list( $validated_track_ids, $validated_user_ids ) = $this -> validate_ids( $atts );
 
 				if ( count( $validated_track_ids ) > 0 || count( $validated_user_ids ) > 0 ) {
@@ -1592,7 +1617,7 @@ EOF;
 					$query = json_encode( array( 'id' => $validated_track_ids, 'live' => $validated_user_ids ) );
 					$query = base64_encode( $query );
 					$query_nonce = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
-					$alltracks_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&_wpnonce=$query_nonce" );
+					$alltracks_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&maxage=$maxage&_wpnonce=$query_nonce" );
 
 					$text = $atts['text'] . $content;
 					if ( $text == '' ) $text = 'download ' . $track_format;
@@ -2761,7 +2786,7 @@ EOF;
 				return ( is_object( $post ) ? $post -> post_author : false );
 			}
 
-			function get_live_tracks( $user_ids )  {
+			function get_live_tracks( $user_ids, $maxage = 0 )  {
 				global $wpdb;
 
 				if ( empty( $user_ids ) ) return array();
@@ -2773,6 +2798,11 @@ EOF;
 					'ON t.id = l.trip_id INNER JOIN (SELECT t2.user_id, MAX(l2.occurred) AS endts FROM ' . $this -> tbl_locations . ' l2 ' .
 					'INNER JOIN ' . $this -> tbl_tracks . ' t2 ON l2.trip_id = t2.id GROUP BY t2.user_id) uu ON l.occurred = uu.endts ' .
 					'AND t.user_id = uu.user_id WHERE t.user_id IN ' . $sql_in;
+
+				if ( $maxage > 0 ) {
+					$ts = gmdate( 'Y-m-d H:i:s', ( time() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - $maxage ) );
+					$sql .= " AND uu.endts > '$ts'";
+				}
 
 				$res = $wpdb -> get_results( $sql, OBJECT_K );
 				$track_ids = array();
@@ -2793,6 +2823,7 @@ EOF;
 				global $wpdb;
 
 				$query_string = stripslashes( $_REQUEST['query'] );
+				$maxage = (int) $_REQUEST['maxage'];
 				$post_id = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : 0 );
 				$format = $_REQUEST['format'];
 				$author_id = $this -> get_author( $post_id );
@@ -2804,7 +2835,7 @@ EOF;
 					$user_ids = $query -> live;
 					$validated_track_ids = $this -> validate_track_ids( $track_ids, $author_id );
 					$validated_user_ids = $this-> validate_user_ids( $user_ids, $author_id );
-					$user_track_ids = $this -> get_live_tracks( $validated_user_ids );
+					$user_track_ids = $this -> get_live_tracks( $validated_user_ids, $maxage );
 					$track_ids = array_merge( $validated_track_ids, $user_track_ids );
 
 					$follow = false;
