@@ -754,7 +754,7 @@ EOF;
 			function enable_proxy_html() {
 				$checked = ( $this->options['enable_proxy'] ? 'checked' : '' );
 				$linkurl = esc_attr__( 'https://wordpress.org/plugins/trackserver/faq/', 'trackserver' );
-				$linktext = esc_html__( 'FAQ about security' );
+				$linktext = esc_html__( 'FAQ about security', 'trackserver' );
 				$link = "<a href=\"$linkurl\">$linktext</a>";
 
 				$format = <<<EOF
@@ -762,10 +762,10 @@ EOF;
 					%2\$s<br />
 EOF;
 				printf( $format,
-					esc_html__( "Check this to enable the proxy for external tracks, which can be used by prefixing their URL with 'proxy:'" ),
+					esc_html__( "Check this to enable the proxy for external tracks, which can be used by prefixing their URL with 'proxy:'", 'trackserver' ),
 					sprintf( esc_html__( "This will enable your authors to invoke HTTP requests originating from your server. " .
 						"Only enable this when you need it and if you trust your authors not to use harmful URLs. " .
-						'Please see the %1$s for more information.'	), $link ) );
+						'Please see the %1$s for more information.', 'trackserver' ), $link ) );
 			}
 
 			function trackme_slug_html() {
