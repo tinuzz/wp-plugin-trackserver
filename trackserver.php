@@ -308,7 +308,7 @@ EOF;
 				wp_enqueue_style( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.css' );
 				wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-0.0.4/Leaflet.fullscreen.min.js', array(), false, true );
 				wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), TRACKSERVER_VERSION, true );
-				wp_enqueue_style( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.css' );
+				wp_enqueue_style( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.css', array(), TRACKSERVER_VERSION );
 				wp_enqueue_script( 'promise-polyfill', TRACKSERVER_JSLIB . 'promise-polyfill-6.0.2/promise.min.js', array(), false, true );
 
 				// To be localized in wp_footer() with data from the shortcode(s). Enqueued last, in wp_enqueue_scripts.
