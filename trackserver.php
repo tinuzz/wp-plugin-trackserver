@@ -849,10 +849,11 @@ EOF;
 				printf( $format,
 					esc_html__( "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps", 'trackserver' ),
 					esc_html__( 'Full custom URL', 'trackserver' ),
-					sprintf( esc_html__( 'Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS connections. ' .
-					'If your WordPress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a ' .
+					sprintf( esc_html__( 'Note about HTTPS: older versions of %1$s may or may not support %3$s for HTTPS connections. ' .
+					'As of v%2$s, SNI is verified to work. If your WordPress depends on SNI for HTTPS connections and you cannot ' .
+					'use the latest version of %1$s, please use HTTP. This is a ' .
 					'problem with %1$s that Trackserver cannot fix.', 'trackserver' ),
-					'OruxMaps', '6.0.5', $link ) );
+					'OruxMaps', '7.1.2', $link ) );
 			}
 
 			function osmand_slug_html() {
