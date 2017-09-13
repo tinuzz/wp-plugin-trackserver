@@ -87,6 +87,7 @@
 				$actions = array(
 					'delete' => esc_html__( 'Delete', 'trackserver' ),
 					'merge'  => esc_html__( 'Merge', 'trackserver' ),
+					'dlgpx'  => esc_html__( 'Download as GPX', 'trackserver' ),
 					'recalc' => esc_html__( 'Recalculate', 'trackserver' ),
 				);
 				return $actions;

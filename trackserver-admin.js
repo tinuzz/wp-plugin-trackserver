@@ -185,7 +185,7 @@ var TrackserverAdmin = (function () {
                 ts_tb_show('ts-merge-modal', 'Merge tracks', 600, 250);
                 return false;
             }
-            if (action == 'recalc') {
+            if (action == 'recalc' || action == 'dlgpx') {
                 return true;
             }
             return false;

@@ -384,6 +384,7 @@ EOF;
 								'delete' => __( 'deletion', 'trackserver' ),
 								'merge' => __( 'merging', 'trackserver' ),
 								'recalc' => __( 'recalculation', 'trackserver' ),
+								'dlgpx' => __( 'downloading', 'trackserver' ),
 								'track' => __( 'track', 'trackserver' ),
 								'tracks' => __( 'tracks', 'trackserver' ),
 								/* translators: %1$s = action, %2$s = number and %3$s is 'track' or 'tracks' */
@@ -2824,48 +2825,62 @@ EOF;
 				global $wpdb;
 
 				$query_string = stripslashes( $_REQUEST['query'] );
-				$maxage = (int) $_REQUEST['maxage'];
+				$maxage = ( isset( $_REQUEST['maxage'] ) ? (int) $_REQUEST['maxage'] : 0 );
 				$post_id = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : 0 );
 				$format = $_REQUEST['format'];
-				$author_id = $this -> get_author( $post_id );
+				$is_admin = array_key_exists( 'admin', $_REQUEST ) ? true : false;
 
-				if ( wp_verify_nonce( $_REQUEST['_wpnonce'], 'gettrack_' . $query_string . "_p" . $post_id ) ) {
-					$query = base64_decode( $query_string );
-					$query = json_decode( $query );
-					$track_ids = $query -> id;
-					$user_ids = $query -> live;
-					$validated_track_ids = $this -> validate_track_ids( $track_ids, $author_id );
-					$validated_user_ids = $this-> validate_user_ids( $user_ids, $author_id );
-					$user_track_ids = $this -> get_live_tracks( $validated_user_ids, $maxage );
-					$track_ids = array_merge( $validated_track_ids, $user_track_ids );
+				// Refuse to serve the track without a valid nonce. Admin screen uses a different nonce.
+				if (
+					( $is_admin &&
+					! wp_verify_nonce( $_REQUEST['_wpnonce'], 'manage_track_' . $query_string ) ) ||
+					( ( ! $is_admin ) &&
+					! wp_verify_nonce( $_REQUEST['_wpnonce'], 'gettrack_' . $query_string . "_p" . $post_id ) )
+				) {
+					header( 'HTTP/1.1 403 Forbidden' );
+					echo "Access denied (q=$query_string).\n";
+					die();
+				}
 
-					$follow = false;
-					if ( count( $user_track_ids ) > 0 ) {
-						$follow = $user_track_ids[0];
-					}
-
-					$extra_metadata = array(
-							'follow' => $follow
-					);
-
-					$sql_in = "('" . implode("','", $track_ids) . "')";
-					$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this -> tbl_locations .
-						' l INNER JOIN ' . $this -> tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' ORDER BY trip_id, occurred';
-					$res = $wpdb -> get_results( $sql, ARRAY_A );
-
-					if ( $format == 'gpx' ) {
-						$this -> send_as_gpx( $res );
-					}
-					else { // default to 'alltracks' internal format
-						$this -> send_alltracks( $res, $extra_metadata );
-					}
-
+				// 'is_admin' is verified at this point. We use the current user's id as author, to make
+				// sure users can only download their own tracks, unless they can 'trackserver_publish'
+				if ( $is_admin ) {
+					$author_id = get_current_user_id();
 				}
 				else {
-					header( 'HTTP/1.1 403 Forbidden' );
-					echo "Access denied.\n";
+					$author_id = $this -> get_author( $post_id );
 				}
-				die();
+
+				$query = base64_decode( $query_string );
+				$query = json_decode( $query );
+				$track_ids = $query -> id;
+				$user_ids = $query -> live;
+				$validated_track_ids = $this -> validate_track_ids( $track_ids, $author_id );
+				$validated_user_ids = $this-> validate_user_ids( $user_ids, $author_id );
+				$user_track_ids = $this -> get_live_tracks( $validated_user_ids, $maxage );
+				$track_ids = array_merge( $validated_track_ids, $user_track_ids );
+
+				$follow = false;
+				if ( count( $user_track_ids ) > 0 ) {
+					$follow = $user_track_ids[0];
+				}
+
+				$extra_metadata = array(
+						'follow' => $follow
+				);
+
+				$sql_in = "('" . implode("','", $track_ids) . "')";
+				$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this -> tbl_locations .
+					' l INNER JOIN ' . $this -> tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' ORDER BY trip_id, occurred';
+				$res = $wpdb -> get_results( $sql, ARRAY_A );
+
+				if ( $format == 'gpx' ) {
+					$this -> send_as_gpx( $res );
+				}
+				else { // default to 'alltracks' internal format
+					$this -> send_alltracks( $res, $extra_metadata );
+				}
+
 			}
 
 			/**
@@ -3631,6 +3646,16 @@ EOF;
 					setcookie( 'ts_bulk_result', $message, time() + 300 );
 					wp_redirect( $_REQUEST['_wp_http_referer'] );
 					exit;
+				}
+
+				if ( $action === 'dlgpx' ) {
+
+					$track_format = 'gpx';
+					$query = json_encode( array( 'id' => $track_ids, 'live' => array() ) );
+					$query = base64_encode( $query );
+					$query_nonce = wp_create_nonce( 'manage_track_' . $query );
+					$alltracks_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&format=$track_format&admin=1&_wpnonce=$query_nonce" );
+					wp_redirect( $alltracks_url );
 				}
 
 				if ( $action === 'recalc' ) {
