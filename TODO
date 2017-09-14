@@ -10,7 +10,6 @@ Server:
 - logging requests to MySQL
 - DONE: use geoJSON instead of Polyline, if callbacks are feasable for extracting metadata
   or use a second HTTP request for the metadata
-- implement GPSgate protocol
 - DONE: implement OSMand protocol
 - DONE: don't use the WP password for TrackMe tracking, it is insecure. Use a secret like with OsmAnd.
 - implement shortcode to display TrackMe/OsmAnd password (feature request through WP forum)

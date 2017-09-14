@@ -57,9 +57,8 @@ It includes some code and libraries written by other people:
 
 = TODO =
 
-* Support [GpsGate](http://gpsgate.com/) tracking protocol
-* Better permissions/authorization system
 * More track management features, like folders/collections and editing / splitting tracks
+* Better permissions/authorization system
 * Track statistics, like distance, average speed, etc.
 * Add map profiles, maybe include [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers) plugin
 * ...
