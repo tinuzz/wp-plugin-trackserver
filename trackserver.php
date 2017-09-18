@@ -43,7 +43,7 @@ License: GPL2
 		define( 'TRACKSERVER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 		define( 'TRACKSERVER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 		define( 'TRACKSERVER_JSLIB', TRACKSERVER_PLUGIN_URL . 'lib/' );
-		define( 'TRACKSERVER_VERSION', '3.0.1-20170228' );
+		define( 'TRACKSERVER_VERSION', '3.0.1-20170918' );
 
 		/**
 		 * The main plugin class.
@@ -215,6 +215,7 @@ License: GPL2
 				add_action( 'admin_post_trackserver_save_track', array( &$this, 'admin_post_save_track' ) );
 				add_action( 'admin_post_trackserver_upload_track', array( &$this, 'admin_post_upload_track' ) );
 				add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
+				add_action( 'wp_ajax_trackserver_save_track', array( &$this, 'admin_ajax_save_modified_track' ) );
 
 				// WordPress MU
 				add_action( 'wpmu_new_blog', array( &$this, 'wpmu_new_blog' ) );
@@ -380,17 +381,33 @@ EOF;
 
 						$settings = array(
 							'msg' => array(
-								'areyousure' => __( 'Are you sure?', 'trackserver' ),
-								'delete' => __( 'deletion', 'trackserver' ),
-								'merge' => __( 'merging', 'trackserver' ),
-								'recalc' => __( 'recalculation', 'trackserver' ),
-								'dlgpx' => __( 'downloading', 'trackserver' ),
-								'track' => __( 'track', 'trackserver' ),
-								'tracks' => __( 'tracks', 'trackserver' ),
+								'areyousure'     => __( 'Are you sure?', 'trackserver' ),
+								'delete'         => __( 'deletion', 'trackserver' ),
+								'merge'          => __( 'merging', 'trackserver' ),
+								'recalc'         => __( 'recalculation', 'trackserver' ),
+								'dlgpx'          => __( 'downloading', 'trackserver' ),
+								'dlkml'          => __( 'downloading', 'trackserver' ),
+								'track'          => __( 'track', 'trackserver' ),
+								'tracks'         => __( 'tracks', 'trackserver' ),
+								'edittrack'      => __( 'Edit track', 'trackserver' ),
+								'deletepoint'    => __( 'Delete point', 'trackserver' ),
+								'splittrack'     => __( 'Split track here', 'trackserver' ),
+								'savechanges'    => __( 'Save changes', 'trackserver' ),
+								'unsavedchanges' => __( 'There are unsaved changes. Save?', 'trackserver' ),
+								'save'           => __( 'Save', 'trackserver' ),
+								'discard'        => __( 'Discard', 'trackserver' ),
+								'cancel'         => __( 'Cancel', 'trackserver' ),
 								/* translators: %1$s = action, %2$s = number and %3$s is 'track' or 'tracks' */
-								'selectminimum' => __( 'For %1$s, select %2$s %3$s at minimum', 'trackserver' ),
+								'selectminimum'  => __( 'For %1$s, select %2$s %3$s at minimum', 'trackserver' ),
+							),
+							'urls' => array(
+								'adminpost' => admin_url() . 'admin-post.php',
+								'managetracks' => admin_url() . 'admin.php?page=trackserver-tracks',
 							),
 						);
+
+						// Enqueue leaflet-editable
+						wp_enqueue_script( 'leaflet-editable', TRACKSERVER_JSLIB . 'leaflet-editable-1.1.0/Leaflet.Editable.min.js', array(), false, true );
 
 						// Enqueue the admin js (Thickbox overrides) in the footer
 						wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL .'trackserver-admin.js', array( 'thickbox' ), TRACKSERVER_VERSION, true );
@@ -3431,36 +3448,112 @@ EOF;
 			function admin_post_save_track() {
 				global $wpdb;
 
-				check_admin_referer( 'manage_track_' . $_REQUEST['track_id'] );
+				$track_id = (int) $_REQUEST['track_id'];
+				check_admin_referer( 'manage_track_' . $track_id );
 
-				// Save track. Use stripslashes() on the data, because WP magically escapes it.
-				$name = stripslashes( $_REQUEST['name'] );
-				$source = stripslashes( $_REQUEST['source'] );
-				$comment = stripslashes( $_REQUEST['comment'] );
+				if ( $this -> current_user_can_manage( $track_id ) ) {
 
-				if ( $_REQUEST['trackserver_action'] == 'delete' ) {
-					$result = $this -> wpdb_delete_tracks( (int) $_REQUEST['track_id'] );
-					$message = 'Track "' . $name . '" (ID=' . $_REQUEST['track_id'] . ', ' .
-						 $result['locations'] . ' locations) deleted';
-					setcookie( 'ts_bulk_result', $message, time() + 300 );
+					// Save track. Use stripslashes() on the data, because WP magically escapes it.
+					$name = stripslashes( $_REQUEST['name'] );
+					$source = stripslashes( $_REQUEST['source'] );
+					$comment = stripslashes( $_REQUEST['comment'] );
+
+					if ( $_REQUEST['trackserver_action'] == 'delete' ) {
+						$result = $this -> wpdb_delete_tracks( (int) $track_id );
+						$message = 'Track "' . $name . '" (ID=' . $track_id . ', ' .
+							 $result['locations'] . ' locations) deleted';
+					}
+					elseif ( $_REQUEST['trackserver_action'] == 'split' ) {
+						$vertex = intval( $_REQUEST['vertex'] );  // not covered by nonce!
+						$r = $this -> wpdb_split_track( $track_id, $vertex );
+						$message = 'Track "' . $name . '" (ID=' . $track_id . ') has been split at point ' . $vertex . ' ' . $r;
+					}
+					else {
+
+						$data = array(
+							'name' => $name,
+							'source' => $source,
+							'comment' => $comment
+						);
+						$where = array( 'id' => $track_id );
+						$wpdb -> update( $this -> tbl_tracks, $data, $where, '%s', '%d' );
+
+						$message = 'Track "' . $name . '" (ID=' . $track_id . ') saved';
+					}
 				}
 				else {
-
-					$data = array(
-						'name' => $name,
-						'source' => $source,
-						'comment' => $comment
-					);
-					$where = array( 'id' => $_REQUEST['track_id'] );
-					$wpdb -> update( $this -> tbl_tracks, $data, $where, '%s', '%d' );
-
-					$message = 'Track "' . $name . '" (ID=' . $_REQUEST['track_id'] . ') saved';
-					setcookie( 'ts_bulk_result', $message, time() + 300 );
+					$message = __( 'It seems you have insufficient permissions to manage track ID ' ) . $track_id;
 				}
 
 				// Redirect back to the admin page. This should be safe.
+				setcookie( 'ts_bulk_result', $message, time() + 300 );
 				wp_redirect( $_REQUEST['_wp_http_referer'] );
 				exit;
+			}
+
+			/**
+			 * Function to return an array of location ids given an array of location
+			 * indexes relative to the track, as passed from Leaflet Editable
+			 */
+			function get_location_ids_by_index( $track_id, $indexes ) {
+				global $wpdb;
+
+				$sql_in = "('" . implode("','", $indexes) . "')";
+				$sql = $wpdb -> prepare( 'SELECT c.* FROM (' .
+					'SELECT @row := @row + 1 AS row, l.id FROM ' . $this -> tbl_locations . ' l CROSS JOIN (select @row := -1) r WHERE l.trip_id=%d ORDER BY occurred' .
+					') c WHERE c.row IN ' . $sql_in, $track_id );
+				$res = $wpdb -> get_results( $sql, OBJECT_K );
+				return $res;
+			}
+
+			/**
+			 * Function to handle AJAX request from track editor
+			 */
+			function admin_ajax_save_modified_track() {
+				global $wpdb;
+
+				$_POST = stripslashes_deep( $_POST );
+				$modifications = json_decode( $_POST['modifications'], true );
+				$i = 0;
+
+				if ( count( $modifications ) ) {
+					$track_ids = $this -> filter_current_user_tracks( array_keys( $modifications) );
+
+					if ( count( $track_ids ) ) {
+
+						// TODO: support editing multiple tracks by looping over $modifications
+						$track_id = $track_ids[0];
+						check_ajax_referer( 'manage_track_' . $track_id );
+						$indexes = array_keys( $modifications[$track_id] );
+						$loc_ids = $this -> get_location_ids_by_index( $track_id, $indexes );
+						$sql = array();
+						$delete_ids = array();
+						foreach ( $modifications[$track_id] as $loc_index => $mod ) {
+							if ( $mod['action'] == 'delete' ) {
+								$delete_ids[] = $loc_ids[$loc_index] -> id;
+							}
+							elseif ( $mod['action'] == 'move' ) {
+								$sql[] = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_locations . ' SET latitude=%s, longitude=%s WHERE id=%d', $mod['lat'], $mod['lng'], $loc_ids[$loc_index] -> id);
+							}
+						}
+
+						if ( count( $delete_ids ) ) {
+							$sql_in = "('" . implode("','", $delete_ids) . "')";
+							$sql[] = 'DELETE FROM ' . $this -> tbl_locations . ' WHERE id IN ' . $sql_in;
+						}
+
+						// If a query fails, give up immediately
+						foreach ($sql as $query) {
+							if ( $wpdb -> query( $query ) === false ) {
+								break;
+							}
+							$i++;
+						}
+						$this -> calculate_distance( $track_id );
+					}
+				}
+				echo "OK: $i queries executed";
+				wp_die();
 			}
 
 			/**
@@ -3573,6 +3666,11 @@ EOF;
 				return array();
 			}
 
+			function current_user_can_manage( $track_id ) {
+				$valid = $this -> filter_current_user_tracks( array( $track_id ) );
+				return count( $valid ) == 1;
+			}
+
 			/**
 			 * Function to delete tracks from the database
 			 *
@@ -3593,6 +3691,38 @@ EOF;
 				$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
 				$nt = $wpdb -> query( $sql );
 				return array( 'locations' => $nl, 'tracks' => $nt );
+			}
+
+			function wpdb_split_track( $track_id, $point ) {
+				global $wpdb;
+
+				$split_id_arr = $this -> get_location_ids_by_index( $track_id, array( $point ) );
+				if ( count( $split_id_arr ) > 0 ) {  // should be exactly 1
+					$split_id = $split_id_arr[ $point ] -> id;
+					$sql = $wpdb -> prepare( 'SELECT occurred FROM ' . $this -> tbl_locations . ' WHERE id=%s', $split_id );
+					$occurred = $wpdb -> get_var( $sql );
+
+					// Duplicate track record
+					$sql = $wpdb -> prepare( 'INSERT INTO ' . $this -> tbl_tracks .
+						" (user_id, name, created, source, comment) SELECT user_id, CONCAT(name, ' #2'), created," .
+						" source, comment FROM " . $this -> tbl_tracks . " WHERE id=%s", $track_id );
+					$wpdb -> query( $sql );
+					$new_id = $wpdb -> insert_id;
+
+					// Update locations with the new track ID
+					$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_locations . ' SET trip_id=%s WHERE trip_id=%s AND occurred > %s', $new_id, $track_id, $occurred );
+					$wpdb -> query( $sql );
+
+					// Duplicate the split-point to the new track
+					$sql = $wpdb -> prepare( 'INSERT INTO ' . $this -> tbl_locations .
+						" (trip_id, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment) " .
+						" SELECT %s, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment FROM " .
+						$this -> tbl_locations . " WHERE id=%s", $new_id, $split_id );
+					$wpdb -> query( $sql );
+
+					$this -> calculate_distance( $new_id );
+					return print_r( $new_id, true );
+				}
 			}
 
 			/**
@@ -3636,6 +3766,11 @@ EOF;
 						$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_tracks . ' SET name=%s WHERE id=%d',
 							 ( $name = stripslashes( $_REQUEST['merged_name'] ) ), $id );
 						$wpdb -> query( $sql );
+
+						// TODO: consider checking for duplicate points that we created ourselves when splitting a track,
+						// (see wpdb_split_track()) and remove them. We'd need 2 or 3 queries and some ugly code for that.
+						// Is it worth the effort?
+
 						$format = __( "Merged %1\$d location(s) from %2\$d track(s) into '%3\$s'.", 'trackserver' );
 						$message = sprintf( $format, intval( $nl ), intval( $nt ), $name );
 					}

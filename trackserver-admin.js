@@ -10,53 +10,39 @@ var tb_click = function(e)
 {
     var ts_action = jQuery(this).attr("data-action");
     var row = jQuery(this).closest("tr");
-    var tds = row.find("td");
-    if (ts_action == 'edit') {
+    var tds = row.find("th,td");
 
+    // track_base_url should come from WP via wp_localize_script()
+    var track_url = track_base_url + "admin=1";
+    var nonce = false;
+
+    if (ts_action == 'edit') {
         tb_window_width = 600;
         tb_window_height = 320;
     }
     if (ts_action == 'view') {
         tb_window_width = 1024;
         tb_window_height = 768;
-
-
-        // track_base_url should come from WP via wp_localize_script()
-        track_url = track_base_url + "admin=1";
-        jQuery.each(tds, function() {
-            col_arr = /column-(\S+)/.exec(this.className);
-            col = col_arr[1];
-            switch (col) {
-                case 'id':
-                    // http://stackoverflow.com/questions/3442394/using-text-to-retrieve-only-text-not-nested-in-child-tags
-                    track_id = jQuery(this).contents().filter(function(){
-                        return this.nodeType == Node.TEXT_NODE;
-                    })[0].nodeValue;
-                    track_url += "&id=" + track_id;
-                    break;
-                case 'nonce':
-                    track_url += "&_wpnonce="+jQuery(this).text();
-                    break;
-            }
-        });
-        trackserver_mapdata = [{"div_id":"tsadminmap","tracks":[{"track_id":"0","track_url":track_url,"track_type":"polylinexhr","markers":true}],"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false}];
     }
     if (ts_action == 'howto') {
-
         tb_window_width = 850;
         tb_window_height = 560;
     }
 
-    if (ts_action == 'edit') {
-        // http://stackoverflow.com/questions/14460421/jquery-get-the-contents-of-a-table-row-with-a-button-click
+    if (ts_action == 'view' || ts_action == 'edit') {
+
+        // Loop over the table columns and set up the 'trackserver-edit-track' form with the data
         jQuery.each(tds, function() {
-            col_arr = /column-(\S+)/.exec(this.className);
-            col = col_arr[1];
+
+            // Extract the column name from the assigned CSS class
+            col_arr = /(column-)?([^-\s]+)(-column)?/.exec(this.className);
+            col = col_arr[2];
+
             switch (col) {
-                case 'id':
-                    // Strip everything from the first non-numeric character
-                    id_val = jQuery(this).text().replace(/[^0-9].*/, '');
-                    jQuery('#track_id').val(id_val);
+                case 'check':
+                    track_id = jQuery(this).find('input').val();
+                    track_url += "&id=" + track_id;
+                    jQuery('#track_id').val(track_id);
                     break;
                 case 'name':
                     jQuery('#input-track-name').val(jQuery(this).text());
@@ -68,11 +54,15 @@ var tb_click = function(e)
                     jQuery('#input-track-comment').val(jQuery(this).text());
                     break;
                 case 'nonce':
-                    jQuery('#_wpnonce').val(jQuery(this).text());
+                    nonce = jQuery(this).text();
+                    track_url += "&_wpnonce="+nonce;
+                    jQuery('#_wpnonce').val(nonce);
                     break;
             }
         });
+        trackserver_mapdata = [{"div_id":"tsadminmap","tracks":[{"track_id":track_id,"track_url":track_url,"track_type":"polylinexhr","markers":true,"nonce":nonce}],"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false}];
     }
+
     old_tb_click.call(this); // Pass the clicked element as context
     return false;
 };
@@ -101,18 +91,27 @@ var tb_show = function(c, u, i)
     jQuery("#tsadminmapcontainer").css({"width": (w - 32) + 'px', "height": (h - 60)});
     if (trackserver_mapdata) {
         Trackserver.init( trackserver_mapdata );
+        TrackserverAdmin.setup_editables();
+
     }
 };
 
 var old_tb_remove = window.tb_remove;
 var tb_remove = function ()
 {
-    old_tb_remove()
     // Clean up the map when appropriate
     if (typeof Trackserver !== 'undefined' && Trackserver.adminmap) {
+
+        // Show 'unsaved data' if necessary.
+        if (TrackserverAdmin.show_savedialog_if_modified()) return;
+        old_tb_remove()
         Trackserver.adminmap.remove();
     }
+    else {
+        old_tb_remove()
+    }
     trackserver_mapdata = false;
+    TrackserverAdmin.clear_modified();  // probably redundant, but cheap
 }
 
 var ts_tb_show = function (div, caption, width, height) {
@@ -129,6 +128,9 @@ var ts_tb_show = function (div, caption, width, height) {
 var TrackserverAdmin = (function () {
 
     return {
+
+        modified_locations: {},
+        latlngs: false,  // list of latlngs that doesn't change when deleting a vertex
 
         init: function() {
             this.checked = false;
@@ -147,7 +149,6 @@ var TrackserverAdmin = (function () {
                 min_items = 2;
                 min_str = trackserver_admin_settings['msg']['tracks'];
             }
-            //var checked = jQuery('input[name=track\\[\\]]:checked');
             this.checked = jQuery('input[name=track\\[\\]]:checked');
             if (this.checked.length < min_items) {
                 actionstr = trackserver_admin_settings['msg'][action] || action;
@@ -278,6 +279,233 @@ var TrackserverAdmin = (function () {
                     jQuery('#trackserver-edit-action').val('delete');
                     jQuery('#trackserver-edit-track').submit();
                 }
+            });
+        },
+
+        show_savedialog_if_modified: function( callback=false ) {
+
+            var _this = this;
+
+            if ( Object.keys(this.modified_locations).length > 0 ) {
+                var savedialog = L.popup()
+                    .setLatLng(Trackserver.adminmap.getCenter())
+                    .setContent( trackserver_admin_settings['msg']['unsavedchanges'] +
+                        '<br><br><button id="savedialogsavebutton">' +
+                        trackserver_admin_settings['msg']['save'] +
+                        '</button> <button id="savedialogdiscardbutton">' +
+                        trackserver_admin_settings['msg']['discard'] +
+                        '</button> <button id="savedialogcancelbutton">' +
+                        trackserver_admin_settings['msg']['cancel'] +
+                        '</button>')
+                Trackserver.adminmap.openPopup(savedialog);
+                jQuery('#savedialogsavebutton').on('click', function(e) {
+                    _this.save_modified(true, callback);
+                });
+                jQuery('#savedialogcancelbutton').on('click', function(e) {
+                    savedialog.remove();
+                });
+                jQuery('#savedialogdiscardbutton').on('click', function(e) {
+                    _this.clear_modified();
+                    tb_remove();
+                    if (callback) callback.call(_this);
+                });
+                return true;
+            }
+            if (callback) callback.call(this);
+            return false;
+        },
+
+        save_modified: function( close=false, callback=false ) {
+            var map = Trackserver.adminmap;
+
+            if ( Object.keys(this.modified_locations).length > 0 ) {
+                var data = {
+                    action: 'trackserver_save_track',
+                    modifications: JSON.stringify(this.modified_locations),
+                    _wpnonce: trackserver_mapdata[0].tracks[0].nonce
+                }
+
+                var saving = L.popup()
+                    .setLatLng(map.getCenter())
+                    .setContent('Saving...');
+                map.openPopup(saving);
+
+                jQuery.post(ajaxurl, data, function(response) {
+                    saving.remove();
+                    if (close) {
+                        tb_remove();
+                    }
+                    if (callback) {
+                        callback.call(_this);
+                    }
+                });
+            }
+            this.clear_modified();
+        },
+
+        modify_location: function(track_id, loc_index, action, latlng) {
+            if (!this.modified_locations.hasOwnProperty(track_id)) {
+                this.modified_locations[track_id] = {};
+            }
+            if (!this.modified_locations[track_id].hasOwnProperty(loc_index)) {
+                this.modified_locations[track_id][loc_index] = {};
+            }
+            mod = { action: action }
+            if (latlng) {
+                mod['lat'] = latlng.lat;
+                mod['lng'] = latlng.lng;
+            }
+            this.modified_locations[track_id][loc_index] = mod;
+        },
+
+        location_delete: function(track_id, loc_index) {
+            this.modify_location(track_id, loc_index, 'delete', null);
+        },
+
+        location_move: function(track_id, loc_index, latlng) {
+            this.modify_location(track_id, loc_index, 'move', latlng);
+        },
+
+        clear_modified: function() {
+            this.modified_locations = {}
+            this.latlngs = false;
+        },
+
+        // Clone the list of latlngs, because we need immutable indexes
+        init_latlngs: function(latlngs) {
+            this.latlngs = this.latlngs || latlngs.slice(0);
+        },
+
+        // Get the original index of the vertex
+        get_vertex_index: function(vertex) {
+            this.init_latlngs(vertex.latlngs);
+            return this.latlngs.indexOf(vertex.latlng);
+        },
+
+        delete_vertex: function(vertex) {
+            var layer = vertex.editor.feature;
+            var track_id = layer.options.track_id;
+            var vertex_index = this.get_vertex_index(vertex);
+            vertex.delete();
+            this.location_delete(track_id, vertex_index);
+        },
+
+        move_vertex: function(vertex) {
+            var layer = vertex.editor.feature;
+            var track_id = layer.options.track_id;
+            var vertex_index = this.get_vertex_index(vertex);
+            this.location_move(track_id, vertex_index, vertex.latlng);
+        },
+
+        setup_editables: function() {
+            var map = Trackserver.adminmap;
+            var _this = this;
+
+            this.clear_modified();
+
+            // Workaround for https://github.com/Leaflet/Leaflet.draw/issues/692
+            L.Editable.include({
+                createVertexIcon: function (options) {
+                    return (L.Browser.mobile && L.Browser.touch) ? new L.Editable.TouchVertexIcon(options) : new L.Editable.VertexIcon(options);
+                }
+            });
+
+            L.EditControl = L.Control.extend({
+                options: {
+                    position: 'topleft',
+                    html: '',
+                    title: {
+                        'edit': trackserver_admin_settings['msg']['edittrack'],
+                        'save': trackserver_admin_settings['msg']['savechanges']
+                    }
+
+                },
+
+                onAdd: function (map) {
+                    var container = L.DomUtil.create('div', 'leaflet-control-edit leaflet-bar leaflet-control');
+
+                    this.link = L.DomUtil.create('a', 'leaflet-control-edit-button leaflet-bar-part', container);
+                    this.link.href = '#';
+                    this.link.title = trackserver_admin_settings['msg']['edittrack'];
+                    this.link.innerHTML = this.options.html;
+                    this._map = map;
+
+                    L.DomEvent.on(this.link, 'click', this._click, this);
+
+                    return container;
+                },
+
+                _click: function (e) {
+                    L.DomEvent.stopPropagation(e);
+                    L.DomEvent.preventDefault(e);
+                    this.toggleEdit();
+                },
+
+                toggleEdit: function() {
+                    var container = this.getContainer();
+                    var edit_enabled = Trackserver.edit_enabled('tsadminmap');
+                    if (edit_enabled) {
+                        _this.save_modified();
+                        L.DomUtil.removeClass(container, 'leaflet-control-edit-enabled');
+                        this.link.title = this.options.title['edit'];
+                    }
+                    else {
+                        L.DomUtil.addClass(container, 'leaflet-control-edit-enabled');
+                        this.link.title = this.options.title['save'];
+                    }
+                    Trackserver.toggle_edit('tsadminmap');
+                }
+
+            });
+
+            map.addControl(new L.EditControl());
+
+            map.on('editable:vertex:contextmenu', function(e) {
+                var vertex = e.vertex;
+                var vertex_index = _this.get_vertex_index(vertex);
+
+                map.once('popupopen', function(e) {
+
+                    jQuery('.deletepoint').on('click', function(e) {
+                        _this.delete_vertex(vertex);
+                    });
+
+                    jQuery('.splittrack').on('click', function(e) {
+                        if (confirm(trackserver_admin_settings['msg']['areyousure'])) {
+
+                            // Handle unsaved modifications, submit the 'split' action as a callback function.
+                            // This function will be called with TrackserverAdmin as context.
+                            _this.show_savedialog_if_modified( function() {
+                                jQuery('#trackserver-edit-action').val('split');
+                                jQuery('#trackserver-edit-track').append(
+                                    jQuery('<input>').attr({
+                                        type: 'hidden',
+                                        name: 'vertex',
+                                        value: vertex_index
+                                    }))
+                                .submit();
+                            });
+                        }
+                    });
+                });
+
+                var popup = e.vertex.bindPopup('<a href="#" data-id="' + vertex_index + '" class="deletepoint" >' + trackserver_admin_settings['msg']['deletepoint'] + ' ' + vertex_index + '</a><br><a href="#" class="splittrack">' + trackserver_admin_settings['msg']['splittrack'] + '</a>').openPopup();
+
+            });
+
+            // Cancel rawclick event to prevent the default behaviour of deleting the vertex
+            map.on('editable:vertex:rawclick', function(e) {
+                e.cancel();
+            });
+
+            // Delete the vertex on ctrl-click or meta-click
+            map.on('editable:vertex:metakeyclick editable:vertex:ctrlclick', function(e) {
+                _this.delete_vertex(e.vertex);
+            });
+
+            //  Record modification after dragging a vertex
+            map.on('editable:vertex:dragend', function(e) {
+                _this.move_vertex(e.vertex);
             });
         }
     };

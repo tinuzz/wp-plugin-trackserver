@@ -13,3 +13,22 @@
 	margin-right: 20px;
 	color: white;
 }
+
+.leaflet-control-edit-button {
+	background-position: -2px -2px;
+}
+
+.leaflet-control-edit a {
+	background: #fff url(img/editable-spritesheet.png) no-repeat 0 0;
+	background-position: -30px 0;
+}
+
+.leaflet-control-edit-enabled a {
+	background-position: 0 0;
+}
+
+.leaflet-vertex-icon {
+	border-radius: 50%;
+	width: 6px;
+	height: 6px;
+}

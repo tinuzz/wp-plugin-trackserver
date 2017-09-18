@@ -78,6 +78,21 @@ var Trackserver = (function () {
             return keys;
         },
 
+        toggle_edit: function (div_id) {
+            editables = this.get_mydata ( div_id, 'all', 'editables' );
+            for ( var i = 0; i < editables.length; ++i ) {
+                editables[i].toggleEdit();
+            }
+        },
+
+        edit_enabled: function(div_id) {
+            editables = this.get_mydata ( div_id, 'all', 'editables' );
+            if (editables.length > 0) {
+                return editables[0].editEnabled();
+            }
+            return false;
+        },
+
         do_draw: function(i, mymapdata) {
 
             var map = mymapdata.map;
@@ -196,6 +211,7 @@ var Trackserver = (function () {
 
                     var id, layer, start_latlng, end_latlng, start_marker, end_marker, point_layer;
                     var markers = [];
+                    var editables = [];
                     var layer_index = 0;
 
                     // Get 'start_latlng' and 'end_latlng' for the current track(s). We need
@@ -217,6 +233,7 @@ var Trackserver = (function () {
                             start_latlng = layer._latlngs[0];
                             end_latlng   = layer._latlngs[ layer._latlngs.length - 1 ];
                             layer_index++;
+                            editables.push(layer);
                         }
                         else if (do_points && '_layers' in layer) {
                             // Iterate over the _layers object, in which every layer, each containing a
@@ -232,6 +249,7 @@ var Trackserver = (function () {
                                 }
                             }
                             end_latlng = point_layer._latlng;
+                            //editables.push(point_layer);
                             layer_index++;
                         }
                         else {
@@ -285,6 +303,7 @@ var Trackserver = (function () {
                     var num_ready = _this.get_mydata(div_id, 'all', 'num_ready');
                     num_ready++;
                     _this.set_mydata(div_id, 'all', 'num_ready', num_ready);
+                    _this.set_mydata(div_id, 'all', 'editables', editables);
 
                     if (do_markers && num_ready == mymapdata.tracks.length) {
                         var first_marker = _this.get_mydata(div_id, 'all', 'first_marker');
@@ -460,6 +479,13 @@ var Trackserver = (function () {
                     { attribution: trackserver_settings['attribution'], maxZoom: 18 });
 
                 var options = {center : center, zoom : zoom, layers: [map_layer0], messagebox: true };
+
+                // Make admin map editable
+                if (mymapdata.div_id == 'tsadminmap') {
+                    options['editOptions'] = { 'skipMiddleMarkers': true };
+                    options['editable'] = true;
+                }
+
                 var map = L.map( mymapdata.div_id, options );
                 mymapdata.map = map;
                 mymapdata.center = center;
