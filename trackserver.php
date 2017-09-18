@@ -3771,6 +3771,7 @@ EOF;
 						// (see wpdb_split_track()) and remove them. We'd need 2 or 3 queries and some ugly code for that.
 						// Is it worth the effort?
 
+						$this -> calculate_distance( $id );
 						$format = __( "Merged %1\$d location(s) from %2\$d track(s) into '%3\$s'.", 'trackserver' );
 						$message = sprintf( $format, intval( $nl ), intval( $nt ), $name );
 					}
