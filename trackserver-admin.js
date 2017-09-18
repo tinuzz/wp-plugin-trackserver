@@ -17,9 +17,9 @@ var tb_click = function(e)
         tb_window_height = 320;
     }
     if (ts_action == 'view') {
+        tb_window_width = 1024;
+        tb_window_height = 768;
 
-        tb_window_width = 800;
-        tb_window_height = 600;
 
         // track_base_url should come from WP via wp_localize_script()
         track_url = track_base_url + "admin=1";
