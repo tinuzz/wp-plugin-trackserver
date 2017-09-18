@@ -2297,12 +2297,12 @@ EOF;
 						}
 						else {
 							if ( $return ) return false;
-							die( "User has insufficient permissions\n" );
+							$this -> http_terminate( '403', 'Insufficient permissions' );
 						}
 					}
 				}
 				if ( $return ) return false;
-				die( "Username or password incorrect\n" );
+				$this -> http_terminate( '403', 'Username or password incorrect' );
 			}
 
 			/**
@@ -2854,9 +2854,7 @@ EOF;
 					( ( ! $is_admin ) &&
 					! wp_verify_nonce( $_REQUEST['_wpnonce'], 'gettrack_' . $query_string . "_p" . $post_id ) )
 				) {
-					header( 'HTTP/1.1 403 Forbidden' );
-					echo "Access denied (q=$query_string).\n";
-					die();
+					$this -> http_terminate( '403', "Access denied (q=$query_string)" );
 				}
 
 				// 'is_admin' is verified at this point. We use the current user's id as author, to make
@@ -2941,8 +2939,7 @@ EOF;
 					}
 				}
 				else {
-					header( 'HTTP/1.1 403 Forbidden' );
-					echo "Access denied.\n";
+					$this -> http_terminate();
 				}
 				die();
 			}
@@ -2985,9 +2982,7 @@ EOF;
 					( ( ! array_key_exists( 'admin', $_REQUEST ) ) &&
 					! wp_verify_nonce( $_REQUEST['_wpnonce'], 'gettrack_' . $track_id . "_p" . $post_id ) )
 				) {
-					header( 'HTTP/1.1 403 Forbidden' );
-					echo "Access denied (t=$track_id).\n";
-					die();
+					$this -> http_terminate( '403', "Access denied (t=$track_id)" );
 				}
 
 				if ( $track_id ) {
@@ -3553,7 +3548,7 @@ EOF;
 					}
 				}
 				echo "OK: $i queries executed";
-				wp_die();
+				die();
 			}
 
 			/**
