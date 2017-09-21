@@ -74,6 +74,8 @@ License: GPL2
 				'osmand_trackname_format' => 'OsmAnd %F %H',
 				'sendlocation_slug' => 'sendlocation',
 				'sendlocation_trackname_format' => 'SendLocation %F %H',
+				'owntracks_slug' => 'owntracks',
+				'owntracks_trackname_format' => 'Owntracks %F',
 				'upload_tag' => 'tsupload',
 				'gettrack_slug' => 'trackserver/gettrack',
 				'enable_proxy' => false,
@@ -1715,6 +1717,14 @@ EOF;
 					die();
 				}
 
+				$slug = $this -> options['owntracks_slug'];
+				$uri = $base_uri . "/" . $slug;
+
+				if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
+					$this -> handle_owntracks_request();
+					die();
+				}
+
 				$tag = $this -> options['upload_tag'];
 				$uri = $base_uri . "/" . $tag ;
 
@@ -2257,6 +2267,92 @@ EOF;
 				}
 
 				$this -> http_terminate( 400, 'Bad request' );
+			}
+
+			function handle_owntracks_request() {
+				global $wpdb;
+
+				$user_id = $this -> validate_http_basicauth();
+				$payload = file_get_contents('php://input');
+				$json = @json_decode($payload, true);
+
+				//Array
+				//(
+				//    [_type] => location
+				//    [tid] => te
+				//    [acc] => 21
+				//    [batt] => 24
+				//    [conn] => w
+				//    [lat] => 51.448285
+				//    [lon] => 5.4727492
+				//    [t] => u
+				//    [tst] => 1505766127
+				//)
+
+				//Array
+				//(
+				//    [_type] => waypoint
+				//    [desc] => Thuis
+				//    [lat] => 51.4481325
+				//    [lon] => 5.47281640625
+				//    [tst] => 1505766855
+				//)
+
+				if ( isset( $json['_type'] ) && $json['_type'] == 'location' ) {
+
+					// Largely copied from SendLocation handling
+					$ts = $json['tst'];
+					$offset = $this -> utc_to_local_offset( $ts );
+					$ts += $offset;
+					$occurred = date( 'Y-m-d H:i:s', $ts );
+
+					// Get track name from strftime format string
+					$trackname = strftime( $this -> options['owntracks_trackname_format'], $ts );
+
+					if ( $trackname != '' ) {
+						$track_id = $this -> get_track_by_name( $user_id, $trackname );
+
+						if ( $track_id == null ) {
+							$data = array( 'user_id' => $user_id, 'name' => $trackname, 'created' => $occurred, 'source' => 'OwnTracks' );
+							$format = array( '%d', '%s', '%s', '%s' );
+
+							if ( $wpdb -> insert( $this -> tbl_tracks, $data, $format ) ) {
+								$track_id = $wpdb -> insert_id;
+							}
+							else {
+								$this -> http_terminate( 501, 'Database error' );
+							}
+						}
+
+						$latitude = $json['lat'];
+						$longitude = $json['lon'];
+						$now = $occurred;
+
+						if ( $latitude != '' && $longitude != '' ) {
+							$data = array(
+								'trip_id' => $track_id,
+								'latitude' => $latitude,
+								'longitude' => $longitude,
+								'created' => $now,
+								'occurred' => $occurred,
+							);
+							$format = array( '%d', '%s', '%s', '%s', '%s' );
+
+							if ( $json['alt'] != '' ) {
+								$data['altitude'] = $json['alt'];
+								$format[] = '%s';
+							}
+
+							if ($wpdb -> insert( $this -> tbl_locations, $data, $format ) ) {
+								$this -> calculate_distance( $track_id );
+								$this -> http_terminate( 200, "[]" );
+							}
+							else {
+								$this -> http_terminate( 501, 'Database error' );
+							}
+						}
+					}
+				}
 			}
 
 			/**
