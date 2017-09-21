@@ -238,13 +238,22 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 = UNRELEASED =
 
-* In JavaScript, store track information from the server more reliably.
-* When a (live) track that is currently shown on the map is no longer present in the server response, show a nice popup, suggesting a page reload.
+Added:
+* A track editor in the WP admin, based on Leaflet.Editable.
+* A proxy for external KML and GPX tracks, to work around CORS restrictions.
+* 'maxage' shortcode parameter to impose time-based limit on live tracks.
+* Bulk action for downloading tracks as GPX.
+
+Changed:
 * Make the 'infobar' shortcode attribute accept a string, to override the template set in the user profile.
-* Implement a proxy for external KML and GPX tracks, to work around CORS restrictions.
 * Show a popup on the map with an internationalized message when there are not tracks to display.
-* Implement 'maxage' shortcode parameter to impose time-based limit on live tracks.
+* When a (live) track that is currently shown on the map is no longer present in the server response, show a nice popup, suggesting a page reload.
 * Limit the TrackMe 'gettriplist' command to the 25 latest tracks, serve them in reverse order.
+* Increase WP-admin 'View track' modal window size to 1024x768.
+
+Fixed:
+* In JavaScript, store track information from the server more reliably.
+* Improve HTTP responses around authentication failure.
 
 = v3.0.1 =
 Release date: 28 February 2017
