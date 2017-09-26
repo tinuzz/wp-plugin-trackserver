@@ -711,6 +711,9 @@ EOF;
 			function sendlocation_settings_html() {
 			}
 
+			function owntracks_settings_html() {
+			}
+
 			/**
 			 * Output HTML for the HTTP POST settings section.
 			 *
@@ -970,6 +973,45 @@ EOF;
 					esc_html__( 'hour', 'trackserver' ) );
 			}
 
+			function owntracks_slug_html() {
+				$val = htmlspecialchars( $this -> options['owntracks_slug'] );
+				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
+
+				$format = <<<EOF
+					%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
+					<input type="text" size="25" name="trackserver_options[owntracks_slug]" id="trackserver_owntracks_slug" value="$val" autocomplete="off" /><br /><br />
+					<strong>%2\$s:</strong> $url/$val/<br /><br />
+EOF;
+
+				printf( $format,
+					esc_html__( "The URL slug for OwnTracks, used in OwnTracks' settings", 'trackserver' ),
+					esc_html__( "Preferences -> Connection -> Host" )
+				 	);
+			}
+
+			function owntracks_trackname_format_html() {
+				$val = htmlspecialchars( str_replace( '%', '%%', $this -> options['owntracks_trackname_format'] ) );
+				$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
+
+				$format = <<<EOF
+					%1\$s<br /><br />
+					<input type="text" size="25" name="trackserver_options[owntracks_trackname_format]" id="trackserver_owntracks_trackname_format" value="$val" autocomplete="off" /><br />
+					%%Y = %2\$s, %%m = %3\$s, %%d = %4\$s, %%H = %5\$s, %%F = %%Y-%%m-%%d
+					<br />
+EOF;
+
+				printf( $format,
+					sprintf( esc_html__( 'Generated track name in %1$s format. OwnTracks online tracking does not support the concept of ' .
+					"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
+					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
+					"can be specified here.  If you specify a constant string, without any strftime() format placeholders, one " .
+					"and the same track will be used forever and all locations.", 'trackserver' ), $link ),
+					esc_html__( 'year', 'trackserver' ),
+					esc_html__( 'month', 'trackserver' ),
+					esc_html__( 'day', 'trackserver' ),
+					esc_html__( 'hour', 'trackserver' ) );
+			}
+
 			function upload_tag_html() {
 				$val = htmlspecialchars( $this -> options['upload_tag'] );
 				$url = htmlspecialchars( site_url( null ) . $this -> url_prefix );
@@ -1029,6 +1071,7 @@ EOF;
 				add_settings_section( 'trackserver-mapmytracks', esc_html__( 'OruxMaps MapMyTracks settings', 'trackserver' ), array( &$this, 'mapmytracks_settings_html' ), 'trackserver' );
 				add_settings_section( 'trackserver-osmand', esc_html__( 'OsmAnd online tracking settings', 'trackserver' ), array( &$this, 'osmand_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-sendlocation', esc_html__( 'SendLocation settings', 'trackserver' ), array( &$this, 'sendlocation_settings_html' ),  'trackserver' );
+				add_settings_section( 'trackserver-owntracks', esc_html__( 'OwnTracks settings', 'trackserver' ), array( &$this, 'owntracks_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-httppost', esc_html__( 'HTTP upload settings', 'trackserver' ), array( &$this, 'httppost_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-shortcode', esc_html__( 'Shortcode / map settings', 'trackserver' ), array( &$this, 'shortcode_settings_html' ),  'trackserver' );
 				add_settings_section( 'trackserver-advanced', esc_html__( 'Advanced settings', 'trackserver' ), array( &$this, 'advanced_settings_html' ),  'trackserver' );
@@ -1058,6 +1101,12 @@ EOF;
 						array( &$this, 'sendlocation_slug_html' ), 'trackserver', 'trackserver-sendlocation' );
 				add_settings_field( 'trackserver_sendlocation_trackname_format', esc_html__( 'SendLocation trackname format', 'trackserver' ),
 						array( &$this, 'sendlocation_trackname_format_html' ), 'trackserver', 'trackserver-sendlocation' );
+
+				// Settings for section 'trackserver-owntracks'
+				add_settings_field( 'trackserver_owntracks_slug', esc_html__( 'OwnTracks URL slug', 'trackserver' ),
+						array( &$this, 'owntracks_slug_html' ), 'trackserver', 'trackserver-owntracks' );
+				add_settings_field( 'trackserver_owntracks_trackname_format', esc_html__( 'OwnTracks trackname format', 'trackserver' ),
+						array( &$this, 'owntracks_trackname_format_html' ), 'trackserver', 'trackserver-owntracks' );
 
 				// Settings for section 'trackserver-httppost'
 				add_settings_field( 'trackserver_upload_tag', esc_html__( 'HTTP POST URL slug', 'trackserver' ),
