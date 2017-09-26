@@ -162,6 +162,8 @@ var TrackserverAdmin = (function () {
             return true;
         },
 
+        // This function is called from the click event of a submit-button. If it
+        // returns true, the form will be submitted
         handle_bulk_action: function (action) {
             if (action == 'delete') {
                 if (confirm(trackserver_admin_settings['msg']['areyousure'])) {
@@ -188,6 +190,33 @@ var TrackserverAdmin = (function () {
             }
             if (action == 'recalc' || action == 'dlgpx') {
                 return true;
+            }
+            if (action == 'view') {
+                var tracks = [];
+                var track_url = track_base_url + "admin=1";
+                var nonce =  false;
+                jQuery.each(this.checked, function() {
+                    var url = track_url + '&id=' + this.value;
+                    var row = jQuery(this).closest("tr");
+                    var tds = row.find("th,td");
+                    jQuery.each(tds, function() {
+
+                        // Extract the column name from the assigned CSS class
+                        col_arr = /(column-)?([^-\s]+)(-column)?/.exec(this.className);
+                        col = col_arr[2];
+
+                        switch (col) {
+                            case 'nonce':
+                                nonce = jQuery(this).text();
+                                url += "&_wpnonce="+nonce;
+                                break;
+                        }
+                    });
+                    tracks.push( { track_id: this.value, track_type: 'polylinexhr', markers: true, nonce: nonce, track_url: url });
+                });
+                trackserver_mapdata = [{"div_id":"tsadminmap","tracks":tracks,"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false}];
+                ts_tb_show('ts-view-modal', 'Track', 1024, 768);
+                return false;
             }
             return false;
         },

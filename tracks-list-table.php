@@ -89,6 +89,7 @@
 					'merge'  => esc_html__( 'Merge', 'trackserver' ),
 					'dlgpx'  => esc_html__( 'Download as GPX', 'trackserver' ),
 					'recalc' => esc_html__( 'Recalculate', 'trackserver' ),
+					'view'   => esc_html__( 'View', 'trackserver' ),
 				);
 				return $actions;
 			}
