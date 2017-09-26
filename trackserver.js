@@ -303,7 +303,10 @@ var Trackserver = (function () {
                     var num_ready = _this.get_mydata(div_id, 'all', 'num_ready');
                     num_ready++;
                     _this.set_mydata(div_id, 'all', 'num_ready', num_ready);
-                    _this.set_mydata(div_id, 'all', 'editables', editables);
+
+                    // Append to the 'editables' list
+                    var oldeditables = _this.get_mydata(div_id, 'all', 'editables');
+                    _this.set_mydata(div_id, 'all', 'editables', oldeditables.concat(editables));
 
                     if (do_markers && num_ready == mymapdata.tracks.length) {
                         var first_marker = _this.get_mydata(div_id, 'all', 'first_marker');
@@ -379,6 +382,7 @@ var Trackserver = (function () {
         draw_tracks: function (mymapdata) {
 
             this.set_mydata(mymapdata.div_id, 'all', 'num_ready', 0);
+            this.set_mydata(mymapdata.div_id, 'all', 'editables', []);
             var _this = this;
 
             if ( mymapdata.alltracks ) {
