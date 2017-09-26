@@ -3653,17 +3653,20 @@ EOF;
 				global $wpdb;
 
 				$_POST = stripslashes_deep( $_POST );
+
+				if ( ! isset( $_POST['t'], $_POST['modifications'] ) ) {
+					$this -> http_terminate('403', 'Missing parameter(s)');
+				}
+
+				check_ajax_referer( 'manage_track_' . $_POST['t'] );
+
 				$modifications = json_decode( $_POST['modifications'], true );
 				$i = 0;
 
 				if ( count( $modifications ) ) {
 					$track_ids = $this -> filter_current_user_tracks( array_keys( $modifications) );
 
-					if ( count( $track_ids ) ) {
-
-						// TODO: support editing multiple tracks by looping over $modifications
-						$track_id = $track_ids[0];
-						check_ajax_referer( 'manage_track_' . $track_id );
+					foreach ( $track_ids as $track_id ) {
 						$indexes = array_keys( $modifications[$track_id] );
 						$loc_ids = $this -> get_location_ids_by_index( $track_id, $indexes );
 						$sql = array();

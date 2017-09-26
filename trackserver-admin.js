@@ -322,7 +322,8 @@ var TrackserverAdmin = (function () {
                 var data = {
                     action: 'trackserver_save_track',
                     modifications: JSON.stringify(this.modified_locations),
-                    _wpnonce: trackserver_mapdata[0].tracks[0].nonce
+                    _wpnonce: trackserver_mapdata[0].tracks[0].nonce,
+                    t: trackserver_mapdata[0].tracks[0].track_id
                 }
 
                 var saving = L.popup()
