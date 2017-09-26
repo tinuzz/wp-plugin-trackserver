@@ -130,7 +130,7 @@ var TrackserverAdmin = (function () {
     return {
 
         modified_locations: {},
-        latlngs: false,  // list of latlngs that doesn't change when deleting a vertex
+        latlngs: {},  // object containing list of latlngs per track, that doesn't change when deleting a vertex
 
         init: function() {
             this.checked = false;
@@ -368,31 +368,30 @@ var TrackserverAdmin = (function () {
 
         clear_modified: function() {
             this.modified_locations = {}
-            this.latlngs = false;
+            this.latlngs = {};
         },
 
         // Clone the list of latlngs, because we need immutable indexes
-        init_latlngs: function(latlngs) {
-            this.latlngs = this.latlngs || latlngs.slice(0);
+        init_latlngs: function(track_id, latlngs) {
+            this.latlngs[track_id] = this.latlngs[track_id] || latlngs.slice(0);
         },
 
         // Get the original index of the vertex
         get_vertex_index: function(vertex) {
-            this.init_latlngs(vertex.latlngs);
-            return this.latlngs.indexOf(vertex.latlng);
+            var track_id = vertex.editor.feature.options.track_id;
+            this.init_latlngs(track_id, vertex.latlngs);
+            return this.latlngs[track_id].indexOf(vertex.latlng);
         },
 
         delete_vertex: function(vertex) {
-            var layer = vertex.editor.feature;
-            var track_id = layer.options.track_id;
+            var track_id = vertex.editor.feature.options.track_id;
             var vertex_index = this.get_vertex_index(vertex);
             vertex.delete();
             this.location_delete(track_id, vertex_index);
         },
 
         move_vertex: function(vertex) {
-            var layer = vertex.editor.feature;
-            var track_id = layer.options.track_id;
+            var track_id = vertex.editor.feature.options.track_id;
             var vertex_index = this.get_vertex_index(vertex);
             this.location_move(track_id, vertex_index, vertex.latlng);
         },
