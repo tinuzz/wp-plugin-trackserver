@@ -242,7 +242,9 @@ Added:
 * A track editor in the WP admin, based on Leaflet.Editable.
 * A proxy for external KML and GPX tracks, to work around CORS restrictions.
 * 'maxage' shortcode parameter to impose time-based limit on live tracks.
+* OwnTracks HTTP support, locations request handling only for now.
 * Bulk action for downloading tracks as GPX.
+* Bulk action for viewing multiple tracks at once in the admin. Editing them also works.
 
 Changed:
 * Make the 'infobar' shortcode attribute accept a string, to override the template set in the user profile.
@@ -254,6 +256,7 @@ Changed:
 Fixed:
 * In JavaScript, store track information from the server more reliably.
 * Improve HTTP responses around authentication failure.
+* Recalculate the total track distance after merging multiple tracks
 
 = v3.0.1 =
 Release date: 28 February 2017
