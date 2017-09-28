@@ -2,18 +2,18 @@
 class Tracks_List_Table extends WP_List_Table {
 
 	private $options;
-	private $usercache = Array();
+	private $usercache = array();
 
 	function __construct( $options ) {
 			global $status, $page;
 
 			$this -> options = $options;
 
-			//Set parent defaults
+			// Set parent defaults
 			parent::__construct( array(
-				'singular' => 'track',    //singular name of the listed records
-				'plural'   => 'tracks',   //plural name of the listed records
-				'ajax'     => false       //does this table support ajax?
+				'singular' => 'track',    // singular name of the listed records
+				'plural'   => 'tracks',   // plural name of the listed records
+				'ajax'     => false,       // does this table support ajax?
 			) );
 	}
 
@@ -21,15 +21,12 @@ class Tracks_List_Table extends WP_List_Table {
 		if ( $column_name == 'edit' ) {
 			return ' <a href="#TB_inline?width=&inlineId=ts-edit-modal" title="' . esc_attr__( 'Edit track properties', 'trackserver' ) .
 				'" class="thickbox" data-id="' . $item['id'] . '" data-action="edit">' . esc_html__( 'Edit', 'trackserver' ) . '</a>';
-		}
-		elseif ( $column_name == 'view' ) {
+		} elseif ( $column_name == 'view' ) {
 			return ' <a href="#TB_inline?width=&inlineId=ts-view-modal" title="' . htmlspecialchars( $item['name'] ) .
 				'" class="thickbox" data-id="' . $item['id'] . '" data-action="view">' . esc_html__( 'View', 'trackserver' ) . '</a>';
-		}
-		elseif ( $column_name == 'nonce' ) {
+		} elseif ( $column_name == 'nonce' ) {
 			return wp_create_nonce( 'manage_track_' . $item['id'] );
-		}
-		elseif ( $column_name == 'user_id' ) {
+		} elseif ( $column_name == 'user_id' ) {
 			if ( ! isset( $this -> usercache[ $item['user_id'] ] ) ) {
 				$user = get_userdata( $item['user_id'] );
 				$u = new stdClass();
@@ -38,24 +35,23 @@ class Tracks_List_Table extends WP_List_Table {
 				$this -> usercache[ $item['user_id'] ] = $u;
 			}
 			return $this -> usercache[ $item['user_id'] ] -> user_login;
-		}
-		else {
+		} else {
 			return htmlspecialchars( $item[ $column_name ] );
 		}
-		return print_r( $item, true );    //Show the whole array for troubleshooting purposes
+		return print_r( $item, true );    // Show the whole array for troubleshooting purposes
 	}
 
 	function column_cb( $item ) {
 		return sprintf(
 			'<input type="checkbox" name="%1$s[]" value="%2$s" />',
-			/*$1%s*/ $this -> _args['singular'],  //Let's simply repurpose the table's singular label ("movie")
-			/*$2%s*/ $item['id']                  //The value of the checkbox should be the record's id
+			/*$1%s*/ $this -> _args['singular'],  // Let's simply repurpose the table's singular label ("movie")
+			/*$2%s*/ $item['id']                  // The value of the checkbox should be the record's id
 		);
 	}
 
 	function get_columns() {
 		$columns = array(
-			'cb'        => '<input type="checkbox" />', //Render a checkbox instead of text
+			'cb'        => '<input type="checkbox" />', // Render a checkbox instead of text
 			'id'        => esc_html__( 'ID', 'trackserver' ),
 			'user_id'   => esc_html__( 'User', 'trackserver' ),
 			'name'      => esc_html__( 'Name', 'trackserver' ),
@@ -75,11 +71,11 @@ class Tracks_List_Table extends WP_List_Table {
 	function get_sortable_columns() {
 		return array(
 			'id'     => array( 'id', false ),
-			'user_id'=> array( 'user_id', false ),
+			'user_id' => array( 'user_id', false ),
 			'name'   => array( 'name', false ),
 			'tstart' => array( 'tstart', false ),
 			'tend'   => array( 'tend', false ),
-			'source' => array( 'source', false )
+			'source' => array( 'source', false ),
 		);
 	}
 
@@ -106,8 +102,8 @@ class Tracks_List_Table extends WP_List_Table {
 		global $wpdb;
 
 		$sql = "SELECT DISTINCT t.user_id, COALESCE(u.user_login, CONCAT('unknown UID ', t.user_id)) AS user_login FROM " .
-			$this -> options['tbl_tracks'] . " t LEFT JOIN " .
-			$wpdb -> users . " u  ON t.user_id = u.ID ORDER BY user_login";
+			$this -> options['tbl_tracks'] . ' t LEFT JOIN ' .
+			$wpdb -> users . ' u  ON t.user_id = u.ID ORDER BY user_login';
 		$this -> usercache = $wpdb -> get_results( $sql, OBJECT_K );
 
 		$view = $this -> options['view'];
@@ -120,9 +116,11 @@ class Tracks_List_Table extends WP_List_Table {
 		if ( current_user_can( 'trackserver_admin' ) ) {
 			echo '<select name="' . $author_select_name . '" id="' . $author_select_id . '" class="postform">';
 			echo '<option value="0">All users</option>';
-			foreach ($this -> usercache as $u) {
+			foreach ( $this -> usercache as $u ) {
 				echo '<option class="level-0" value="' . $u -> user_id . '"';
-				if ( $u -> user_id == $view ) echo " selected";
+				if ( $u -> user_id == $view ) {
+					echo ' selected';
+				}
 				echo '>' . htmlspecialchars( $u -> user_login ) . '</option>';
 			}
 			echo '</select>';
@@ -138,7 +136,7 @@ class Tracks_List_Table extends WP_List_Table {
 		$hidden   = array( 'nonce' );
 		$sortable = $this -> get_sortable_columns();
 
-		# This should be prettier
+		// This should be prettier
 		$orderby = 'tstart';
 		if ( ! empty( $_REQUEST['orderby'] ) &&
 			in_array( $_REQUEST['orderby'], array( 'id', 'user_id', 'name', 'tstart', 'tend', 'source' ) ) ) {
@@ -158,8 +156,7 @@ class Tracks_List_Table extends WP_List_Table {
 		if ( current_user_can( 'trackserver_admin' ) ) {
 			if ( (int) $this -> options['view'] == 0 ) {
 				$where = 1;
-			}
-			else {
+			} else {
 				$where = "user_id='" . $this -> options['view'] . "'";
 			}
 		}
@@ -167,7 +164,7 @@ class Tracks_List_Table extends WP_List_Table {
 		$this -> _column_headers = array( $columns, $hidden, $sortable );
 
 		$sql = 'SELECT t.id, t.name, t.source, t.comment, user_id, min(l.occurred) as tstart, max(l.occurred) ' .
-			'as tend, count(l.occurred) as numpoints, t.distance FROM '.
+			'as tend, count(l.occurred) as numpoints, t.distance FROM ' .
 			$this -> options['tbl_tracks'] . ' t LEFT JOIN ' . $this -> options['tbl_locations'] .
 			" l ON l.trip_id = t.id WHERE $where GROUP BY t.id ORDER BY $orderby $order LIMIT $offset,$limit";
 		$data = $wpdb -> get_results( $sql, ARRAY_A );
@@ -178,7 +175,7 @@ class Tracks_List_Table extends WP_List_Table {
 		 * without filtering. We'll need this later, so you should always include it
 		 * in your own package classes.
 		 */
-		$sql = "SELECT count(id) FROM " . $this -> options['tbl_tracks'] . " WHERE $where";
+		$sql = 'SELECT count(id) FROM ' . $this -> options['tbl_tracks'] . " WHERE $where";
 		$total_items = $wpdb -> get_var( $sql );
 
 		/*
@@ -193,7 +190,7 @@ class Tracks_List_Table extends WP_List_Table {
 		$this -> set_pagination_args( array(
 			'total_items' => $total_items,                  // WE have to calculate the total number of items
 			'per_page'    => $per_page,                     // WE have to determine how many items to show on a page
-			'total_pages' => ceil($total_items/$per_page)   // WE have to calculate the total number of pages
+			'total_pages' => ceil( $total_items / $per_page ),   // WE have to calculate the total number of pages
 		) );
 
 	}
