@@ -58,7 +58,7 @@ class Polyline {
 	private static $instance;
 
 	public function __construct() {
-	  // Overloading bug #11
+		// Overloading bug #11
 	}
 
 	/**
