@@ -27,7 +27,6 @@
  */
 
 // @NAMESPACE@ namespace emcconville {
-
 class Polyline {
 	/**
 	 * @var array $polylines
@@ -70,7 +69,7 @@ class Polyline {
 	 * @ignore
 	 */
 	public static function Singleton() {
-		trigger_error('Polyline::Singleton deprecated.', E_USER_DEPRECATED);
+		trigger_error( 'Polyline::Singleton deprecated.', E_USER_DEPRECATED );
 		return self::$instance instanceof self ? self::$instance : self::$instance = new self;
 	}
 
@@ -86,16 +85,16 @@ class Polyline {
 	 * @codeCoverageIgnore
 	 * @ignore
 	 */
-	public function __call($method,$arguments) {
-		trigger_error('Polyline::__call('.$method.') deprecated.', E_USER_DEPRECATED);
+	public function __call( $method, $arguments ) {
+		trigger_error( 'Polyline::__call(' . $method . ') deprecated.', E_USER_DEPRECATED );
 		$return = null;
-		if (preg_match('/^get(.+?)(points|encoded)$/i', $method, $matches)) {
+		if ( preg_match( '/^get(.+?)(points|encoded)$/i', $method, $matches ) ) {
 			list($all,$node,$type) = $matches;
-			return $this->getPolyline(strtolower($node), strtolower($type));
-		} elseif (preg_match('/^get(points|encoded)$/i', $method, $matches)) {
+			return $this->getPolyline( strtolower( $node ), strtolower( $type ) );
+		} elseif ( preg_match( '/^get(points|encoded)$/i', $method, $matches ) ) {
 			list($all,$type) = $matches;
-			$node = array_shift($arguments);
-			return $this->getPolyline(strtolower($node), strtolower($type));
+			$node = array_shift( $arguments );
+			return $this->getPolyline( strtolower( $node ), strtolower( $type ) );
 		} else {
 			throw new BadMethodCallException();
 		}
@@ -104,6 +103,7 @@ class Polyline {
 
 	/**
 	 * Polyline getter
+	 *
 	 * @param string $node
 	 * @param string $type
 	 * @return mixed
@@ -111,13 +111,13 @@ class Polyline {
 	 * @codeCoverageIgnore
 	 * @ignore
 	 */
-	public function getPolyline($node, $type) {
-		trigger_error('Polyline::getPolyline deprecated.', E_USER_DEPRECATED);
-		$node = strtolower($node);
-		$type = in_array($type, array('points','encoded')) ? $type : 'encoded';
-		return isset($this->polylines[$node])
-					? $this->polylines[$node][$type]
-					: ($type =='points' ? array() : null);
+	public function getPolyline( $node, $type ) {
+		trigger_error( 'Polyline::getPolyline deprecated.', E_USER_DEPRECATED );
+		$node = strtolower( $node );
+		$type = in_array( $type, array( 'points', 'encoded' ) ) ? $type : 'encoded';
+		return isset( $this->polylines[ $node ] )
+					? $this->polylines[ $node ][ $type ]
+					: ($type == 'points' ? array() : null);
 	}
 
 	/**
@@ -131,24 +131,27 @@ class Polyline {
 	 * @ignore
 	 */
 	public function polyline() {
-		trigger_error('Polyline::polyline deprecated.', E_USER_DEPRECATED);
+		trigger_error( 'Polyline::polyline deprecated.', E_USER_DEPRECATED );
 		$arguments = func_get_args();
 		$return = null;
-		switch (count($arguments)) {
+		switch ( count( $arguments ) ) {
 			case 2:
 				list($node,$value) = $arguments;
-				$isArray = is_array($value);
-				$return = $this->polylines[strtolower($node)] = array(
-						'points'  => $isArray ? self::Flatten($value) : self::Decode($value),
-						'encoded' => $isArray ? self::Encode($value) : $value
-					);
-				$return = $return[$isArray ? 'encoded' : 'points' ];
+				$isArray = is_array( $value );
+				$return = $this->polylines[ strtolower( $node ) ] = array(
+					'points'  => $isArray ? self::Flatten( $value ) : self::Decode( $value ),
+					'encoded' => $isArray ? self::Encode( $value ) : $value,
+				);
+				$return = $return[ $isArray ? 'encoded' : 'points' ];
 				break;
 			case 1:
-				$node = strtolower((string)array_shift($arguments));
-				$return = isset($this->polylines[$node])
-						? $this->polylines[$node]
-						: array( 'points' => null, 'encoded' => null );
+				$node = strtolower( (string) array_shift( $arguments ) );
+				$return = isset( $this->polylines[ $node ] )
+						? $this->polylines[ $node ]
+						: array(
+							'points' => null,
+							'encoded' => null,
+						);
 				break;
 		}
 		return $return;
@@ -163,36 +166,36 @@ class Polyline {
 	 * @ignore
 	 */
 	public function listPolylines() {
-		trigger_error('Polyline::listPolylines deprecated.', E_USER_DEPRECATED);
-		return $return = array_keys($this->polylines);
+		trigger_error( 'Polyline::listPolylines deprecated.', E_USER_DEPRECATED );
+		return $return = array_keys( $this->polylines );
 	}
 
 	/**
 	 * Apply Google Polyline algorithm to list of points
 	 *
-	 * @param array $points
+	 * @param array   $points
 	 * @param integer $precision optional
 	 * @return string encoded string
 	 */
-	final public static function Encode($points) {
-		$points = self::Flatten($points);
+	final public static function Encode( $points ) {
+		$points = self::Flatten( $points );
 		$encodedString = '';
 		$index = 0;
-		$previous = array(0,0);
-		foreach ($points as $number) {
-			$number = (float)($number);
-			$number = (int)round($number * pow(10, static::$precision));
-			$diff = $number - $previous[$index % 2];
-			$previous[$index % 2] = $number;
+		$previous = array( 0, 0 );
+		foreach ( $points as $number ) {
+			$number = (float) ($number);
+			$number = (int) round( $number * pow( 10, static::$precision ) );
+			$diff = $number - $previous[ $index % 2 ];
+			$previous[ $index % 2 ] = $number;
 			$number = $diff;
 			$index++;
 			$number = ($number < 0) ? ~($number << 1) : ($number << 1);
 			$chunk = '';
-			while ($number >= 0x20) {
-				$chunk .= chr((0x20 | ($number & 0x1f)) + 63);
+			while ( $number >= 0x20 ) {
+				$chunk .= chr( (0x20 | ($number & 0x1f)) + 63 );
 				$number >>= 5;
 			}
-			$chunk .= chr($number + 63);
+			$chunk .= chr( $number + 63 );
 			$encodedString .= $chunk;
 		}
 		return $encodedString;
@@ -201,27 +204,27 @@ class Polyline {
 	/**
 	 * Reverse Google Polyline algorithm on encoded string
 	 *
-	 * @param string $string
+	 * @param string  $string
 	 * @param integer $precision optional
 	 * @return array points
 	 */
-	final public static function Decode($string) {
+	final public static function Decode( $string ) {
 		$points = array();
 		$index = $i = 0;
-		$previous = array(0,0);
-		while ($i < strlen($string)) {
+		$previous = array( 0, 0 );
+		while ( $i < strlen( $string ) ) {
 			$shift = $result = 0x00;
 			do {
-				$bit = ord(substr($string, $i++)) - 63;
+				$bit = ord( substr( $string, $i++ ) ) - 63;
 				$result |= ($bit & 0x1f) << $shift;
 				$shift += 5;
-			} while ($bit >= 0x20);
+			} while ( $bit >= 0x20 );
 
 			$diff = ($result & 1) ? ~($result >> 1) : ($result >> 1);
-			$number = $previous[$index % 2] + $diff;
-			$previous[$index % 2] = $number;
+			$number = $previous[ $index % 2 ] + $diff;
+			$previous[ $index % 2 ] = $number;
 			$index++;
-			$points[] = $number * 1 / pow(10, static::$precision);
+			$points[] = $number * 1 / pow( 10, static::$precision );
 		}
 		return $points;
 	}
@@ -232,11 +235,11 @@ class Polyline {
 	 * @param array $array
 	 * @return array flattened
 	 */
-	final public static function Flatten($array) {
+	final public static function Flatten( $array ) {
 		$flatten = array();
 		array_walk_recursive(
 			$array, // @codeCoverageIgnore
-			function ($current) use (&$flatten) {
+			function ( $current ) use ( &$flatten ) {
 				$flatten[] = $current;
 			}
 		);
@@ -249,17 +252,17 @@ class Polyline {
 	 * @param array $list
 	 * @return array pairs
 	 */
-	final public static function Pair($list) {
+	final public static function Pair( $list ) {
 		$pairs = array();
-		if (!is_array($list)) {
+		if ( ! is_array( $list ) ) {
 			return $pairs;
 		}
 		do {
 			$pairs[] = array(
-					array_shift($list),
-					array_shift($list)
-				);
-		} while (!empty($list));
+				array_shift( $list ),
+				array_shift( $list ),
+			);
+		} while ( ! empty( $list ) );
 		return $pairs;
 	}
 }
