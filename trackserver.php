@@ -3099,9 +3099,6 @@ EOF;
 		 */
 		function handle_gettrack() {
 
-			// Include polyline encoder
-			require_once TRACKSERVER_PLUGIN_DIR . 'Polyline.php';
-
 			global $wpdb;
 
 			$post_id = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : null );
@@ -3174,16 +3171,24 @@ EOF;
 		 * @since 2.2
 		 */
 		function send_as_polyline( $res ) {
+
+			// Include polyline encoder
+			require_once TRACKSERVER_PLUGIN_DIR . 'class-polyline.php';
+
 			$points = array();
 			foreach ( $res as $row ) {
 				$points[] = array( $row['latitude'], $row['longitude'] );
 			}
-			$encoded = Polyline::Encode( $points );
+			$encoded = Polyline::encode( $points );
 			$metadata = $this -> get_metadata( $row );
 			$this -> send_as_json( $encoded, $metadata );
 		}
 
 		function send_alltracks( $res, $extra_metadata ) {
+
+			// Include polyline encoder
+			require_once TRACKSERVER_PLUGIN_DIR . 'class-polyline.php';
+
 			$tracks = array();
 			foreach ( $res as $row ) {
 				$id = $row['trip_id'];
@@ -3195,7 +3200,7 @@ EOF;
 			}
 			// Convert points to Polyline
 			foreach ( $tracks as $id => $values ) {
-				$tracks[$id]['track'] = Polyline::Encode( $values['points'] );
+				$tracks[$id]['track'] = Polyline::encode( $values['points'] );
 				unset( $tracks[$id]['points'] );
 			}
 			header( 'Content-Type: application/json' );

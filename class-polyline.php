@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Polyline
  *
@@ -67,7 +66,7 @@ class Polyline {
 	 */
 	final public static function encode( $points ) {
 		$points = self::flatten( $points );
-		$encodedString = '';
+		$encoded_string = '';
 		$index = 0;
 		$previous = array( 0, 0 );
 		foreach ( $points as $number ) {
@@ -84,9 +83,9 @@ class Polyline {
 				$number >>= 5;
 			}
 			$chunk .= chr( $number + 63 );
-			$encodedString .= $chunk;
+			$encoded_string .= $chunk;
 		}
-		return $encodedString;
+		return $encoded_string;
 	}
 
 	/**
@@ -98,10 +97,12 @@ class Polyline {
 	 */
 	final public static function decode( $string ) {
 		$points = array();
-		$index = $i = 0;
+		$index = 0;
+		$i = 0;
 		$previous = array( 0, 0 );
 		while ( $i < strlen( $string ) ) {
-			$shift = $result = 0x00;
+			$shift = 0x00;
+			$result = 0x00;
 			do {
 				$bit = ord( substr( $string, $i++ ) ) - 63;
 				$result |= ($bit & 0x1f) << $shift;
