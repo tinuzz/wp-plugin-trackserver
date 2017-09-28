@@ -28,8 +28,7 @@
 
 // @NAMESPACE@ namespace emcconville {
 
-class Polyline
-{
+class Polyline {
 	/**
 	 * @var array $polylines
 	 * @deprecated
@@ -58,8 +57,7 @@ class Polyline
 	 */
 	private static $instance;
 
-	public function __construct()
-	{
+	public function __construct() {
 	  // Overloading bug #11
 	}
 
@@ -71,8 +69,7 @@ class Polyline
 	 * @codeCoverageIgnore
 	 * @ignore
 	 */
-	public static function Singleton()
-	{
+	public static function Singleton() {
 		trigger_error('Polyline::Singleton deprecated.', E_USER_DEPRECATED);
 		return self::$instance instanceof self ? self::$instance : self::$instance = new self;
 	}
@@ -89,8 +86,7 @@ class Polyline
 	 * @codeCoverageIgnore
 	 * @ignore
 	 */
-	public function __call($method,$arguments)
-	{
+	public function __call($method,$arguments) {
 		trigger_error('Polyline::__call('.$method.') deprecated.', E_USER_DEPRECATED);
 		$return = null;
 		if (preg_match('/^get(.+?)(points|encoded)$/i', $method, $matches)) {
@@ -115,8 +111,7 @@ class Polyline
 	 * @codeCoverageIgnore
 	 * @ignore
 	 */
-	public function getPolyline($node, $type)
-	{
+	public function getPolyline($node, $type) {
 		trigger_error('Polyline::getPolyline deprecated.', E_USER_DEPRECATED);
 		$node = strtolower($node);
 		$type = in_array($type, array('points','encoded')) ? $type : 'encoded';
@@ -135,8 +130,7 @@ class Polyline
 	 * @codeCoverageIgnore
 	 * @ignore
 	 */
-	public function polyline()
-	{
+	public function polyline() {
 		trigger_error('Polyline::polyline deprecated.', E_USER_DEPRECATED);
 		$arguments = func_get_args();
 		$return = null;
@@ -168,8 +162,7 @@ class Polyline
 	 * @codeCoverageIgnore
 	 * @ignore
 	 */
-	public function listPolylines()
-	{
+	public function listPolylines() {
 		trigger_error('Polyline::listPolylines deprecated.', E_USER_DEPRECATED);
 		return $return = array_keys($this->polylines);
 	}
@@ -181,8 +174,7 @@ class Polyline
 	 * @param integer $precision optional
 	 * @return string encoded string
 	 */
-	final public static function Encode($points)
-	{
+	final public static function Encode($points) {
 		$points = self::Flatten($points);
 		$encodedString = '';
 		$index = 0;
@@ -213,8 +205,7 @@ class Polyline
 	 * @param integer $precision optional
 	 * @return array points
 	 */
-	final public static function Decode($string)
-	{
+	final public static function Decode($string) {
 		$points = array();
 		$index = $i = 0;
 		$previous = array(0,0);
@@ -241,8 +232,7 @@ class Polyline
 	 * @param array $array
 	 * @return array flattened
 	 */
-	final public static function Flatten($array)
-	{
+	final public static function Flatten($array) {
 		$flatten = array();
 		array_walk_recursive(
 			$array, // @codeCoverageIgnore
@@ -259,8 +249,7 @@ class Polyline
 	 * @param array $list
 	 * @return array pairs
 	 */
-	final public static function Pair($list)
-	{
+	final public static function Pair($list) {
 		$pairs = array();
 		if (!is_array($list)) {
 			return $pairs;
