@@ -35,7 +35,7 @@ License: GPL2
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	die( "No, sorry." );
+	die( 'No, sorry.' );
 }
 
 if ( ! class_exists( 'Trackserver' ) ) {
@@ -83,11 +83,11 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			'tripnames_format' => '%F %T',
 			'tile_url' => 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 			'attribution' => '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-			'db_version' => false
+			'db_version' => false,
 		);
 
 		var $user_meta_defaults = array(
-			'ts_infobar_template' => '{displayname} - {lat},{lon} - {timestamp}'
+			'ts_infobar_template' => '{displayname} - {lat},{lon} - {timestamp}',
 		);
 
 		var $shortcode  = 'tsmap';
@@ -100,10 +100,10 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.0
 		 */
-		function __construct () {
+		function __construct() {
 			global $wpdb;
-			$this -> tbl_tracks = $wpdb->prefix . "ts_tracks";
-			$this -> tbl_locations = $wpdb->prefix . "ts_locations";
+			$this -> tbl_tracks = $wpdb->prefix . 'ts_tracks';
+			$this -> tbl_locations = $wpdb->prefix . 'ts_locations';
 			$this -> init_options();
 			$this -> user_meta_defaults['ts_trackme_key'] = substr( md5( uniqid() ), -8 );
 			$this -> user_meta_defaults['ts_osmand_key'] = substr( md5( uniqid() ), -8 );
@@ -130,7 +130,9 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		function init_options() {
 			$options = get_option( 'trackserver_options' );
-			if ( ! $options ) $options = array();
+			if ( ! $options ) {
+				$options = array();
+			}
 			$this -> options = array_merge( $this -> option_defaults, $options );
 			update_option( 'trackserver_options', $this -> options );
 
@@ -147,8 +149,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			if ( true === WP_DEBUG ) {
 				if ( is_array( $log ) || is_object( $log ) ) {
 					error_log( print_r( $log, true ) );
-				}
-				else {
+				} else {
 					error_log( $log );
 				}
 			}
@@ -164,7 +165,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			// Set default profile values for the currently logged-in user
 			if ( current_user_can( 'use_trackserver' ) ) {
 				$user_id = get_current_user_id();
-				foreach ($this -> user_meta_defaults as $key => $value ) {
+				foreach ( $this -> user_meta_defaults as $key => $value ) {
 					if ( get_user_meta( $user_id, $key, true ) == '' ) {
 						update_user_meta( $user_id, $key, $value );
 					}
@@ -316,11 +317,11 @@ EOF;
 
 			// To be localized in wp_footer() with data from the shortcode(s). Enqueued last, in wp_enqueue_scripts.
 			// Also localized and enqueued in admin_enqueue_scripts
-			wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL .'trackserver.js', array(), TRACKSERVER_VERSION, true );
+			wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.js', array(), TRACKSERVER_VERSION, true );
 
 			$settings = array(
-					'tile_url' => $this -> options['tile_url'],
-					'attribution' => $this -> options['attribution'],
+				'tile_url' => $this -> options['tile_url'],
+				'attribution' => $this -> options['attribution'],
 			);
 			wp_localize_script( 'trackserver', 'trackserver_settings', $settings );
 
@@ -341,10 +342,10 @@ EOF;
 				$this -> load_common_scripts();
 
 				// Live-update only on the front-end, not in admin
-				wp_enqueue_style( 'leaflet-messagebox', TRACKSERVER_JSLIB .'leaflet-messagebox-1.0/leaflet-messagebox.css' );
-				wp_enqueue_script( 'leaflet-messagebox', TRACKSERVER_JSLIB .'leaflet-messagebox-1.0/leaflet-messagebox.js', array(), false, true );
-				wp_enqueue_style( 'leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.1/leaflet-liveupdate.css' );
-				wp_enqueue_script( 'leaflet-liveupdate', TRACKSERVER_JSLIB .'leaflet-liveupdate-1.1/leaflet-liveupdate.js', array(), false, true );
+				wp_enqueue_style( 'leaflet-messagebox', TRACKSERVER_JSLIB . 'leaflet-messagebox-1.0/leaflet-messagebox.css' );
+				wp_enqueue_script( 'leaflet-messagebox', TRACKSERVER_JSLIB . 'leaflet-messagebox-1.0/leaflet-messagebox.js', array(), false, true );
+				wp_enqueue_style( 'leaflet-liveupdate', TRACKSERVER_JSLIB . 'leaflet-liveupdate-1.1/leaflet-liveupdate.css' );
+				wp_enqueue_script( 'leaflet-liveupdate', TRACKSERVER_JSLIB . 'leaflet-liveupdate-1.1/leaflet-liveupdate.js', array(), false, true );
 
 				// Enqueue the main script last
 				wp_enqueue_script( 'trackserver' );
@@ -366,11 +367,10 @@ EOF;
 
 			switch ( $hook ) {
 				case 'trackserver_page_trackserver-tracks':
-
 					$this -> load_common_scripts();
 
 					// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
-					$track_base_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . "/?", ( is_ssl()  ? 'https' : 'http' ) );
+					$track_base_url = get_home_url( null, $this -> url_prefix . '/' . $this -> options['gettrack_slug'] . '/?', ( is_ssl() ? 'https' : 'http' ) );
 					wp_localize_script( 'trackserver', 'track_base_url', $track_base_url );
 
 					// Enqueue the main script last
@@ -380,7 +380,6 @@ EOF;
 					// The options page only has 'trackserver-admin.js'.
 
 				case 'toplevel_page_trackserver-options':
-
 					$settings = array(
 						'msg' => array(
 							'areyousure'     => __( 'Are you sure?', 'trackserver' ),
@@ -412,7 +411,7 @@ EOF;
 					wp_enqueue_script( 'leaflet-editable', TRACKSERVER_JSLIB . 'leaflet-editable-1.1.0/Leaflet.Editable.min.js', array(), false, true );
 
 					// Enqueue the admin js (Thickbox overrides) in the footer
-					wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL .'trackserver-admin.js', array( 'thickbox' ), TRACKSERVER_VERSION, true );
+					wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox' ), TRACKSERVER_VERSION, true );
 					wp_localize_script( 'trackserver-admin', 'trackserver_admin_settings', $settings );
 					wp_enqueue_script( 'trackserver-admin' );
 					break;
@@ -427,7 +426,7 @@ EOF;
 
 			if ( ! $this -> options['db_version'] ) {
 
-				$sql = "CREATE TABLE IF NOT EXISTS " . $this -> tbl_locations . " (
+				$sql = 'CREATE TABLE IF NOT EXISTS ' . $this -> tbl_locations . " (
 					`id` int(11) NOT NULL AUTO_INCREMENT,
 					`trip_id` int(11) NOT NULL,
 					`latitude` double NOT NULL,
@@ -446,7 +445,7 @@ EOF;
 
 				$wpdb->query( $sql );
 
-				$sql = "CREATE TABLE IF NOT EXISTS " . $this -> tbl_tracks . " (
+				$sql = 'CREATE TABLE IF NOT EXISTS ' . $this -> tbl_tracks . " (
 					`id` int(11) NOT NULL AUTO_INCREMENT,
 					`user_id` int(11) NOT NULL,
 					`name` varchar(255) NOT NULL,
@@ -472,8 +471,8 @@ EOF;
 		 */
 		function set_table_refs() {
 			global $wpdb;
-			$this -> tbl_tracks = $wpdb->prefix . "ts_tracks";
-			$this -> tbl_locations = $wpdb->prefix . "ts_locations";
+			$this -> tbl_tracks = $wpdb->prefix . 'ts_tracks';
+			$this -> tbl_locations = $wpdb->prefix . 'ts_locations';
 		}
 
 		/**
@@ -520,7 +519,7 @@ EOF;
 		 *
 		 * @since 3.0
 		 */
-		function wpmu_new_blog( $blog_id) {
+		function wpmu_new_blog( $blog_id ) {
 			if ( is_plugin_active_for_network( 'trackserver/trackserver.php' ) ) {
 				$this->switch_to_blog( $blog_id );
 				$this->init_options();
@@ -565,24 +564,24 @@ EOF;
 				// Upgrade table if necessary. Add upgrade SQL statements here, and
 				// update $db_version at the top of the file
 				$upgrade_sql = array();
-				$upgrade_sql[5] = "ALTER TABLE " . $this -> tbl_tracks . " CHANGE `created` `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP";
-				$upgrade_sql[6] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `created` TIMESTAMP NOT NULL AFTER `updated`";
-				$upgrade_sql[7] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `source` VARCHAR( 255 ) NOT NULL AFTER `created`";
-				$upgrade_sql[8] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `distance` INT( 11 ) NOT NULL AFTER `comment`";
-				$upgrade_sql[9] = "ALTER TABLE " . $this -> tbl_tracks . " ADD INDEX ( `user_id` )";
-				$upgrade_sql[10] = "ALTER TABLE " . $this -> tbl_locations . " ADD INDEX ( `trip_id` )";
-				$upgrade_sql[11] = "ALTER TABLE " . $this -> tbl_locations . " ADD INDEX ( `occurred` )";
+				$upgrade_sql[5] = 'ALTER TABLE ' . $this -> tbl_tracks . ' CHANGE `created` `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP';
+				$upgrade_sql[6] = 'ALTER TABLE ' . $this -> tbl_tracks . ' ADD `created` TIMESTAMP NOT NULL AFTER `updated`';
+				$upgrade_sql[7] = 'ALTER TABLE ' . $this -> tbl_tracks . ' ADD `source` VARCHAR( 255 ) NOT NULL AFTER `created`';
+				$upgrade_sql[8] = 'ALTER TABLE ' . $this -> tbl_tracks . ' ADD `distance` INT( 11 ) NOT NULL AFTER `comment`';
+				$upgrade_sql[9] = 'ALTER TABLE ' . $this -> tbl_tracks . ' ADD INDEX ( `user_id` )';
+				$upgrade_sql[10] = 'ALTER TABLE ' . $this -> tbl_locations . ' ADD INDEX ( `trip_id` )';
+				$upgrade_sql[11] = 'ALTER TABLE ' . $this -> tbl_locations . ' ADD INDEX ( `occurred` )';
 
 				// Fix the 'update'/'updated' mess in the tracks table
 				if ( in_array( 'update', $colnames ) ) {
 					$upgrade_sql[13] = 'ALTER TABLE ' . $this -> tbl_tracks . ' DROP `update`';
 				}
 				if ( ! in_array( 'updated', $colnames ) ) {
-					$upgrade_sql[14] = "ALTER TABLE " . $this -> tbl_tracks . " ADD `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() AFTER `name`";
+					$upgrade_sql[14] = 'ALTER TABLE ' . $this -> tbl_tracks . ' ADD `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() AFTER `name`';
 				}
 				$upgrade_sql[15] = 'UPDATE ' . $this -> tbl_tracks . ' t SET t.updated=(SELECT max(occurred) FROM `' . $this -> tbl_locations . '` WHERE trip_id = t.id)';
 
-				for ($i = $installed_version + 1; $i <= $this -> db_version; $i++ ) {
+				for ( $i = $installed_version + 1; $i <= $this -> db_version; $i++ ) {
 					if ( array_key_exists( $i, $upgrade_sql ) ) {
 						$wpdb -> query( $upgrade_sql[ $i ] );
 					}
@@ -598,14 +597,15 @@ EOF;
 		 */
 		function set_capabilities() {
 			$roles = array(
-				 'administrator' => array( 'use_trackserver', 'trackserver_publish', 'trackserver_admin' ),
-				 'editor' => array( 'use_trackserver', 'trackserver_publish' ),
-				 'author'  => array( 'use_trackserver' ) );
+				'administrator' => array( 'use_trackserver', 'trackserver_publish', 'trackserver_admin' ),
+				'editor' => array( 'use_trackserver', 'trackserver_publish' ),
+				'author'  => array( 'use_trackserver' ),
+			);
 
 			foreach ( $roles as $rolename => $capnames ) {
 				$role = get_role( $rolename );
-				foreach ($capnames as $cap) {
-					if ( !( $role -> has_cap( $cap ) ) ) {
+				foreach ( $capnames as $cap ) {
+					if ( ! ( $role -> has_cap( $cap ) ) ) {
 						$role -> add_cap( $cap );
 					}
 				}
@@ -758,8 +758,7 @@ EOF;
 				%1\$s<br />
 EOF;
 
-			printf( $format,
-				esc_html__( 'Please check with your map tile provider what attribution is required.', 'trackserver' ) );
+			printf( $format, esc_html__( 'Please check with your map tile provider what attribution is required.', 'trackserver' ) );
 		}
 
 		function gettrack_slug_html() {
@@ -788,10 +787,11 @@ EOF;
 				<input type="checkbox" name="trackserver_options[enable_proxy]" id="trackserver_enable_proxy" $checked> %1\$s<br />
 				%2\$s<br />
 EOF;
+
 			printf( $format,
 				esc_html__( "Check this to enable the proxy for external tracks, which can be used by prefixing their URL with 'proxy:'", 'trackserver' ),
-				sprintf( esc_html__( "This will enable your authors to invoke HTTP requests originating from your server. " .
-					"Only enable this when you need it and if you trust your authors not to use harmful URLs. " .
+				sprintf( esc_html__( 'This will enable your authors to invoke HTTP requests originating from your server. ' .
+					'Only enable this when you need it and if you trust your authors not to use harmful URLs. ' .
 					'Please see the %1$s for more information.', 'trackserver' ), $link ) );
 		}
 
@@ -812,9 +812,9 @@ EOF;
 				esc_html__( "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe", 'trackserver' ),
 				esc_html__( 'Full URL header', 'trackserver' ),
 				sprintf( esc_html__( 'Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS connections. ' .
-				'If your WordPress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a ' .
-				'problem with %1$s that Trackserver cannot fix.', 'trackserver' ),
-				'TrackMe', '2.00.1', $link ) );
+					'If your WordPress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a ' .
+					'problem with %1$s that Trackserver cannot fix.', 'trackserver' ),
+					'TrackMe', '2.00.1', $link ) );
 		}
 
 		function trackme_extension_html() {
@@ -830,7 +830,7 @@ EOF;
 				esc_html__( "The Server extension in TrackMe's settings", 'trackserver' ),
 				esc_html__( 'WARNING', 'trackserver' ),
 				esc_html__( "the default value in TrackMe is 'php', but this will most likely NOT work, so better change it to something else. Anything will do, " .
-				"as long as the request is handled by Wordpress' index.php, so it's better to not use any known file type extension, like 'html' or 'jpg'. A single " .
+				"as long as the request is handled by WordPress' index.php, so it's better to not use any known file type extension, like 'html' or 'jpg'. A single " .
 				"character like 'z' (the default) should work just fine. Change the 'Server extension' setting in TrackMe to match the value you put here.",
 				'trackserver' ) );
 		}
@@ -848,11 +848,11 @@ EOF;
 			printf( $format,
 				sprintf( esc_html__( 'Since version 1.9, Trackserver needs a separate password for online tracking with TrackMe. We do not use the WordPress ' .
 				'password here anymore for security reasons. The access key is unique to your ' .
-				'user account and it can be configured in %1$s. Your current TrackMe password is: %2$s. This is what you enter in the Password field '.
+				'user account and it can be configured in %1$s. Your current TrackMe password is: %2$s. This is what you enter in the Password field ' .
 				'in TrackMe\'s settings!!', 'trackserver' ), $link, $trackme_key ),
 				esc_html__( 'WARNING', 'trackserver' ),
-				esc_html__( 'if you just upgraded to version 1.9 or higher and you have been using Trackserver with TrackMe, '.
-				'you should update the password in TrackMe to match the password in your profile. Trackserver does not check your '.
+				esc_html__( 'if you just upgraded to version 1.9 or higher and you have been using Trackserver with TrackMe, ' .
+				'you should update the password in TrackMe to match the password in your profile. Trackserver does not check your ' .
 				'WordPress password anymore, because the way TrackMe uses your password is not sufficiently secure.', 'trackserver' ) );
 		}
 
@@ -965,8 +965,8 @@ EOF;
 				sprintf( esc_html__( 'Generated track name in %1$s format. SendLocation online tracking does not support the concept of ' .
 				"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
 				"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
-				"can be specified here.  If you specify a constant string, without any strftime() format placeholders, one " .
-				"and the same track will be used forever and all locations.", 'trackserver' ), $link ),
+				'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
+				'and the same track will be used forever and all locations.', 'trackserver' ), $link ),
 				esc_html__( 'year', 'trackserver' ),
 				esc_html__( 'month', 'trackserver' ),
 				esc_html__( 'day', 'trackserver' ),
@@ -1210,9 +1210,8 @@ EOF;
 			// If the author has the power, don't check the track's owner
 			if ( user_can( $author_id, 'trackserver_publish' ) ) {
 				$sql = 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id IN ' . $sql_in;
-			}
-			// Otherwise, filter the list of posts against the author ID
-			else {
+			} else {
+				// Otherwise, filter the list of posts against the author ID
 				$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . ' WHERE id IN ' . $sql_in .
 					' AND user_id=%d;', $author_id );
 			}
@@ -3073,17 +3072,14 @@ EOF;
 						if ( ( $ct = wp_remote_retrieve_header( $response, 'content-type') ) != '' ) {
 							header( 'Content-Type: ' . $ct );
 						}
-					}
-					else {
+					} else {
 						header( 'Content-Type: application/xml');
 					}
 					print( wp_remote_retrieve_body( $response ) );
-				}
-				else {
+				} else {
 					$this -> http_terminate( '500', $response->get_error_message() );
 				}
-			}
-			else {
+			} else {
 				$this -> http_terminate();
 			}
 			die();
@@ -3432,8 +3428,8 @@ EOF;
 					<input type="hidden" name="page" value="trackserver-tracks" />
 					<div class="wrap">
 						<h2><?php esc_html_e( 'Manage tracks', 'trackserver' ); ?></h2>
-						<?php $this -> notice_bulk_action_result() ?>
-						<?php $this -> tracks_list_table -> display() ?>
+						<?php $this -> notice_bulk_action_result(); ?>
+						<?php $this -> tracks_list_table -> display(); ?>
 					</div>
 				</form>
 			<?php
@@ -3447,8 +3443,8 @@ EOF;
 
 			?>
 			<div class="wrap">
-				<h2><?php esc_html_e( 'Trackserver profile', 'trackserver' ) ?></h2>
-				<?php $this -> notice_bulk_action_result() ?>
+				<h2><?php esc_html_e( 'Trackserver profile', 'trackserver' ); ?></h2>
+				<?php $this -> notice_bulk_action_result(); ?>
 				<form id="trackserver-profile" method="post">
 					<?php wp_nonce_field( 'your-profile' ); ?>
 					<table class="form-table">
@@ -3456,7 +3452,7 @@ EOF;
 							<tr>
 								<th scope="row">
 									<label for="trackme_access_key">
-										<?php esc_html_e( 'TrackMe password', 'trackserver' ) ?>
+										<?php esc_html_e( 'TrackMe password', 'trackserver' ); ?>
 									</label>
 								</th>
 								<td>
@@ -3466,7 +3462,7 @@ EOF;
 							<tr>
 								<th scope="row">
 									<label for="osmand_access_key">
-										<?php esc_html_e( 'OsmAnd access key', 'trackserver' ) ?>
+										<?php esc_html_e( 'OsmAnd access key', 'trackserver' ); ?>
 									</label>
 								</th>
 								<td>
@@ -3607,14 +3603,11 @@ EOF;
 					$result = $this -> wpdb_delete_tracks( (int) $track_id );
 					$message = 'Track "' . $name . '" (ID=' . $track_id . ', ' .
 						 $result['locations'] . ' locations) deleted';
-				}
-				elseif ( $_REQUEST['trackserver_action'] == 'split' ) {
+				} elseif ( $_REQUEST['trackserver_action'] == 'split' ) {
 					$vertex = intval( $_REQUEST['vertex'] );  // not covered by nonce!
 					$r = $this -> wpdb_split_track( $track_id, $vertex );
 					$message = 'Track "' . $name . '" (ID=' . $track_id . ') has been split at point ' . $vertex . ' ' . $r;
-				}
-				else {
-
+				} else {
 					$data = array(
 						'name' => $name,
 						'source' => $source,
@@ -3625,8 +3618,7 @@ EOF;
 
 					$message = 'Track "' . $name . '" (ID=' . $track_id . ') saved';
 				}
-			}
-			else {
+			} else {
 				$message = __( 'It seems you have insufficient permissions to manage track ID ' ) . $track_id;
 			}
 
@@ -3660,7 +3652,7 @@ EOF;
 			$_POST = stripslashes_deep( $_POST );
 
 			if ( ! isset( $_POST['t'], $_POST['modifications'] ) ) {
-				$this -> http_terminate('403', 'Missing parameter(s)');
+				$this -> http_terminate( '403', 'Missing parameter(s)' );
 			}
 
 			check_ajax_referer( 'manage_track_' . $_POST['t'] );
@@ -3672,16 +3664,17 @@ EOF;
 				$track_ids = $this -> filter_current_user_tracks( array_keys( $modifications) );
 
 				foreach ( $track_ids as $track_id ) {
-					$indexes = array_keys( $modifications[$track_id] );
+					$indexes = array_keys( $modifications[ $track_id ] );
 					$loc_ids = $this -> get_location_ids_by_index( $track_id, $indexes );
 					$sql = array();
 					$delete_ids = array();
-					foreach ( $modifications[$track_id] as $loc_index => $mod ) {
+					foreach ( $modifications[ $track_id ] as $loc_index => $mod ) {
 						if ( $mod['action'] == 'delete' ) {
-							$delete_ids[] = $loc_ids[$loc_index] -> id;
+							$delete_ids[] = $loc_ids[ $loc_index ] -> id;
 						}
 						elseif ( $mod['action'] == 'move' ) {
-							$sql[] = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_locations . ' SET latitude=%s, longitude=%s WHERE id=%d', $mod['lat'], $mod['lng'], $loc_ids[$loc_index] -> id);
+							$sql[] = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_locations . ' SET latitude=%s, longitude=%s WHERE id=%d',
+								$mod['lat'], $mod['lng'], $loc_ids[ $loc_index ] -> id);
 						}
 					}
 
@@ -3691,7 +3684,7 @@ EOF;
 					}
 
 					// If a query fails, give up immediately
-					foreach ($sql as $query) {
+					foreach ( $sql as $query ) {
 						if ( $wpdb -> query( $query ) === false ) {
 							break;
 						}
@@ -3865,7 +3858,7 @@ EOF;
 				$sql = $wpdb -> prepare( 'INSERT INTO ' . $this -> tbl_locations .
 					" (trip_id, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment) " .
 					" SELECT %s, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment FROM " .
-					$this -> tbl_locations . " WHERE id=%s", $new_id, $split_id );
+					$this -> tbl_locations . ' WHERE id=%s', $new_id, $split_id );
 				$wpdb -> query( $sql );
 
 				$this -> calculate_distance( $new_id );
@@ -3890,9 +3883,8 @@ EOF;
 					$nt = $result['tracks'];
 					$format = __( 'Deleted %1$d location(s) in %2$d track(s).', 'trackserver' );
 					$message = sprintf( $format, intval( $nl ), intval( $nt ) );
-				}
-				else {
-					$message = __( "No tracks deleted", 'trackserver' );
+				} else {
+					$message = __( 'No tracks deleted', 'trackserver' );
 				}
 				setcookie( 'ts_bulk_result', $message, time() + 300 );
 				wp_redirect( $_REQUEST['_wp_http_referer'] );
@@ -3911,8 +3903,8 @@ EOF;
 					$nl = $wpdb -> query( $sql );
 					$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
 					$nt = $wpdb -> query( $sql );
-					$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_tracks . ' SET name=%s WHERE id=%d',
-						 ( $name = stripslashes( $_REQUEST['merged_name'] ) ), $id );
+					$name = stripslashes( $_REQUEST['merged_name'] );
+					$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_tracks . ' SET name=%s WHERE id=%d', $name, $id );
 					$wpdb -> query( $sql );
 
 					// TODO: consider checking for duplicate points that we created ourselves when splitting a track,
@@ -3922,9 +3914,8 @@ EOF;
 					$this -> calculate_distance( $id );
 					$format = __( "Merged %1\$d location(s) from %2\$d track(s) into '%3\$s'.", 'trackserver' );
 					$message = sprintf( $format, intval( $nl ), intval( $nt ), $name );
-				}
-				else {
-					$format = __( "Need >= 2 tracks to merge, got only %1\$d", 'trackserver' );
+				} else {
+					$format = __( 'Need >= 2 tracks to merge, got only %1\$d', 'trackserver' );
 					$message = sprintf( $format, $n );
 				}
 				setcookie( 'ts_bulk_result', $message, time() + 300 );
@@ -3935,6 +3926,7 @@ EOF;
 			if ( $action === 'dlgpx' ) {
 
 				$track_format = 'gpx';
+				// @codingStandardsIgnoreLine
 				$query = json_encode( array( 'id' => $track_ids, 'live' => array() ) );
 				$query = base64_encode( $query );
 				$query_nonce = wp_create_nonce( 'manage_track_' . $query );
@@ -3948,12 +3940,11 @@ EOF;
 					foreach ( $track_ids as $id ) {
 						$this -> calculate_distance( $id );
 					}
-					$exec_time = round( microtime( true ) - $exec_t0, 1);
+					$exec_time = round( microtime( true ) - $exec_t0, 1 );
 					$format = __( 'Recalculated track stats for %1$d track(s) in %2$d seconds', 'trackserver' );
 					$message = sprintf( $format, count( $track_ids ), $exec_time );
-				}
-				else {
-					$message = __( "No tracks found to recalculate", 'trackserver' );
+				} else {
+					$message = __( 'No tracks found to recalculate', 'trackserver' );
 				}
 				setcookie( 'ts_bulk_result', $message, time() + 300 );
 				wp_redirect( $_REQUEST['_wp_http_referer'] );
@@ -3968,7 +3959,7 @@ EOF;
 			if ( $this -> bulk_action_result_msg ) {
 				?>
 					<div class="updated">
-						<p><?= nl2br( htmlspecialchars( $this -> bulk_action_result_msg ) ) ?></p>
+						<p><?php echo nl2br( htmlspecialchars( $this -> bulk_action_result_msg ) ); ?></p>
 					</div>
 				<?php
 			}
@@ -4009,16 +4000,14 @@ EOF;
 
 					if ( count( $result['track_ids'] ) > 0 ) {
 						$html = '';
-						foreach ( $result['track_ids'] as $trk) {
+						foreach ( $result['track_ids'] as $trk ) {
 							$html .= "[tsmap track=$trk]\n";
 						}
+					} else {
+						$html = 'Error: no tracks found in GPX.';
 					}
-					else {
-						$html = "Error: no tracks found in GPX.";
-					}
-				}
-				else {
-					$html =  'Error: file could not be parsed as valid GPX 1.1.';
+				} else {
+					$html = 'Error: file could not be parsed as valid GPX 1.1.';
 				}
 			}
 			return $html;
@@ -4030,7 +4019,7 @@ EOF;
 
 			$dlat = $lat2 - $lat1;
 			$dlon = $lon2 - $lon1;
-			$a = pow ( sin( $dlat / 2 ), 2 ) + cos( $lat1 ) * cos( $lat2 ) * pow( sin( $dlon / 2 ), 2 );
+			$a = pow( sin( $dlat / 2 ), 2 ) + cos( $lat1 ) * cos( $lat2 ) * pow( sin( $dlon / 2 ), 2 );
 			$c = 2 * atan2( sqrt( $a ), sqrt( 1 - $a ) );
 			$d = $radius * $c;
 			return (int) $d;
@@ -4043,14 +4032,13 @@ EOF;
 		function calculate_distance_speed( $track_id ) {
 			global $wpdb;
 
-			$sql = $wpdb -> prepare( 'SELECT id, latitude, longitude, speed, occurred FROM ' . $this -> tbl_locations .
-				' WHERE trip_id=%d ORDER BY occurred', $track_id );
+			$sql = $wpdb -> prepare( 'SELECT id, latitude, longitude, speed, occurred FROM ' . $this -> tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $track_id );
 			$res = $wpdb -> get_results( $sql, ARRAY_A );
 
 			$oldlat = false;
 			$distance = 0;
 			foreach ( $res as $row ) {
-				if ($oldlat) {
+				if ( $oldlat ) {
 					$delta_distance = $this -> distance( $oldlat, $oldlon, $row['latitude'], $row['longitude'] );
 					$distance += $delta_distance;
 
@@ -4066,6 +4054,7 @@ EOF;
 						$speed = $delta_distance / $delta_time; // in m/s
 
 						// Update the speed column in the database for this location
+						// @codingStandardsIgnoreLine
 						$wpdb -> update( $this -> tbl_locations, array( 'speed' => $speed ), array( 'id' => $row['id'] ), '%f', '%d' );
 					}
 				}
@@ -4075,6 +4064,7 @@ EOF;
 			}
 
 			if ( $distance > 0 ) {
+				// @codingStandardsIgnoreLine
 				$wpdb -> update( $this -> tbl_tracks, array( 'distance' => $distance ), array( 'id' => $track_id ), '%d', '%d' );
 			}
 		}
@@ -4087,11 +4077,11 @@ $trackserver = new Trackserver();
 
 // For 4.3.0 <= PHP <= 5.4.0
 if ( ! function_exists( 'http_response_code' ) ) {
-	function http_response_code( $newcode = NULL ) {
+	function http_response_code( $newcode = null ) {
 		static $code = 200;
-		if ( $newcode !== NULL ) {
+		if ( $newcode !== null ) {
 			header( 'X-PHP-Response-Code: ' . $newcode, true, $newcode );
-			if( ! headers_sent() ) {
+			if ( ! headers_sent() ) {
 				$code = $newcode;
 			}
 		}

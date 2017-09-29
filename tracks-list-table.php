@@ -9,11 +9,11 @@ class Tracks_List_Table extends WP_List_Table {
 
 			$this -> options = $options;
 
-			// Set parent defaults
+			// Set parent defaults.
 			parent::__construct( array(
-				'singular' => 'track',    // singular name of the listed records
-				'plural'   => 'tracks',   // plural name of the listed records
-				'ajax'     => false,       // does this table support ajax?
+				'singular' => 'track',    // Singular name of the listed records.
+				'plural'   => 'tracks',   // Plural name of the listed records.
+				'ajax'     => false,      // Does this table support ajax?
 			) );
 	}
 
@@ -38,20 +38,20 @@ class Tracks_List_Table extends WP_List_Table {
 		} else {
 			return htmlspecialchars( $item[ $column_name ] );
 		}
-		return print_r( $item, true );    // Show the whole array for troubleshooting purposes
+		return print_r( $item, true );    // Show the whole array for troubleshooting purposes.
 	}
 
 	function column_cb( $item ) {
 		return sprintf(
 			'<input type="checkbox" name="%1$s[]" value="%2$s" />',
-			/*$1%s*/ $this -> _args['singular'],  // Let's simply repurpose the table's singular label ("movie")
-			/*$2%s*/ $item['id']                  // The value of the checkbox should be the record's id
+			/*$1%s*/ $this -> _args['singular'],  // Let's simply repurpose the table's singular label ("movie").
+			/*$2%s*/ $item['id']                  // The value of the checkbox should be the record's id.
 		);
 	}
 
 	function get_columns() {
 		$columns = array(
-			'cb'        => '<input type="checkbox" />', // Render a checkbox instead of text
+			'cb'        => '<input type="checkbox" />', // Render a checkbox instead of text.
 			'id'        => esc_html__( 'ID', 'trackserver' ),
 			'user_id'   => esc_html__( 'User', 'trackserver' ),
 			'name'      => esc_html__( 'Name', 'trackserver' ),
@@ -136,7 +136,7 @@ class Tracks_List_Table extends WP_List_Table {
 		$hidden   = array( 'nonce' );
 		$sortable = $this -> get_sortable_columns();
 
-		// This should be prettier
+		// This should be prettier.
 		$orderby = 'tstart';
 		if ( ! empty( $_REQUEST['orderby'] ) &&
 			in_array( $_REQUEST['orderby'], array( 'id', 'user_id', 'name', 'tstart', 'tend', 'source' ) ) ) {
@@ -154,7 +154,7 @@ class Tracks_List_Table extends WP_List_Table {
 
 		$where = "user_id='" . get_current_user_id() . "'";
 		if ( current_user_can( 'trackserver_admin' ) ) {
-			if ( (int) $this -> options['view'] == 0 ) {
+			if ( 0 == (int) $this -> options['view'] ) {
 				$where = 1;
 			} else {
 				$where = "user_id='" . $this -> options['view'] . "'";
@@ -188,9 +188,9 @@ class Tracks_List_Table extends WP_List_Table {
 		 * REQUIRED. We also have to register our pagination options & calculations.
 		 */
 		$this -> set_pagination_args( array(
-			'total_items' => $total_items,                  // WE have to calculate the total number of items
-			'per_page'    => $per_page,                     // WE have to determine how many items to show on a page
-			'total_pages' => ceil( $total_items / $per_page ),   // WE have to calculate the total number of pages
+			'total_items' => $total_items,                       // WE have to calculate the total number of items.
+			'per_page'    => $per_page,                          // WE have to determine how many items to show on a page.
+			'total_pages' => ceil( $total_items / $per_page ),   // WE have to calculate the total number of pages.
 		) );
 
 	}
