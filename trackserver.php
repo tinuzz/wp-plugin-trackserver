@@ -2722,13 +2722,16 @@ EOF;
 		 * @since 1.9
 		 */
 		function bytes_to_human( $size ) {
-			if( ($size >= 1<<30))
-				return number_format($size/(1<<30),1)."GB";
-			if( ($size >= 1<<20))
-				return number_format($size/(1<<20),1)."MB";
-			if( ($size >= 1<<10))
-				return number_format($size/(1<<10),1)."KB";
-			return number_format($size)." bytes";
+			if ( ( $size >= 1 << 30 ) ) {
+				return number_format( $size / ( 1 << 30 ), 1 ) . 'GB';
+			}
+			if ( ( $size >= 1 << 20 ) ) {
+				return number_format( $size / ( 1 << 20 ), 1 ) . 'MB';
+			}
+			if ( ( $size >= 1 << 10 ) ) {
+				return number_format( $size / ( 1 << 10 ), 1 ) . 'KB';
+			}
+			return number_format( $size ) . ' bytes';
 		}
 
 		/**
@@ -2952,10 +2955,12 @@ EOF;
 		function get_live_tracks( $user_ids, $maxage = 0 )  {
 			global $wpdb;
 
-			if ( empty( $user_ids ) ) return array();
+			if ( empty( $user_ids ) ) {
+				return array();
+			}
 			$user_ids = array_unique( $user_ids );
 
-			$sql_in = "('" . implode("','", $user_ids) . "')";
+			$sql_in = "('" . implode( "','", $user_ids ) . "')";
 
 			$sql = 'SELECT DISTINCT t.user_id, l.trip_id AS id FROM ' . $this -> tbl_tracks . ' t INNER JOIN ' . $this -> tbl_locations . ' l ' .
 				'ON t.id = l.trip_id INNER JOIN (SELECT t2.user_id, MAX(l2.occurred) AS endts FROM ' . $this -> tbl_locations . ' l2 ' .
@@ -2967,11 +2972,11 @@ EOF;
 				$sql .= " AND uu.endts > '$ts'";
 			}
 
-			$res = $wpdb -> get_results( $sql, OBJECT_K );
+			$res = $wpdb -> get_results( $sql, OBJECT_K ); // WPCS: unprepared SQL OK
 			$track_ids = array();
-			foreach ($user_ids as $uid) {
+			foreach ( $user_ids as $uid ) {
 				if ( array_key_exists( $uid, $res ) ) {
-					$track_ids[] = $res[$uid]->id;
+					$track_ids[] = $res[ $uid ]->id;
 				}
 			}
 			return $track_ids;
@@ -2996,7 +3001,7 @@ EOF;
 				( $is_admin &&
 				! wp_verify_nonce( $_REQUEST['_wpnonce'], 'manage_track_' . $query_string ) ) ||
 				( ( ! $is_admin ) &&
-				! wp_verify_nonce( $_REQUEST['_wpnonce'], 'gettrack_' . $query_string . "_p" . $post_id ) )
+				! wp_verify_nonce( $_REQUEST['_wpnonce'], 'gettrack_' . $query_string . '_p' . $post_id ) )
 			) {
 				$this -> http_terminate( '403', "Access denied (q=$query_string)" );
 			}
@@ -3005,8 +3010,7 @@ EOF;
 			// sure users can only download their own tracks, unless they can 'trackserver_publish'
 			if ( $is_admin ) {
 				$author_id = get_current_user_id();
-			}
-			else {
+			} else {
 				$author_id = $this -> get_author( $post_id );
 			}
 
@@ -3025,19 +3029,20 @@ EOF;
 			}
 
 			$extra_metadata = array(
-					'follow' => $follow
+				'follow' => $follow,
 			);
 
-			$sql_in = "('" . implode("','", $track_ids) . "')";
-			$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this -> tbl_locations .
-				' l INNER JOIN ' . $this -> tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' ORDER BY trip_id, occurred';
+			// @codingStandardsIgnoreStart
+			$sql_in = "('" . implode( "','", $track_ids ) . "')";
+			$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->tbl_locations .
+				' l INNER JOIN ' . $this->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' ORDER BY trip_id, occurred';
 			$res = $wpdb -> get_results( $sql, ARRAY_A );
+			// @codingStandardsIgnoreEnd
 
 			if ( $format == 'gpx' ) {
 				$this -> send_as_gpx( $res );
-			}
-			else { // default to 'alltracks' internal format
-				$this -> send_alltracks( $res, $extra_metadata );
+			} else {
+				$this -> send_alltracks( $res, $extra_metadata ); // default to 'alltracks' internal format
 			}
 
 		}
@@ -3059,21 +3064,23 @@ EOF;
 			$proxy_string = stripslashes( $_REQUEST['proxy'] );
 			$post_id = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : 0 );
 
-			if ( wp_verify_nonce( $_REQUEST['_wpnonce'], 'proxy_' . $proxy_string . "_p" . $post_id ) ) {
+			if ( wp_verify_nonce( $_REQUEST['_wpnonce'], 'proxy_' . $proxy_string . '_p' . $post_id ) ) {
 				$url = base64_decode( $proxy_string );
 				$options = array(
 					'httpversion' => '1.1',
-					'user-agent'  => 'WordPress/Trackserver ' . TRACKSERVER_VERSION . '; https://github.com/tinuzz/wp-plugin-trackserver'
+					'user-agent'  => 'WordPress/Trackserver ' . TRACKSERVER_VERSION . '; https://github.com/tinuzz/wp-plugin-trackserver',
 				);
 				$response = wp_remote_get( $url, $options );
 				if ( is_array( $response ) ) {
-					if ( ( $rc = (int) wp_remote_retrieve_response_code( $response ) ) != 200 ) {
+					$rc = (int) wp_remote_retrieve_response_code( $response );
+					if ( $rc != 200 ) {
 						header( 'HTTP/1.1 ' . $rc . ' ' . wp_remote_retrieve_response_message( $response ) );
-						if ( ( $ct = wp_remote_retrieve_header( $response, 'content-type') ) != '' ) {
+						$ct = wp_remote_retrieve_header( $response, 'content-type' );
+						if ( $ct != '' ) {
 							header( 'Content-Type: ' . $ct );
 						}
 					} else {
-						header( 'Content-Type: application/xml');
+						header( 'Content-Type: application/xml' );
 					}
 					print( wp_remote_retrieve_body( $response ) );
 				} else {
@@ -3107,8 +3114,7 @@ EOF;
 			if ( isset( $_REQUEST['proxy'] ) ) {
 				if ( $this->options['enable_proxy'] ) {
 					return $this -> handle_gettrack_proxy();
-				}
-				else {
+				} else {
 					$this -> http_terminate( '403', 'Proxy disabled' );
 				}
 			}
@@ -3118,26 +3124,25 @@ EOF;
 				( array_key_exists( 'admin', $_REQUEST ) &&
 				! wp_verify_nonce( $_REQUEST['_wpnonce'], 'manage_track_' . $track_id ) ) ||
 				( ( ! array_key_exists( 'admin', $_REQUEST ) ) &&
-				! wp_verify_nonce( $_REQUEST['_wpnonce'], 'gettrack_' . $track_id . "_p" . $post_id ) )
+				! wp_verify_nonce( $_REQUEST['_wpnonce'], 'gettrack_' . $track_id . '_p' . $post_id ) )
 			) {
 				$this -> http_terminate( '403', "Access denied (t=$track_id)" );
 			}
 
 			if ( $track_id ) {
 
+				// @codingStandardsIgnoreStart
 				$sql = $wpdb -> prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
 					 $this -> tbl_locations . ' l INNER JOIN ' . $this -> tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id=%d  ORDER BY occurred', $track_id );
-
 				$res = $wpdb -> get_results( $sql, ARRAY_A );
+				// @codingStandardsIgnoreEnd
 
 				if ( $format == 'gpx' ) {
 					$this -> send_as_gpx( $res );
+				} else {
+					$this -> send_as_polyline( $res ); // default to 'polyline'
 				}
-				else { // default to 'polyline'
-					$this -> send_as_polyline( $res );
-				}
-			}
-			else {
+			} else {
 				echo "ENOID\n";
 			}
 		}
@@ -3154,7 +3159,7 @@ EOF;
 			}
 			$encoded = array(
 				'type' => 'LineString',
-				'coordinates' => $points
+				'coordinates' => $points,
 			);
 			$metadata = $this -> get_metadata( $row );
 			$this -> send_as_json( $encoded, $metadata );
@@ -3189,15 +3194,17 @@ EOF;
 			foreach ( $res as $row ) {
 				$id = $row['trip_id'];
 				if ( ! array_key_exists( $id, $tracks ) ) {
-					$tracks[$id] = array( 'points' => array() );
+					$tracks[ $id ] = array(
+						'points' => array(),
+					);
 				}
-				$tracks[$id]['points'][] = array( $row['latitude'], $row['longitude'] );
-				$tracks[$id]['metadata'] = $this -> get_metadata( $row, $extra_metadata );
+				$tracks[ $id ]['points'][] = array( $row['latitude'], $row['longitude'] );
+				$tracks[ $id ]['metadata'] = $this -> get_metadata( $row, $extra_metadata );
 			}
 			// Convert points to Polyline
 			foreach ( $tracks as $id => $values ) {
-				$tracks[$id]['track'] = Polyline::encode( $values['points'] );
-				unset( $tracks[$id]['points'] );
+				$tracks[ $id ]['track'] = Polyline::encode( $values['points'] );
+				unset( $tracks[ $id ]['points'] );
 			}
 			header( 'Content-Type: application/json' );
 			echo json_encode( $tracks );
@@ -3210,26 +3217,35 @@ EOF;
 		 * @since 2.2
 		 */
 		function send_as_json( $encoded, $metadata ) {
-			$data = array( 'track' => $encoded, 'metadata' => $metadata );
+			$data = array(
+				'track' => $encoded,
+				'metadata' => $metadata,
+			);
 			header( 'Content-Type: application/json' );
 			echo json_encode( $data );
 		}
 
 		function send_as_gpx( $res ) {
-
-			$dom = new DOMDocument('1.0', 'utf-8');
+			$dom = new DOMDocument( '1.0', 'utf-8' );
+			// @codingStandardsIgnoreStart
 			$dom->preserveWhiteSpace = false;
 			$dom->formatOutput = true;
-			$dom->appendChild( $gpx = $dom->createElementNS( 'http://www.topografix.com/GPX/1/1', 'gpx' ) );
+			// @codingStandardsIgnoreEnd
+			$gpx = $dom->createElementNS( 'http://www.topografix.com/GPX/1/1', 'gpx' );
+			$dom->appendChild( $gpx );
 			$gpx->setAttributeNS( 'http://www.w3.org/2000/xmlns/', 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance' );
 			$gpx->setAttribute( 'creator', 'Trackserver ' . TRACKSERVER_VERSION );
 			$gpx->setAttribute( 'version', '1.1' );
 			$gpx->setAttributeNS( 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', 'http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd' );
-			$gpx->appendChild( $metadata = $dom->createElement( 'metadata' ) );
-			$metadata->appendChild( $author = $dom->createElement( 'author' ) );
-			$author->appendChild( $authorname = $dom->createElement( 'name' ) );
-			$home_url = get_home_url( null, '/', ( is_ssl()  ? 'https' : 'http' ) );
-			$metadata->appendChild( $link = $dom->createElement( 'link' ) );
+			$metadata = $dom->createElement( 'metadata' );
+			$gpx->appendChild( $metadata );
+			$author = $dom->createElement( 'author' );
+			$metadata->appendChild( $author );
+			$authorname = $dom->createElement( 'name' );
+			$author->appendChild( $authorname );
+			$home_url = get_home_url( null, '/', ( is_ssl() ? 'https' : 'http' ) );
+			$link = $dom->createElement( 'link' );
+			$metadata->appendChild( $link );
 			$link->setAttribute( 'href', $home_url );
 
 			$first = true;
@@ -3237,7 +3253,7 @@ EOF;
 			foreach ( $res as $row ) {
 
 				// Once, for the first record. Add stuff to the <gpx> element, using the database results
-				if (  $first ) {
+				if ( $first ) {
 					$authorname->appendChild( $dom->createCDATASection( $this -> get_user_id( (int) $row['user_id'], 'display_name' ) ) );
 					$first_track_id = $row['trip_id'];
 					$first = false;
@@ -3245,22 +3261,27 @@ EOF;
 
 				// For every track
 				if ( $row['trip_id'] != $last_track_id ) {
-					$gpx->appendChild( $trk = $dom->createElement( 'trk' ) );
-					$trk->appendChild( $name = $dom->createElement( 'name' ) );
+					$trk = $dom->createElement( 'trk' );
+					$gpx->appendChild( $trk );
+					$name = $dom->createElement( 'name' );
+					$trk->appendChild( $name );
 					$name->appendChild( $dom->createCDATASection( $row['name'] ) );
 					if ( $row['comment'] ) {
-						$trk->appendChild( $desc = $dom->createElement( 'desc' ) );
+						$desc = $dom->createElement( 'desc' );
+						$trk->appendChild( $desc );
 						$desc->appendChild( $dom->createCDATASection( $row['comment'] ) );
 					}
-					$trk->appendChild( $trkseg = $dom->createElement( 'trkseg' ) );
+					$trkseg = $dom->createElement( 'trkseg' );
+					$trk->appendChild( $trkseg );
 					$last_track_id = $row['trip_id'];
 				}
 
-				$trkseg->appendChild( $trkpt = $dom->createElement( 'trkpt' ) );
+				$trkpt = $dom->createElement( 'trkpt' );
+				$trkseg->appendChild( $trkpt );
 				$trkpt->setAttribute( 'lat', $row['latitude'] );
 				$trkpt->setAttribute( 'lon', $row['longitude'] );
 
-				$timezone_offset = new DateInterval( 'PT' . ( (int) get_option( 'gmt_offset' ) * 3600 ). 'S' );
+				$timezone_offset = new DateInterval( 'PT' . ( (int) get_option( 'gmt_offset' ) * 3600 ) . 'S' );
 				$occurred = new DateTime( $row['occurred'] );  // A DateTime object in local time
 				$occurred = $occurred -> sub( $timezone_offset );
 				$occ_iso = $occurred -> format( 'c' );
@@ -3268,7 +3289,7 @@ EOF;
 			}
 
 			header( 'Content-Type: application/gpx+xml' );
-			header('Content-Disposition: filename="trackserver-'. $first_track_id .'.gpx"');
+			header( 'Content-Disposition: filename="trackserver-' . $first_track_id . '.gpx"' );
 			echo $dom->saveXML();
 		}
 
@@ -3298,10 +3319,11 @@ EOF;
 		 */
 		function user_has_tracks( $user_id ) {
 			global $wpdb;
+			// @codingStandardsIgnoreStart
 			$sql = $wpdb -> prepare( 'SELECT count(id) FROM ' . $this -> tbl_tracks . ' WHERE user_id=%d', $user_id );
 			$n = (int) $wpdb -> get_var( $sql );
-			if ( $n > 0 ) return true;
-			return false;
+			// @codingStandardsIgnoreEnd
+			return $n > 0;
 		}
 
 		function setup_tracks_list_table() {
@@ -3355,7 +3377,7 @@ EOF;
 			?>
 				<div id="ts-edit-modal" style="display:none;">
 					<p>
-						<form id="trackserver-edit-track" method="post" action="<?=$url?>">
+						<form id="trackserver-edit-track" method="post" action="<?php echo $url; ?>">
 							<table style="width: 100%">
 								<?php wp_nonce_field( 'manage_track' ); ?>
 								<input type="hidden" name="action" value="trackserver_save_track" />
@@ -3389,7 +3411,7 @@ EOF;
 				<div id="ts-merge-modal" style="display:none;">
 					<p>
 						<?php esc_html__( 'Merge all points of multiple tracks into one track. Please specify the name for the merged track.', 'trackserver' ); ?>
-						<form method="post" action="<?=$url?>">
+						<form method="post" action="<?php echo $url; ?>">
 							<table style="width: 100%">
 								<?php wp_nonce_field( 'manage_track' ); ?>
 								<tr>
@@ -3408,7 +3430,7 @@ EOF;
 				</div>
 				<div id="ts-upload-modal" style="display:none;">
 					<div style="padding: 15px 0">
-						<form id="ts-upload-form" method="post" action="<?=$url?>" enctype="multipart/form-data">
+						<form id="ts-upload-form" method="post" action="<?php echo $url; ?>" enctype="multipart/form-data">
 							<?php wp_nonce_field( 'upload_track' ); ?>
 							<input type="hidden" name="action" value="trackserver_upload_track" />
 							<input type="file" name="gpxfile[]" multiple="multiple" style="display: none" id="ts-file-input" />
@@ -3472,7 +3494,7 @@ EOF;
 							<tr>
 								<th scope="row">
 									<label for="sendlocation_access_key">
-										<?php esc_html_e( 'SendLocation access key', 'trackserver' ) ?>
+										<?php esc_html_e( 'SendLocation access key', 'trackserver' ); ?>
 									</label>
 								</th>
 								<td>
@@ -3482,7 +3504,7 @@ EOF;
 							<tr>
 								<th scope="row">
 									<label for="infobar_template">
-										<?php esc_html_e( 'Shortcode infobar template', 'trackserver' ) ?>
+										<?php esc_html_e( 'Shortcode infobar template', 'trackserver' ); ?>
 									</label>
 								</th>
 								<td>
@@ -3515,11 +3537,13 @@ EOF;
 				<strong>%2\$s:</strong> $url/$slug$suffix<br />
 EOF;
 
+			// @codingStandardsIgnoreStart
 			printf( $format,
 				esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
 				'The key should be added, together with your WordPress username, as a URL parameter to the online tracking ' .
 				'URL set in OsmAnd, as displayed below. Change this regularly.', 'trackserver' ),
-				esc_html__( "Full URL", 'trackserver' ) );
+				esc_html__( 'Full URL', 'trackserver' ) );
+			// @codingStandardsIgnoreEnd
 		}
 
 		function sendlocation_key_html() {
@@ -3536,11 +3560,13 @@ EOF;
 				<strong>%2\$s:</strong> $url/$slug$suffix<br />
 EOF;
 
+			// @codingStandardsIgnoreStart
 			printf( $format,
 				esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
 				'The key should be added, together with your WordPress username, as a URL component in the tracking ' .
 				'URL set in SendLocation, as displayed below. Change this regularly.', 'trackserver' ),
-				esc_html__( "Your personal server and script", 'trackserver' ) );
+				esc_html__( 'Your personal server and script', 'trackserver' ) );
+			// @codingStandardsIgnoreEnd
 		}
 
 		function trackme_passwd_html() {
@@ -3558,11 +3584,12 @@ EOF;
 				<strong>%3\$s:</strong> $extn<br />
 EOF;
 
+			// @codingStandardsIgnoreStart
 			printf( $format,
-				esc_html__( 'A password for online tracking. We do not use WordPress password here for security reasons. ' .
-				'Change this regularly.', 'trackserver' ),
-				esc_html__( "URL header", 'trackserver' ),
-				esc_html__( "Server extension", 'trackserver' ) );
+				esc_html__( 'A password for online tracking. We do not use WordPress password here for security reasons. Change this regularly.', 'trackserver' ),
+				esc_html__( 'URL header', 'trackserver' ),
+				esc_html__( 'Server extension', 'trackserver' ) );
+			// @codingStandardsIgnoreEnd
 		}
 
 		function infobar_template_html() {
@@ -3572,10 +3599,12 @@ EOF;
 				%1\$s<br />
 				<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="$template" autocomplete="off" /><br /><br />
 EOF;
+			// @codingStandardsIgnoreStart
 			printf( $format,
 				esc_html__( 'With live tracking, an information bar can be shown on the map, displaying some data from the latest trackpoint. ' .
 				'Here you can format the content of the infobar. Possible replacement tags are {lat}, {lon}, {timestamp}, {altitude}, ' .
 				'{speedms}, {speedkmh}, {speedmph}, {userid}, {userlogin}, {displayname}.', 'trackserver' ) );
+			// @codingStandardsIgnoreEnd
 		}
 
 		function profiles_html() {
@@ -3583,7 +3612,7 @@ EOF;
 			if ( ! current_user_can( 'manage_options' ) ) {
 				wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 			}
-			echo "<h2>Trackserver map profiles</h2>";
+			echo '<h2>Trackserver map profiles</h2>';
 		}
 
 		function admin_post_save_track() {
@@ -3606,15 +3635,17 @@ EOF;
 				} elseif ( $_REQUEST['trackserver_action'] == 'split' ) {
 					$vertex = intval( $_REQUEST['vertex'] );  // not covered by nonce!
 					$r = $this -> wpdb_split_track( $track_id, $vertex );
-					$message = 'Track "' . $name . '" (ID=' . $track_id . ') has been split at point ' . $vertex . ' ' . $r;
+					$message = 'Track "' . $name . '" (ID=' . $track_id . ') has been split at point ' . $vertex . ' ' . $r;  // TODO: i18n
 				} else {
 					$data = array(
 						'name' => $name,
 						'source' => $source,
-						'comment' => $comment
+						'comment' => $comment,
 					);
-					$where = array( 'id' => $track_id );
-					$wpdb -> update( $this -> tbl_tracks, $data, $where, '%s', '%d' );
+					$where = array(
+						'id' => $track_id,
+					);
+					$wpdb -> update( $this->tbl_tracks, $data, $where, '%s', '%d' );
 
 					$message = 'Track "' . $name . '" (ID=' . $track_id . ') saved';
 				}
@@ -3635,11 +3666,13 @@ EOF;
 		function get_location_ids_by_index( $track_id, $indexes ) {
 			global $wpdb;
 
-			$sql_in = "('" . implode("','", $indexes) . "')";
+			$sql_in = "('" . implode( "','", $indexes ) . "')";
+			// @codingStandardsIgnoreStart
 			$sql = $wpdb -> prepare( 'SELECT c.* FROM (' .
-				'SELECT @row := @row + 1 AS row, l.id FROM ' . $this -> tbl_locations . ' l CROSS JOIN (select @row := -1) r WHERE l.trip_id=%d ORDER BY occurred' .
+				'SELECT @row := @row + 1 AS row, l.id FROM ' . $this->tbl_locations . ' l CROSS JOIN (select @row := -1) r WHERE l.trip_id=%d ORDER BY occurred' .
 				') c WHERE c.row IN ' . $sql_in, $track_id );
 			$res = $wpdb -> get_results( $sql, OBJECT_K );
+			// @codingStandardsIgnoreEnd
 			return $res;
 		}
 
@@ -3661,7 +3694,7 @@ EOF;
 			$i = 0;
 
 			if ( count( $modifications ) ) {
-				$track_ids = $this -> filter_current_user_tracks( array_keys( $modifications) );
+				$track_ids = $this -> filter_current_user_tracks( array_keys( $modifications ) );
 
 				foreach ( $track_ids as $track_id ) {
 					$indexes = array_keys( $modifications[ $track_id ] );
@@ -3671,21 +3704,20 @@ EOF;
 					foreach ( $modifications[ $track_id ] as $loc_index => $mod ) {
 						if ( $mod['action'] == 'delete' ) {
 							$delete_ids[] = $loc_ids[ $loc_index ] -> id;
-						}
-						elseif ( $mod['action'] == 'move' ) {
-							$sql[] = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_locations . ' SET latitude=%s, longitude=%s WHERE id=%d',
-								$mod['lat'], $mod['lng'], $loc_ids[ $loc_index ] -> id);
+						} elseif ( $mod['action'] == 'move' ) {
+							$qfmt = 'UPDATE ' . $this->tbl_locations . ' SET latitude=%s, longitude=%s WHERE id=%d';
+							$sql[] = $wpdb -> prepare( $qfmt, $mod['lat'], $mod['lng'], $loc_ids[ $loc_index ] -> id ); // WPCS: unprepared SQL OK
 						}
 					}
 
 					if ( count( $delete_ids ) ) {
-						$sql_in = "('" . implode("','", $delete_ids) . "')";
+						$sql_in = "('" . implode( "','", $delete_ids ) . "')";
 						$sql[] = 'DELETE FROM ' . $this -> tbl_locations . ' WHERE id IN ' . $sql_in;
 					}
 
 					// If a query fails, give up immediately
 					foreach ( $sql as $query ) {
-						if ( $wpdb -> query( $query ) === false ) {
+						if ( $wpdb -> query( $query ) === false ) { // WPCS: unprepared SQL OK
 							break;
 						}
 						$i++;
@@ -3715,7 +3747,8 @@ EOF;
 		 */
 		function load_manage_tracks() {
 			$this -> setup_tracks_list_table();
-			if ( $action = $this -> tracks_list_table -> get_current_action() ) {
+			$action = $this -> tracks_list_table -> get_current_action();
+			if ( $action ) {
 				$this -> process_bulk_action( $action );
 			}
 			// Set up bulk action result notice
@@ -3762,14 +3795,13 @@ EOF;
 
 			// If the data is not an array, do nothing
 			if ( is_array( $data ) ) {
-				foreach ( $data as $meta_key => $meta_value) {
+				foreach ( $data as $meta_key => $meta_value ) {
 					if ( in_array( $meta_key, $valid_fields ) ) {
 						update_user_meta( $user_id, $meta_key, $meta_value );
 					}
 				}
 				$message = __( 'Profile updated', 'trackserver' );
-			}
-			else {
+			} else {
 				$message = __( 'ERROR: could not update user profile', 'trackserver' );
 			}
 
@@ -3797,12 +3829,12 @@ EOF;
 			if ( count( $track_ids ) > 0 ) {
 
 				$in = '(' . implode( ',', $track_ids ) . ')';
-				$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id );
+				$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this -> tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id ); // WPCS: unprepared SQL OK
 
 				if ( current_user_can( 'trackserver_admin' ) ) {
 					$sql = 'SELECT id FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
 				}
-				return $wpdb -> get_col( $sql );
+				return $wpdb -> get_col( $sql ); // WPCS: unprepared SQL OK
 			}
 			return array();
 		}
@@ -3828,10 +3860,13 @@ EOF;
 			}
 			$in = '(' . implode( ',', $track_ids ) . ')';
 			$sql = 'DELETE FROM ' . $this -> tbl_locations . " WHERE trip_id IN $in";
-			$nl = $wpdb -> query( $sql );
+			$nl = $wpdb -> query( $sql ); // WPCS: unprepared SQL OK
 			$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
-			$nt = $wpdb -> query( $sql );
-			return array( 'locations' => $nl, 'tracks' => $nt );
+			$nt = $wpdb -> query( $sql ); // WPCS: unprepared SQL OK
+			return array(
+				'locations' => $nl,
+				'tracks' => $nt,
+			);
 		}
 
 		function wpdb_split_track( $track_id, $point ) {
@@ -3840,6 +3875,8 @@ EOF;
 			$split_id_arr = $this -> get_location_ids_by_index( $track_id, array( $point ) );
 			if ( count( $split_id_arr ) > 0 ) {  // should be exactly 1
 				$split_id = $split_id_arr[ $point ] -> id;
+
+				// @codingStandardsIgnoreStart
 				$sql = $wpdb -> prepare( 'SELECT occurred FROM ' . $this -> tbl_locations . ' WHERE id=%s', $split_id );
 				$occurred = $wpdb -> get_var( $sql );
 
@@ -3860,6 +3897,7 @@ EOF;
 					" SELECT %s, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment FROM " .
 					$this -> tbl_locations . ' WHERE id=%s', $new_id, $split_id );
 				$wpdb -> query( $sql );
+				// @codingStandardsIgnoreEnd
 
 				$this -> calculate_distance( $new_id );
 				return print_r( $new_id, true );
@@ -3881,6 +3919,7 @@ EOF;
 					$result = $this -> wpdb_delete_tracks( $track_ids );
 					$nl = $result['locations'];
 					$nt = $result['tracks'];
+					// translators: placeholders are for number of locations and number of tracks
 					$format = __( 'Deleted %1$d location(s) in %2$d track(s).', 'trackserver' );
 					$message = sprintf( $format, intval( $nl ), intval( $nt ) );
 				} else {
@@ -3893,19 +3932,20 @@ EOF;
 
 			if ( $action === 'merge' ) {
 				// Need at least 2 tracks
-				if ( ( $n = count( $track_ids ) ) > 1 ) {
+				$n = count( $track_ids );
+				if ( $n > 1 ) {
 					$id = min( $track_ids );
 					$rest = array_diff( $track_ids, array( $id ) );
 					// How useful is it to escape integers?
 					array_walk( $rest, array( $wpdb, 'escape_by_ref' ) );
 					$in = '(' . implode( ',', $rest ) . ')';
-					$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id );
-					$nl = $wpdb -> query( $sql );
+					$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id ); // WPCS: unprepared SQL OK
+					$nl = $wpdb -> query( $sql ); // WPCS: unprepared SQL OK
 					$sql = 'DELETE FROM ' . $this -> tbl_tracks . " WHERE id IN $in";
-					$nt = $wpdb -> query( $sql );
+					$nt = $wpdb -> query( $sql ); // WPCS: unprepared SQL OK
 					$name = stripslashes( $_REQUEST['merged_name'] );
-					$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_tracks . ' SET name=%s WHERE id=%d', $name, $id );
-					$wpdb -> query( $sql );
+					$sql = $wpdb -> prepare( 'UPDATE ' . $this -> tbl_tracks . ' SET name=%s WHERE id=%d', $name, $id ); // WPCS: unprepared SQL OK
+					$wpdb -> query( $sql ); // WPCS: unprepared SQL OK
 
 					// TODO: consider checking for duplicate points that we created ourselves when splitting a track,
 					// (see wpdb_split_track()) and remove them. We'd need 2 or 3 queries and some ugly code for that.
@@ -3941,6 +3981,7 @@ EOF;
 						$this -> calculate_distance( $id );
 					}
 					$exec_time = round( microtime( true ) - $exec_t0, 1 );
+					// translators: placeholders are for number of tracks and numer of seconds elapsed
 					$format = __( 'Recalculated track stats for %1$d track(s) in %2$d seconds', 'trackserver' );
 					$message = sprintf( $format, count( $track_ids ), $exec_time );
 				} else {
@@ -3992,7 +4033,8 @@ EOF;
 			if ( $type == 'application/gpx+xml' ) {
 				$user_id = $this -> get_author( $id );
 				$filename = get_attached_file( $id );
-				if ( $xml = $this -> validate_gpx_file( $filename ) ) {
+				$xml = $this -> validate_gpx_file( $filename );
+				if ( $xml ) {
 
 					// Call 'process_gpx' with 'skip_existing' == true, to prevent
 					// uploaded files being processed more than once
@@ -4032,8 +4074,8 @@ EOF;
 		function calculate_distance_speed( $track_id ) {
 			global $wpdb;
 
-			$sql = $wpdb -> prepare( 'SELECT id, latitude, longitude, speed, occurred FROM ' . $this -> tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $track_id );
-			$res = $wpdb -> get_results( $sql, ARRAY_A );
+			$sql = $wpdb -> prepare( 'SELECT id, latitude, longitude, speed, occurred FROM ' . $this -> tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $track_id ); // WPCS: unprepared SQL OK
+			$res = $wpdb -> get_results( $sql, ARRAY_A ); // WPCS: unprepared SQL OK
 
 			$oldlat = false;
 			$distance = 0;
