@@ -2684,18 +2684,18 @@ EOF;
 		}
 
 		function mapmytracks_get_source() {
-				$source = '';
-				if ( array_key_exists( 'source', $_POST ) ) {
-					$source .= $_POST['source'];
-				}
-				if ( array_key_exists( 'version', $_POST ) ) {
-					$source .= ' v' . $_POST['version'];
-				}
-				if ( $source != '' ) {
-					$source .= ' / ';
-				}
-				$source .= 'MapMyTracks';
-				return $source;
+			$source = '';
+			if ( array_key_exists( 'source', $_POST ) ) {
+				$source .= $_POST['source'];
+			}
+			if ( array_key_exists( 'version', $_POST ) ) {
+				$source .= ' v' . $_POST['version'];
+			}
+			if ( $source != '' ) {
+				$source .= ' / ';
+			}
+			$source .= 'MapMyTracks';
+			return $source;
 		}
 
 		/**
