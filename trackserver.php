@@ -3305,6 +3305,7 @@ EOF;
 				'last_trkpt_speed_ms' => number_format( $row['speed'], 2 ),
 				'last_trkpt_speed_kmh' => number_format( (float) $row['speed'] * 3.6, 2 ),
 				'last_trkpt_speed_mph' => number_format( (float) $row['speed'] * 2.23693629, 2 ),
+				'distance' => $row['distance'],
 			);
 			if ( $row['user_id'] ) {
 				$metadata['userid'] = $row['user_id'];

@@ -61,6 +61,7 @@ var Trackserver = (function () {
             this.set_mydata(options.div_id, options.track_id, 'speed_ms', o.metadata.last_trkpt_speed_ms);
             this.set_mydata(options.div_id, options.track_id, 'speed_kmh', o.metadata.last_trkpt_speed_kmh);
             this.set_mydata(options.div_id, options.track_id, 'speed_mph', o.metadata.last_trkpt_speed_mph);
+            this.set_mydata(options.div_id, options.track_id, 'distance', o.metadata.distance);
             this.set_mydata(options.div_id, options.track_id, 'userid', o.metadata.userid);
             this.set_mydata(options.div_id, options.track_id, 'userlogin', o.metadata.userlogin);
             this.set_mydata(options.div_id, options.track_id, 'displayname', o.metadata.displayname);
@@ -198,6 +199,7 @@ var Trackserver = (function () {
                         var speed_ms    = alltracks[track_id].metadata.last_trkpt_speed_ms;
                         var speed_kmh   = alltracks[track_id].metadata.last_trkpt_speed_kmh;
                         var speed_mph   = alltracks[track_id].metadata.last_trkpt_speed_mph;
+                        var distance    = alltracks[track_id].metadata.distance;
                         var userid      = alltracks[track_id].metadata.userid;
                         var userlogin   = alltracks[track_id].metadata.userlogin;
                         var displayname = alltracks[track_id].metadata.displayname;
@@ -339,6 +341,7 @@ var Trackserver = (function () {
                                 infobar_text = infobar_text.replace(/\{speedms\}/gi, speed_ms);
                                 infobar_text = infobar_text.replace(/\{speedkmh\}/gi, speed_kmh);
                                 infobar_text = infobar_text.replace(/\{speedmph\}/gi, speed_mph);
+                                infobar_text = infobar_text.replace(/\{distance\}/gi, distance);
                                 infobar_text = infobar_text.replace(/\{userid\}/gi, userid);
                                 infobar_text = infobar_text.replace(/\{userlogin\}/gi, userlogin);
                                 infobar_text = infobar_text.replace(/\{displayname\}/gi, displayname);
