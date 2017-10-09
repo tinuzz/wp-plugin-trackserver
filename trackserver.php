@@ -846,14 +846,21 @@ EOF;
 			$trackme_key = '<code>' . htmlspecialchars( get_user_meta( $user_id, 'ts_trackme_key', true ) ) . '</code>';
 
 			printf( $format,
-				sprintf( esc_html__( 'Since version 1.9, Trackserver needs a separate password for online tracking with TrackMe. We do not use the WordPress ' .
-				'password here anymore for security reasons. The access key is unique to your ' .
-				'user account and it can be configured in %1$s. Your current TrackMe password is: %2$s. This is what you enter in the Password field ' .
-				'in TrackMe\'s settings!!', 'trackserver' ), $link, $trackme_key ),
+				// translators: placeholders are for link to user profile and trackme access key
+				sprintf( esc_html__(
+					// @codingStandardsIgnoreStart
+					'Since version 1.9, Trackserver needs a separate password for online tracking with TrackMe. We do not use the WordPress ' .
+					'password here anymore for security reasons. The access key is unique to your ' .
+					'user account and it can be configured in %1$s. Your current TrackMe password is: %2$s. This is what you enter in the Password field ' .
+					'in TrackMe\'s settings!!', 'trackserver'
+				), $link, $trackme_key ),
 				esc_html__( 'WARNING', 'trackserver' ),
 				esc_html__( 'if you just upgraded to version 1.9 or higher and you have been using Trackserver with TrackMe, ' .
-				'you should update the password in TrackMe to match the password in your profile. Trackserver does not check your ' .
-				'WordPress password anymore, because the way TrackMe uses your password is not sufficiently secure.', 'trackserver' ) );
+					'you should update the password in TrackMe to match the password in your profile. Trackserver does not check your ' .
+					'WordPress password anymore, because the way TrackMe uses your password is not sufficiently secure.', 'trackserver'
+					// @codingStandardsIgnoreEnd
+				)
+			);
 		}
 
 		function mapmytracks_tag_html() {
@@ -872,11 +879,16 @@ EOF;
 			printf( $format,
 				esc_html__( "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps", 'trackserver' ),
 				esc_html__( 'Full custom URL', 'trackserver' ),
-				sprintf( esc_html__( 'Note about HTTPS: older versions of %1$s may or may not support %3$s for HTTPS connections. ' .
-				'As of v%2$s, SNI is verified to work. If your WordPress depends on SNI for HTTPS connections and you cannot ' .
-				'use the latest version of %1$s, please use HTTP. This is a ' .
-				'problem with %1$s that Trackserver cannot fix.', 'trackserver' ),
-				'OruxMaps', '7.1.2', $link ) );
+				// translators: placeholders are for product name and version, and link to SNI Wikipedia page
+				sprintf( esc_html__(
+					// @codingStandardsIgnoreStart
+					'Note about HTTPS: older versions of %1$s may or may not support %3$s for HTTPS connections. ' .
+					'As of v%2$s, SNI is verified to work. If your WordPress depends on SNI for HTTPS connections and you cannot ' .
+					'use the latest version of %1$s, please use HTTP. This is a ' .
+					'problem with %1$s that Trackserver cannot fix.', 'trackserver'
+					// @codingStandardsIgnoreEnd
+				), 'OruxMaps', '7.1.2', $link )
+			);
 		}
 
 		function osmand_slug_html() {
@@ -889,7 +901,8 @@ EOF;
 EOF;
 
 			printf( $format,
-				esc_html__( "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd", 'trackserver' ) );
+				esc_html__( "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd", 'trackserver' )
+			);
 		}
 
 		function osmand_key_deprecation_html() {
@@ -903,14 +916,24 @@ EOF;
 			$link = '<a href="admin.php?page=trackserver-yourprofile">' .
 				esc_html__( 'your Trackserver profile', 'trackserver' ) . '</a>';
 			printf( $format,
-				sprintf( esc_html__( 'Trackserver needs an access key for online tracking with OsmAnd. We do not use WordPress ' .
-				'password here for security reasons. Since version 1.9 of Trackserver, the access key is unique to your ' .
-				'user account and it can be configured in %1$s.', 'trackserver' ), $link ),
+				// translators: placeholder is for link to user profile
+				sprintf( esc_html__(
+					// @codingStandardsIgnoreStart
+					'Trackserver needs an access key for online tracking with OsmAnd. We do not use WordPress ' .
+					'password here for security reasons. Since version 1.9 of Trackserver, the access key is unique to your ' .
+					'user account and it can be configured in %1$s.', 'trackserver'
+					// @codingStandardsIgnoreEnd
+				), $link ),
 				esc_html__( 'WARNING', 'trackserver' ),
-				sprintf( esc_html__( 'if you just upgraded to version 1.9 or higher, the OsmAnd access key has been ' .
-				'reset to a new random value. Your old key is no longer valid. If you use Trackserver with OsmAnd, please ' .
-				'make sure the key matches your settings in OsmAnd. Your current access key is: %1$s. Change it regularly. ' .
-				'You can find the full tracking URL in your Trackserver profile.', 'trackserver' ), $osmand_key )
+				// translators: placeholder is for access key
+				sprintf( esc_html__(
+					// @codingStandardsIgnoreStart
+					'if you just upgraded to version 1.9 or higher, the OsmAnd access key has been ' .
+					'reset to a new random value. Your old key is no longer valid. If you use Trackserver with OsmAnd, please ' .
+					'make sure the key matches your settings in OsmAnd. Your current access key is: %1$s. Change it regularly. ' .
+					'You can find the full tracking URL in your Trackserver profile.', 'trackserver'
+					// @codingStandardsIgnoreEnd
+				), $osmand_key )
 			);
 		}
 
@@ -926,15 +949,21 @@ EOF;
 EOF;
 
 			printf( $format,
-				sprintf( esc_html__( 'Generated track name in %1$s format. OsmAnd online tracking does not support the concept of ' .
-				"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
-				"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
-				'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
-				'and the same track will be used forever and all locations.', 'trackserver' ), $link ),
+				// translators: placeholder is for link to strftime() manual
+				sprintf( esc_html__(
+					// @codingStandardsIgnoreStart
+					'Generated track name in %1$s format. OsmAnd online tracking does not support the concept of ' .
+					"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
+					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
+					'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
+					'and the same track will be used forever and all locations.', 'trackserver'
+					// @codingStandardsIgnoreEnd
+				), $link ),
 				esc_html__( 'year', 'trackserver' ),
 				esc_html__( 'month', 'trackserver' ),
 				esc_html__( 'day', 'trackserver' ),
-				esc_html__( 'hour', 'trackserver' ) );
+				esc_html__( 'hour', 'trackserver' )
+			);
 		}
 
 		function sendlocation_slug_html() {
@@ -947,7 +976,8 @@ EOF;
 EOF;
 
 			printf( $format,
-				esc_html__( "The URL slug for SendLocation, used in SendLocation's settings", 'trackserver' ) );
+				esc_html__( "The URL slug for SendLocation, used in SendLocation's settings", 'trackserver' )
+			);
 		}
 
 		function sendlocation_trackname_format_html() {
@@ -962,15 +992,21 @@ EOF;
 EOF;
 
 			printf( $format,
-				sprintf( esc_html__( 'Generated track name in %1$s format. SendLocation online tracking does not support the concept of ' .
-				"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
-				"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
-				'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
-				'and the same track will be used forever and all locations.', 'trackserver' ), $link ),
+				// translators: placeholder is for link to strftime() manual
+				sprintf( esc_html__(
+					// @codingStandardsIgnoreStart
+					'Generated track name in %1$s format. SendLocation online tracking does not support the concept of ' .
+					"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
+					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
+					'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
+					'and the same track will be used forever and all locations.', 'trackserver'
+					// @codingStandardsIgnoreEnd
+				), $link ),
 				esc_html__( 'year', 'trackserver' ),
 				esc_html__( 'month', 'trackserver' ),
 				esc_html__( 'day', 'trackserver' ),
-				esc_html__( 'hour', 'trackserver' ) );
+				esc_html__( 'hour', 'trackserver' )
+			);
 		}
 
 		function owntracks_slug_html() {
@@ -1001,15 +1037,21 @@ EOF;
 EOF;
 
 			printf( $format,
-				sprintf( esc_html__( 'Generated track name in %1$s format. OwnTracks online tracking does not support the concept of ' .
-				"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
-				"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
-				'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
-				'and the same track will be used forever and all locations.', 'trackserver' ), $link ),
+				// translators: placeholder is for link to strftime() manual
+				sprintf( esc_html__(
+					// @codingStandardsIgnoreStart
+					'Generated track name in %1$s format. OwnTracks online tracking does not support the concept of ' .
+					"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
+					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
+					'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
+					'and the same track will be used forever and all locations.', 'trackserver'
+					// @codingStandardsIgnoreEnd
+				), $link ),
 				esc_html__( 'year', 'trackserver' ),
 				esc_html__( 'month', 'trackserver' ),
 				esc_html__( 'day', 'trackserver' ),
-				esc_html__( 'hour', 'trackserver' ) );
+				esc_html__( 'hour', 'trackserver' )
+			);
 		}
 
 		function upload_tag_html() {
@@ -1022,15 +1064,17 @@ EOF;
 				<br />
 				<strong>%2\$s:</strong> $url/$val<br />
 EOF;
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( 'The URL slug for upload via HTTP POST', 'trackserver' ),
-				esc_html__( 'Full URL', 'trackserver' ) );
+				esc_html__( 'Full URL', 'trackserver' )
+			);
 		}
 
 		function normalize_tripnames_html() {
 			$val = ( isset( $this->options['normalize_tripnames'] ) ? $this->options['normalize_tripnames'] : '' );
 			$ch = '';
-			 if ( $val == 'yes' ) {
+			if ( $val == 'yes' ) {
 				$ch = 'checked';
 			}
 			echo <<<EOF
@@ -1062,7 +1106,7 @@ EOF;
 			return $options;
 		}
 
-		function register_settings () {
+		function register_settings() {
 			// All options in one array
 			register_setting( 'trackserver-options', 'trackserver_options', array( &$this, 'sanitize_option_values' ) );
 
@@ -1077,52 +1121,84 @@ EOF;
 			add_settings_section( 'trackserver-advanced', esc_html__( 'Advanced settings', 'trackserver' ), array( &$this, 'advanced_settings_html' ),  'trackserver' );
 
 			// Settings for section 'trackserver-trackme'
-			add_settings_field( 'trackserver_trackme_slug', esc_html__( 'TrackMe URL slug', 'trackserver' ),
-					array( &$this, 'trackme_slug_html' ), 'trackserver', 'trackserver-trackme' );
-			add_settings_field( 'trackserver_trackme_extension', esc_html__( 'TrackMe server extension', 'trackserver' ),
-					array( &$this, 'trackme_extension_html' ), 'trackserver', 'trackserver-trackme' );
-			add_settings_field( 'trackserver_trackme_password', esc_html__( 'TrackMe password', 'trackserver' ),
-					array( &$this, 'trackme_password_html' ), 'trackserver', 'trackserver-trackme' );
+			add_settings_field(
+				'trackserver_trackme_slug', esc_html__( 'TrackMe URL slug', 'trackserver' ),
+				array( &$this, 'trackme_slug_html' ), 'trackserver', 'trackserver-trackme'
+			);
+			add_settings_field(
+				'trackserver_trackme_extension', esc_html__( 'TrackMe server extension', 'trackserver' ),
+				array( &$this, 'trackme_extension_html' ), 'trackserver', 'trackserver-trackme'
+			);
+			add_settings_field(
+				'trackserver_trackme_password', esc_html__( 'TrackMe password', 'trackserver' ),
+				array( &$this, 'trackme_password_html' ), 'trackserver', 'trackserver-trackme'
+			);
 
 			// Settings for section 'trackserver-mapmytracks'
-			add_settings_field( 'trackserver_mapmytracks_tag', esc_html__( 'MapMyTracks URL slug', 'trackserver' ),
-					array( &$this, 'mapmytracks_tag_html' ), 'trackserver', 'trackserver-mapmytracks' );
+			add_settings_field(
+				'trackserver_mapmytracks_tag', esc_html__( 'MapMyTracks URL slug', 'trackserver' ),
+				array( &$this, 'mapmytracks_tag_html' ), 'trackserver', 'trackserver-mapmytracks'
+			);
 
 			// Settings for section 'trackserver-osmand'
-			add_settings_field( 'trackserver_osmand_slug', esc_html__( 'OsmAnd URL slug', 'trackserver' ),
-					array( &$this, 'osmand_slug_html' ), 'trackserver', 'trackserver-osmand' );
-			add_settings_field( 'trackserver_osmand_key', esc_html__( 'OsmAnd access key', 'trackserver' ),
-					array( &$this, 'osmand_key_deprecation_html' ), 'trackserver', 'trackserver-osmand' );
-			add_settings_field( 'trackserver_osmand_trackname_format', esc_html__( 'OsmAnd trackname format', 'trackserver' ),
-					array( &$this, 'osmand_trackname_format_html' ), 'trackserver', 'trackserver-osmand' );
+			add_settings_field(
+				'trackserver_osmand_slug', esc_html__( 'OsmAnd URL slug', 'trackserver' ),
+				array( &$this, 'osmand_slug_html' ), 'trackserver', 'trackserver-osmand'
+			);
+			add_settings_field(
+				'trackserver_osmand_key', esc_html__( 'OsmAnd access key', 'trackserver' ),
+				array( &$this, 'osmand_key_deprecation_html' ), 'trackserver', 'trackserver-osmand'
+			);
+			add_settings_field(
+				'trackserver_osmand_trackname_format', esc_html__( 'OsmAnd trackname format', 'trackserver' ),
+				array( &$this, 'osmand_trackname_format_html' ), 'trackserver', 'trackserver-osmand'
+			);
 
 			// Settings for section 'trackserver-sendlocation'
-			add_settings_field( 'trackserver_sendlocation_slug', esc_html__( 'SendLocation URL slug', 'trackserver' ),
-					array( &$this, 'sendlocation_slug_html' ), 'trackserver', 'trackserver-sendlocation' );
-			add_settings_field( 'trackserver_sendlocation_trackname_format', esc_html__( 'SendLocation trackname format', 'trackserver' ),
-					array( &$this, 'sendlocation_trackname_format_html' ), 'trackserver', 'trackserver-sendlocation' );
+			add_settings_field(
+				'trackserver_sendlocation_slug', esc_html__( 'SendLocation URL slug', 'trackserver' ),
+				array( &$this, 'sendlocation_slug_html' ), 'trackserver', 'trackserver-sendlocation'
+			);
+			add_settings_field(
+				'trackserver_sendlocation_trackname_format', esc_html__( 'SendLocation trackname format', 'trackserver' ),
+				array( &$this, 'sendlocation_trackname_format_html' ), 'trackserver', 'trackserver-sendlocation'
+			);
 
 			// Settings for section 'trackserver-owntracks'
-			add_settings_field( 'trackserver_owntracks_slug', esc_html__( 'OwnTracks URL slug', 'trackserver' ),
-					array( &$this, 'owntracks_slug_html' ), 'trackserver', 'trackserver-owntracks' );
-			add_settings_field( 'trackserver_owntracks_trackname_format', esc_html__( 'OwnTracks trackname format', 'trackserver' ),
-					array( &$this, 'owntracks_trackname_format_html' ), 'trackserver', 'trackserver-owntracks' );
+			add_settings_field(
+				'trackserver_owntracks_slug', esc_html__( 'OwnTracks URL slug', 'trackserver' ),
+				array( &$this, 'owntracks_slug_html' ), 'trackserver', 'trackserver-owntracks'
+			);
+			add_settings_field(
+				'trackserver_owntracks_trackname_format', esc_html__( 'OwnTracks trackname format', 'trackserver' ),
+				array( &$this, 'owntracks_trackname_format_html' ), 'trackserver', 'trackserver-owntracks'
+			);
 
 			// Settings for section 'trackserver-httppost'
-			add_settings_field( 'trackserver_upload_tag', esc_html__( 'HTTP POST URL slug', 'trackserver' ),
-					array( &$this, 'upload_tag_html' ), 'trackserver', 'trackserver-httppost' );
+			add_settings_field(
+				'trackserver_upload_tag', esc_html__( 'HTTP POST URL slug', 'trackserver' ),
+				array( &$this, 'upload_tag_html' ), 'trackserver', 'trackserver-httppost'
+			);
 
 			// Settings for section 'trackserver-shortcode'
-			add_settings_field( 'trackserver_tile_url', esc_html__( 'OSM/Google tile server URL', 'trackserver' ),
-					array( &$this, 'tile_url_html' ), 'trackserver', 'trackserver-shortcode' );
-			add_settings_field( 'trackserver_attribution', esc_html__( 'Tile attribution', 'trackserver' ),
-					array( &$this, 'attribution_html' ), 'trackserver', 'trackserver-shortcode' );
+			add_settings_field(
+				'trackserver_tile_url', esc_html__( 'OSM/Google tile server URL', 'trackserver' ),
+				array( &$this, 'tile_url_html' ), 'trackserver', 'trackserver-shortcode'
+			);
+			add_settings_field(
+				'trackserver_attribution', esc_html__( 'Tile attribution', 'trackserver' ),
+				array( &$this, 'attribution_html' ), 'trackserver', 'trackserver-shortcode'
+			);
 
 			// Settings for section 'trackserver-advanced'
-			add_settings_field( 'trackserver_gettrack_slug', esc_html__( 'Gettrack URL slug', 'trackserver' ),
-					array( &$this, 'gettrack_slug_html' ), 'trackserver', 'trackserver-advanced' );
-			add_settings_field( 'trackserver_enable_proxy', esc_html__( 'Enable proxy', 'trackserver' ),
-					array( &$this, 'enable_proxy_html' ), 'trackserver', 'trackserver-advanced' );
+			add_settings_field(
+				'trackserver_gettrack_slug', esc_html__( 'Gettrack URL slug', 'trackserver' ),
+				array( &$this, 'gettrack_slug_html' ), 'trackserver', 'trackserver-advanced'
+			);
+			add_settings_field(
+				'trackserver_enable_proxy', esc_html__( 'Enable proxy', 'trackserver' ),
+				array( &$this, 'enable_proxy_html' ), 'trackserver', 'trackserver-advanced'
+			);
 		}
 
 		function admin_menu() {
@@ -1134,19 +1210,23 @@ EOF;
 			// A dedicated menu in the main tree
 			add_menu_page( esc_html__( 'Trackserver Options', 'trackserver' ), esc_html__( 'Trackserver', 'trackserver' ),
 				'manage_options', 'trackserver-options', array( &$this, 'options_page_html' ),
-				TRACKSERVER_PLUGIN_URL . 'img/trackserver.png' );
+				TRACKSERVER_PLUGIN_URL . 'img/trackserver.png'
+			);
 
-			add_submenu_page( 'trackserver-options', esc_html__( 'Trackserver Options', 'trackserver' ),
-				esc_html__( 'Options', 'trackserver' ), 'manage_options', 'trackserver-options',
-				array( &$this, 'options_page_html' ) );
+			add_submenu_page(
+				'trackserver-options', esc_html__( 'Trackserver Options', 'trackserver' ),
+				esc_html__( 'Options', 'trackserver' ), 'manage_options', 'trackserver-options', array( &$this, 'options_page_html' )
+			);
 
-			$page2 = add_submenu_page( 'trackserver-options', esc_html__( 'Manage tracks', 'trackserver' ),
-				esc_html__( 'Manage tracks', 'trackserver' ), 'use_trackserver', 'trackserver-tracks',
-				array( &$this, 'manage_tracks_html' ) );
+			$page2 = add_submenu_page(
+				'trackserver-options', esc_html__( 'Manage tracks', 'trackserver' ),
+				esc_html__( 'Manage tracks', 'trackserver' ), 'use_trackserver', 'trackserver-tracks', array( &$this, 'manage_tracks_html' )
+			);
 
-			$page3 = add_submenu_page( 'trackserver-options', esc_html__( 'Your profile', 'trackserver' ),
-				esc_html__( 'Your profile', 'trackserver' ), 'use_trackserver', 'trackserver-yourprofile',
-				array( &$this, 'yourprofile_html' ) );
+			$page3 = add_submenu_page(
+				'trackserver-options', esc_html__( 'Your profile', 'trackserver' ),
+				esc_html__( 'Your profile', 'trackserver' ), 'use_trackserver', 'trackserver-yourprofile', array( &$this, 'yourprofile_html' )
+			);
 
 			// Early action to set up the 'Manage tracks' page and handle bulk actions.
 			add_action( 'load-' . $page2, array( &$this, 'load_manage_tracks' ) );
@@ -1213,10 +1293,9 @@ EOF;
 				$sql = 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE id IN ' . $sql_in;
 			} else {
 				// Otherwise, filter the list of posts against the author ID
-				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE id IN ' . $sql_in .
-					' AND user_id=%d;', $author_id );
+				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE id IN ' . $sql_in . ' AND user_id=%d;', $author_id ); // WPCS: unprepared SQL OK
 			}
-			$validated_track_ids = $wpdb->get_col( $sql );
+			$validated_track_ids = $wpdb->get_col( $sql ); // WPCS: unprepared SQL OK
 
 			// Restore track order as given in the shortcode
 			$trk0 = array();
@@ -1243,7 +1322,8 @@ EOF;
 			} else {
 				$field = 'login';
 			}
-			if ( $user = get_user_by( $field, $user ) ) {
+			$user = get_user_by( $field, $user );
+			if ( $user ) {
 				return ( $property == 'ID' ? (int) $user->$property : $user->$property );
 			} else {
 				return false;
@@ -1260,7 +1340,9 @@ EOF;
 		function validate_user_ids( $user_ids, $author_id ) {
 			global $wpdb;
 
-			if ( count( $user_ids ) == 0 ) return array();
+			if ( count( $user_ids ) == 0 ) {
+				return array();
+			}
 
 			$user_ids = array_map( array( $this, 'get_user_id' ), $user_ids );  // Get numeric IDs
 			$user_ids = array_filter( $user_ids );   // Get rid of the falses.
@@ -1272,7 +1354,7 @@ EOF;
 			if ( count( $user_ids ) > 0 ) {
 				$sql_in = "('" . implode( "','", $user_ids ) . "')";
 				$sql = 'SELECT DISTINCT(user_id) FROM ' . $this->tbl_tracks . ' WHERE user_id IN ' . $sql_in;
-				$validated_user_ids = $wpdb->get_col( $sql );
+				$validated_user_ids = $wpdb->get_col( $sql ); // WPCS: unprepared SQL OK
 
 				// Restore track order as given in the shortcode
 				$usr0 = array();
@@ -1328,7 +1410,9 @@ EOF;
 			$p = false;
 			if ( is_array( $this->points ) ) {
 				$p = ( $shift ? array_shift( $this->points ) : $this->points[0] );
-				if ( empty( $this->points ) ) $this->points[] = $p;
+				if ( empty( $this->points ) ) {
+					$this->points[] = $p;
+				}
 			}
 
 			return ( in_array( $p, array( 'true', 't', 'yes', 'y' ), true ) ? true : false ); // default false
@@ -1349,7 +1433,9 @@ EOF;
 			$p = false;
 			if ( is_array( $this->markers ) ) {
 				$p = ( $shift ? array_shift( $this->markers ) : $this->markers[0] );
-				if ( empty( $this->markers ) ) $this->markers[] = $p;
+				if ( empty( $this->markers ) ) {
+					$this->markers[] = $p;
+				}
 			}
 
 			$markers     = ( in_array( $p, array( 'false', 'f', 'no', 'n' ), true ) ? false : true  ); // default true
@@ -1382,19 +1468,27 @@ EOF;
 			$style = array();
 			if ( is_array( $this->colors ) ) {
 				$style['color'] = ( $shift ? array_shift( $this->colors ) : $this->colors[0] );
-				if ( empty( $this->colors ) ) $this->colors[] = $style['color'];
+				if ( empty( $this->colors ) ) {
+					$this->colors[] = $style['color'];
+				}
 			}
 			if ( is_array( $this->weights ) ) {
 				$style['weight'] = ( $shift ? array_shift( $this->weights ) : $this->weights[0] );
-				if ( empty( $this->weights ) ) $this->weights[] = $style['weight'];
+				if ( empty( $this->weights ) ) {
+					$this->weights[] = $style['weight'];
+				}
 			}
 			if ( is_array( $this->opacities ) ) {
 				$style['opacity'] = ( $shift ? array_shift( $this->opacities ) : $this->opacities[0] );
-				if ( empty( $this->opacities ) ) $this->opacities[] = $style['opacity'];
+				if ( empty( $this->opacities ) ) {
+					$this->opacities[] = $style['opacity'];
+				}
 			}
 			if ( is_array( $this->dashes ) ) {
 				$style['dashArray'] = ( $shift ? array_shift( $this->dashes ) : $this->dashes[0] );
-				if ( empty( $this->dashes ) ) $this->dashes[] = $style['dashArray'];
+				if ( empty( $this->dashes ) ) {
+					$this->dashes[] = $style['dashArray'];
+				}
 			}
 			return $style;
 		}
@@ -1407,14 +1501,23 @@ EOF;
 		 * @since 3.1
 		 */
 		function get_maxage( $str ) {
-			if ( $str === false ) return 0;
+			if ( $str === false ) {
+				return 0;
+			}
 			preg_match_all( '/^(\d+)\s*(\w)?$/', $str, $matches );
 			$n = (int) $matches[1][0];
 			$u = strtolower( $matches[2][0] );
-			if ( $u == '' ) return $n;
-			$map = array( 's' => 1, 'm' => 60, 'h' => 3600, 'd' => 86400 );
+			if ( $u == '' ) {
+				return $n;
+			}
+			$map = array(
+				's' => 1,
+				'm' => 60,
+				'h' => 3600,
+				'd' => 86400,
+			);
 			if ( array_key_exists( $u, $map ) ) {
-				return $n * $map[$u];
+				return $n * $map[ $u ];
 			}
 			return $n;
 		}
@@ -1493,7 +1596,10 @@ EOF;
 
 			if ( count( $validated_track_ids ) > 0 || count( $validated_user_ids ) > 0 ) {
 
-				$query = json_encode( array( 'id' => $validated_track_ids, 'live' => $validated_user_ids ) );
+				$query = json_encode( array(
+					'id' => $validated_track_ids,
+					'live' => $validated_user_ids,
+				) );
 				$query = base64_encode( $query );
 				$query_nonce = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
 				$alltracks_url = get_home_url( null, $this->url_prefix . '/' . $this->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=" . $this->track_format . "&maxage=$maxage&_wpnonce=$query_nonce" );
@@ -1529,11 +1635,15 @@ EOF;
 				if ( count( $all_track_ids ) ) {
 					$sql_in = "('" . implode( "','", $all_track_ids ) . "')";
 					$sql = 'SELECT AVG(latitude) FROM ' . $this->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
-					$result = $wpdb->get_var( $sql );
-					if ( $result ) $default_lat = $result;
+					$result = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
+					if ( $result ) {
+						$default_lat = $result;
+					}
 					$sql = 'SELECT AVG(longitude) FROM ' . $this->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
-					$result = $wpdb->get_var( $sql );
-					if ( $result ) $default_lon = $result;
+					$result = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
+					if ( $result ) {
+						$default_lon = $result;
+					}
 				}
 			}
 
@@ -1680,13 +1790,18 @@ EOF;
 					$track_format = $atts['format'];
 				}
 
-				$query = json_encode( array( 'id' => $validated_track_ids, 'live' => $validated_user_ids ) );
+				$query = json_encode( array(
+					'id' => $validated_track_ids,
+					'live' => $validated_user_ids,
+				) );
 				$query = base64_encode( $query );
 				$query_nonce = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
 				$alltracks_url = get_home_url( null, $this->url_prefix . '/' . $this->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&maxage=$maxage&_wpnonce=$query_nonce" );
 
 				$text = $atts['text'] . $content;
-				if ( $text == '' ) $text = 'download ' . $track_format;
+				if ( $text == '' ) {
+					$text = 'download ' . $track_format;
+				}
 
 				$out = '<a href="' . $alltracks_url . '" ' . $class_str . '>' . htmlspecialchars( $text ) . '</a>';
 			}
@@ -1919,7 +2034,12 @@ EOF;
 						$occurred = current_time( 'Y-m-d H:i:s' );
 					}
 
-					$data = array( 'user_id' => $user_id, 'name' => $trip_name, 'created' => $occurred, 'source' => 'TrackMe' );
+					$data = array(
+						'user_id' => $user_id,
+						'name' => $trip_name,
+						'created' => $occurred,
+						'source' => 'TrackMe',
+					);
 					$format = array( '%d', '%s', '%s', '%s' );
 
 					if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
@@ -1986,8 +2106,10 @@ EOF;
 		function handle_trackme_gettriplist( $user_id ) {
 			global $wpdb;
 
+			// @codingStandardsIgnoreStart
 			$sql = $wpdb->prepare( 'SELECT name,created FROM ' . $this->tbl_tracks . ' WHERE user_id=%d ORDER BY created DESC LIMIT 0,25', $user_id );
 			$trips = $wpdb->get_results( $sql, ARRAY_A );
+			// @codingStandardsIgnoreEnd
 			$triplist = '';
 			foreach ( $trips as $row ) {
 				$triplist .= htmlspecialchars( $row['name'] ) . '|' . htmlspecialchars( $row['created'] ) . "\n";
@@ -2008,16 +2130,20 @@ EOF;
 			if ( $trip_name != '' ) {
 
 				// Try to find the trip
+				// @codingStandardsIgnoreStart
 				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trip_name );
 				$trip_id = $wpdb->get_var( $sql );
+				// @codingStandardsIgnoreEnd
 
 				if ( $trip_id == null ) {
 					$this->trackme_result( 7 );   // Trip not found
 				} else {
 
+					// @codingStandardsIgnoreStart
 					$sql = $wpdb->prepare( 'SELECT id, latitude, longitude, altitude, speed, heading, occurred, comment FROM ' .
 						$this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $trip_id );
 					$res = $wpdb->get_results( $sql, ARRAY_A );
+					// @codingStandardsIgnoreEnd
 
 					$output = '';
 					foreach ( $res as $row ) {
@@ -2056,14 +2182,18 @@ EOF;
 			if ( $trip_name != '' ) {
 
 				// Try to find the trip
-				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trip_name );
-				$trip_id = $wpdb->get_var( $sql );
+				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trip_name ); // WPCS: unprepared SQL OK
+				$trip_id = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
 
 				if ( $trip_id == null ) {
 					$this->trackme_result( 7 );   // Trip not found
 				} else {
-					$loc_where = array( 'trip_id' => $trip_id );
-					$trip_where = array( 'id' => $trip_id );
+					$loc_where = array(
+						'trip_id' => $trip_id,
+					);
+					$trip_where = array(
+						'id' => $trip_id,
+					);
 					$wpdb->delete( $this->tbl_locations, $loc_where );
 					$wpdb->delete( $this->tbl_tracks, $trip_where );
 					$this->trackme_result( 0 );   // Trip deleted
@@ -2141,8 +2271,8 @@ EOF;
 		 */
 		function get_track_by_name( $user_id, $trackname ) {
 			global $wpdb;
-			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trackname );
-			return $wpdb->get_var( $sql );
+			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trackname ); // WPCS: unprepared SQL OK
+			return $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
 		}
 
 		/**
@@ -2174,7 +2304,12 @@ EOF;
 				if ( $trackname != '' ) {
 					$track_id = $this->get_track_by_name( $user_id, $trackname );
 					if ( $track_id == null ) {
-						$data = array( 'user_id' => $user_id, 'name' => $trackname, 'created' => $occurred, 'source' => 'OsmAnd' );
+						$data = array(
+							'user_id' => $user_id,
+							'name' => $trackname,
+							'created' => $occurred,
+							'source' => 'OsmAnd',
+						);
 						$format = array( '%d', '%s', '%s', '%s' );
 
 						if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
@@ -2248,7 +2383,12 @@ EOF;
 				$track_id = $this->get_track_by_name( $user_id, $trackname );
 
 				if ( $track_id == null ) {
-					$data = array( 'user_id' => $user_id, 'name' => $trackname, 'created' => $occurred, 'source' => 'SendLocation' );
+					$data = array(
+						'user_id' => $user_id,
+						'name' => $trackname,
+						'created' => $occurred,
+						'source' => 'SendLocation',
+					);
 					$format = array( '%d', '%s', '%s', '%s' );
 
 					if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
@@ -2305,6 +2445,7 @@ EOF;
 
 			$user_id = $this->validate_http_basicauth();
 			$payload = file_get_contents( 'php://input' );
+			// @codingStandardsIgnoreLine
 			$json = @json_decode( $payload, true );
 
 			//Array
@@ -2344,7 +2485,12 @@ EOF;
 					$track_id = $this->get_track_by_name( $user_id, $trackname );
 
 					if ( $track_id == null ) {
-						$data = array( 'user_id' => $user_id, 'name' => $trackname, 'created' => $occurred, 'source' => 'OwnTracks' );
+						$data = array(
+							'user_id' => $user_id,
+							'name' => $trackname,
+							'created' => $occurred,
+							'source' => 'OwnTracks',
+						);
 						$format = array( '%d', '%s', '%s', '%s' );
 
 						if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
@@ -2420,12 +2566,16 @@ EOF;
 					if ( user_can( $user_id, 'use_trackserver' ) ) {
 						return $user_id;
 					} else {
-						if ( $return ) return false;
+						if ( $return ) {
+							return false;
+						}
 						$this->http_terminate( '403', 'Insufficient permissions' );
 					}
 				}
 			}
-			if ( $return ) return false;
+			if ( $return ) {
+				return false;
+			}
 			$this->http_terminate( '403', 'Username or password incorrect' );
 		}
 
@@ -2455,7 +2605,12 @@ EOF;
 				}
 
 				$source = $this->mapmytracks_get_source();
-				$data = array( 'user_id' => $user_id, 'name' => $trip_name, 'created' => $occurred, 'source' => $source );
+				$data = array(
+					'user_id' => $user_id,
+					'name' => $trip_name,
+					'created' => $occurred,
+					'source' => $source,
+				);
 				$format = array( '%d', '%s', '%s', '%s' );
 
 				if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
@@ -2477,11 +2632,11 @@ EOF;
 		function handle_mapmytracks_update_activity( $user_id ) {
 			global $wpdb;
 
-			$sql = $wpdb -> prepare( 'SELECT id, user_id FROM ' . $this->tbl_tracks . ' WHERE id=%d', $_POST['activity_id'] );
-			$trip_id = $wpdb -> get_var( $sql );
+			$sql = $wpdb->prepare( 'SELECT id, user_id FROM ' . $this->tbl_tracks . ' WHERE id=%d', $_POST['activity_id'] ); // WPCS: unprepared SQL OK
+			$trip_id = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
 			if ( $trip_id ) {
 				// Get the user ID for the trip from the cached result of previous query
-				$trip_owner = $wpdb -> get_var( null, 1 );
+				$trip_owner = $wpdb->get_var( null, 1 ); // WPCS: unprepared SQL OK
 
 				// Check if the current login is actually the owner of the trip
 				if ( $trip_owner == $user_id ) {
@@ -2526,7 +2681,8 @@ EOF;
 
 			$_POST = stripslashes_deep( $_POST );
 			if ( isset( $_POST['gpx_file'] ) ) {
-				if ( $xml = $this->validate_gpx_string( $_POST['gpx_file'] ) ) {
+				$xml = $this->validate_gpx_string( $_POST['gpx_file'] );
+				if ( $xml ) {
 					$result = $this->process_gpx( $xml, $user_id );
 
 					// If a description was given, put it in the comment field.
@@ -2534,9 +2690,8 @@ EOF;
 						$track_ids = $result['track_ids'];
 						if ( count( $track_ids ) > 0 ) {
 							$in = '(' . implode( ',', $track_ids ) . ')';
-							$sql = $wpdb -> prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in",
-								$_POST['description'], $user_id );
-							$wpdb -> query( $sql );
+							$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $user_id ); // WPCS: unprepared SQL OK
+							$wpdb -> query( $sql ); // WPCS: unprepared SQL OK
 						}
 					}
 
@@ -2601,8 +2756,10 @@ EOF;
 		 */
 		function utc_to_local_offset( $ts ) {
 
-			if ( ! $localtz = get_option( 'timezone_string' ) ) {
-				if ( ! $localtz = ini_get( 'date.timezone' ) ) {
+			$localtz = get_option( 'timezone_string' );
+			if ( ! $localtz ) {
+				$localtz = ini_get( 'date.timezone' );
+				if ( ! $localtz ) {
 					$localtz = 'Europe/London';
 				}
 			}
@@ -2627,14 +2784,13 @@ EOF;
 				foreach ( $points as $p ) {
 					$ts = $p['timestamp'] + $offset;
 					$occurred = date( 'Y-m-d H:i:s', $ts );
-					$sqldata[] = $wpdb -> prepare( '(%d, %s, %s, %s, %s, %s)',
-						$trip_id, $p['latitude'], $p['longitude'], $p['altitude'], $now, $occurred );
+					$sqldata[] = $wpdb -> prepare( '(%d, %s, %s, %s, %s, %s)', $trip_id, $p['latitude'], $p['longitude'], $p['altitude'], $now, $occurred );
 				}
 
 				// Let's see how many rows we can put in a single MySQL INSERT query.
 				// A row is roughly 86 bytes, so lets's use 100 to be on the safe side.
 				$sql = "SHOW VARIABLES LIKE 'max_allowed_packet'";  // returns 2 columns
-				$max_bytes = intval( $wpdb -> get_var( $sql, 1 ) ); // we need the 2nd
+				$max_bytes = intval( $wpdb->get_var( $sql, 1 ) ); // we need the 2nd // WPCS: unprepared SQL OK
 
 				if ( $max_bytes ) {
 					$max_rows = (int) ( $max_bytes / 100 );
@@ -2649,7 +2805,7 @@ EOF;
 					$sql = 'INSERT INTO ' . $this->tbl_locations .
 					 ' (trip_id, latitude, longitude, altitude, created, occurred) VALUES ';
 					$sql .= implode( ',', $chunk );
-					if ( $wpdb -> query( $sql ) === false ) {
+					if ( $wpdb -> query( $sql ) === false ) { // WPCS: unprepared SQL OK
 						return false;
 					}
 				}
@@ -2778,13 +2934,13 @@ EOF;
 
 							// No need to HTML-escape the message here
 							$format = __( "File '%1\$s': imported %2\$s points from %3\$s track(s) in %4\$s seconds.", 'trackserver' );
-							// @codingStandardsIgnoreStart
-							$message .= sprintf( $format,
+							$message .= sprintf(
+								$format,
 								(string) $f['name'],
 								(string) $result['num_trkpt'],
 								(string) $result['num_trk'],
-								(string) $result['exec_time'] ) . "\n";
-							// @codingStandardsIgnoreEnd
+								(string) $result['exec_time']
+							) . "\n";
 						} else {
 							// No need to HTML-escape the message here
 							$message .= sprintf( __( "ERROR: File '%1\$s' could not be validated as GPX 1.1", 'trackserver' ), $f['name'] ) . "\n";
@@ -3520,11 +3676,13 @@ EOF;
 EOF;
 
 			// @codingStandardsIgnoreStart
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
 				'The key should be added, together with your WordPress username, as a URL parameter to the online tracking ' .
 				'URL set in OsmAnd, as displayed below. Change this regularly.', 'trackserver' ),
-				esc_html__( 'Full URL', 'trackserver' ) );
+				esc_html__( 'Full URL', 'trackserver' )
+			);
 			// @codingStandardsIgnoreEnd
 		}
 
@@ -3543,11 +3701,13 @@ EOF;
 EOF;
 
 			// @codingStandardsIgnoreStart
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
 				'The key should be added, together with your WordPress username, as a URL component in the tracking ' .
 				'URL set in SendLocation, as displayed below. Change this regularly.', 'trackserver' ),
-				esc_html__( 'Your personal server and script', 'trackserver' ) );
+				esc_html__( 'Your personal server and script', 'trackserver' )
+			);
 			// @codingStandardsIgnoreEnd
 		}
 
@@ -3567,10 +3727,12 @@ EOF;
 EOF;
 
 			// @codingStandardsIgnoreStart
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( 'A password for online tracking. We do not use WordPress password here for security reasons. Change this regularly.', 'trackserver' ),
 				esc_html__( 'URL header', 'trackserver' ),
-				esc_html__( 'Server extension', 'trackserver' ) );
+				esc_html__( 'Server extension', 'trackserver' )
+			);
 			// @codingStandardsIgnoreEnd
 		}
 
@@ -3582,10 +3744,12 @@ EOF;
 				<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="$template" autocomplete="off" /><br /><br />
 EOF;
 			// @codingStandardsIgnoreStart
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( 'With live tracking, an information bar can be shown on the map, displaying some data from the latest trackpoint. ' .
 				'Here you can format the content of the infobar. Possible replacement tags are {lat}, {lon}, {timestamp}, {altitude}, ' .
-				'{speedms}, {speedkmh}, {speedmph}, {userid}, {userlogin}, {displayname}.', 'trackserver' ) );
+				'{speedms}, {speedkmh}, {speedmph}, {userid}, {userlogin}, {displayname}.', 'trackserver' )
+			);
 			// @codingStandardsIgnoreEnd
 		}
 
@@ -3874,10 +4038,12 @@ EOF;
 				$wpdb -> query( $sql );
 
 				// Duplicate the split-point to the new track
-				$sql = $wpdb -> prepare( 'INSERT INTO ' . $this->tbl_locations .
+				$sql = $wpdb -> prepare(
+					'INSERT INTO ' . $this->tbl_locations .
 					" (trip_id, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment) " .
 					" SELECT %s, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment FROM " .
-					$this->tbl_locations . ' WHERE id=%s', $new_id, $split_id );
+					$this->tbl_locations . ' WHERE id=%s', $new_id, $split_id
+				);
 				$wpdb -> query( $sql );
 				// @codingStandardsIgnoreEnd
 
