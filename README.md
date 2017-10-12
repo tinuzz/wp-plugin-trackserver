@@ -1,5 +1,6 @@
 # wp-plugin-trackserver
-A WordPress plugin for GPS tracking and publishing
+A WordPress plugin for GPS tracking and publishing [![Build Status](https://travis-ci.org/tinuzz/wp-plugin-trackserver.svg?branch=master)](https://travis-ci.org/tinuzz/wp-plugin-trackserver)
+
 
 Getting your GPS tracks into Wordpress and publishing them has never been easier!
 
