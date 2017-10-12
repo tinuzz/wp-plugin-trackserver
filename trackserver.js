@@ -386,6 +386,7 @@ var Trackserver = (function () {
 
             this.set_mydata(mymapdata.div_id, 'all', 'num_ready', 0);
             this.set_mydata(mymapdata.div_id, 'all', 'editables', []);
+            this.set_mydata(mymapdata.div_id, 'all', 'map', mymapdata.map);
             var _this = this;
 
             if ( mymapdata.alltracks ) {
