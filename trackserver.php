@@ -443,7 +443,7 @@ EOF;
 					KEY `trip_id` (`trip_id`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-				$wpdb->query( $sql );
+				$wpdb->query( $sql ); // WPCS: unprepared SQL OK
 
 				$sql = 'CREATE TABLE IF NOT EXISTS ' . $this->tbl_tracks . " (
 					`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -458,7 +458,7 @@ EOF;
 					KEY `user_id` (`user_id`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-				$wpdb->query( $sql );
+				$wpdb->query( $sql ); // WPCS: unprepared SQL OK
 
 				$this->update_option( 'db_version', $this->db_version );
 			}
@@ -558,7 +558,7 @@ EOF;
 
 				// Get a list of column names for the tracks table
 				$sql = 'SELECT * FROM ' . $this->tbl_tracks . ' LIMIT 0,1';
-				$wpdb->query( $sql );
+				$wpdb->query( $sql ); // WPCS: unprepared SQL OK
 				$colnames = $wpdb->get_col_info( 'name' );
 
 				// Upgrade table if necessary. Add upgrade SQL statements here, and
@@ -583,7 +583,7 @@ EOF;
 
 				for ( $i = $installed_version + 1; $i <= $this->db_version; $i++ ) {
 					if ( array_key_exists( $i, $upgrade_sql ) ) {
-						$wpdb -> query( $upgrade_sql[ $i ] );
+						$wpdb->query( $upgrade_sql[ $i ] ); // WPCS: unprepared SQL OK
 					}
 				}
 				$this->update_option( 'db_version', $this->db_version );
@@ -774,7 +774,8 @@ EOF;
 
 			printf( $format,
 				esc_html__( "The URL slug for the 'gettrack' API, used by Trackserver's shortcode [tsmap]", 'trackserver' ),
-				esc_html__( 'There is generally no need to change this.', 'trackserver' ) );
+				esc_html__( 'There is generally no need to change this.', 'trackserver' )
+			);
 		}
 
 		function enable_proxy_html() {
@@ -790,9 +791,15 @@ EOF;
 
 			printf( $format,
 				esc_html__( "Check this to enable the proxy for external tracks, which can be used by prefixing their URL with 'proxy:'", 'trackserver' ),
-				sprintf( esc_html__( 'This will enable your authors to invoke HTTP requests originating from your server. ' .
+				// translators: placeholder is for link to Trackserver FAQ
+				sprintf( esc_html__(
+					// @codingStandardsIgnoreStart
+					'This will enable your authors to invoke HTTP requests originating from your server. ' .
 					'Only enable this when you need it and if you trust your authors not to use harmful URLs. ' .
-					'Please see the %1$s for more information.', 'trackserver' ), $link ) );
+					'Please see the %1$s for more information.', 'trackserver'
+					// @codingStandardsIgnoreEnd
+				), $link )
+			);
 		}
 
 		function trackme_slug_html() {
@@ -811,10 +818,15 @@ EOF;
 			printf( $format,
 				esc_html__( "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe", 'trackserver' ),
 				esc_html__( 'Full URL header', 'trackserver' ),
-				sprintf( esc_html__( 'Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS connections. ' .
+				// translators: placeholders are for product name and version, and link to Wikipedia page
+				sprintf( esc_html__(
+					// @codingStandardsIgnoreStart
+					'Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS connections. ' .
 					'If your WordPress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a ' .
-					'problem with %1$s that Trackserver cannot fix.', 'trackserver' ),
-					'TrackMe', '2.00.1', $link ) );
+					'problem with %1$s that Trackserver cannot fix.', 'trackserver'
+					// @codingStandardsIgnoreEnd
+				), 'TrackMe', '2.00.1', $link )
+			);
 		}
 
 		function trackme_extension_html() {
@@ -829,10 +841,16 @@ EOF;
 			printf( $format,
 				esc_html__( "The Server extension in TrackMe's settings", 'trackserver' ),
 				esc_html__( 'WARNING', 'trackserver' ),
-				esc_html__( "the default value in TrackMe is 'php', but this will most likely NOT work, so better change it to something else. Anything will do, " .
-				"as long as the request is handled by WordPress' index.php, so it's better to not use any known file type extension, like 'html' or 'jpg'. A single " .
-				"character like 'z' (the default) should work just fine. Change the 'Server extension' setting in TrackMe to match the value you put here.",
-				'trackserver' ) );
+				esc_html__(
+					// @codingStandardsIgnoreStart
+					"the default value in TrackMe is 'php', but this will most likely NOT work, so better change " .
+					"it to something else. Anything will do, as long as the request is handled by WordPress' index.php, " .
+					"so it's better to not use any known file type extension, like 'html' or 'jpg'. A single " .
+					"character like 'z' (the default) should work just fine. Change the 'Server extension' setting " .
+					'in TrackMe to match the value you put here.', 'trackserver'
+					// @codingStandardsIgnoreEnd
+				)
+			);
 		}
 
 		function trackme_password_html() {
@@ -2691,7 +2709,7 @@ EOF;
 						if ( count( $track_ids ) > 0 ) {
 							$in = '(' . implode( ',', $track_ids ) . ')';
 							$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $user_id ); // WPCS: unprepared SQL OK
-							$wpdb -> query( $sql ); // WPCS: unprepared SQL OK
+							$wpdb->query( $sql ); // WPCS: unprepared SQL OK
 						}
 					}
 
@@ -2784,7 +2802,7 @@ EOF;
 				foreach ( $points as $p ) {
 					$ts = $p['timestamp'] + $offset;
 					$occurred = date( 'Y-m-d H:i:s', $ts );
-					$sqldata[] = $wpdb -> prepare( '(%d, %s, %s, %s, %s, %s)', $trip_id, $p['latitude'], $p['longitude'], $p['altitude'], $now, $occurred );
+					$sqldata[] = $wpdb->prepare( '(%d, %s, %s, %s, %s, %s)', $trip_id, $p['latitude'], $p['longitude'], $p['altitude'], $now, $occurred );
 				}
 
 				// Let's see how many rows we can put in a single MySQL INSERT query.
@@ -2805,7 +2823,7 @@ EOF;
 					$sql = 'INSERT INTO ' . $this->tbl_locations .
 					 ' (trip_id, latitude, longitude, altitude, created, occurred) VALUES ';
 					$sql .= implode( ',', $chunk );
-					if ( $wpdb -> query( $sql ) === false ) { // WPCS: unprepared SQL OK
+					if ( $wpdb->query( $sql ) === false ) { // WPCS: unprepared SQL OK
 						return false;
 					}
 				}
@@ -2993,7 +3011,7 @@ EOF;
 		function get_track_id_by_name( $name, $user_id ) {
 			global $wpdb;
 			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE name=%s AND user_id=%d LIMIT 0,1', $name, $user_id ); // WPCS: unprepared SQL OK
-			$trip_id = $wpdb -> get_var( $sql ); // WPCS: unprepared SQL OK
+			$trip_id = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
 			return ( $trip_id ? $trip_id : false );
 		}
 
@@ -3049,8 +3067,8 @@ EOF;
 						'source' => $source,
 					);
 					$format = array( '%d', '%s', '%s', '%s' );
-					if ( $wpdb -> insert( $this->tbl_tracks, $data, $format ) ) {
-						$trip_id = $wpdb -> insert_id;
+					if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
+						$trip_id = $wpdb->insert_id;
 						$this->mapmytracks_insert_points( $points, $trip_id );
 						$track_ids[] = $trip_id;
 						$ntrk++;
@@ -3109,7 +3127,7 @@ EOF;
 				$sql .= " AND uu.endts > '$ts'";
 			}
 
-			$res = $wpdb -> get_results( $sql, OBJECT_K ); // WPCS: unprepared SQL OK
+			$res = $wpdb->get_results( $sql, OBJECT_K ); // WPCS: unprepared SQL OK
 			$track_ids = array();
 			foreach ( $user_ids as $uid ) {
 				if ( array_key_exists( $uid, $res ) ) {
@@ -3173,7 +3191,7 @@ EOF;
 			$sql_in = "('" . implode( "','", $track_ids ) . "')";
 			$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->tbl_locations .
 				' l INNER JOIN ' . $this->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' ORDER BY trip_id, occurred';
-			$res = $wpdb -> get_results( $sql, ARRAY_A );
+			$res = $wpdb->get_results( $sql, ARRAY_A );
 			// @codingStandardsIgnoreEnd
 
 			if ( $format == 'gpx' ) {
@@ -3269,9 +3287,9 @@ EOF;
 			if ( $track_id ) {
 
 				// @codingStandardsIgnoreStart
-				$sql = $wpdb -> prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
+				$sql = $wpdb->prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
 					 $this->tbl_locations . ' l INNER JOIN ' . $this->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id=%d  ORDER BY occurred', $track_id );
-				$res = $wpdb -> get_results( $sql, ARRAY_A );
+				$res = $wpdb->get_results( $sql, ARRAY_A );
 				// @codingStandardsIgnoreEnd
 
 				if ( $format == 'gpx' ) {
@@ -3458,8 +3476,8 @@ EOF;
 		function user_has_tracks( $user_id ) {
 			global $wpdb;
 			// @codingStandardsIgnoreStart
-			$sql = $wpdb -> prepare( 'SELECT count(id) FROM ' . $this->tbl_tracks . ' WHERE user_id=%d', $user_id );
-			$n = (int) $wpdb -> get_var( $sql );
+			$sql = $wpdb->prepare( 'SELECT count(id) FROM ' . $this->tbl_tracks . ' WHERE user_id=%d', $user_id );
+			$n = (int) $wpdb->get_var( $sql );
 			// @codingStandardsIgnoreEnd
 			return $n > 0;
 		}
@@ -3791,7 +3809,7 @@ EOF;
 					$where = array(
 						'id' => $track_id,
 					);
-					$wpdb -> update( $this->tbl_tracks, $data, $where, '%s', '%d' );
+					$wpdb->update( $this->tbl_tracks, $data, $where, '%s', '%d' );
 
 					$message = 'Track "' . $name . '" (ID=' . $track_id . ') saved';
 				}
@@ -3814,10 +3832,10 @@ EOF;
 
 			$sql_in = "('" . implode( "','", $indexes ) . "')";
 			// @codingStandardsIgnoreStart
-			$sql = $wpdb -> prepare( 'SELECT c.* FROM (' .
+			$sql = $wpdb->prepare( 'SELECT c.* FROM (' .
 				'SELECT @row := @row + 1 AS row, l.id FROM ' . $this->tbl_locations . ' l CROSS JOIN (select @row := -1) r WHERE l.trip_id=%d ORDER BY occurred' .
 				') c WHERE c.row IN ' . $sql_in, $track_id );
-			$res = $wpdb -> get_results( $sql, OBJECT_K );
+			$res = $wpdb->get_results( $sql, OBJECT_K );
 			// @codingStandardsIgnoreEnd
 			return $res;
 		}
@@ -3852,7 +3870,7 @@ EOF;
 							$delete_ids[] = $loc_ids[ $loc_index ] -> id;
 						} elseif ( $mod['action'] == 'move' ) {
 							$qfmt = 'UPDATE ' . $this->tbl_locations . ' SET latitude=%s, longitude=%s WHERE id=%d';
-							$sql[] = $wpdb -> prepare( $qfmt, $mod['lat'], $mod['lng'], $loc_ids[ $loc_index ] -> id ); // WPCS: unprepared SQL OK
+							$sql[] = $wpdb->prepare( $qfmt, $mod['lat'], $mod['lng'], $loc_ids[ $loc_index ] -> id ); // WPCS: unprepared SQL OK
 						}
 					}
 
@@ -3863,7 +3881,7 @@ EOF;
 
 					// If a query fails, give up immediately
 					foreach ( $sql as $query ) {
-						if ( $wpdb -> query( $query ) === false ) { // WPCS: unprepared SQL OK
+						if ( $wpdb->query( $query ) === false ) { // WPCS: unprepared SQL OK
 							break;
 						}
 						$i++;
@@ -3975,12 +3993,12 @@ EOF;
 			if ( count( $track_ids ) > 0 ) {
 
 				$in = '(' . implode( ',', $track_ids ) . ')';
-				$sql = $wpdb -> prepare( 'SELECT id FROM ' . $this->tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id ); // WPCS: unprepared SQL OK
+				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id ); // WPCS: unprepared SQL OK
 
 				if ( current_user_can( 'trackserver_admin' ) ) {
 					$sql = 'SELECT id FROM ' . $this->tbl_tracks . " WHERE id IN $in";
 				}
-				return $wpdb -> get_col( $sql ); // WPCS: unprepared SQL OK
+				return $wpdb->get_col( $sql ); // WPCS: unprepared SQL OK
 			}
 			return array();
 		}
@@ -4006,9 +4024,9 @@ EOF;
 			}
 			$in = '(' . implode( ',', $track_ids ) . ')';
 			$sql = 'DELETE FROM ' . $this->tbl_locations . " WHERE trip_id IN $in";
-			$nl = $wpdb -> query( $sql ); // WPCS: unprepared SQL OK
+			$nl = $wpdb->query( $sql ); // WPCS: unprepared SQL OK
 			$sql = 'DELETE FROM ' . $this->tbl_tracks . " WHERE id IN $in";
-			$nt = $wpdb -> query( $sql ); // WPCS: unprepared SQL OK
+			$nt = $wpdb->query( $sql ); // WPCS: unprepared SQL OK
 			return array(
 				'locations' => $nl,
 				'tracks' => $nt,
@@ -4023,28 +4041,28 @@ EOF;
 				$split_id = $split_id_arr[ $point ] -> id;
 
 				// @codingStandardsIgnoreStart
-				$sql = $wpdb -> prepare( 'SELECT occurred FROM ' . $this->tbl_locations . ' WHERE id=%s', $split_id );
-				$occurred = $wpdb -> get_var( $sql );
+				$sql = $wpdb->prepare( 'SELECT occurred FROM ' . $this->tbl_locations . ' WHERE id=%s', $split_id );
+				$occurred = $wpdb->get_var( $sql );
 
 				// Duplicate track record
-				$sql = $wpdb -> prepare( 'INSERT INTO ' . $this->tbl_tracks .
+				$sql = $wpdb->prepare( 'INSERT INTO ' . $this->tbl_tracks .
 					" (user_id, name, created, source, comment) SELECT user_id, CONCAT(name, ' #2'), created," .
 					" source, comment FROM " . $this->tbl_tracks . " WHERE id=%s", $track_id );
-				$wpdb -> query( $sql );
-				$new_id = $wpdb -> insert_id;
+				$wpdb->query( $sql );
+				$new_id = $wpdb->insert_id;
 
 				// Update locations with the new track ID
-				$sql = $wpdb -> prepare( 'UPDATE ' . $this->tbl_locations . ' SET trip_id=%s WHERE trip_id=%s AND occurred > %s', $new_id, $track_id, $occurred );
-				$wpdb -> query( $sql );
+				$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_locations . ' SET trip_id=%s WHERE trip_id=%s AND occurred > %s', $new_id, $track_id, $occurred );
+				$wpdb->query( $sql );
 
 				// Duplicate the split-point to the new track
-				$sql = $wpdb -> prepare(
+				$sql = $wpdb->prepare(
 					'INSERT INTO ' . $this->tbl_locations .
 					" (trip_id, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment) " .
 					" SELECT %s, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment FROM " .
 					$this->tbl_locations . ' WHERE id=%s', $new_id, $split_id
 				);
-				$wpdb -> query( $sql );
+				$wpdb->query( $sql );
 				// @codingStandardsIgnoreEnd
 
 				$this->calculate_distance( $new_id );
@@ -4087,13 +4105,13 @@ EOF;
 					// How useful is it to escape integers?
 					array_walk( $rest, array( $wpdb, 'escape_by_ref' ) );
 					$in = '(' . implode( ',', $rest ) . ')';
-					$sql = $wpdb -> prepare( 'UPDATE ' . $this->tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id ); // WPCS: unprepared SQL OK
-					$nl = $wpdb -> query( $sql ); // WPCS: unprepared SQL OK
+					$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id ); // WPCS: unprepared SQL OK
+					$nl = $wpdb->query( $sql ); // WPCS: unprepared SQL OK
 					$sql = 'DELETE FROM ' . $this->tbl_tracks . " WHERE id IN $in";
-					$nt = $wpdb -> query( $sql ); // WPCS: unprepared SQL OK
+					$nt = $wpdb->query( $sql ); // WPCS: unprepared SQL OK
 					$name = stripslashes( $_REQUEST['merged_name'] );
-					$sql = $wpdb -> prepare( 'UPDATE ' . $this->tbl_tracks . ' SET name=%s WHERE id=%d', $name, $id ); // WPCS: unprepared SQL OK
-					$wpdb -> query( $sql ); // WPCS: unprepared SQL OK
+					$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . ' SET name=%s WHERE id=%d', $name, $id ); // WPCS: unprepared SQL OK
+					$wpdb->query( $sql ); // WPCS: unprepared SQL OK
 
 					// TODO: consider checking for duplicate points that we created ourselves when splitting a track,
 					// (see wpdb_split_track()) and remove them. We'd need 2 or 3 queries and some ugly code for that.
@@ -4238,8 +4256,8 @@ EOF;
 		function calculate_distance_speed( $track_id ) {
 			global $wpdb;
 
-			$sql = $wpdb -> prepare( 'SELECT id, latitude, longitude, speed, occurred FROM ' . $this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $track_id ); // WPCS: unprepared SQL OK
-			$res = $wpdb -> get_results( $sql, ARRAY_A ); // WPCS: unprepared SQL OK
+			$sql = $wpdb->prepare( 'SELECT id, latitude, longitude, speed, occurred FROM ' . $this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $track_id ); // WPCS: unprepared SQL OK
+			$res = $wpdb->get_results( $sql, ARRAY_A ); // WPCS: unprepared SQL OK
 
 			$oldlat = false;
 			$distance = 0;
@@ -4261,7 +4279,7 @@ EOF;
 
 						// Update the speed column in the database for this location
 						// @codingStandardsIgnoreLine
-						$wpdb -> update( $this->tbl_locations, array( 'speed' => $speed ), array( 'id' => $row['id'] ), '%f', '%d' );
+						$wpdb->update( $this->tbl_locations, array( 'speed' => $speed ), array( 'id' => $row['id'] ), '%f', '%d' );
 					}
 				}
 				$oldlat = $row['latitude'];
@@ -4271,7 +4289,7 @@ EOF;
 
 			if ( $distance > 0 ) {
 				// @codingStandardsIgnoreLine
-				$wpdb -> update( $this->tbl_tracks, array( 'distance' => $distance ), array( 'id' => $track_id ), '%d', '%d' );
+				$wpdb->update( $this->tbl_tracks, array( 'distance' => $distance ), array( 'id' => $track_id ), '%d', '%d' );
 			}
 		}
 
