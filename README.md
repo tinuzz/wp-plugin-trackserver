@@ -27,6 +27,12 @@ are included. Maps can be viewed in full-screen on modern browsers.
 
 See the FAQ section for more information on the shortcode's supported attributes.
 
+For more information, please see:
+* [Trackserver WordPress plugin](https://www.grendelman.net/wp/trackserver-wordpress-plugin/) - Information and demo's
+* [Introducing Trackserver WordPress plugin](https://www.grendelman.net/wp/introducing-trackserver-wordpress-plugin/) (11 February 2015)
+* [Trackserver v2.0 released](https://www.grendelman.net/wp/trackserver-v2-0-released/) (23 December 2015)
+* [Trackserver v3.0 release](https://www.grendelman.net/wp/trackserver-v3-0-released/) (27 February 2017)
+
 # Requirements
 
 Trackserver requires PHP 5.3 or newer and it needs both DOMDocument and
