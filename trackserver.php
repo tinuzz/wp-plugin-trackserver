@@ -2416,11 +2416,12 @@ EOF;
 					}
 				}
 
-				$latitude = $_GET['lat'];
-				$longitude = $_GET['lon'];
-				$altitude = urldecode( $_GET['altitude'] );
-				$speed = urldecode( $_GET['speed'] );
-				$heading = urldecode( $_GET['heading'] );
+				// SendLocation sometimes uses commas as decimal separators (issue #12)
+				$latitude = str_replace( ',', '.', $_GET['lat'] );
+				$longitude = str_replace( ',', '.', $_GET['lon'] );
+				$altitude = str_replace( ',', '.', urldecode( $_GET['altitude'] ) );
+				$speed = str_replace( ',', '.', urldecode( $_GET['speed'] ) );
+				$heading =  str_replace( ',', '.', urldecode( $_GET['heading'] ) );
 				$now = $occurred;
 
 				if ( $latitude != '' && $longitude != '' ) {
