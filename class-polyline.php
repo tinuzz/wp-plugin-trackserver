@@ -65,21 +65,21 @@ class Polyline {
 	 * @return string encoded string
 	 */
 	final public static function encode( $points ) {
-		$points = self::flatten( $points );
+		$points         = self::flatten( $points );
 		$encoded_string = '';
-		$index = 0;
-		$previous = array( 0, 0 );
+		$index          = 0;
+		$previous       = array( 0, 0 );
 		foreach ( $points as $number ) {
-			$number = (float) ($number);
-			$number = (int) round( $number * pow( 10, static::$precision ) );
-			$diff = $number - $previous[ $index % 2 ];
+			$number                 = (float) $number;
+			$number                 = (int) round( $number * pow( 10, static::$precision ) );
+			$diff                   = $number - $previous[ $index % 2 ];
 			$previous[ $index % 2 ] = $number;
-			$number = $diff;
+			$number                 = $diff;
 			$index++;
-			$number = ($number < 0) ? ~($number << 1) : ($number << 1);
-			$chunk = '';
+			$number                 = ( $number < 0 ) ? ~( $number << 1 ) : ( $number << 1 );
+			$chunk                  = '';
 			while ( $number >= 0x20 ) {
-				$chunk .= chr( (0x20 | ($number & 0x1f)) + 63 );
+				$chunk  .= chr( ( 0x20 | ( $number & 0x1f ) ) + 63 );
 				$number >>= 5;
 			}
 			$chunk .= chr( $number + 63 );
@@ -96,9 +96,9 @@ class Polyline {
 	 * @return array points
 	 */
 	final public static function decode( $string ) {
-		$points = array();
-		$index = 0;
-		$i = 0;
+		$points   = array();
+		$index    = 0;
+		$i        = 0;
 		$previous = array( 0, 0 );
 		while ( $i < strlen( $string ) ) {
 			$shift = 0x00;
@@ -109,7 +109,7 @@ class Polyline {
 				$shift += 5;
 			} while ( $bit >= 0x20 );
 
-			$diff = ($result & 1) ? ~($result >> 1) : ($result >> 1);
+			$diff = ( $result & 1 ) ? ~( $result >> 1 ) : ( $result >> 1 );
 			$number = $previous[ $index % 2 ] + $diff;
 			$previous[ $index % 2 ] = $number;
 			$index++;

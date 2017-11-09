@@ -237,8 +237,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		function wp_loaded() {
 			global $wp_rewrite;
-			if ( ! $wp_rewrite -> using_permalinks() || $wp_rewrite -> using_index_permalinks() ) {
-				$this->url_prefix = '/' . $wp_rewrite -> index;
+			if ( ! $wp_rewrite->using_permalinks() || $wp_rewrite->using_index_permalinks() ) {
+				$this->url_prefix = '/' . $wp_rewrite->index;
 			}
 			load_plugin_textdomain( 'trackserver', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 
@@ -605,8 +605,8 @@ EOF;
 			foreach ( $roles as $rolename => $capnames ) {
 				$role = get_role( $rolename );
 				foreach ( $capnames as $cap ) {
-					if ( ! ( $role -> has_cap( $cap ) ) ) {
-						$role -> add_cap( $cap );
+					if ( ! ( $role->has_cap( $cap ) ) ) {
+						$role->add_cap( $cap );
 					}
 				}
 			}
@@ -2268,7 +2268,7 @@ EOF;
 
 			$user = get_user_by( 'login', $username );
 			if ( $user ) {
-				$user_id = intval( $user -> data -> ID );
+				$user_id = intval( $user->data->ID );
 				$user_key = get_user_meta( $user_id, $meta_key, true );
 
 				if ( $key != $user_key ) {
@@ -2421,7 +2421,7 @@ EOF;
 				$longitude = str_replace( ',', '.', $_GET['lon'] );
 				$altitude = str_replace( ',', '.', urldecode( $_GET['altitude'] ) );
 				$speed = str_replace( ',', '.', urldecode( $_GET['speed'] ) );
-				$heading =  str_replace( ',', '.', urldecode( $_GET['heading'] ) );
+				$heading = str_replace( ',', '.', urldecode( $_GET['heading'] ) );
 				$now = $occurred;
 
 				if ( $latitude != '' && $longitude != '' ) {
@@ -2662,9 +2662,9 @@ EOF;
 					$points = $this->mapmytracks_parse_points( $_POST['points'] );
 					if ( $this->mapmytracks_insert_points( $points, $trip_id ) ) {
 						$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
-						$xml -> addChild( 'type', 'activity_updated' );
-						//echo $xml -> asXML();
-						echo str_replace( array( "\r", "\n" ), '', $xml -> asXML() );
+						$xml->addChild( 'type', 'activity_updated' );
+						//echo $xml->asXML();
+						echo str_replace( array( "\r", "\n" ), '', $xml->asXML() );
 					}
 					// Absence of a valid XML response causes OruxMaps to re-send the data in a subsequent request
 				}
@@ -2677,8 +2677,8 @@ EOF;
 		 */
 		function handle_mapmytracks_stop_activity( $user_id ) {
 			$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
-			$xml -> addChild( 'type', 'activity_stopped' );
-			echo str_replace( array( "\r", "\n" ), '', $xml -> asXML() );
+			$xml->addChild( 'type', 'activity_stopped' );
+			echo str_replace( array( "\r", "\n" ), '', $xml->asXML() );
 		}
 
 		/**
@@ -2686,9 +2686,9 @@ EOF;
 		 */
 		function mapmytracks_invalid_auth() {
 			$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
-			$xml -> addChild( 'type', 'error' );
-			$xml -> addChild( 'reason', 'unauthorised' );
-			echo str_replace( array( "\r", "\n" ), '', $xml -> asXML() );
+			$xml->addChild( 'type', 'error' );
+			$xml->addChild( 'reason', 'unauthorised' );
+			echo str_replace( array( "\r", "\n" ), '', $xml->asXML() );
 		}
 
 		/**
@@ -2716,8 +2716,8 @@ EOF;
 
 					// Output a success message
 					$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
-					$xml -> addChild( 'type', 'success' );
-					echo str_replace( array( "\r", "\n" ), '', $xml -> asXML() );
+					$xml->addChild( 'type', 'success' );
+					echo str_replace( array( "\r", "\n" ), '', $xml->asXML() );
 				}
 			}
 		}
@@ -2912,23 +2912,23 @@ EOF;
 
 		function validate_gpx_file( $filename ) {
 			$xml = new DOMDocument();
-			$xml -> load( $filename );
+			$xml->load( $filename );
 			return $this->validate_gpx_data( $xml );
 		}
 
 		function validate_gpx_string( $data ) {
 			$xml = new DOMDocument();
-			$xml -> loadXML( $data );
+			$xml->loadXML( $data );
 			return $this->validate_gpx_data( $xml );
 		}
 
 		function validate_gpx_data( $xml ) {
 			$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.1.xsd';
-			if ( $xml -> schemaValidate( $schema ) ) {
+			if ( $xml->schemaValidate( $schema ) ) {
 				return $xml;
 			}
 			$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.0.xsd';
-			if ( $xml -> schemaValidate( $schema ) ) {
+			if ( $xml->schemaValidate( $schema ) ) {
 				return $xml;
 			}
 			return false;
@@ -3033,21 +3033,21 @@ EOF;
 			$track_ids = array();
 			$exec_t0 = microtime( true );
 
-			foreach ( $gpx -> trk as $trk ) {
+			foreach ( $gpx->trk as $trk ) {
 				$points = array();
-				$trip_name = $trk -> name;
+				$trip_name = $trk->name;
 
 				// @codingStandardsIgnoreLine
 				if ( $skip_existing && ( $trk_id = $this->get_track_id_by_name( $trip_name, $user_id ) ) ) {
 					$track_ids[] = $trk_id;
 				} else {
-					foreach ( $trk -> trkseg as $trkseg ) {
-						foreach ( $trkseg -> trkpt as $trkpt ) {
-							$trkpt_ts = $this->parse_iso_date( (string) $trkpt -> time );
+					foreach ( $trk->trkseg as $trkseg ) {
+						foreach ( $trkseg->trkpt as $trkpt ) {
+							$trkpt_ts = $this->parse_iso_date( (string) $trkpt->time );
 							if ( ! $trip_start ) {
 								$trip_start = date( 'Y-m-d H:i:s', $trkpt_ts );
 								$last_ts = (int) $trkpt_ts - 1;
-								if ( empty( $trkpt -> time ) ) {
+								if ( empty( $trkpt->time ) ) {
 									$fake_time = true;
 								}
 							}
@@ -3096,8 +3096,8 @@ EOF;
 		function parse_iso_date( $ts ) {
 			//$i = new DateInterval('PT' .strval (get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) .'S' );
 			$d = new DateTime( $ts );
-			//$d = $d -> add( $i );
-			return $d -> format( 'U' );
+			//$d = $d->add( $i );
+			return $d->format( 'U' );
 		}
 
 		/**
@@ -3105,7 +3105,7 @@ EOF;
 		 */
 		function get_author( $post_id ) {
 			$post = get_post( $post_id );
-			return ( is_object( $post ) ? $post -> post_author : false );
+			return ( is_object( $post ) ? $post->post_author : false );
 		}
 
 		function get_live_tracks( $user_ids, $maxage = 0 ) {
@@ -3172,8 +3172,8 @@ EOF;
 
 			$query = base64_decode( $query_string );
 			$query = json_decode( $query );
-			$track_ids = $query -> id;
-			$user_ids = $query -> live;
+			$track_ids = $query->id;
+			$user_ids = $query->live;
 			$validated_track_ids = $this->validate_track_ids( $track_ids, $author_id );
 			$validated_user_ids = $this-> validate_user_ids( $user_ids, $author_id );
 			$user_track_ids = $this->get_live_tracks( $validated_user_ids, $maxage );
@@ -3439,8 +3439,8 @@ EOF;
 
 				$timezone_offset = new DateInterval( 'PT' . ( (int) get_option( 'gmt_offset' ) * 3600 ) . 'S' );
 				$occurred = new DateTime( $row['occurred'] );  // A DateTime object in local time
-				$occurred = $occurred -> sub( $timezone_offset );
-				$occ_iso = $occurred -> format( 'c' );
+				$occurred = $occurred->sub( $timezone_offset );
+				$occ_iso = $occurred->format( 'c' );
 				$trkpt->appendChild( $dom->createElement( 'time', $occ_iso ) );
 			}
 
@@ -3527,7 +3527,7 @@ EOF;
 
 			add_thickbox();
 			$this->setup_tracks_list_table();
-			$this->tracks_list_table -> prepare_items();
+			$this->tracks_list_table->prepare_items();
 
 			$url = admin_url() . 'admin-post.php';
 
@@ -3608,7 +3608,7 @@ EOF;
 					<div class="wrap">
 						<h2><?php esc_html_e( 'Manage tracks', 'trackserver' ); ?></h2>
 						<?php $this->notice_bulk_action_result(); ?>
-						<?php $this->tracks_list_table -> display(); ?>
+						<?php $this->tracks_list_table->display(); ?>
 					</div>
 				</form>
 			<?php
@@ -3868,10 +3868,10 @@ EOF;
 					$delete_ids = array();
 					foreach ( $modifications[ $track_id ] as $loc_index => $mod ) {
 						if ( $mod['action'] == 'delete' ) {
-							$delete_ids[] = $loc_ids[ $loc_index ] -> id;
+							$delete_ids[] = $loc_ids[ $loc_index ]->id;
 						} elseif ( $mod['action'] == 'move' ) {
 							$qfmt = 'UPDATE ' . $this->tbl_locations . ' SET latitude=%s, longitude=%s WHERE id=%d';
-							$sql[] = $wpdb->prepare( $qfmt, $mod['lat'], $mod['lng'], $loc_ids[ $loc_index ] -> id ); // WPCS: unprepared SQL OK
+							$sql[] = $wpdb->prepare( $qfmt, $mod['lat'], $mod['lng'], $loc_ids[ $loc_index ]->id ); // WPCS: unprepared SQL OK
 						}
 					}
 
@@ -3912,7 +3912,7 @@ EOF;
 		 */
 		function load_manage_tracks() {
 			$this->setup_tracks_list_table();
-			$action = $this->tracks_list_table -> get_current_action();
+			$action = $this->tracks_list_table->get_current_action();
 			if ( $action ) {
 				$this->process_bulk_action( $action );
 			}
@@ -4039,7 +4039,7 @@ EOF;
 
 			$split_id_arr = $this->get_location_ids_by_index( $track_id, array( $point ) );
 			if ( count( $split_id_arr ) > 0 ) {  // should be exactly 1
-				$split_id = $split_id_arr[ $point ] -> id;
+				$split_id = $split_id_arr[ $point ]->id;
 
 				// @codingStandardsIgnoreStart
 				$sql = $wpdb->prepare( 'SELECT occurred FROM ' . $this->tbl_locations . ' WHERE id=%s', $split_id );
@@ -4270,7 +4270,7 @@ EOF;
 					if ( $row['speed'] == '0' ) {
 						$oldtime = new DateTime( $oldocc );
 						$newtime = new DateTime( $row['occurred'] );
-						$delta_time = $newtime -> getTimestamp() - $oldtime -> getTimestamp();
+						$delta_time = $newtime->getTimestamp() - $oldtime->getTimestamp();
 
 						// On duplicate timestamps, we assume the delta was 1 second
 						if ( $delta_time < 1 ) {
