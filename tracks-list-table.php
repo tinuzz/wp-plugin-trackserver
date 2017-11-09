@@ -28,13 +28,14 @@ class Tracks_List_Table extends WP_List_Table {
 			return wp_create_nonce( 'manage_track_' . $item['id'] );
 		} elseif ( $column_name == 'user_id' ) {
 			if ( ! isset( $this->usercache[ $item['user_id'] ] ) ) {
-				$user = get_userdata( $item['user_id'] );
-				$u = new stdClass();
-				$u -> user_id = $item['user_id'];
-				$u -> user_login = $user -> user_login;
+				$user          = get_userdata( $item['user_id'] );
+				$u             = new stdClass();
+				$u->user_id    = $item['user_id'];
+				$u->user_login = $user->user_login;
+
 				$this->usercache[ $item['user_id'] ] = $u;
 			}
-			return $this->usercache[ $item['user_id'] ] -> user_login;
+			return $this->usercache[ $item['user_id'] ]->user_login;
 		} else {
 			return htmlspecialchars( $item[ $column_name ] );
 		}
@@ -70,12 +71,12 @@ class Tracks_List_Table extends WP_List_Table {
 
 	function get_sortable_columns() {
 		return array(
-			'id'     => array( 'id', false ),
+			'id'      => array( 'id', false ),
 			'user_id' => array( 'user_id', false ),
-			'name'   => array( 'name', false ),
-			'tstart' => array( 'tstart', false ),
-			'tend'   => array( 'tend', false ),
-			'source' => array( 'source', false ),
+			'name'    => array( 'name', false ),
+			'tstart'  => array( 'tstart', false ),
+			'tend'    => array( 'tend', false ),
+			'source'  => array( 'source', false ),
 		);
 	}
 
@@ -104,11 +105,12 @@ class Tracks_List_Table extends WP_List_Table {
 		$sql = "SELECT DISTINCT t.user_id, COALESCE(u.user_login, CONCAT('unknown UID ', t.user_id)) AS user_login FROM " .
 			$this->options['tbl_tracks'] . ' t LEFT JOIN ' .
 			$wpdb->users . ' u  ON t.user_id = u.ID ORDER BY user_login';
+
 		$this->usercache = $wpdb->get_results( $sql, OBJECT_K ); // WPCS: unprepared SQL OK
 
-		$view = $this->options['view'];
+		$view               = $this->options['view'];
 		$author_select_name = "author-$which";
-		$author_select_id = "author-select-$which";
+		$author_select_id   = "author-select-$which";
 		$addtrack_button_id = "addtrack-button-$which";
 
 		echo '<div class="alignleft actions" style="padding-bottom: 1px; line-height: 32px">';
@@ -117,15 +119,23 @@ class Tracks_List_Table extends WP_List_Table {
 			echo '<select name="' . $author_select_name . '" id="' . $author_select_id . '" class="postform">';
 			echo '<option value="0">All users</option>';
 			foreach ( $this->usercache as $u ) {
-				echo '<option class="level-0" value="' . $u -> user_id . '"';
-				if ( $u -> user_id == $view ) {
+				echo '<option class="level-0" value="' . $u->user_id . '"';
+				if ( $u->user_id == $view ) {
 					echo ' selected';
 				}
-				echo '>' . htmlspecialchars( $u -> user_login ) . '</option>';
+				echo '>' . htmlspecialchars( $u->user_login ) . '</option>';
 			}
 			echo '</select>';
 		}
 		echo '</div>';
+		echo '<div class="tablenav-pages"> &nbsp;';
+		echo '<span class="paging-input"> Show ';
+		echo '<select name="per-page-' . $which . '" class="postform">' .
+			'<option value="20" selected>20</option>' .
+			'<option value="50">50</option>' .
+			'<option value="100">100</option>' .
+			'</select> items';
+		echo '</span></div>';
 	}
 
 	function prepare_items() {
@@ -149,8 +159,8 @@ class Tracks_List_Table extends WP_List_Table {
 		}
 
 		$current_page = $this->get_pagenum();
-		$offset = ( $current_page - 1 ) * $per_page;
-		$limit = $per_page;
+		$offset       = ( $current_page - 1 ) * $per_page;
+		$limit        = $per_page;
 
 		$where = "user_id='" . get_current_user_id() . "'";
 		if ( current_user_can( 'trackserver_admin' ) ) {
@@ -167,6 +177,7 @@ class Tracks_List_Table extends WP_List_Table {
 			'as tend, count(l.occurred) as numpoints, t.distance FROM ' .
 			$this->options['tbl_tracks'] . ' t LEFT JOIN ' . $this->options['tbl_locations'] .
 			" l ON l.trip_id = t.id WHERE $where GROUP BY t.id ORDER BY $orderby $order LIMIT $offset,$limit";
+
 		$data = $wpdb->get_results( $sql, ARRAY_A ); // WPCS: unprepared SQL OK
 
 		/*
@@ -175,7 +186,7 @@ class Tracks_List_Table extends WP_List_Table {
 		 * without filtering. We'll need this later, so you should always include it
 		 * in your own package classes.
 		 */
-		$sql = 'SELECT count(id) FROM ' . $this->options['tbl_tracks'] . " WHERE $where";
+		$sql         = 'SELECT count(id) FROM ' . $this->options['tbl_tracks'] . " WHERE $where";
 		$total_items = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
 
 		/*
