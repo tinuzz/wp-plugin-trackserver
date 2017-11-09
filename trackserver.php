@@ -67,23 +67,23 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @var array $option_defaults
 		 */
 		var $option_defaults = array(
-			'trackme_slug' => 'trackme',
-			'trackme_extension' => 'z',
-			'mapmytracks_tag' => 'mapmytracks',
-			'osmand_slug' => 'osmand',
-			'osmand_trackname_format' => 'OsmAnd %F %H',
-			'sendlocation_slug' => 'sendlocation',
+			'trackme_slug'                  => 'trackme',
+			'trackme_extension'             => 'z',
+			'mapmytracks_tag'               => 'mapmytracks',
+			'osmand_slug'                   => 'osmand',
+			'osmand_trackname_format'       => 'OsmAnd %F %H',
+			'sendlocation_slug'             => 'sendlocation',
 			'sendlocation_trackname_format' => 'SendLocation %F %H',
-			'owntracks_slug' => 'owntracks',
-			'owntracks_trackname_format' => 'Owntracks %F',
-			'upload_tag' => 'tsupload',
-			'gettrack_slug' => 'trackserver/gettrack',
-			'enable_proxy' => false,
-			'normalize_tripnames' => 'yes',
-			'tripnames_format' => '%F %T',
-			'tile_url' => 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-			'attribution' => '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-			'db_version' => false,
+			'owntracks_slug'                => 'owntracks',
+			'owntracks_trackname_format'    => 'Owntracks %F',
+			'upload_tag'                    => 'tsupload',
+			'gettrack_slug'                 => 'trackserver/gettrack',
+			'enable_proxy'                  => false,
+			'normalize_tripnames'           => 'yes',
+			'tripnames_format'              => '%F %T',
+			'tile_url'                      => 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			'attribution'                   => '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+			'db_version'                    => false,
 		);
 
 		var $user_meta_defaults = array(
@@ -1131,12 +1131,12 @@ EOF;
 			// Add sections
 			add_settings_section( 'trackserver-trackme', esc_html__( 'TrackMe settings', 'trackserver' ), array( &$this, 'trackme_settings_html' ), 'trackserver' );
 			add_settings_section( 'trackserver-mapmytracks', esc_html__( 'OruxMaps MapMyTracks settings', 'trackserver' ), array( &$this, 'mapmytracks_settings_html' ), 'trackserver' );
-			add_settings_section( 'trackserver-osmand', esc_html__( 'OsmAnd online tracking settings', 'trackserver' ), array( &$this, 'osmand_settings_html' ),  'trackserver' );
-			add_settings_section( 'trackserver-sendlocation', esc_html__( 'SendLocation settings', 'trackserver' ), array( &$this, 'sendlocation_settings_html' ),  'trackserver' );
-			add_settings_section( 'trackserver-owntracks', esc_html__( 'OwnTracks settings', 'trackserver' ), array( &$this, 'owntracks_settings_html' ),  'trackserver' );
-			add_settings_section( 'trackserver-httppost', esc_html__( 'HTTP upload settings', 'trackserver' ), array( &$this, 'httppost_settings_html' ),  'trackserver' );
-			add_settings_section( 'trackserver-shortcode', esc_html__( 'Shortcode / map settings', 'trackserver' ), array( &$this, 'shortcode_settings_html' ),  'trackserver' );
-			add_settings_section( 'trackserver-advanced', esc_html__( 'Advanced settings', 'trackserver' ), array( &$this, 'advanced_settings_html' ),  'trackserver' );
+			add_settings_section( 'trackserver-osmand', esc_html__( 'OsmAnd online tracking settings', 'trackserver' ), array( &$this, 'osmand_settings_html' ), 'trackserver' );
+			add_settings_section( 'trackserver-sendlocation', esc_html__( 'SendLocation settings', 'trackserver' ), array( &$this, 'sendlocation_settings_html' ), 'trackserver' );
+			add_settings_section( 'trackserver-owntracks', esc_html__( 'OwnTracks settings', 'trackserver' ), array( &$this, 'owntracks_settings_html' ), 'trackserver' );
+			add_settings_section( 'trackserver-httppost', esc_html__( 'HTTP upload settings', 'trackserver' ), array( &$this, 'httppost_settings_html' ), 'trackserver' );
+			add_settings_section( 'trackserver-shortcode', esc_html__( 'Shortcode / map settings', 'trackserver' ), array( &$this, 'shortcode_settings_html' ), 'trackserver' );
+			add_settings_section( 'trackserver-advanced', esc_html__( 'Advanced settings', 'trackserver' ), array( &$this, 'advanced_settings_html' ), 'trackserver' );
 
 			// Settings for section 'trackserver-trackme'
 			add_settings_field(
@@ -1408,7 +1408,7 @@ EOF;
 
 			if ( $atts['user'] ) {
 				$user_ids = explode( ',', $atts['user'] );
-				$validated_user_ids = array_merge( $validated_user_ids, $this-> validate_user_ids( $user_ids, $author_id ) );
+				$validated_user_ids = array_merge( $validated_user_ids, $this->validate_user_ids( $user_ids, $author_id ) );
 			}
 			return array( $validated_track_ids, $validated_user_ids );
 		}
@@ -1456,9 +1456,9 @@ EOF;
 				}
 			}
 
-			$markers     = ( in_array( $p, array( 'false', 'f', 'no', 'n' ), true ) ? false : true  ); // default true
-			$markers     = ( in_array( $p, array( 'start', 's' ), true ) ? 'start' : $markers  );
-			$markers     = ( in_array( $p, array( 'end', 'e' ), true ) ? 'end' : $markers  );
+			$markers = ( in_array( $p, array( 'false', 'f', 'no', 'n' ), true ) ? false : true ); // default true
+			$markers = ( in_array( $p, array( 'start', 's' ), true ) ? 'start' : $markers );
+			$markers = ( in_array( $p, array( 'end', 'e' ), true ) ? 'end' : $markers );
 			return $markers;
 		}
 
@@ -1704,9 +1704,9 @@ EOF;
 			}
 
 			$continuous  = ( in_array( $atts['continuous'], array( 'false', 'f', 'no', 'n' ), true ) ? false : true ); // default true
-			$infobar     = ( in_array( $atts['infobar'],    array( 'false', 'f', 'no', 'n', false ), true ) ? false : true );  // default false, any value is true
-			$is_not_live = ( in_array( $atts['live'],       array( 'false', 'f', 'no', 'n' ), true ) ? false : $is_live );   // force override
-			$is_live     = ( in_array( $atts['live'],       array( 'true', 't', 'yes', 'y' ), true ) ? true : $is_not_live );   // force override
+			$infobar     = ( in_array( $atts['infobar'], array( 'false', 'f', 'no', 'n', false ), true ) ? false : true );  // default false, any value is true
+			$is_not_live = ( in_array( $atts['live'], array( 'false', 'f', 'no', 'n' ), true ) ? false : $is_live );   // force override
+			$is_live     = ( in_array( $atts['live'], array( 'true', 't', 'yes', 'y' ), true ) ? true : $is_not_live );   // force override
 			$infobar_tpl = get_user_meta( $author_id, 'ts_infobar_template', true );
 			$zoom        = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : ( $is_live ? '16' : '6' ) );
 			$fit         = ( $atts['zoom'] !== false ? false : true ); // zoom is always set, so we need a signal for altering fitBounds() options
@@ -1904,7 +1904,7 @@ EOF;
 			}
 
 			$tag = $this->options['upload_tag'];
-			$uri = $base_uri . '/' . $tag ;
+			$uri = $base_uri . '/' . $tag;
 
 			if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
 				$this->handle_upload();
@@ -1912,7 +1912,7 @@ EOF;
 			}
 
 			$tag = $this->options['gettrack_slug'];
-			$uri = $base_uri . '/' . $tag ;
+			$uri = $base_uri . '/' . $tag;
 
 			if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
 				$this->handle_gettrack();
@@ -3175,7 +3175,7 @@ EOF;
 			$track_ids = $query->id;
 			$user_ids = $query->live;
 			$validated_track_ids = $this->validate_track_ids( $track_ids, $author_id );
-			$validated_user_ids = $this-> validate_user_ids( $user_ids, $author_id );
+			$validated_user_ids = $this->validate_user_ids( $user_ids, $author_id );
 			$user_track_ids = $this->get_live_tracks( $validated_user_ids, $maxage );
 			$track_ids = array_merge( $validated_track_ids, $user_track_ids );
 

@@ -75,14 +75,14 @@ class Polyline {
 			$diff                   = $number - $previous[ $index % 2 ];
 			$previous[ $index % 2 ] = $number;
 			$number                 = $diff;
-			$index++;
 			$number                 = ( $number < 0 ) ? ~( $number << 1 ) : ( $number << 1 );
 			$chunk                  = '';
+			$index++;
 			while ( $number >= 0x20 ) {
-				$chunk  .= chr( ( 0x20 | ( $number & 0x1f ) ) + 63 );
+				$chunk   .= chr( ( 0x20 | ( $number & 0x1f ) ) + 63 );
 				$number >>= 5;
 			}
-			$chunk .= chr( $number + 63 );
+			$chunk          .= chr( $number + 63 );
 			$encoded_string .= $chunk;
 		}
 		return $encoded_string;
@@ -101,19 +101,19 @@ class Polyline {
 		$i        = 0;
 		$previous = array( 0, 0 );
 		while ( $i < strlen( $string ) ) {
-			$shift = 0x00;
+			$shift  = 0x00;
 			$result = 0x00;
 			do {
-				$bit = ord( substr( $string, $i++ ) ) - 63;
-				$result |= ($bit & 0x1f) << $shift;
-				$shift += 5;
+				$bit     = ord( substr( $string, $i++ ) ) - 63;
+				$result |= ( $bit & 0x1f ) << $shift;
+				$shift  += 5;
 			} while ( $bit >= 0x20 );
 
-			$diff = ( $result & 1 ) ? ~( $result >> 1 ) : ( $result >> 1 );
-			$number = $previous[ $index % 2 ] + $diff;
+			$diff                   = ( $result & 1 ) ? ~( $result >> 1 ) : ( $result >> 1 );
+			$number                 = $previous[ $index % 2 ] + $diff;
 			$previous[ $index % 2 ] = $number;
+			$points[]               = $number * 1 / pow( 10, static::$precision );
 			$index++;
-			$points[] = $number * 1 / pow( 10, static::$precision );
 		}
 		return $points;
 	}
