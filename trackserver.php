@@ -2823,8 +2823,7 @@ EOF;
 				// Insert the data into the databae in chunks of $max_rows.
 				// If insertion fails, return false immediately
 				foreach ( $sqldata as $chunk ) {
-					$sql  = 'INSERT INTO ' . $this->tbl_locations .
-					 ' (trip_id, latitude, longitude, altitude, created, occurred) VALUES ';
+					$sql  = 'INSERT INTO ' . $this->tbl_locations . ' (trip_id, latitude, longitude, altitude, created, occurred, hidden) VALUES ';
 					$sql .= implode( ',', $chunk );
 					if ( $wpdb->query( $sql ) === false ) { // WPCS: unprepared SQL OK
 						return false;
@@ -3798,7 +3797,7 @@ EOF;
 				if ( $_REQUEST['trackserver_action'] == 'delete' ) {
 					$result  = $this->wpdb_delete_tracks( (int) $track_id );
 					$message = 'Track "' . $name . '" (ID=' . $track_id . ', ' .
-						 $result['locations'] . ' locations) deleted';
+						$result['locations'] . ' locations) deleted';
 				} elseif ( $_REQUEST['trackserver_action'] == 'split' ) {
 					$vertex  = intval( $_REQUEST['vertex'] );  // not covered by nonce!
 					$r       = $this->wpdb_split_track( $track_id, $vertex );
