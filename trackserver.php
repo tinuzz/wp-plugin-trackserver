@@ -81,7 +81,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			'enable_proxy'                  => false,
 			'normalize_tripnames'           => 'yes',
 			'tripnames_format'              => '%F %T',
-			'tile_url'                      => 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			'tile_url'                      => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 			'attribution'                   => '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			'db_version'                    => false,
 		);
@@ -748,9 +748,18 @@ EOF;
 
 		function tile_url_html() {
 			$val = htmlspecialchars( $this->options['tile_url'] );
-			echo <<<EOF
-				<input type="text" size="50" name="trackserver_options[tile_url]" id="trackserver_tile_url" value="$val" autocomplete="off" /><br /><br />
+			$format = <<<EOF
+				<input type="text" size="50" name="trackserver_options[tile_url]" id="trackserver_tile_url" value="$val" autocomplete="off" /><br />
+				%1\$s<br />
 EOF;
+
+			printf( $format,
+				sprintf( esc_html__( 'OSM example: %1$s', 'trackserver' ), $this->option_defaults['tile_url'] ).
+				'<br>'.
+				esc_html__( 'Google example: https://mt.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', 'trackserver' ).
+				'<br>'.
+				esc_html__( 'Where lyrs= value can be: h – roads only, m – standard roadmap p – terrain r – somehow altered roadmap s – satellite only t – terrain only y – hybrid', 'trackserver' )
+			);
 		}
 
 		function attribution_html() {
