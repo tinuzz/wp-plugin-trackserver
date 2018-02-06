@@ -1248,6 +1248,8 @@ EOF;
 				esc_html__( 'Your profile', 'trackserver' ), 'use_trackserver', 'trackserver-yourprofile', array( &$this, 'yourprofile_html' )
 			);
 
+			add_submenu_page( 'trackserver-options', esc_html__( 'Shortcode', 'trackserver' ), esc_html__( 'Shortcode', 'trackserver' ), 'use_trackserver', 'trackserver-shortcode', array( &$this, 'shortcode_html' ) );
+
 			// Early action to set up the 'Manage tracks' page and handle bulk actions.
 			add_action( 'load-' . $page2, array( &$this, 'load_manage_tracks' ) );
 
@@ -3677,6 +3679,237 @@ EOF;
 					</p>
 				</form>
 			</div>
+			<?php
+
+		}
+
+		function shortcode_html() {
+
+			if ( ! current_user_can( 'use_trackserver' ) ) {
+				wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
+			}
+
+			// TODO
+
+			?>
+			<div class="wrap">
+
+				<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+				<h2><?php esc_html_e( 'Shortcode configurator', 'trackserver' ); ?></h2>
+				<div id="app">
+
+					<p><?php esc_html_e( 'Configure your settings bellow and copy generated shortcode:', 'trackserver' ); ?>
+						<br>
+						<code>[tsmap<span v-show="track_ids"> id={{track_ids}}</span><span v-show="track_live"> live=true</span><span v-show="track_user"> user={{track_user}}</span><span v-show="track_maxage"> maxage={{track_maxage}}</span><span v-show="track_width"> width={{track_width}}</span><span v-show="track_height"> height={{track_height}}</span><span v-show="track_align"> align={{track_align}}</span><span v-show="track_class"> class='{{track_class}}'</span><span v-show="track_not_continuous"> continuous=false</span><span v-show="track_gpx"> gpx='{{track_gpx}}'</span><span v-show="track_kml"> kml='{{track_kml}}'</span><span v-show="track_infobar"> infobar={{track_infobar}}</span><span v-show="track_zoom"> zoom={{track_zoom}}</span><span v-show="track_disable_markers"> markers=false</span><span v-show="track_color"> color='{{track_color}}'</span><span v-show="track_weight"> weight='{{track_weight}}'</span><span v-show="track_opacity"> opacity='{{track_opacity}}'</span><span v-show="track_points"> points=true</span>]</code>
+					</p>
+
+					<table class="form-table">
+						<tbody>
+
+							<tr>
+								<th scope="row">
+									<label for="track_id"><?php esc_html_e( 'Track IDs', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_id" v-model="track_ids" class="regular-text">
+									<p class="description"><?php esc_html_e( 'One or more track IDs, separated by commas', 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_live"><?php esc_html_e( 'Live', 'trackserver' ); ?></label></th>
+								<td><input type="checkbox" id="track_live" v-model="track_live">
+									<p>
+										<span class="description"><?php esc_html_e( 'Force live tracking for this map. This can be used for example with an externally updated GPX or KML file.', 'trackserver' ); ?></span>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_user"><?php esc_html_e( 'User', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_user" v-model="track_user" class="regular-text">
+									<p class="description"><?php esc_html_e( "One or more user IDs, separated by commas, who's latest track to follow 'live'. A literal '@' means the author of the post (you). When viewing the map, the liveupdate feature will follow the track of the first user specified. When the end-marker is enabled for a live track (and why shouldn't it?), clicking it will change the focus of the liveupdate to that track. The map view will follow the latest location and the infobar (if present) will display its information.", 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_maxage"><?php esc_html_e( 'Max age', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_maxage" v-model="track_maxage" class="regular-text">
+									<p class="description"><?php esc_html_e( "The maximum age of a live track for it to be included on the map. If this parameter is given, all user tracks that have not been updated in the last X amount of time, will not be displayed. The value is a time expression in the form of a number and a unit, for example: '120s', '30m', '2h', '3d'.", 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_width"><?php esc_html_e( 'Map width', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_width" v-model="track_width" class="regular-text" placeholder="100%">
+									<p class="description"><?php esc_html_e( 'Map width, default: 100%', 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_height"><?php esc_html_e( 'Map height', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_height" v-model="track_height" class="regular-text" placeholder="480px">
+									<p class="description"><?php esc_html_e( 'Map height, default: 480px', 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_align"><?php esc_html_e( 'Alignment', 'trackserver' ); ?></label>
+								</th>
+								<td>
+									<input type="radio" id="track_align" name="track_align" value="" v-model="track_align" checked> <?php esc_html_e( 'not set', 'trackserver' ); ?>
+									<input type="radio" name="track_align" value="left" v-model="track_align"> <?php esc_html_e( 'left', 'trackserver' ); ?>
+									<input type="radio" name="track_align" value="center" v-model="track_align"> <?php esc_html_e( 'center', 'trackserver' ); ?>
+									<input type="radio" name="track_align" value="right" v-model="track_align"> <?php esc_html_e( 'right', 'trackserver' ); ?>
+									<p class="description"><?php esc_html_e( 'Map alignment', 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_class"><?php esc_html_e( 'CSS class', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_class" v-model="track_class" class="regular-text" placeholder="">
+									<p class="description"><?php esc_html_e( 'CSS class to add to the map div for customization.', 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_not_continuous"><?php esc_html_e( 'Not continuous', 'trackserver' ); ?></label></th>
+								<td><input type="checkbox" id="track_not_continuous" v-model="track_not_continuous">
+									<p>
+										<span class="description"><?php esc_html_e( 'If not checked, multiple tracks will be considered as one continuous track. The only effect this has, at the moment, is that intermediate start markers are yellow instead of green.', 'trackserver' ); ?></span>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_gpx"><?php esc_html_e( 'GPX file URL', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_gpx" v-model="track_gpx" class="regular-text" placeholder="">
+									<p class="description"><?php esc_html_e( "One or more URLs to GPX files to be plotted on the map. Multiple URLs should be separated by spaces (e.g. http://example.com/track1.gpx http://example.com/track2.gpx). If URL is prefixed with the string 'proxy:', the request is proxied through Trackserver.", 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_kml"><?php esc_html_e( 'KML file URL', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_kml" v-model="track_kml" class="regular-text" placeholder="">
+									<p class="description"><?php esc_html_e( "One or more URLs to KML files to be plotted on the map. Multiple URLs should be separated by spaces (e.g. http://example.com/track1.kml http://example.com/track2.kml). If URL is prefixed with the string 'proxy:', the request is proxied through Trackserver.", 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_infobar"><?php esc_html_e( 'Information bar', 'trackserver' ); ?></label></th>
+								<td><input type="checkbox" id="track_infobar" v-model="track_infobar">
+									<p>
+										<span class="description"><?php esc_html_e( "Whether an information bar should be shown on the map, when live tracking is active. This only works with 'track=live' or the 'user' parameter, and has no effect in other cases. When multiple live tracks are requested, the infobar will display the data of the first track only. Instead of 'true' or 'yes', a template string containing one or more placeholders (like {lat}, {lon}, {speedkmh}, etc.) can be given to the attribute, in which case it overrides the value specified in the user profile. Please check the Trackserver user profile page in the WordPress backend for which placeholders are supported.", 'trackserver' ); ?></span>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_zoom"><?php esc_html_e( 'Zoom', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_zoom" v-model="track_zoom" class="regular-text" placeholder="">
+									<p class="description"><?php esc_html_e( 'The zoom factor to use for the map, a number between 0 and 18. For a map with live tracks, this number is absolute. For a map with only static tracks, this number represents the maximum zoom level, so the map will always fit all the tracks.', 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<td colspan="2">
+									<?php esc_html_e( "The following attributes apply to tracks that are drawn on the map. Each of them can contain multiple values, separated by commas (or colons, in the case of 'dash'), to be applied to different tracks in order. If there a are less values than tracks, the last value will be applied to the remaining tracks.", 'trackserver' ); ?>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_disable_markers"><?php esc_html_e( 'Disable markers', 'trackserver' ); ?></label></th>
+								<td><input type="checkbox" id="track_disable_markers" v-model="track_disable_markers">
+									<p>
+										<span class="description"><?php esc_html_e( 'Disable start/end markers on the track', 'trackserver' ); ?></span>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_color"><?php esc_html_e( 'Color', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_color" v-model="track_color" class="regular-text" placeholder="">
+									<p class="description"><?php esc_html_e( 'One or more colors, separated by commas, to use for the tracks on the map. Default comes from Leaflet.', 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_weight"><?php esc_html_e( 'Weight', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_weight" v-model="track_weight" class="regular-text" placeholder="">
+									<p class="description"><?php esc_html_e( 'One or more weights, separated by commas, to use for the tracks on the map. Default comes from Leaflet.', 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_opacity"><?php esc_html_e( 'Opacity', 'trackserver' ); ?></label>
+								</th>
+								<td><input type="text" id="track_opacity" v-model="track_opacity" class="regular-text" placeholder="">
+									<p class="description"><?php esc_html_e( 'One or more opacities, separated by commas, to use for the tracks on the map. Default comes from Leaflet.', 'trackserver' ); ?></p>
+								</td>
+							</tr>
+
+							<tr>
+								<th scope="row">
+									<label for="track_points"><?php esc_html_e( 'Points instead of line', 'trackserver' ); ?></label></th>
+								<td><input type="checkbox" id="track_points" v-model="track_points">
+									<p>
+										<span class="description"><?php esc_html_e( 'The track will be displayed as collection of points instead of a line.', 'trackserver' ); ?></span>
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+				<script>
+					var app = new Vue({
+						el: '#app',
+						data: {
+							track_points: false,
+							track_opacity: '',
+							track_weight: '',
+							track_color: '',
+							track_disable_markers: false,
+							track_zoom: '',
+							track_infobar: false,
+							track_kml: '',
+							track_gpx: '',
+							track_not_continuous: false,
+							track_class: '',
+							track_align: '',
+							track_height: '',
+							track_width: '',
+							track_maxage: '',
+							track_user: '',
+							track_live: false,
+							track_ids: ''
+						}
+					})
+				</script>
+
+			</div>
+
 			<?php
 
 		}
