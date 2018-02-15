@@ -370,6 +370,11 @@ var Trackserver = (function () {
                     //this._map.fitBounds(featuregroup.getBounds());
                     this._map.setView(mymapdata.center, 6);
                 })
+                /*
+                .on('click', function(e) {
+                    console.log(e.target.options.track_id);
+                })
+                */
                 .addTo(featuregroup);
 
             this.set_mydata(div_id, track_id, 'track', runLayer);
