@@ -534,7 +534,7 @@ var Trackserver = (function () {
                         this.draw_tracks(mymapdata);
                     }
                 }
-                else {
+                else if (!this.adminmap) {
                     var popup = L.popup()
                         .setLatLng(mymapdata.center)
                         .setContent(trackserver_i18n['no_tracks_to_display']).openOn(map);
