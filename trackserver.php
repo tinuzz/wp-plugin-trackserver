@@ -377,6 +377,7 @@ EOF;
 
 			switch ( $hook ) {
 				case 'trackserver_page_trackserver-tracks':
+				case 'trackserver_page_trackserver-yourprofile':
 					$this->load_common_scripts();
 
 					// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
@@ -3654,6 +3655,8 @@ EOF;
 				wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 			}
 
+			add_thickbox();
+
 			?>
 			<div class="wrap">
 				<h2><?php esc_html_e( 'Trackserver profile', 'trackserver' ); ?></h2>
@@ -3702,6 +3705,16 @@ EOF;
 									<?php $this->infobar_template_html(); ?>
 								</td>
 							</tr>
+							<tr>
+								<th scope="row">
+									<label for="geofence_center">
+										<?php esc_html_e( 'Geofencing', 'trackserver' ); ?>
+									</label>
+								</th>
+								<td>
+									<?php $this->geofences_html(); ?>
+								</td>
+							</tr>
 						<tbody>
 					</table>
 					<p class="submit">
@@ -3709,6 +3722,11 @@ EOF;
 							class="button button-primary" id="submit" name="submit">
 					</p>
 				</form>
+				<div id="ts-view-modal" style="display:none;">
+						<div id="tsadminmapcontainer">
+							<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
+						</div>
+				</div>
 			</div>
 			<?php
 
@@ -3804,6 +3822,92 @@ EOF;
 				'{speedms}, {speedkmh}, {speedmph}, {userid}, {userlogin}, {displayname}.', 'trackserver' )
 			);
 			// @codingStandardsIgnoreEnd
+		}
+
+		/**
+		 * Output HTML for managing geofences
+		 *
+		 * This function outputs the HTML for managing geofences in the user
+		 * profile. Geofences are stored in the user's metadata as a single
+		 * associative array. If the stored array does not contain a geofence with
+		 * all '0' values, we add one. This can be used to add new geofences.
+		 *
+		 * @since 3.1
+		 */
+		function geofences_html() {
+			$current_user      = wp_get_current_user();
+			$url               = admin_url() . 'admin.php?page=trackserver-yourprofile';
+			$geofences         = get_user_meta( $current_user->ID, 'ts_geofences', true );
+			$default_geofence  = array(
+				'lat'    => 0,
+				'lon'    => 0,
+				'radius' => 0,
+				'action' => 'hide',
+			);
+			$action_select_fmt = '<select name="ts_geofence_action[%1$d]" data-id="%1$d" class="ts-input-geofence">%2$s</select>';
+			$actions           = array(
+				'hide'    => esc_html__( 'Hide' ),
+				'discard' => esc_html__( 'Discard' ),
+			);
+
+			if ( ! in_array( $default_geofence, $geofences ) ) {
+				$geofences[] = $default_geofence;
+			}
+
+			// @codingStandardsIgnoreStart
+			echo esc_html__( 'Track updates that fall within the specified radius (in meters) from the center point, ' .
+				'will be marked as hidden or discarded, depending on the specified action. Modify the "0, 0, 0" entry to add a new fence. ' .
+				'Set the values to "0, 0, 0, Hide" to delete an entry. ' .
+				'The center point coordinates should be specified in decimal degrees. A radius of 0 will disable the fence. ' .
+				'Use the link below to view existing geofences. You can also click the map to pick the center coordinates for a new fence. ' .
+				'Remember to set a radius and update your profile afterwards.', 'trackserver' ) . '<br>';
+			// @codingStandardsIgnoreEnd
+
+			echo '<table>';
+			for ( $i = 0; $i < count( $geofences ); $i++ ) {
+				$fence                 = $geofences[ $i ];
+				$lat                   = htmlspecialchars( $fence['lat'] );
+				$lon                   = htmlspecialchars( $fence['lon'] );
+				$radius                = htmlspecialchars( $fence['radius'] );
+				$action                = $fence['action'];
+				$action_select_options = '';
+				foreach ( $actions as $k => $v ) {
+					$option_selected        = ( $action == $k ? 'selected' : '' );
+					$action_select_options .= '<option value="' . $k . '" ' . $option_selected . '>' . $v . '</option>';
+				}
+
+				// Mark all rows (and especially the '0,0,0' row) for easier finding in JavaScript
+				$itemdata = 'data-id="' . $i . '"';
+				if ( $lat == '0' && $lon == '0' && $radius == '0' && $action == 'hide' ) {
+					$itemdata .= ' data-newentry';
+				}
+
+				echo '<tr ' . $itemdata . ' class="trackserver_geofence">' .
+					'<td>' . esc_html__( 'Center latitude' ) .
+					' <input type="text" size="10" name="ts_geofence_lat[' . $i . ']" value="' . $lat . '" class="ts-input-geofence-lat ts-input-geofence" autocomplete="off" ' .
+					$itemdata . ' /></td>' .
+					'<td>' . esc_html__( 'Longitude' ) .
+					' <input type="text" size="10" name="ts_geofence_lon[' . $i . ']" value="' . $lon . '" class="ts-input-geofence-lon ts-input-geofence" autocomplete="off" ' .
+					$itemdata . ' /></td>' .
+					'<td>' . esc_html__( 'Radius' ) .
+					' <input type="text" size="10" name="ts_geofence_radius[' . $i . ']" value="' . $radius . '" class="ts-input-geofence-radius ts-input-geofence" autocomplete="off" ' .
+					$itemdata . ' /></td>' .
+					'<td>' . esc_html__( 'Action' ) . ' ';
+
+				printf( $action_select_fmt, $i, $action_select_options );
+
+				echo '</td></tr>';
+			}
+			echo '<tr><td colspan="4" style="text-align: right">' .
+				'<a href="#TB_inline?width=&inlineId=ts-view-modal" class="thickbox" data-id="0" data-action="fences">' . esc_html__( 'View geofences', 'trackserver' ) . '</a>';
+				'</td></tr>';
+			echo '</table>';
+			echo '<div id="ts_geofences_changed" style="color: red; display: none">' .
+				esc_html__( "It seems you have made changes to the geofences. Don't forget to update your profile!", 'trackserver' );
+				'</div>';
+
+			// Prepare the map data
+			wp_localize_script( 'trackserver-admin', 'trackserver_admin_geofences', $geofences );
 		}
 
 		function profiles_html() {
@@ -3988,9 +4092,19 @@ EOF;
 		 * @since 1.9
 		 */
 		function process_profile_update() {
-			$user_id      = get_current_user_id();
-			$data         = $_POST['ts_user_meta'];
-			$valid_fields = array( 'ts_osmand_key', 'ts_trackme_key', 'ts_sendlocation_key', 'ts_infobar_template' );
+			$user_id         = get_current_user_id();
+			$data            = $_POST['ts_user_meta'];
+			$geofence_lat    = $_POST['ts_geofence_lat'];
+			$geofence_lon    = $_POST['ts_geofence_lon'];
+			$geofence_radius = $_POST['ts_geofence_radius'];
+			$geofence_action = $_POST['ts_geofence_action'];
+			$valid_fields    = array(
+				'ts_osmand_key',
+				'ts_trackme_key',
+				'ts_sendlocation_key',
+				'ts_infobar_template',
+			);
+			$valid_actions   = array( 'hide', 'discard' );
 
 			// If the data is not an array, do nothing
 			if ( is_array( $data ) ) {
@@ -3999,6 +4113,24 @@ EOF;
 						update_user_meta( $user_id, $meta_key, $meta_value );
 					}
 				}
+
+				if ( is_array( $geofence_lat ) && is_array( $geofence_lon ) && is_array( $geofence_radius ) && is_array( $geofence_action ) ) {
+					$geofences = array();
+					$keys = array_keys( $geofence_lat );  // The keys should be the same for all relevant arrays, normally a 0-based index.
+					foreach ( $keys as $k ) {
+						$newfence = array(
+							'lat'    => (float) $geofence_lat[ $k ],
+							'lon'    => (float) $geofence_lon[ $k ],
+							'radius' => abs( (int) $geofence_radius[ $k ] ),
+							'action' => ( in_array( $geofence_action[ $k ], $valid_actions ) ? $geofence_action[ $k ] : 'hide' ),
+						);
+						if ( ! in_array( $newfence, $geofences ) ) {
+							$geofences[] = $newfence;
+						}
+					}
+					update_user_meta( $user_id, 'ts_geofences', $geofences );
+				}
+
 				$message = __( 'Profile updated', 'trackserver' );
 			} else {
 				$message = __( 'ERROR: could not update user profile', 'trackserver' );

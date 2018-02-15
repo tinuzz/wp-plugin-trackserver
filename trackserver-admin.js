@@ -18,7 +18,7 @@ var tb_click = function(e)
         tb_window_width = 600;
         tb_window_height = 320;
     }
-    if (ts_action == 'view') {
+    if (ts_action == 'view' || ts_action == 'fences') {
         tb_window_width = 1024;
         tb_window_height = 768;
     }
@@ -65,6 +65,10 @@ var tb_click = function(e)
         trackserver_mapdata = [{"div_id":"tsadminmap","tracks":[{"track_id":track_id,"track_url":track_url,"track_type":"polylinexhr","markers":true,"nonce":nonce}],"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false}];
     }
 
+    if (ts_action == 'fences') {
+        trackserver_mapdata = [{"div_id":"tsadminmap","default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false}];
+    }
+
     old_tb_click.call(this); // Pass the clicked element as context
     return false;
 };
@@ -93,8 +97,13 @@ var tb_show = function(c, u, i)
     jQuery("#tsadminmapcontainer").css({"width": (w - 32) + 'px', "height": (h - 60)});
     if (trackserver_mapdata) {
         Trackserver.init( trackserver_mapdata );
-        TrackserverAdmin.setup_editables();
-
+        TrackserverAdmin.setup();
+        if (typeof trackserver_mapdata[0].tracks != "undefined") {
+            TrackserverAdmin.setup_editables();
+        }
+    }
+    if (typeof trackserver_admin_geofences == 'object') {
+        TrackserverAdmin.draw_geofences();
     }
 };
 
@@ -132,11 +141,16 @@ var TrackserverAdmin = (function () {
     return {
 
         modified_locations: {},
-        latlngs: {},  // object containing list of latlngs per track, that doesn't change when deleting a vertex
+        latlngs: {},    // object containing list of latlngs per track, that doesn't change when deleting a vertex
+        geofences: {},  // hash of objects that hold leaflet shapes for geofences
 
         init: function() {
             this.checked = false;
             this.setup_eventhandlers();
+        },
+
+        setup: function() {
+            this.map = Trackserver.adminmap;
         },
 
         check_selection: function( action ) {
@@ -310,6 +324,10 @@ var TrackserverAdmin = (function () {
                     jQuery('#trackserver-edit-action').val('delete');
                     jQuery('#trackserver-edit-track').submit();
                 }
+            });
+
+            jQuery('.ts-input-geofence').on('change', function(e) {
+                jQuery('#ts_geofences_changed').css({display: 'block'});
             });
         },
 
@@ -538,7 +556,90 @@ var TrackserverAdmin = (function () {
             map.on('editable:vertex:dragend', function(e) {
                 _this.move_vertex(e.vertex);
             });
+        },
+
+        draw_geofence_shape: function(latlng, radius, featuregroup, i) {
+            var _this = this;
+            var map = featuregroup._map;
+            var new_entry_id = jQuery('tr[data-newentry]').attr("data-id");
+            var outer = L.circle(latlng, {radius: radius, color: '#ff0000', weight: 2, opacity: 0.4 }).addTo(featuregroup);
+            var inner = new Trackserver.Mapicon(latlng, { fillColor: '#ff0000' }).addTo(featuregroup)
+                .on('click', function(e) {
+                    var popLocation= e.latlng;
+                    var popup = L.popup()
+                    .setLatLng(popLocation)
+                    .setContent('<a href="#" id="remove-fence" data-id="' + i + '">Remove ' + i + '</a>')
+                    .openOn(map);
+
+                    jQuery('#remove-fence').on('click', function(e) {
+                        jQuery('input[name="ts_geofence_lat[' + i + ']"]').val('0');
+                        jQuery('input[name="ts_geofence_lon[' + i + ']"]').val('0');
+                        jQuery('input[name="ts_geofence_radius[' + i + ']"]').val('0').focus();
+                        jQuery('select[name="ts_geofence_action[' + i + ']"]').val('hide').change();
+                        _this.remove_geofence(featuregroup, i);
+                        map.closePopup();
+                        return false;
+                    });
+                    L.DomEvent.stopPropagation(e);
+                    L.DomEvent.preventDefault(e);
+            });
+            this.remove_geofence(featuregroup, i);
+            this.geofences[i] = { outer: outer, inner: inner };
+            return { outer: outer, inner: inner };
+        },
+
+        remove_geofence: function(featuregroup, i) {
+            if (this.geofences.hasOwnProperty(i)) {
+                featuregroup.removeLayer(this.geofences[i].outer);
+                featuregroup.removeLayer(this.geofences[i].inner);
+                delete(this.geofences[i]);
+            }
+        },
+
+        draw_geofences: function() {
+            var _this = this;
+            var featuregroup = L.featureGroup().addTo(this.map);
+            var valid_fences = 0;
+            var new_entry_id = jQuery('tr[data-newentry]').attr("data-id");
+
+            // Use data from the HTML table for drawing
+            jQuery('tr.trackserver_geofence').each( function ( index, el ) {
+                var input_lat = jQuery(el).find('input.ts-input-geofence-lat');
+                var input_lon = jQuery(el).find('input.ts-input-geofence-lon');
+                var input_radius = jQuery(el).find('input.ts-input-geofence-radius');
+                var radius = parseInt(input_radius.val());
+                if (radius > 0) {
+                    var lat = parseFloat(input_lat.val());
+                    var lon = parseFloat(input_lon.val());
+                    var entry_id = jQuery(el).attr('data-id');
+                    _this.draw_geofence_shape([lat,lon], radius, featuregroup, entry_id);
+                    valid_fences++;
+                }
+            });
+
+            if (valid_fences > 0) {  // Prevent 'Bounds are not valid' error
+                this.map.fitBounds(featuregroup.getBounds());
+            }
+
+            this.map.on('click', function(e) {
+                var popLocation= e.latlng;
+                var popup = L.popup()
+                .setLatLng(popLocation)
+                .setContent('<b>Add Geofence</b><br><a href="#" id="ts-gf-pick-location">Pick location</a>')
+                .openOn(_this.map);
+
+                jQuery('#ts-gf-pick-location').on('click', function(e) {
+                    jQuery('input[name="ts_geofence_lat[' + new_entry_id + ']"]').val(popLocation.lat);
+                    jQuery('input[name="ts_geofence_lon[' + new_entry_id + ']"]').val(popLocation.lng);
+                    jQuery('input[name="ts_geofence_radius[' + new_entry_id + ']"]').val('100').focus();
+                    jQuery('select[name="ts_geofence_action[' + new_entry_id + ']"]').change();
+                    _this.draw_geofence_shape([popLocation.lat,popLocation.lng], 100, featuregroup, new_entry_id);
+                    _this.map.closePopup();
+                    return false;
+                });
+            });
         }
+
     };
 })();
 
