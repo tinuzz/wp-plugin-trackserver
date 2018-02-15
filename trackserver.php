@@ -3723,6 +3723,16 @@ EOF;
 							</tr>
 							<tr>
 								<th scope="row">
+									<label for="mapmytracks_profile">
+										<?php esc_html_e( 'MapMyTracks profile', 'trackserver' ); ?>
+									</label>
+								</th>
+								<td>
+									<?php $this->mapmytracks_profile_html(); ?>
+								</td>
+							</tr>
+							<tr>
+								<th scope="row">
 									<label for="osmand_access_key">
 										<?php esc_html_e( 'OsmAnd access key', 'trackserver' ); ?>
 									</label>
@@ -3777,6 +3787,16 @@ EOF;
 			<?php
 			$this->howto_modals_html();
 
+		}
+
+		function mapmytracks_profile_html() {
+			$val     = htmlspecialchars( $this->options['mapmytracks_tag'] );
+			$url     = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$format  = "<strong>%1\$s:</strong> $url/$val<br /><br />";
+
+			printf( $format, esc_html__( 'Full custom URL', 'trackserver' ) );
+
+			$this->mapmytracks_settings_html();
 		}
 
 		function osmand_key_html() {
