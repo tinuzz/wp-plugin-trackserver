@@ -12,9 +12,7 @@ var tb_click = function(e)
     var row = jQuery(this).closest("tr");
     var tds = row.find("th,td");
 
-    // track_base_url should come from WP via wp_localize_script()
-    var track_url = track_base_url + "admin=1";
-    var nonce = false;
+    trackserver_mapdata = false;
 
     if (ts_action == 'edit') {
         tb_window_width = 600;
@@ -30,6 +28,10 @@ var tb_click = function(e)
     }
 
     if (ts_action == 'view' || ts_action == 'edit') {
+
+        // track_base_url should come from WP via wp_localize_script()
+        var track_url = track_base_url + "admin=1";
+        var nonce = false;
 
         // Loop over the table columns and set up the 'trackserver-edit-track' form with the data
         jQuery.each(tds, function() {
