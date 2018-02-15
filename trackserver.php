@@ -3775,6 +3775,7 @@ EOF;
 				</div>
 			</div>
 			<?php
+			$this->howto_modals_html();
 
 		}
 
@@ -3840,7 +3841,7 @@ EOF;
 				%1\$s<br />
 				<input type="text" size="25" name="ts_user_meta[ts_trackme_key]" id="trackserver_trackme_key" value="$key" autocomplete="off" /><br /><br />
 				<strong>%2\$s:</strong> $url/$slug<br />
-				<strong>%3\$s:</strong> $extn<br />
+				<strong>%3\$s:</strong> $extn<br /><br />
 EOF;
 
 			// @codingStandardsIgnoreStart
@@ -3851,6 +3852,8 @@ EOF;
 				esc_html__( 'Server extension', 'trackserver' )
 			);
 			// @codingStandardsIgnoreEnd
+
+			$this->trackme_settings_html();
 		}
 
 		function infobar_template_html() {
