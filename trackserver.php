@@ -43,7 +43,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 	define( 'TRACKSERVER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 	define( 'TRACKSERVER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 	define( 'TRACKSERVER_JSLIB', TRACKSERVER_PLUGIN_URL . 'lib/' );
-	define( 'TRACKSERVER_VERSION', '3.0.1-20170918' );
+	define( 'TRACKSERVER_VERSION', '3.0.1-20180215' );
 
 	/**
 	 * The main plugin class.
