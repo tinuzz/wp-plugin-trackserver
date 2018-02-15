@@ -3036,7 +3036,7 @@ EOF;
 
 			foreach ( $gpx->trk as $trk ) {
 				$points    = array();
-				$trip_name = $trk->name;
+				$trip_name = (string) $trk->name;
 
 				// @codingStandardsIgnoreLine
 				if ( $skip_existing && ( $trk_id = $this->get_track_id_by_name( $trip_name, $user_id ) ) ) {
@@ -3053,8 +3053,8 @@ EOF;
 								}
 							}
 							$points[] = array(
-								'latitude'  => $trkpt['lat'],
-								'longitude' => $trkpt['lon'],
+								'latitude'  => (string) $trkpt['lat'],
+								'longitude' => (string) $trkpt['lon'],
 								'altitude'  => (string) $trkpt->ele,
 								'timestamp' => ( $fake_time ? ( $last_ts + 1 ) : $this->parse_iso_date( (string) $trkpt->time ) ),
 							);
