@@ -57,7 +57,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @access private
 		 * @var int $db_version
 		 */
-		var $db_version = 15;
+		var $db_version = 16;
 
 		/**
 		 * Default values for options. See class constructor for more.
@@ -591,6 +591,7 @@ EOF;
 					$upgrade_sql[14] = 'ALTER TABLE ' . $this->tbl_tracks . ' ADD `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() AFTER `name`';
 				}
 				$upgrade_sql[15] = 'UPDATE ' . $this->tbl_tracks . ' t SET t.updated=(SELECT max(occurred) FROM `' . $this->tbl_locations . '` WHERE trip_id = t.id)';
+				$upgrade_sql[16] = 'ALTER TABLE ' . $this->tbl_locations . " ADD `hidden` TINYINT(1) NOT NULL DEFAULT '0' AFTER `comment`";
 
 				for ( $i = $installed_version + 1; $i <= $this->db_version; $i++ ) {
 					if ( array_key_exists( $i, $upgrade_sql ) ) {
@@ -2112,6 +2113,13 @@ EOF;
 							$format[]        = '%s';
 						}
 
+						$fenced = $this->is_geofenced( $user_id, $data );
+						if ( $fenced == 'discard' ) {
+							$this->trackme_result( 0 );  // this will not return
+						}
+						$data['hidden'] = ( $fenced == 'hide' ? 1 : 0 );
+						$format[]       = '%d';
+
 						if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
 							$this->calculate_distance( $trip_id );
 							$this->trackme_result( 0 );
@@ -2378,6 +2386,13 @@ EOF;
 							$format[]        = '%s';
 						}
 
+						$fenced = $this->is_geofenced( $user_id, $data );
+						if ( $fenced == 'discard' ) {
+							$this->http_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" ); // this will not return
+						}
+						$data['hidden'] = ( $fenced == 'hide' ? 1 : 0 );
+						$format[]       = '%d';
+
 						if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
 							$this->calculate_distance( $track_id );
 							$this->http_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" );
@@ -2457,6 +2472,13 @@ EOF;
 						$data['heading'] = $heading;
 						$format[]        = '%s';
 					}
+
+					$fenced = $this->is_geofenced( $user_id, $data );
+					if ( $fenced == 'discard' ) {
+						$this->http_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" );  // This will not return
+					}
+					$data['hidden'] = ( $fenced == 'hide' ? 1 : 0 );
+					$format[]       = '%d';
 
 					if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
 						$this->calculate_distance( $track_id );
@@ -2548,6 +2570,13 @@ EOF;
 							$data['altitude'] = $json['alt'];
 							$format[]         = '%s';
 						}
+
+						$fenced = $this->is_geofenced( $user_id, $data );
+						if ( $fenced == 'discard' ) {
+							$this->http_terminate( 200, '[]' );  // This will not return
+						}
+						$data['hidden'] = ( $fenced == 'hide' ? 1 : 0 );
+						$format[]       = '%d';
 
 						if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
 							$this->calculate_distance( $track_id );
@@ -2645,7 +2674,7 @@ EOF;
 
 				if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
 					$trip_id = $wpdb->insert_id;
-					if ( $this->mapmytracks_insert_points( $points, $trip_id ) ) {
+					if ( $this->mapmytracks_insert_points( $points, $trip_id, $user_id ) ) {
 						$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
 						$xml->addChild( 'type', 'activity_started' );
 						$xml->addChild( 'activity_id', (string) $trip_id );
@@ -2671,7 +2700,7 @@ EOF;
 				// Check if the current login is actually the owner of the trip
 				if ( $trip_owner == $user_id ) {
 					$points = $this->mapmytracks_parse_points( $_POST['points'] );
-					if ( $this->mapmytracks_insert_points( $points, $trip_id ) ) {
+					if ( $this->mapmytracks_insert_points( $points, $trip_id, $user_id ) ) {
 						$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
 						$xml->addChild( 'type', 'activity_updated' );
 						//echo $xml->asXML();
@@ -2745,6 +2774,7 @@ EOF;
 				$all    = explode( ' ', $points );
 				for ( $i = 0; $i < count( $all ); $i += 4 ) {
 					if ( $all[ $i ] ) {
+
 						$parsed[] = array(
 							'latitude'  => $all[ $i ],
 							'longitude' => $all[ $i + 1 ],
@@ -2803,7 +2833,7 @@ EOF;
 			return timezone_offset_get( $timezone_object, $datetime_object );
 		}
 
-		function mapmytracks_insert_points( $points, $trip_id ) {
+		function mapmytracks_insert_points( $points, $trip_id, $user_id ) {
 			global $wpdb;
 
 			if ( $points ) {
@@ -2812,9 +2842,15 @@ EOF;
 				$sqldata = array();
 
 				foreach ( $points as $p ) {
-					$ts        = $p['timestamp'] + $offset;
-					$occurred  = date( 'Y-m-d H:i:s', $ts );
-					$sqldata[] = $wpdb->prepare( '(%d, %s, %s, %s, %s, %s)', $trip_id, $p['latitude'], $p['longitude'], $p['altitude'], $now, $occurred );
+					$ts       = $p['timestamp'] + $offset;
+					$occurred = date( 'Y-m-d H:i:s', $ts );
+					$fenced   = $this->is_geofenced( $user_id, $p );
+
+					if ( $fenced == 'discard' ) {
+						continue;
+					}
+					$hidden    = ( $fenced == 'hide' ? 1 : 0 );
+					$sqldata[] = $wpdb->prepare( '(%d, %s, %s, %s, %s, %s, %d)', $trip_id, $p['latitude'], $p['longitude'], $p['altitude'], $now, $occurred, $hidden );
 				}
 
 				// Let's see how many rows we can put in a single MySQL INSERT query.
@@ -3105,7 +3141,7 @@ EOF;
 					$format = array( '%d', '%s', '%s', '%s' );
 					if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
 						$trip_id = $wpdb->insert_id;
-						$this->mapmytracks_insert_points( $points, $trip_id );
+						$this->mapmytracks_insert_points( $points, $trip_id, $user_id );
 						$track_ids[] = $trip_id;
 						$ntrk++;
 					}
@@ -3226,7 +3262,7 @@ EOF;
 			// @codingStandardsIgnoreStart
 			$sql_in = "('" . implode( "','", $track_ids ) . "')";
 			$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->tbl_locations .
-				' l INNER JOIN ' . $this->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' ORDER BY trip_id, occurred';
+				' l INNER JOIN ' . $this->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' AND l.hidden = 0 ORDER BY trip_id, occurred';
 			$res = $wpdb->get_results( $sql, ARRAY_A );
 			// @codingStandardsIgnoreEnd
 
