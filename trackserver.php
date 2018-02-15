@@ -110,6 +110,14 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$this->user_meta_defaults['ts_osmand_key']        = substr( md5( uniqid() ), -8 );
 			$this->user_meta_defaults['ts_sendlocation_key']  = substr( md5( uniqid() ), -8 );
 			$this->user_meta_defaults['ts_tracks_admin_view'] = '0';
+			$this->user_meta_defaults['ts_geofences']         = array(
+				array(
+					'lat'    => 0,
+					'lon'    => 0,
+					'radius' => 0,
+					'action' => 'hide',
+				),
+			);
 
 			$this->mapdata                = array();
 			$this->tracks_list_table      = false;
@@ -2849,6 +2857,31 @@ EOF;
 			}
 			$source .= 'MapMyTracks';
 			return $source;
+		}
+
+		/**
+		 * Function to check whether a given location is geofenced for the given user ID
+		 *
+		 * @since 3.1
+		 */
+		function is_geofenced( $user_id, $data ) {
+			$geofences = get_user_meta( $user_id, 'ts_geofences', true );
+			if ( ! is_array( $geofences ) ) {
+				return false;
+			}
+			foreach ( $geofences as $i => $fence ) {
+				if ( $fence['radius'] > 0 ) {
+					$lat1     = (float) $fence['lat'];
+					$lon1     = (float) $fence['lon'];
+					$lat2     = (float) $data['latitude'];
+					$lon2     = (float) $data['longitude'];
+					$distance = $this->distance( $lat1, $lon1, $lat2, $lon2 );
+					if ( $distance <= $fence['radius'] ) {
+						return $fence['action'];
+					}
+				}
+			}
+			return false;
 		}
 
 		/**
