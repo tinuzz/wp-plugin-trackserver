@@ -658,6 +658,34 @@ EOF;
 				<hr />
 			</div>
 			<?php
+			$this->howto_modals_html();
+		}
+
+		function howto_modals_html() {
+			$trackme_settings_img     = TRACKSERVER_PLUGIN_URL . 'img/trackme-settings.png';
+			$trackme_settings         = esc_attr__( 'TrackMe settings', 'trackserver' );
+			$mapmytracks_settings_img = TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png';
+			$mapmytracks_settings     = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
+			$autoshare_settings_img   = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
+			$autoshare_settings       = esc_attr__( 'AutoShare settings', 'trackserver' );
+
+			echo <<<EOF
+				<div id="ts-trackmehowto-modal" style="display:none;">
+					<p>
+							<img src="$trackme_settings_img" alt="$trackme_settings" />
+					</p>
+				</div>
+				<div id="ts-oruxmapshowto-modal" style="display:none;">
+					<p>
+							<img src="$mapmytracks_settings_img" alt="$mapmytracks_settings" />
+					</p>
+				</div>
+				<div id="ts-autosharehowto-modal" style="display:none;">
+					<p>
+							<img src="$autoshare_settings_img" alt="$autoshare_settings" />
+					</p>
+				</div>
+EOF;
 		}
 
 		/**
@@ -675,7 +703,6 @@ EOF;
 		 * @since 1.0
 		 */
 		function trackme_settings_html() {
-			$trackme_settings_img = TRACKSERVER_PLUGIN_URL . 'img/trackme-settings.png';
 			$howto                = esc_html__( 'How to use TrackMe', 'trackserver' );
 			$download             = esc_html__( 'Download TrackMe', 'trackserver' );
 			$settings             = esc_attr__( 'TrackMe settings', 'trackserver' );
@@ -685,11 +712,6 @@ EOF;
 					data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
 				<a href="https://play.google.com/store/apps/details?id=LEM.TrackMe" target="tsexternal">$download</a>
 				<br />
-				<div id="ts-trackmehowto-modal" style="display:none;">
-					<p>
-							<img src="$trackme_settings_img" alt="$settings" />
-					</p>
-				</div>
 EOF;
 		}
 
@@ -699,7 +721,6 @@ EOF;
 		 * @since 1.0
 		 */
 		function mapmytracks_settings_html() {
-			$mapmytracks_settings_img = TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png';
 			$howto                    = esc_html__( 'How to use OruxMaps MapMyTracks', 'trackserver' );
 			$download                 = esc_html__( 'Download OruxMaps', 'trackserver' );
 			$settings                 = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
@@ -709,11 +730,6 @@ EOF;
 					data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
 				<a href="https://play.google.com/store/apps/details?id=com.orux.oruxmaps" target="tsexternal">$download</a>
 				<br />
-				<div id="ts-oruxmapshowto-modal" style="display:none;">
-					<p>
-							<img src="$mapmytracks_settings_img" alt="$settings" />
-					</p>
-				</div>
 EOF;
 		}
 
@@ -732,7 +748,6 @@ EOF;
 		 * @since 1.0
 		 */
 		function httppost_settings_html() {
-			$autoshare_settings_img = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
 			$howto                  = esc_html__( 'How to use AutoShare', 'trackserver' );
 			$download               = esc_html__( 'Download AutoShare', 'trackserver' );
 			$settings               = esc_attr__( 'AutoShare settings', 'trackserver' );
@@ -742,11 +757,6 @@ EOF;
 					data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
 				<a href="https://play.google.com/store/apps/details?id=com.dngames.autoshare" target="tsexternal">$download</a>
 				<br />
-				<div id="ts-autosharehowto-modal" style="display:none;">
-					<p>
-							<img src="$autoshare_settings_img" alt="$settings" />
-					</p>
-				</div>
 EOF;
 		}
 
