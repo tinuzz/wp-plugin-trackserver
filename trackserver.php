@@ -757,6 +757,12 @@ EOF;
 		}
 
 		function owntracks_settings_html() {
+			$download             = esc_html__( 'Download OwnTracks', 'trackserver' );
+
+			echo <<<EOF
+				<a href="https://play.google.com/store/apps/details?id=org.owntracks.android" target="tsexternal">$download</a>
+				<br />
+EOF;
 		}
 
 		/**
