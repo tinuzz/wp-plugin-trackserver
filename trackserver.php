@@ -666,6 +666,8 @@ EOF;
 			$trackme_settings         = esc_attr__( 'TrackMe settings', 'trackserver' );
 			$mapmytracks_settings_img = TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png';
 			$mapmytracks_settings     = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
+			$osmand_settings_img      = TRACKSERVER_PLUGIN_URL . 'img/osmand-settings.png';
+			$osmand_settings          = esc_attr__( 'OsmAnd settings', 'trackserver' );
 			$autoshare_settings_img   = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
 			$autoshare_settings       = esc_attr__( 'AutoShare settings', 'trackserver' );
 
@@ -673,6 +675,11 @@ EOF;
 				<div id="ts-trackmehowto-modal" style="display:none;">
 					<p>
 							<img src="$trackme_settings_img" alt="$trackme_settings" />
+					</p>
+				</div>
+				<div id="ts-osmandhowto-modal" style="display:none;">
+					<p>
+							<img src="$osmand_settings_img" alt="$osmand_settings" />
 					</p>
 				</div>
 				<div id="ts-oruxmapshowto-modal" style="display:none;">
@@ -734,6 +741,16 @@ EOF;
 		}
 
 		function osmand_settings_html() {
+			$howto                = esc_html__( 'How to use OsmAnd', 'trackserver' );
+			$download             = esc_html__( 'Download OsmAnd', 'trackserver' );
+			$settings             = esc_attr__( 'OsmAnd settings', 'trackserver' );
+
+			echo <<<EOF
+				<a class="thickbox" href="#TB_inline?width=&inlineId=ts-osmandhowto-modal"
+					data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
+				<a href="https://play.google.com/store/apps/details?id=net.osmand" target="tsexternal">$download</a>
+				<br />
+EOF;
 		}
 
 		function sendlocation_settings_html() {
@@ -3810,7 +3827,7 @@ EOF;
 			$format = <<<EOF
 				%1\$s<br />
 				<input type="text" size="25" name="ts_user_meta[ts_osmand_key]" id="trackserver_osmand_key" value="$key" autocomplete="off" /><br /><br />
-				<strong>%2\$s:</strong> $url/$slug$suffix<br />
+				<strong>%2\$s:</strong> $url/$slug$suffix<br /><br />
 EOF;
 
 			// @codingStandardsIgnoreStart
@@ -3822,6 +3839,8 @@ EOF;
 				esc_html__( 'Full URL', 'trackserver' )
 			);
 			// @codingStandardsIgnoreEnd
+
+			$this->osmand_settings_html();
 		}
 
 		function sendlocation_key_html() {
