@@ -241,15 +241,24 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
-= UNRELEASED =
+= v4.0 =
+Release date: unknown
+
+This is another big update. Read more about it here: http://www.grendelman.net/wp/trackserver-v4-0-released/.
 
 Added:
-* A track editor in the WP admin, based on Leaflet.Editable.
+* A track editor in the WP admin, based on Leaflet.Editable. It allows you to move track points and split tracks.
+* Bulk action for viewing multiple tracks at once in the admin. Editing them also works.
+* Geofencing support, allowing you to hide or drop location updates within certain areas.
 * A proxy for external KML and GPX tracks, to work around CORS restrictions.
 * 'maxage' shortcode parameter to impose time-based limit on live tracks.
 * OwnTracks HTTP support, locations request handling only for now.
 * Bulk action for downloading tracks as GPX.
-* Bulk action for viewing multiple tracks at once in the admin. Editing them also works.
+* A {distance} tag for infobar template, for total track distance in meters.
+* Information about live tracking URLs and howto's for mobile apps on the user's Trackserver profile.
+* Information on how to use live tracking in OsmAnd.
+* Lithuanian translation, thanks to Dainius Kaupaitis.
+* PHP coding style checks and automated testing with TravisCI.
 
 Changed:
 * Make the 'infobar' shortcode attribute accept a string, to override the template set in the user profile.
@@ -257,11 +266,18 @@ Changed:
 * When a (live) track that is currently shown on the map is no longer present in the server response, show a nice popup, suggesting a page reload.
 * Limit the TrackMe 'gettriplist' command to the 25 latest tracks, serve them in reverse order.
 * Increase WP-admin 'View track' modal window size to 1024x768.
+* Updated Polyline encoder from Eric McConville to v1.3.
+* Updated Leaflet to version 1.3.1.
+* Updated Leaflet-fullscreen to version 1.0.2.
 
 Fixed:
 * In JavaScript, store track information from the server more reliably.
 * Improve HTTP responses around authentication failure.
-* Recalculate the total track distance after merging multiple tracks
+* Recalculate the total track distance after merging multiple tracks.
+* Easier access to Leaflet map object from 3rd party JavaScript (issue #9).
+* Handle localized decimal numbers from SendLocation (issue #12).
+* Some minor JavaScript and PHP issues.
+* Many many many PHP coding style fixes.
 
 = v3.0.1 =
 Release date: 28 February 2017
