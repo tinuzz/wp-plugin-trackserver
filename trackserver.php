@@ -710,9 +710,9 @@ EOF;
 		 * @since 1.0
 		 */
 		function trackme_settings_html() {
-			$howto                = esc_html__( 'How to use TrackMe', 'trackserver' );
-			$download             = esc_html__( 'Download TrackMe', 'trackserver' );
-			$settings             = esc_attr__( 'TrackMe settings', 'trackserver' );
+			$howto    = esc_html__( 'How to use TrackMe', 'trackserver' );
+			$download = esc_html__( 'Download TrackMe', 'trackserver' );
+			$settings = esc_attr__( 'TrackMe settings', 'trackserver' );
 
 			echo <<<EOF
 				<a class="thickbox" href="#TB_inline?width=&inlineId=ts-trackmehowto-modal"
@@ -728,9 +728,9 @@ EOF;
 		 * @since 1.0
 		 */
 		function mapmytracks_settings_html() {
-			$howto                    = esc_html__( 'How to use OruxMaps MapMyTracks', 'trackserver' );
-			$download                 = esc_html__( 'Download OruxMaps', 'trackserver' );
-			$settings                 = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
+			$howto    = esc_html__( 'How to use OruxMaps MapMyTracks', 'trackserver' );
+			$download = esc_html__( 'Download OruxMaps', 'trackserver' );
+			$settings = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
 
 			echo <<<EOF
 				<a class="thickbox" href="#TB_inline?width=&inlineId=ts-oruxmapshowto-modal"
@@ -741,9 +741,9 @@ EOF;
 		}
 
 		function osmand_settings_html() {
-			$howto                = esc_html__( 'How to use OsmAnd', 'trackserver' );
-			$download             = esc_html__( 'Download OsmAnd', 'trackserver' );
-			$settings             = esc_attr__( 'OsmAnd settings', 'trackserver' );
+			$howto    = esc_html__( 'How to use OsmAnd', 'trackserver' );
+			$download = esc_html__( 'Download OsmAnd', 'trackserver' );
+			$settings = esc_attr__( 'OsmAnd settings', 'trackserver' );
 
 			echo <<<EOF
 				<a class="thickbox" href="#TB_inline?width=&inlineId=ts-osmandhowto-modal"
@@ -757,7 +757,7 @@ EOF;
 		}
 
 		function owntracks_settings_html() {
-			$download             = esc_html__( 'Download OwnTracks', 'trackserver' );
+			$download = esc_html__( 'Download OwnTracks', 'trackserver' );
 
 			echo <<<EOF
 				<a href="https://play.google.com/store/apps/details?id=org.owntracks.android" target="tsexternal">$download</a>
@@ -771,9 +771,9 @@ EOF;
 		 * @since 1.0
 		 */
 		function httppost_settings_html() {
-			$howto                  = esc_html__( 'How to use AutoShare', 'trackserver' );
-			$download               = esc_html__( 'Download AutoShare', 'trackserver' );
-			$settings               = esc_attr__( 'AutoShare settings', 'trackserver' );
+			$howto    = esc_html__( 'How to use AutoShare', 'trackserver' );
+			$download = esc_html__( 'Download AutoShare', 'trackserver' );
+			$settings = esc_attr__( 'AutoShare settings', 'trackserver' );
 
 			echo <<<EOF
 				<a class="thickbox" href="#TB_inline?width=&inlineId=ts-autosharehowto-modal"
@@ -3813,9 +3813,9 @@ EOF;
 		}
 
 		function mapmytracks_profile_html() {
-			$val     = htmlspecialchars( $this->options['mapmytracks_tag'] );
-			$url     = htmlspecialchars( site_url( null ) . $this->url_prefix );
-			$format  = "<strong>%1\$s:</strong> $url/$val<br /><br />";
+			$val    = htmlspecialchars( $this->options['mapmytracks_tag'] );
+			$url    = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$format = "<strong>%1\$s:</strong> $url/$val<br /><br />";
 
 			printf( $format, esc_html__( 'Full custom URL', 'trackserver' ) );
 
@@ -4210,7 +4210,7 @@ EOF;
 
 				if ( is_array( $geofence_lat ) && is_array( $geofence_lon ) && is_array( $geofence_radius ) && is_array( $geofence_action ) ) {
 					$geofences = array();
-					$keys = array_keys( $geofence_lat );  // The keys should be the same for all relevant arrays, normally a 0-based index.
+					$keys      = array_keys( $geofence_lat );  // The keys should be the same for all relevant arrays, normally a 0-based index.
 					foreach ( $keys as $k ) {
 						$newfence = array(
 							'lat'    => (float) $geofence_lat[ $k ],
