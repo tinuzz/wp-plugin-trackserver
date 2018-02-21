@@ -21,6 +21,8 @@ Unlike other plugins that are about maps and tracks, Trackserver's main focus is
 * [TrackMe][trackme]
 * [MapMyTracks protocol][mapmytracks], for example using [OruxMaps][oruxmaps], including upload functionality
 * [OsmAnd's][osmand] live tracking protocol
+* [SendLocation][sendlocation]
+* [OwnTracks][owntracks] (experimental support)
 * HTTP POST, for example using [AutoShare][autoshare]
 
 A shortcode [tsmap] is provided for displaying your tracks on a map. Maps are displayed using the fantastic [Leaflet library][leafletjs] and some useful Leaflet plugins are included. Maps can be viewed in full-screen on modern browsers.
@@ -35,6 +37,8 @@ See the FAQ section for more information on the shortcode's supported attributes
 [mapmytracks]: https://github.com/MapMyTracks/api
 [osmand]: http://osmand.net/
 [oruxmaps]: http://www.oruxmaps.com/index_en.html
+[sendlocation]: https://itunes.apple.com/bm/app/sendlocation/id377724446?mt=8
+[owntracks]: http://owntracks.org/
 [autoshare]: https://play.google.com/store/apps/details?id=com.dngames.autoshare
 [leafletjs]: http://leafletjs.com/
 
@@ -57,10 +61,11 @@ It includes some code and libraries written by other people:
 
 = TODO =
 
-* More track management features, like folders/collections and editing / splitting tracks
+* More track management features, like folders/collections
 * Better permissions/authorization system
 * Track statistics, like distance, average speed, etc.
 * Add map profiles, maybe include [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers) plugin
+* Add track decorations, for example with the [PolylineDecorator](https://github.com/bbecquet/Leaflet.PolylineDecorator) plugin
 * ...
 
 More TODO-items and feature ideas in the TODO file contained in the plugin archive.
