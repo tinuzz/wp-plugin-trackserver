@@ -3994,7 +3994,8 @@ EOF;
 				echo '</td></tr>';
 			}
 			echo '<tr><td colspan="4" style="text-align: right">' .
-				'<a href="#TB_inline?width=&inlineId=ts-view-modal" class="thickbox" data-id="0" data-action="fences">' . esc_html__( 'View geofences', 'trackserver' ) . '</a>';
+				'<a href="#TB_inline?width=&inlineId=ts-view-modal" title="' .  esc_attr__( 'Geofences', 'trackserver' ) .
+				'" class="thickbox" data-id="0" data-action="fences">' . esc_html__( 'View geofences', 'trackserver' ) . '</a>';
 				'</td></tr>';
 			echo '</table>';
 			echo '<div id="ts_geofences_changed" style="color: red; display: none">' .
