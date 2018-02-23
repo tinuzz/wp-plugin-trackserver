@@ -450,6 +450,7 @@ EOF;
 					`created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 					`occurred` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 					`comment` varchar(255) NOT NULL,
+					`hidden` tinyint(1) NOT NULL DEFAULT '0',
 					PRIMARY KEY (`id`),
 					KEY `occurred` (`occurred`),
 					KEY `trip_id` (`trip_id`)
