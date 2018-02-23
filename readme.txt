@@ -241,11 +241,13 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
-= UNRELEASED =
+= v4.0.1 =
+Release date: 23 February 2018
 
 Fixed:
 * Updated Lithuanian translation. Thanks, Dainius Kaupaitis.
-* Add title to the overlay for viewing geofences
+* Add title to the overlay for viewing geofences.
+* Add missing database column for new installations.
 
 = v4.0 =
 Release date: 22 February 2018
