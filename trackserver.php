@@ -810,7 +810,7 @@ EOF;
 		}
 
 		function attribution_html() {
-			$val    = htmlspecialchars( $this->options['attribution'] );
+			$val    = $this->printf_htmlspecialchars( $this->options['attribution'] );
 			$format = <<<EOF
 				<input type="text" size="50" name="trackserver_options[attribution]" id="trackserver_attribution" value="$val" autocomplete="off" /><br />
 				%1\$s<br />
@@ -820,8 +820,8 @@ EOF;
 		}
 
 		function gettrack_slug_html() {
-			$val = htmlspecialchars( $this->options['gettrack_slug'] );
-			$url = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$val = $this->printf_htmlspecialchars( $this->options['gettrack_slug'] );
+			$url = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 
 			$format = <<<EOF
 				%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
@@ -861,8 +861,8 @@ EOF;
 		}
 
 		function trackme_slug_html() {
-			$val     = htmlspecialchars( $this->options['trackme_slug'] );
-			$url     = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$val     = $this->printf_htmlspecialchars( $this->options['trackme_slug'] );
+			$url     = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 			$linkurl = esc_attr__( 'http://en.wikipedia.org/wiki/Server_Name_Indication', 'trackserver' );
 			$link    = "<a href=\"$linkurl\">SNI</a>";
 
@@ -888,7 +888,7 @@ EOF;
 		}
 
 		function trackme_extension_html() {
-			$val = htmlspecialchars( $this->options['trackme_extension'] );
+			$val = $this->printf_htmlspecialchars( $this->options['trackme_extension'] );
 
 			$format = <<<EOF
 				%1\$s<br />
@@ -940,8 +940,8 @@ EOF;
 		}
 
 		function mapmytracks_tag_html() {
-			$val     = htmlspecialchars( $this->options['mapmytracks_tag'] );
-			$url     = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$val     = $this->printf_htmlspecialchars( $this->options['mapmytracks_tag'] );
+			$url     = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 			$linkurl = esc_attr__( 'http://en.wikipedia.org/wiki/Server_Name_Indication', 'trackserver' );
 			$link    = "<a href=\"$linkurl\">SNI</a>";
 
@@ -968,8 +968,8 @@ EOF;
 		}
 
 		function osmand_slug_html() {
-			$val = htmlspecialchars( $this->options['osmand_slug'] );
-			$url = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$val = $this->printf_htmlspecialchars( $this->options['osmand_slug'] );
+			$url = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 
 			$format = <<<EOF
 				%1\$s ($url/<b>&lt;slug&gt;</b>/?...) <br />
@@ -1014,7 +1014,7 @@ EOF;
 		}
 
 		function osmand_trackname_format_html() {
-			$val  = htmlspecialchars( str_replace( '%', '%%', $this->options['osmand_trackname_format'] ) );
+			$val  = $this->printf_htmlspecialchars( $this->options['osmand_trackname_format'] );
 			$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
 
 			$format = <<<EOF
@@ -1043,8 +1043,8 @@ EOF;
 		}
 
 		function sendlocation_slug_html() {
-			$val = htmlspecialchars( $this->options['sendlocation_slug'] );
-			$url = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$val = $this->printf_htmlspecialchars( $this->options['sendlocation_slug'] );
+			$url = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 
 			$format = <<<EOF
 				%1\$s ($url/<b>&lt;slug&gt;/&lt;username&gt;/&lt;access key&gt;</b>/) <br />
@@ -1057,7 +1057,7 @@ EOF;
 		}
 
 		function sendlocation_trackname_format_html() {
-			$val  = htmlspecialchars( str_replace( '%', '%%', $this->options['sendlocation_trackname_format'] ) );
+			$val  = $this->printf_htmlspecialchars( $this->options['sendlocation_trackname_format'] );
 			$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
 
 			$format = <<<EOF
@@ -1086,8 +1086,8 @@ EOF;
 		}
 
 		function owntracks_slug_html() {
-			$val = htmlspecialchars( $this->options['owntracks_slug'] );
-			$url = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$val = $this->printf_htmlspecialchars( $this->options['owntracks_slug'] );
+			$url = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 
 			$format = <<<EOF
 				%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
@@ -1102,7 +1102,7 @@ EOF;
 		}
 
 		function owntracks_trackname_format_html() {
-			$val  = htmlspecialchars( str_replace( '%', '%%', $this->options['owntracks_trackname_format'] ) );
+			$val  = $this->printf_htmlspecialchars( $this->options['owntracks_trackname_format'] );
 			$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
 
 			$format = <<<EOF
@@ -1131,8 +1131,8 @@ EOF;
 		}
 
 		function upload_tag_html() {
-			$val = htmlspecialchars( $this->options['upload_tag'] );
-			$url = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$val = $this->printf_htmlspecialchars( $this->options['upload_tag'] );
+			$url = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 
 			$format = <<<EOF
 				%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
@@ -3826,8 +3826,8 @@ EOF;
 		}
 
 		function mapmytracks_profile_html() {
-			$val    = htmlspecialchars( $this->options['mapmytracks_tag'] );
-			$url    = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$val    = $this->printf_htmlspecialchars( $this->options['mapmytracks_tag'] );
+			$url    = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 			$format = "<strong>%1\$s:</strong> $url/$val<br /><br />";
 
 			printf( $format, esc_html__( 'Full custom URL', 'trackserver' ) );
@@ -3836,12 +3836,12 @@ EOF;
 		}
 
 		function osmand_key_html() {
-			$url          = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$url          = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 			$current_user = wp_get_current_user();
-			$key          = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_osmand_key', true ) );
-			$slug         = htmlspecialchars( $this->options['osmand_slug'] );
+			$key          = $this->printf_htmlspecialchars( get_user_meta( $current_user->ID, 'ts_osmand_key', true ) );
+			$slug         = $this->printf_htmlspecialchars( $this->options['osmand_slug'] );
 			$username     = $current_user->user_login;
-			$suffix       = htmlspecialchars( "/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=$username&key=$key" );
+			$suffix       = $this->printf_htmlspecialchars( "/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=$username&key=$key" );
 
 			$format = <<<EOF
 				%1\$s<br />
@@ -3863,12 +3863,12 @@ EOF;
 		}
 
 		function sendlocation_key_html() {
-			$url          = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$url          = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 			$current_user = wp_get_current_user();
-			$key          = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_sendlocation_key', true ) );
-			$slug         = htmlspecialchars( $this->options['sendlocation_slug'] );
+			$key          = $this->printf_htmlspecialchars( get_user_meta( $current_user->ID, 'ts_sendlocation_key', true ) );
+			$slug         = $this->printf_htmlspecialchars( $this->options['sendlocation_slug'] );
 			$username     = $current_user->user_login;
-			$suffix       = htmlspecialchars( "/$username/$key/" );
+			$suffix       = $this->printf_htmlspecialchars( "/$username/$key/" );
 
 			$format = <<<EOF
 				%1\$s<br />
@@ -3888,11 +3888,11 @@ EOF;
 		}
 
 		function trackme_passwd_html() {
-			$url          = htmlspecialchars( site_url( null ) . $this->url_prefix );
+			$url          = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
 			$current_user = wp_get_current_user();
-			$key          = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_trackme_key', true ) );
-			$slug         = htmlspecialchars( $this->options['trackme_slug'] );
-			$extn         = htmlspecialchars( $this->options['trackme_extension'] );
+			$key          = $this->printf_htmlspecialchars( get_user_meta( $current_user->ID, 'ts_trackme_key', true ) );
+			$slug         = $this->printf_htmlspecialchars( $this->options['trackme_slug'] );
+			$extn         = $this->printf_htmlspecialchars( $this->options['trackme_extension'] );
 			$username     = $current_user->user_login;
 
 			$format = <<<EOF
@@ -3916,7 +3916,7 @@ EOF;
 
 		function infobar_template_html() {
 			$current_user = wp_get_current_user();
-			$template     = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_infobar_template', true ) );
+			$template     = $this->printf_htmlspecialchars( get_user_meta( $current_user->ID, 'ts_infobar_template', true ) );
 			$format       = <<<EOF
 				%1\$s<br />
 				<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="$template" autocomplete="off" /><br /><br />
@@ -4569,6 +4569,10 @@ EOF;
 				// @codingStandardsIgnoreLine
 				$wpdb->update( $this->tbl_tracks, array( 'distance' => $distance ), array( 'id' => $track_id ), '%d', '%d' );
 			}
+		}
+
+		function printf_htmlspecialchars( $input ) {
+			return str_replace( '%', '%%', htmlspecialchars( $input ) );
 		}
 
 	} // class
