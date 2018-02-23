@@ -244,6 +244,10 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 = v4.0.1 =
 Release date: 23 February 2018
 
+IMPORTANT BUGFIX: If you did a fresh install of v4.0, a column was missing from a database table,
+causing location updates and GPX file uploads to fail. This release adds the column if it is missing.
+Upgrades from 3.0 to 4.0 are not affected by this bug (but should still update).
+
 Fixed:
 * Updated Lithuanian translation. Thanks, Dainius Kaupaitis.
 * Add title to the overlay for viewing geofences.
