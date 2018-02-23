@@ -246,6 +246,7 @@ Release date: 23 February 2018
 
 Fixed:
 * Properly escape user-supplied input that is used in printf() format strings
+* Make the default tile server URL use https instead of http
 
 = v4.0.1 =
 Release date: 23 February 2018
