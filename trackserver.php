@@ -59,7 +59,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @access private
 		 * @var int $db_version
 		 */
-		var $db_version = 16;
+		var $db_version = 17;
 
 		/**
 		 * Default values for options. See class constructor for more.
@@ -575,6 +575,11 @@ EOF;
 				$wpdb->query( $sql ); // WPCS: unprepared SQL OK
 				$colnames = $wpdb->get_col_info( 'name' );
 
+				// Get a list of column names for the locations table
+				$sql = 'SELECT * FROM ' . $this->tbl_tracks . ' LIMIT 0,1';
+				$wpdb->query( $sql ); // WPCS: unprepared SQL OK
+				$colnames_locations = $wpdb->get_col_info( 'name' );
+
 				// Upgrade table if necessary. Add upgrade SQL statements here, and
 				// update $db_version at the top of the file
 				$upgrade_sql     = array();
@@ -595,6 +600,11 @@ EOF;
 				}
 				$upgrade_sql[15] = 'UPDATE ' . $this->tbl_tracks . ' t SET t.updated=(SELECT max(occurred) FROM `' . $this->tbl_locations . '` WHERE trip_id = t.id)';
 				$upgrade_sql[16] = 'ALTER TABLE ' . $this->tbl_locations . " ADD `hidden` TINYINT(1) NOT NULL DEFAULT '0' AFTER `comment`";
+
+				// Fix the missing 'hidden' column in fresh installs of v4.0
+				if ( ! in_array( 'hidden', $colnames_locations ) ) {
+					$upgrade_sql[17] = 'ALTER TABLE ' . $this->tbl_locations . " ADD `hidden` TINYINT(1) NOT NULL DEFAULT '0' AFTER `comment`";
+				}
 
 				for ( $i = $installed_version + 1; $i <= $this->db_version; $i++ ) {
 					if ( array_key_exists( $i, $upgrade_sql ) ) {
