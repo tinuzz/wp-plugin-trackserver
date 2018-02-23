@@ -84,7 +84,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			'enable_proxy'                  => false,
 			'normalize_tripnames'           => 'yes',
 			'tripnames_format'              => '%F %T',
-			'tile_url'                      => 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			'tile_url'                      => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 			'attribution'                   => '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			'db_version'                    => false,
 		);
