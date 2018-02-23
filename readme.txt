@@ -241,6 +241,12 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
+= v4.0.2 =
+Release date: 23 February 2018
+
+Fixed:
+* Properly escape user-supplied input that is used in printf() format strings
+
 = v4.0.1 =
 Release date: 23 February 2018
 
