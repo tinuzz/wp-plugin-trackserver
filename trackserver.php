@@ -113,6 +113,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$this->user_meta_defaults['ts_osmand_key']        = substr( md5( uniqid() ), -8 );
 			$this->user_meta_defaults['ts_sendlocation_key']  = substr( md5( uniqid() ), -8 );
 			$this->user_meta_defaults['ts_tracks_admin_view'] = '0';
+			$this->user_meta_defaults['ts_owntracks_share']   = '';
+			$this->user_meta_defaults['ts_owntracks_follow']  = '';
 			$this->user_meta_defaults['ts_geofences']         = array(
 				array(
 					'lat'    => 0,
@@ -3805,6 +3807,26 @@ EOF;
 							</tr>
 							<tr>
 								<th scope="row">
+									<label>
+										<?php esc_html_e( 'OwnTracks share with Friends', 'trackserver' ); ?>
+									</label>
+								</th>
+								<td>
+									<?php $this->owntracks_share_friends_html(); ?>
+								</td>
+							</tr>
+							<tr>
+								<th scope="row">
+									<label>
+										<?php esc_html_e( 'OwnTracks follow Friends', 'trackserver' ); ?>
+									</label>
+								</th>
+								<td>
+									<?php $this->owntracks_follow_friends_html(); ?>
+								</td>
+							</tr>
+							<tr>
+								<th scope="row">
 									<label for="infobar_template">
 										<?php esc_html_e( 'Shortcode infobar template', 'trackserver' ); ?>
 									</label>
@@ -3928,6 +3950,38 @@ EOF;
 			// @codingStandardsIgnoreEnd
 
 			$this->trackme_settings_html();
+		}
+
+		function owntracks_share_friends_html() {
+			$current_user = wp_get_current_user();
+			$value        = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_owntracks_share', true ) );
+			$link_url     = 'http://owntracks.org/booklet/features/friends/';
+
+			// @codingStandardsIgnoreStart
+			echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to share your location with. ' .
+				'Users who use OwnTracks will see your latest location on the map, if they follow you. This setting is only ' .
+				'about sharing your latest (live) location with OwnTracks users. It does not grant access to your track data in ' .
+				'any other way.', 'trackserver'
+			) . '<br /><br />';
+			// translators: placeholder is for a http link URL
+			echo sprintf(
+				__( 'See <a href="%1$s" target="_blank">the description of the Friends feature in the OwnTracks booklet</a> for more information.', 'trackserver' ), $link_url
+			) . '<br /><br />';
+			// @codingStandardsIgnoreEnd
+			echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_share]" value="' . $value . '" autocomplete="off" /><br /><br />';
+		}
+
+		function owntracks_follow_friends_html() {
+			$current_user = wp_get_current_user();
+			$value        = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_owntracks_follow', true ) );
+			// @codingStandardsIgnoreStart
+			echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to follow with OwnTracks. ' .
+				'These users must share their location with you, by listing your username in the "share with users" setting above. ' .
+				'Leave this setting empty to follow all users that share their location with you. You can exclude users by prefixing their ' .
+				'username with a "!" (exclamation mark).', 'trackserver'
+			) . '<br />';
+			// @codingStandardsIgnoreEnd
+			echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_follow]" value="' . $value . '" autocomplete="off" /><br /><br />';
 		}
 
 		function infobar_template_html() {
@@ -4226,6 +4280,8 @@ EOF;
 				'ts_osmand_key',
 				'ts_trackme_key',
 				'ts_sendlocation_key',
+				'ts_owntracks_share',
+				'ts_owntracks_follow',
 				'ts_infobar_template',
 			);
 			$valid_actions   = array( 'hide', 'discard' );
