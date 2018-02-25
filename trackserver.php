@@ -2637,8 +2637,10 @@ EOF;
 		}
 
 		/**
-		 * Validate a timestamp supplied by a client. It checks if the timestamp is in the required
-		 * format and if the timestamp is unchanged after parsing.
+		 * Validate a timestamp supplied by a client.
+		 *
+		 * It checks if the timestamp is in the required format and if the
+		 * timestamp is unchanged after parsing.
 		 *
 		 * @since 1.0
 		 */
@@ -2648,8 +2650,10 @@ EOF;
 		}
 
 		/**
-		 * Validate WordPress credentials for basic HTTP authentication. If no crededtials are received,
-		 * we send a 401 status code. If the username or password are incorrect, we terminate (default) or return
+		 * Validate WordPress credentials for basic HTTP authentication.
+		 *
+		 * If no crededtials are received, we send a 401 status code. If the
+		 * username or password are incorrect, we terminate (default) or return
 		 * false if so requested.
 		 *
 		 * @since 1.0
@@ -2686,12 +2690,12 @@ EOF;
 		}
 
 		/**
-		 * Handle the 'start_activity' request for the MapMyTracks protocol. If
-		 * no title / trip name is received, nothing is done. Received points are
-		 * validated. Trip is inserted with the first point's timstamp as start
-		 * time, or the current time if no valid points are received. Valid
-		 * points are inserted and and the new trip ID is returned in an XML
-		 * message.
+		 * Handle the 'start_activity' request for the MapMyTracks protocol.
+		 *
+		 * If no title / trip name is received, nothing is done. Received points
+		 * are validated. Trip is inserted with the first point's timstamp as start
+		 * time, or the current time if no valid points are received. Valid points
+		 * are inserted and and the new trip ID is returned in an XML message.
 		 *
 		 * @since 1.0
 		 */
