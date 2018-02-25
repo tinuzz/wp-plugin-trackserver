@@ -4006,16 +4006,16 @@ EOF;
 				}
 
 				echo '<tr ' . $itemdata . ' class="trackserver_geofence">' .
-					'<td>' . esc_html__( 'Center latitude' ) .
+					'<td>' . esc_html__( 'Center latitude', 'trackserver' ) .
 					' <input type="text" size="10" name="ts_geofence_lat[' . $i . ']" value="' . $lat . '" class="ts-input-geofence-lat ts-input-geofence" autocomplete="off" ' .
 					$itemdata . ' /></td>' .
-					'<td>' . esc_html__( 'Longitude' ) .
+					'<td>' . esc_html__( 'Longitude', 'trackserver' ) .
 					' <input type="text" size="10" name="ts_geofence_lon[' . $i . ']" value="' . $lon . '" class="ts-input-geofence-lon ts-input-geofence" autocomplete="off" ' .
 					$itemdata . ' /></td>' .
-					'<td>' . esc_html__( 'Radius' ) .
+					'<td>' . esc_html__( 'Radius', 'trackserver' ) .
 					' <input type="text" size="10" name="ts_geofence_radius[' . $i . ']" value="' . $radius . '" class="ts-input-geofence-radius ts-input-geofence" autocomplete="off" ' .
 					$itemdata . ' /></td>' .
-					'<td>' . esc_html__( 'Action' ) . ' ';
+					'<td>' . esc_html__( 'Action', 'trackserver' ) . ' ';
 
 				printf( $action_select_fmt, $i, $action_select_options );
 

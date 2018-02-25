@@ -241,6 +241,11 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
+= UNRELEASED =
+
+Fixed:
+* Missing gettext domain on some localized strings
+
 = v4.0.2 =
 Release date: 23 February 2018
 
