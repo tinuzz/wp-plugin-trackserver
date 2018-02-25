@@ -2539,6 +2539,17 @@ EOF;
 			$this->http_terminate( 400, 'Bad request' );
 		}
 
+		/**
+		 * Handle a request from OwnTracks
+		 *
+		 * After validating the HTTP basic authentication, a track name is
+		 * constructed from the strftime() format string in the settings and the
+		 * track is created if it doesn't exist. The JSON payload from OwnTracks is
+		 * parsed and the location data is stored. A response containing Locations
+		 * and Cards for Friends is returned to the client.
+		 *
+		 * @since 4.0
+		 */
 		function handle_owntracks_request() {
 			global $wpdb;
 
