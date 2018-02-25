@@ -243,6 +243,9 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 = UNRELEASED =
 
+Added:
+* OwnTracks Friends and Cards responses to Location requests
+
 Fixed:
 * Missing gettext domain on some localized strings
 

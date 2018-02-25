@@ -2560,6 +2560,8 @@ EOF;
 			// @codingStandardsIgnoreLine
 			$json = @json_decode( $payload, true );
 
+			$response = $this->create_owntracks_response( $user_id );
+
 			//Array
 			//(
 			//    [_type] => location
@@ -2640,13 +2642,164 @@ EOF;
 
 						if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
 							$this->calculate_distance( $track_id );
-							$this->http_terminate( 200, '[]' );
+							$this->http_terminate( 200, $response );
 						} else {
 							$this->http_terminate( 501, 'Database error' );
 						}
 					}
 				}
 			}
+			$this->http_terminate( 200, $response );
+		}
+
+		/**
+		 * Return a 2 character string, to be used as the Tracker ID (TID) in OwnTracks.
+		 *
+		 * Depending on what data is available, we use the user's first name, last name
+		 * or login name to create the TID.
+		 *
+		 * @since 4.1
+		 */
+		function get_owntracks_tid( $user ) {
+			if ( $user->first_name && $user->last_name ) {
+				$tid = $user->first_name[0] . $user->last_name[0];
+			} elseif ( $user->first_name ) {
+				$tid = substr( $user->first_name, 0, 2 );
+			} elseif ( $user->last_name ) {
+				$tid = substr( $user->last_name, 0, 2 );
+			} else {
+				$tid = substr( $user->user_login, 0, 2 );
+			}
+			return $tid;
+		}
+
+		/**
+		 * Return a list of user IDs that share their OwnTracks location with us.
+		 *
+		 * The function does a query directly on the 'usermeta' table, which is ugly.
+		 * We want to match a given username against a comma-separated list of usernames.
+		 * Unfortunately, using WP_User_Query is not feasable, because the 'LIKE' comparator
+		 * doesn't allow us to match the beginning or the end of the meta data. If one
+		 * username is a substring of another, we're in trouble: if the given username is
+		 * 'john', and the list ends with ',johnpetersen', there is no way to avoid a match.
+		 * Also, using the 'REGEXP' comparator would force us to construct a regexp
+		 * containing a user name, which seems hard to properly quote.
+		 *
+		 * Instead, we do it like it's done in update_meta_cache()
+		 * https://core.trac.wordpress.org/browser/tags/4.9.2/src/wp-includes/meta.php#L787
+		 *
+		 * The ID of the requesting user is always included.
+		 *
+		 * @since 4.1
+		 */
+		function get_owntracks_users_sharing( $user ) {
+			global  $wpdb;
+
+			$username = $user->user_login;
+			$table    = _get_meta_table( 'user' );
+			// @codingStandardsIgnoreLine
+			$sql = $wpdb->prepare ( "SELECT user_id, meta_key, meta_value FROM $table WHERE meta_key='ts_owntracks_share' AND (" .
+				'meta_value=%s OR meta_value LIKE %s OR meta_value LIKE %s OR meta_value LIKE %s)',
+				$username, '%,' . $wpdb->esc_like( $username ), '%,' . $wpdb->esc_like( $username ) . ',%', $wpdb->esc_like( $username ) . ',%'
+			);
+			// @codingStandardsIgnoreLine
+			$res = $wpdb->get_results( $sql, ARRAY_A );
+			$user_ids = array( $user->ID );
+			foreach ( $res as $row ) {
+				$user_ids[] = (int) $row['user_id'];
+			}
+			return array_unique( $user_ids );
+		}
+
+		/**
+		 * Return an array of user IDs who are our OwnTracks Friends.
+		 *
+		 * The list of users sharing their location with us is filtered for the
+		 * users we are following. An empty list means we follow all users. If
+		 * there are positive usernames in the list, we intersect the list of
+		 * sharing users with the list of users we follow.  If there are negative
+		 * usernames in the list, they are removed from the final list.
+		 *
+		 * @since 4.1
+		 */
+		function get_owntracks_friends( $user ) {
+			$friends   = $this->get_owntracks_users_sharing( $user );
+			$following = get_user_meta( $user->ID, 'ts_owntracks_follow', true );
+			if ( empty( $following ) ) {
+				return $friends;
+			}
+			$following   = array_unique( array_map( 'trim', explode( ',', $following ) ) );  // convert to array and trim whitespace
+			$do_follow   = array( $user->ID );
+			$dont_follow = array();
+
+			foreach ( $following as $f ) {
+				$ff = ( $f[0] == '!' ? substr( $f, 1 ) : $f );
+				$u  = get_user_by( 'login', $ff );
+				if ( ! $u ) {   // username not found
+					continue;
+				}
+				if ( $f[0] == '!' ) {
+					$dont_follow[] = $u->ID;
+				} else {
+					$do_follow[] = $u->ID;
+				}
+			}
+
+			// our own user ID is always in the list
+			if ( count( $do_follow ) > 1 ) {
+				$friends = array_intersect( $friends, $do_follow );
+			}
+			if ( ! empty( $dont_follow ) ) {
+				$friends = array_diff( $friends, $dont_follow );
+			}
+			return array_values( $friends );   // strip explicit keys
+		}
+
+		/**
+		 * Create a response for the OwnTracks request.
+		 *
+		 * For all of our Friends (users that share with us, minus the users that
+		 * we do not follow), construct a location object and a card object, put it
+		 * all in a list and return the result as JSON.
+		 *
+		 * @since 4.1
+		 */
+		function create_owntracks_response( $author_id ) {
+			global $wpdb;
+
+			$user      = get_user_by( 'id', $author_id );
+			$user_ids  = $this->get_owntracks_friends( $user );
+			$track_ids = $this->get_live_tracks( $user_ids );
+			$objects   = array();
+
+			foreach ( $track_ids as $track_id ) {
+				// @codingStandardsIgnoreStart
+				$sql = $wpdb->prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, UNIX_TIMESTAMP(occurred) AS tst, t.user_id, t.name, t.distance, t.comment FROM ' .
+					$this->tbl_locations . ' l INNER JOIN ' . $this->tbl_tracks .
+					' t ON l.trip_id = t.id WHERE trip_id=%d AND l.hidden = 0 ORDER BY occurred DESC LIMIT 0,1', $track_id
+				);
+				$res = $wpdb->get_row( $sql, ARRAY_A );
+				// @codingStandardsIgnoreEnd
+
+				$user = get_user_by( 'id', $res['user_id'] );
+				$tid  = $this->get_owntracks_tid( $user );
+
+				$objects[] = array(
+					'_type' => 'location',
+					'lat'   => $res['latitude'],
+					'lon'   => $res['longitude'],
+					'tid'   => $tid,
+					'tst'   => $res['tst'],
+					'topic' => 'owntracks/' . $res['user_id'] . '/mobile',
+				);
+
+				$objects[] = array(
+					'_type' => 'card',
+					'name'  => $user->display_name,
+					'tid'   => $tid,
+				);
+			}
+			return json_encode( $objects );
 		}
 
 		/**
