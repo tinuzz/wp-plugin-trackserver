@@ -1912,9 +1912,11 @@ EOF;
 			$tag                = $this->options['trackme_slug'];
 			$ext                = $this->options['trackme_extension'];
 			$base_uri           = preg_replace( '/^http:\/\/[^\/]+/', '', $url );
+			$request_uri        = strtok( $_SERVER['REQUEST_URI'], '?' );     // Strip querystring off request URI
+
 			$trackme_uri        = $base_uri . '/' . $tag . '/requests.' . $ext;
 			$trackme_export_uri = $base_uri . '/' . $tag . '/export.' . $ext;
-			$request_uri        = strtok( $_SERVER['REQUEST_URI'], '?' );     // Strip querystring off request URI
+			$trackme_cloud_uri  = $base_uri . '/' . $tag . '/cloud.' . $ext;
 
 			if ( $request_uri == $trackme_uri ) {
 				$this->handle_trackme_request();
@@ -1923,6 +1925,11 @@ EOF;
 
 			if ( $request_uri == $trackme_export_uri ) {
 				$this->handle_trackme_export();
+				die();
+			}
+
+			if ( $request_uri == $trackme_cloud_uri ) {
+				$this->handle_trackme_cloud();
 				die();
 			}
 
@@ -2048,7 +2055,16 @@ EOF;
 		function handle_trackme_export() {
 			http_response_code( 501 );
 			echo 'Export is not supported by the server.';
+		}
 
+		/**
+		 * Handle TrackMe cloud requests. Not currently implemented.
+		 *
+		 * @since 4.1
+		 */
+		function handle_trackme_cloud() {
+			http_response_code( 501 );
+			echo 'Cloud sharing is not supported by the server.';
 		}
 
 		/**
