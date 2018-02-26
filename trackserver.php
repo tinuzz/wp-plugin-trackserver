@@ -4176,8 +4176,8 @@ EOF;
 			);
 			$action_select_fmt = '<select name="ts_geofence_action[%1$d]" data-id="%1$d" class="ts-input-geofence">%2$s</select>';
 			$actions           = array(
-				'hide'    => esc_html__( 'Hide' ),
-				'discard' => esc_html__( 'Discard' ),
+				'hide'    => esc_html__( 'Hide', 'trackserver' ),
+				'discard' => esc_html__( 'Discard', 'trackserver' ),
 			);
 
 			if ( ! in_array( $default_geofence, $geofences ) ) {
