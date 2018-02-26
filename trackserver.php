@@ -2560,8 +2560,6 @@ EOF;
 			// @codingStandardsIgnoreLine
 			$json = @json_decode( $payload, true );
 
-			$response = $this->create_owntracks_response( $user_id );
-
 			//Array
 			//(
 			//    [_type] => location
@@ -2642,13 +2640,13 @@ EOF;
 
 						if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
 							$this->calculate_distance( $track_id );
-							$this->http_terminate( 200, $response );
 						} else {
 							$this->http_terminate( 501, 'Database error' );
 						}
 					}
 				}
 			}
+			$response = $this->create_owntracks_response( $user_id );
 			$this->http_terminate( 200, $response );
 		}
 
