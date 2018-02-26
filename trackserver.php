@@ -2060,11 +2060,33 @@ EOF;
 		/**
 		 * Handle TrackMe cloud requests. Not currently implemented.
 		 *
+		 * Cloud sharing functions do not send authentication data, only a unique
+		 * ID ($_GET['id']) This makes it difficult to implement in Trackserver,
+		 * because we cannot match the ID with a WordPress user. An option would
+		 * be to (mis)use the displayname ($_GET['dn']) for authentication data.
+		 * The 'show' action sends only the ID, so it needs to be stored on the
+		 * server, for example in usermeta.
+		 *
+		 * This isn't very secure, because as far as I can tell, the ID is
+		 * auto-generated on the client and cannot be changed, which makes it
+		 * unsuitable for any role in authentication.  Altogether, this feels like
+		 * a very ugly hack, so I am not going to implement it.
+		 *
+		 * Error messages are not localized on purpose.
+		 *
 		 * @since 4.1
 		 */
 		function handle_trackme_cloud() {
-			http_response_code( 501 );
-			echo 'Cloud sharing is not supported by the server.';
+
+			switch ( $_GET['a'] ) {
+				case 'update':
+					$this->http_terminate( 501, 'Cloud sharing is not supported by the server.' );
+					break;
+				case 'show':
+					$this->http_terminate( 501, '"Show Cloud People" is not supported by the server.' );
+					break;
+			}
+			$this->http_terminate( 501, 'The action you requested is not supported by the server.' );
 		}
 
 		/**
