@@ -392,6 +392,8 @@ var Trackserver = (function () {
             this.set_mydata(mymapdata.div_id, 'all', 'num_ready', 0);
             this.set_mydata(mymapdata.div_id, 'all', 'editables', []);
             this.set_mydata(mymapdata.div_id, 'all', 'map', mymapdata.map);
+            var drawcounter = this.get_mydata(mymapdata.div_id, 'all', 'drawcounter');
+            this.set_mydata(mymapdata.div_id, 'all', 'drawcounter', drawcounter + 1);
             var _this = this;
 
             if ( mymapdata.alltracks ) {
@@ -502,6 +504,7 @@ var Trackserver = (function () {
                 var map = L.map( mymapdata.div_id, options );
                 mymapdata.map = map;
                 mymapdata.center = center;
+                this.set_mydata( mymapdata.div_id, 'all', 'drawcounter', 0);
 
                 // An ugly shortcut to be able to destroy the map in WP admin
                 if ( mymapdata.div_id == 'tsadminmap' ) {
