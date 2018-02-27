@@ -1,41 +1,36 @@
 TODO:
 
-Server:
-- Fix default map center for live map
-- implement TrackMe export to KML/GPX. How? Create blog post?
-- implement tripname normalization; find a way around Trackme using the name as the PK
-- reverse geocoding for trip names
-- maybe use export button to trigger tripame normalization
+General:
 - add columns to trip (& location?) tables to store remote IP
 - logging requests to MySQL
-- DONE: use geoJSON instead of Polyline, if callbacks are feasable for extracting metadata
-  or use a second HTTP request for the metadata
-- DONE: implement OSMand protocol
-- DONE: don't use the WP password for TrackMe tracking, it is insecure. Use a secret like with OsmAnd.
+- redo geoJSON support for more track features in the backend
+- Track statistics, like distance, average speed, etc.
 - implement shortcode to display TrackMe/OsmAnd password (feature request through WP forum)
-- implement live tracking multiple users (feature request)
-- multi-site support - http://rabinshrestha.com/make-wordpress-plugin-compatible-with-multisite/
 - implement generic HTTP GET interface and/or CelltracGTS/Free support
 
 Frontend:
-- DONE: Leaflet shortcode / map view.
-- DONE: Icons for start/finish
-- DONE: Media manager integration
-- DONE: autoupdate (live tracking) toggle button
-- DONE: ability to show multiple tracks per map
+- query tracks by string match with wildcards, instead of just by id
+- query tracks by collection, when admin backend is implemented
+- avatar support for live tracks (like in OwnTracks)
+- live tracking tooltip format template
+- track decorations, for example with the [PolylineDecorator](https://github.com/bbecquet/Leaflet.PolylineDecorator) plugin
+- infobar tags for total elapsed time, average speed
 
 Admin backend:
-- DONE: Manage trips (name, comment, delete)
-- DONE: Internationalization
-- DONE: Add HOWTO screens for all clients
-- DONE: Add columns for nr. of points and distance to table with tracks
+- add user profile setting for default map center (replace hardcoded coordinates)
 - file tracks in folders/collections
-- DONE: make secrets for TrackMe / OsmAnd a per-user setting
+- add waypoints
+- add HOWTO screen for OwnTracks
+- add HOWTO screen for LocusMaps
+- add a Users page for Trackserver user profile management by WP admins
+- add a button to create a 'Trackserver_Subscriber' role, which is Subscriber + 'use_trackserver'
+- bulk action to remove / reapply geofences
+- reverse geofence support
+- tracks list table pagination
+- map profiles, [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers) plugin ?
 
 Javascript:
-- DONE: move the thickbox manipulation to its own file
-- DONE: properly destroy map objects in the admin viewer when closing the thickbox
-
+- better live tracking tooltip handling
 
 
 REWRITE RULES
@@ -66,3 +61,9 @@ EOF;
 $apache = htmlspecialchars($apache);
 $nginx  = htmlspecialchars($nginx);
 
+
+PASS AUTHORIZATION HEADER IN ENVIRONMENT
+
+RewriteEngine on
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
