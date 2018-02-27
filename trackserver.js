@@ -272,13 +272,16 @@ var Trackserver = (function () {
                                 markers.push(start_marker);
                             }
                             if (do_markers === true || do_markers == 'end') {
-                                end_marker = new _this.Mapicon(end_latlng, { fillColor: end_marker_color, track_id: track_id }).addTo(featuregroup).bringToBack()
-                                    .on('click', function(e) {
-                                        if (mymapdata.is_live) {
-                                            _this.set_mydata(div_id, 'all', 'follow_id', this.options.track_id);
-                                            map.liveUpdateControl.updateNow();
-                                        }
+                                end_marker = new _this.Mapicon(end_latlng, { fillColor: end_marker_color, track_id: track_id }).addTo(featuregroup).bringToBack();
+                                if (mymapdata.is_live) {
+                                    end_marker.on('click', function(e) {
+                                        _this.set_mydata(div_id, 'all', 'follow_id', this.options.track_id);
+                                        map.liveUpdateControl.updateNow();
                                     });
+                                    if (typeof displayname == 'string') {
+                                        var tooltip = end_marker.bindTooltip(displayname);
+                                    }
+                                }
                                 markers.push(end_marker);
                             }
                             _this.set_mydata(div_id, track_id, 'markers', markers);

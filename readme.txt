@@ -244,7 +244,9 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 = UNRELEASED =
 
 Added:
-* OwnTracks Friends and Cards responses to Location requests
+* OwnTracks Friends and Cards responses to Location requests.
+* Stub functions for responding more nicely to TrackMe cloud sharing requests.
+* A mouseover-tooltip on end-markers of live tracks, showing the user's displayname.
 
 Fixed:
 * Missing gettext domain on some localized strings
