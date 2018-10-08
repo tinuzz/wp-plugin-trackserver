@@ -245,6 +245,8 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 Added:
 * OwnTracks Friends and Cards responses to Location requests.
+* WordPress user avatars to OwnTracks responses, if available.
+* Input fields in on the Trackserver user profile page for managing OwnTracks share/follow friends.
 * Stub functions for responding more nicely to TrackMe cloud sharing requests.
 * A mouseover-tooltip on end-markers of live tracks, showing the user's displayname.
 

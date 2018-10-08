@@ -2791,6 +2791,26 @@ EOF;
 			return array_values( $friends );   // strip explicit keys
 		}
 
+		function get_owntracks_avatar( $user_id ) {
+			// TODO: cache the image in usermeta and serve it from there if available
+
+			$avatar_data = get_avatar_data( $user_id, array( 'size' => 40 ) );
+			$url = $avatar_data['url'] . '&d=404';  // ask for a 404 if there is no image
+
+			$options  = array(
+				'httpversion' => '1.1',
+				'user-agent'  => 'WordPress/Trackserver ' . TRACKSERVER_VERSION . '; https://github.com/tinuzz/wp-plugin-trackserver',
+			);
+			$response = wp_remote_get( $url, $options );
+			if ( is_array( $response ) ) {
+				$rc = (int) wp_remote_retrieve_response_code( $response );
+				if ( $rc == 200 ) {
+					return base64_encode( wp_remote_retrieve_body( $response ) );
+				}
+			}
+			return false;
+		}
+
 		/**
 		 * Create a response for the OwnTracks request.
 		 *
@@ -2817,8 +2837,8 @@ EOF;
 				$res = $wpdb->get_row( $sql, ARRAY_A );
 				// @codingStandardsIgnoreEnd
 
-				$user = get_user_by( 'id', $res['user_id'] );
-				$tid  = $this->get_owntracks_tid( $user );
+				$ruser = get_user_by( 'id', $res['user_id'] );
+				$tid  = $this->get_owntracks_tid( $ruser );
 
 				$objects[] = array(
 					'_type' => 'location',
@@ -2829,11 +2849,17 @@ EOF;
 					'topic' => 'owntracks/' . $res['user_id'] . '/mobile',
 				);
 
-				$objects[] = array(
+				$card = array(
 					'_type' => 'card',
-					'name'  => $user->display_name,
+					'name'  => $ruser->display_name,
 					'tid'   => $tid,
 				);
+
+				if ( $face = $this->get_owntracks_avatar( $ruser->ID ) ) {
+					$card['face'] = $face;
+				}
+
+				$objects[] = $card;
 			}
 			return json_encode( $objects );
 		}
