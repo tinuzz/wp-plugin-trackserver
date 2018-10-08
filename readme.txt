@@ -241,18 +241,20 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
-= UNRELEASED =
+= v4.1 =
+Release data: 8 October 2018
 
 Added:
 * OwnTracks Friends and Cards responses to Location requests.
 * WordPress user avatars to OwnTracks responses, if available.
-* Input fields in on the Trackserver user profile page for managing OwnTracks share/follow friends.
+* Input fields on the Trackserver user profile page for managing OwnTracks share/follow friends.
 * Stub functions for responding more nicely to TrackMe cloud sharing requests.
 * A mouseover-tooltip on end-markers of live tracks, showing the user's displayname.
 * The user's display name in the title of the Trackserver profile page.
 
 Fixed:
-* Missing gettext domain on some localized strings
+* Missing gettext domain on some localized strings.
+* Added some missing inline documentation in the code.
 
 = v4.0.2 =
 Release date: 23 February 2018
