@@ -3975,9 +3975,13 @@ EOF;
 
 			add_thickbox();
 
+			$user  = wp_get_current_user();
+			$title = __( 'Trackserver profile for %s', 'trackserver' );
+			$title = sprintf( $title, $user->display_name );
+
 			?>
 			<div class="wrap">
-				<h2><?php esc_html_e( 'Trackserver profile', 'trackserver' ); ?></h2>
+				<h2><?php echo esc_html( $title ); ?></h2>
 				<?php $this->notice_bulk_action_result(); ?>
 				<form id="trackserver-profile" method="post">
 					<?php wp_nonce_field( 'your-profile' ); ?>

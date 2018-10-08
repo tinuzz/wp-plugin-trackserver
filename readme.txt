@@ -249,6 +249,7 @@ Added:
 * Input fields in on the Trackserver user profile page for managing OwnTracks share/follow friends.
 * Stub functions for responding more nicely to TrackMe cloud sharing requests.
 * A mouseover-tooltip on end-markers of live tracks, showing the user's displayname.
+* The user's display name in the title of the Trackserver profile page.
 
 Fixed:
 * Missing gettext domain on some localized strings
