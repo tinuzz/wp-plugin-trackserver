@@ -57,43 +57,42 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 
 For the [tsmap] shortcode:
 
-* track: one or more track IDs, separated by commas, or 'live' (deprecated,
+* **track**: one or more track IDs, separated by commas, or 'live' (deprecated,
   'user=@' is preferred).
-* id: an alias for 'track'
-* user: one or more user IDs, separated by commas, who's latest track to follow
+* **id**: an alias for 'track'
+* **user**: one or more user IDs, separated by commas, who's latest track to follow
   'live'. A literal '@' means the author of the post (you). When viewing the
   map, the liveupdate feature will follow the track of the first user specified.
   When the end-marker is enabled for a live track (and why shouldn't it?),
   clicking it will change the focus of the liveupdate to that track. The map view
   will follow the latest location and the infobar (if present) will display its
   information.
-* live: true (or 't', 'yes' or 'y'), or false (default), to force live tracking
+* **live**: true (or 't', 'yes' or 'y'), or false (default), to force live tracking
   for this map. This can be used for example with an externally updated GPX or
   KML file.
-* maxage: the maximum age of a live track for it to be included
-  on the map. If this parameter is given, all user tracks that
-  have not been updated in the last X amount of time, will not be
-  displayed. The value is a time expression in the form of a
-  number and a unit, for example: '120s', '30m', '2h', '3d'.
-* width: map width, default: 100%.
-* height: map height, default: 480px.
-* align: 'left', 'center' or 'right', default: not set.
-* class: a CSS class to add to the map div for customization, default: not set.
-* continuous: true (default) or false (or 'f', 'no' or 'n'), for lack of a
+* **maxage**: the maximum age of a live track for it to be included on the map.
+  If this parameter is given, all user tracks that have not been updated in the
+  last X amount of time, will not be displayed. The value is a time expression in
+  the form of a number and a unit, for example: '120s', '30m', '2h', '3d'.
+* **width**: map width, default: 100%.
+* **height**: map height, default: 480px.
+* **align**: 'left', 'center' or 'right', default: not set.
+* **class**: a CSS class to add to the map div for customization, default: not set.
+* **continuous**: true (default) or false (or 'f', 'no' or 'n'), for lack of a
   better word, to indicate whether multiple tracks should be considered as one
   continuous track. The only effect this has, at the moment, is that intermediate
   start markers are yellow instead of green.
-* gpx: one or more URLs to GPX files to be plotted on the map. Multiple URLs
+* **gpx**: one or more URLs to GPX files to be plotted on the map. Multiple URLs
   should be separated by spaces, and the value as a whole enclosed by double
   quotes (gpx="http://....gpx http://....gpx"). If enabled in the settings, when
   a url is prefixed with the string 'proxy:', the request is proxied through
   Trackserver.
-* kml: one or more URLs to KML files to be plotted on the map. Multiple URLs
+* **kml**: one or more URLs to KML files to be plotted on the map. Multiple URLs
   should be separated by spaces, and the value as a whole enclosed by double
   quotes (kml="http://....kml http://....kml"). If enabled in the settings, when
   a url is prefixed with the string 'proxy:', the request is proxied through
   Trackserver.
-* infobar: true (or 't', 'yes' or 'y'), false (default), or a template string,
+* **infobar**: true (or 't', 'yes' or 'y'), false (default), or a template string,
   to specify whether an information bar should be shown on the map, when live
   tracking is active. This only works with 'track=live' or the 'user' parameter,
   and has no effect in other cases. When multiple live tracks are requested, the
@@ -102,7 +101,7 @@ For the [tsmap] shortcode:
   {lon}, {speedkmh}, etc.) can be given to the attribute, in which case it
   overrides the value specified in the user profile. Please check the Trackserver
   user profile page in the WordPress backend for which placeholders are supported.
-* zoom: the zoom factor to use for the map, a number between 0 and 18. For a
+* **zoom**: the zoom factor to use for the map, a number between 0 and 18. For a
   map with live tracks, this number is absolute. For a map with only static
   tracks, this number represents the maximum zoom level, so the map will always
   fit all the tracks.
@@ -112,19 +111,19 @@ them can contain multiple values, separated by commas (or colons, in the case
 of 'dash'), to be applied to different tracks in order. If there a are less
 values than tracks, the last value will be applied to the remaining tracks.
 
-* markers: one or more of the following values: true (default) or false (or
+* **markers**: one or more of the following values: true (default) or false (or
   'f', 'no' or 'n') to disable start/end markers on the track. The value can
   also be 'start', 's', 'end' or 'e', to draw markers only for the start or the
   end of a track respectively.
-* color: one or more colors, separated by commas, to use for the tracks on the
+* **color**: one or more colors, separated by commas, to use for the tracks on the
   map. Default comes from Leaflet.
-* weight: one or more weights, separated by commas, to use for the tracks on
+* **weight**: one or more weights, separated by commas, to use for the tracks on
   the map. Default comes from Leaflet.
-* opacity: one or more opacities, separated by commas, to use for the tracks on
+* **opacity**: one or more opacities, separated by commas, to use for the tracks on
   the map. Default comes from Leaflet.
-* dash: one or more [dashArrays](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray),
+* **dash**: one or more [dashArrays](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray),
   seperated by colons (:), to use for the tracks on the map. Default is no dashes.
-* points: true (or 't', 'yes' or 'y'), or false (default), to specify whether
+* **points**: true (or 't', 'yes' or 'y'), or false (default), to specify whether
   the track should be displayed as a line or a collection of points.
 
 Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
@@ -143,9 +142,8 @@ To prevent confusion, I suggest you specify tracks in this order in your shortco
 
 Example: [tsmap gpx=/url/for/file.gpx user=jim track=10,99 color=red,blue,green,yellow]
 
-In this case, the GPX track will be yellow, Jim's live track will be green and
-tracks 10 and 99 will be red and blue respectively.
-
+In this case, due to the evaluation order, the GPX track will be yellow, Jim's
+live track will be green and tracks 10 and 99 will be red and blue respectively.
 
 In a feature request I was asked to make it possible to draw just a marker on the
 last known location, and not draw a track at all. Use 'markers' and 'opacity' to
@@ -155,12 +153,12 @@ Example: [tsmap track=live markers=e opacity=0.0]
 
 Attributes for the [tslink] shortcode:
 
-* track: same as for [tsmap]
-* id: same as for [tsmap]
-* user: same as for [tsmap]
-* text: the text to render insde the &lt;a&gt;...&lt;/a&gt; tags
-* class: a CSS class to apply to the 'a' element
-* format: the format in which to download the tracks. Only 'gpx' (the default) is supported at this time. Other formats like KML may follow. Send a feature request if you need a specific format.
+* **track**: same as for [tsmap]
+* **id**: same as for [tsmap]
+* **user**: same as for [tsmap]
+* **text**: the text to render insde the &lt;a&gt;...&lt;/a&gt; tags
+* **class**: a CSS class to apply to the 'a' element
+* **format**: the format in which to download the tracks. Only 'gpx' (the default) is supported at this time. Other formats like KML may follow. Send a feature request if you need a specific format.
 
 Example: [tslink track=1,2,3,4 text="Download the tracks of our 4-day hike in GPX format"]
 
