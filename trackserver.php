@@ -2884,9 +2884,12 @@ EOF;
 		 * username or password are incorrect, we terminate (default) or return
 		 * false if so requested.
 		 *
+		 * On success, the authenticated user's ID is returned. By passing 'object'
+		 * as the second argument, the WP_User object is returned instead.
+		 *
 		 * @since 1.0
 		 */
-		function validate_http_basicauth( $return = false ) {
+		function validate_http_basicauth( $return = false, $what = 'id' ) {
 
 			if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) ) {
 				header( 'WWW-Authenticate: Basic realm="Authentication Required"' );
@@ -2898,11 +2901,11 @@ EOF;
 
 			if ( $user ) {
 				$hash    = $user->data->user_pass;
-				$user_id = intval( $user->data->ID );
+				$user_id = intval( $user->ID );
 
 				if ( wp_check_password( $_SERVER['PHP_AUTH_PW'], $hash, $user_id ) ) {
 					if ( user_can( $user_id, 'use_trackserver' ) ) {
-						return $user_id;
+						return ( $what == 'object' ? $user : $user_id );
 					} else {
 						if ( $return ) {
 							return false;
