@@ -1909,11 +1909,11 @@ EOF;
 		 */
 		function parse_request( $wp ) {
 
-			$url                = site_url( null, 'http' ) . $this->url_prefix;
-			$tag                = $this->options['trackme_slug'];
-			$ext                = $this->options['trackme_extension'];
-			$base_uri           = preg_replace( '/^http:\/\/[^\/]+/', '', $url );
-			$request_uri        = strtok( $_SERVER['REQUEST_URI'], '?' );     // Strip querystring off request URI
+			$url         = site_url( null, 'http' ) . $this->url_prefix;
+			$tag         = $this->options['trackme_slug'];
+			$ext         = $this->options['trackme_extension'];
+			$base_uri    = preg_replace( '/^http:\/\/[^\/]+/', '', $url );
+			$request_uri = strtok( $_SERVER['REQUEST_URI'], '?' );     // Strip querystring off request URI
 
 			$trackme_uri        = $base_uri . '/' . $tag . '/requests.' . $ext;
 			$trackme_export_uri = $base_uri . '/' . $tag . '/export.' . $ext;
@@ -2796,7 +2796,7 @@ EOF;
 			// TODO: cache the image in usermeta and serve it from there if available
 
 			$avatar_data = get_avatar_data( $user_id, array( 'size' => 40 ) );
-			$url = $avatar_data['url'] . '&d=404';  // ask for a 404 if there is no image
+			$url         = $avatar_data['url'] . '&d=404';  // ask for a 404 if there is no image
 
 			$options  = array(
 				'httpversion' => '1.1',
@@ -2839,7 +2839,7 @@ EOF;
 				// @codingStandardsIgnoreEnd
 
 				$ruser = get_user_by( 'id', $res['user_id'] );
-				$tid  = $this->get_owntracks_tid( $ruser );
+				$tid   = $this->get_owntracks_tid( $ruser );
 
 				$objects[] = array(
 					'_type' => 'location',
@@ -2856,7 +2856,8 @@ EOF;
 					'tid'   => $tid,
 				);
 
-				if ( $face = $this->get_owntracks_avatar( $ruser->ID ) ) {
+				$face = $this->get_owntracks_avatar( $ruser->ID );
+				if ( $face ) {
 					$card['face'] = $face;
 				}
 
@@ -3976,7 +3977,9 @@ EOF;
 
 			add_thickbox();
 
-			$user  = wp_get_current_user();
+			$user = wp_get_current_user();
+
+			// translators: placeholder is for a user's display name
 			$title = __( 'Trackserver profile for %s', 'trackserver' );
 			$title = sprintf( $title, $user->display_name );
 
