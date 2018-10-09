@@ -834,7 +834,8 @@ EOF;
 				<br />
 EOF;
 
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( "The URL slug for the 'gettrack' API, used by Trackserver's shortcode [tsmap]", 'trackserver' ),
 				esc_html__( 'There is generally no need to change this.', 'trackserver' )
 			);
@@ -851,16 +852,20 @@ EOF;
 				%2\$s<br />
 EOF;
 
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( "Check this to enable the proxy for external tracks, which can be used by prefixing their URL with 'proxy:'", 'trackserver' ),
-				// translators: placeholder is for link to Trackserver FAQ
-				sprintf( esc_html__(
-					// @codingStandardsIgnoreStart
-					'This will enable your authors to invoke HTTP requests originating from your server. ' .
-					'Only enable this when you need it and if you trust your authors not to use harmful URLs. ' .
-					'Please see the %1$s for more information.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				), $link )
+				sprintf(
+					// translators: placeholder is for link to Trackserver FAQ
+					esc_html__(
+						// @codingStandardsIgnoreStart
+						'This will enable your authors to invoke HTTP requests originating from your server. ' .
+						'Only enable this when you need it and if you trust your authors not to use harmful URLs. ' .
+						'Please see the %1$s for more information.', 'trackserver'
+						// @codingStandardsIgnoreEnd
+					),
+					$link
+				)
 			);
 		}
 
@@ -877,17 +882,23 @@ EOF;
 				%3\$s<br /><br />
 EOF;
 
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe", 'trackserver' ),
 				esc_html__( 'Full URL header', 'trackserver' ),
-				// translators: placeholders are for product name and version, and link to Wikipedia page
-				sprintf( esc_html__(
-					// @codingStandardsIgnoreStart
-					'Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS connections. ' .
-					'If your WordPress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a ' .
-					'problem with %1$s that Trackserver cannot fix.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				), 'TrackMe', '2.00.1', $link )
+				sprintf(
+					// translators: placeholders are for product name and version, and link to Wikipedia page
+					esc_html__(
+						// @codingStandardsIgnoreStart
+						'Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS connections. ' .
+						'If your WordPress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a ' .
+						'problem with %1$s that Trackserver cannot fix.', 'trackserver'
+						// @codingStandardsIgnoreEnd
+					),
+					'TrackMe',
+					'2.00.1',
+					$link
+				)
 			);
 		}
 
@@ -900,7 +911,8 @@ EOF;
 				<br />
 				<b>%2\$s</b>: %3\$s<br /><br />
 EOF;
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( "The Server extension in TrackMe's settings", 'trackserver' ),
 				esc_html__( 'WARNING', 'trackserver' ),
 				esc_html__(
@@ -925,17 +937,25 @@ EOF;
 			$user_id     = get_current_user_id();
 			$trackme_key = '<code>' . htmlspecialchars( get_user_meta( $user_id, 'ts_trackme_key', true ) ) . '</code>';
 
-			printf( $format,
-				// translators: placeholders are for link to user profile and trackme access key
-				sprintf( esc_html__(
-					// @codingStandardsIgnoreStart
-					'Since version 1.9, Trackserver needs a separate password for online tracking with TrackMe. We do not use the WordPress ' .
-					'password here anymore for security reasons. The access key is unique to your ' .
-					'user account and it can be configured in %1$s. Your current TrackMe password is: %2$s. This is what you enter in the Password field ' .
-					'in TrackMe\'s settings!!', 'trackserver'
-				), $link, $trackme_key ),
+			printf(
+				$format,
+				sprintf(
+					// translators: placeholders are for link to user profile and trackme access key
+					esc_html__(
+						// @codingStandardsIgnoreStart
+						'Since version 1.9, Trackserver needs a separate password for online tracking with TrackMe. We do not use the WordPress ' .
+						'password here anymore for security reasons. The access key is unique to your ' .
+						'user account and it can be configured in %1$s. Your current TrackMe password is: %2$s. This is what you enter in the Password field ' .
+						'in TrackMe\'s settings!!', 'trackserver'
+					// @codingStandardsIgnoreEnd
+					),
+					$link,
+					$trackme_key
+				),
 				esc_html__( 'WARNING', 'trackserver' ),
-				esc_html__( 'if you just upgraded to version 1.9 or higher and you have been using Trackserver with TrackMe, ' .
+				esc_html__(
+						// @codingStandardsIgnoreStart
+					'if you just upgraded to version 1.9 or higher and you have been using Trackserver with TrackMe, ' .
 					'you should update the password in TrackMe to match the password in your profile. Trackserver does not check your ' .
 					'WordPress password anymore, because the way TrackMe uses your password is not sufficiently secure.', 'trackserver'
 					// @codingStandardsIgnoreEnd
@@ -956,18 +976,24 @@ EOF;
 				%3\$s<br /><br />
 EOF;
 
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps", 'trackserver' ),
 				esc_html__( 'Full custom URL', 'trackserver' ),
-				// translators: placeholders are for product name and version, and link to SNI Wikipedia page
-				sprintf( esc_html__(
-					// @codingStandardsIgnoreStart
-					'Note about HTTPS: older versions of %1$s may or may not support %3$s for HTTPS connections. ' .
-					'As of v%2$s, SNI is verified to work. If your WordPress depends on SNI for HTTPS connections and you cannot ' .
-					'use the latest version of %1$s, please use HTTP. This is a ' .
-					'problem with %1$s that Trackserver cannot fix.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				), 'OruxMaps', '7.1.2', $link )
+				sprintf(
+					// translators: placeholders are for product name and version, and link to SNI Wikipedia page
+					esc_html__(
+						// @codingStandardsIgnoreStart
+						'Note about HTTPS: older versions of %1$s may or may not support %3$s for HTTPS connections. ' .
+						'As of v%2$s, SNI is verified to work. If your WordPress depends on SNI for HTTPS connections and you cannot ' .
+						'use the latest version of %1$s, please use HTTP. This is a ' .
+						'problem with %1$s that Trackserver cannot fix.', 'trackserver'
+						// @codingStandardsIgnoreEnd
+					),
+					'OruxMaps',
+					'7.1.2',
+					$link
+				)
 			);
 		}
 
@@ -980,7 +1006,8 @@ EOF;
 				<input type="text" size="25" name="trackserver_options[osmand_slug]" id="trackserver_osmand_slug" value="$val" autocomplete="off" /><br /><br />
 EOF;
 
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd", 'trackserver' )
 			);
 		}
@@ -995,25 +1022,32 @@ EOF;
 EOF;
 			$link   = '<a href="admin.php?page=trackserver-yourprofile">' .
 				esc_html__( 'your Trackserver profile', 'trackserver' ) . '</a>';
-			printf( $format,
-				// translators: placeholder is for link to user profile
-				sprintf( esc_html__(
-					// @codingStandardsIgnoreStart
-					'Trackserver needs an access key for online tracking with OsmAnd. We do not use WordPress ' .
-					'password here for security reasons. Since version 1.9 of Trackserver, the access key is unique to your ' .
-					'user account and it can be configured in %1$s.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				), $link ),
+			printf(
+				$format,
+				sprintf(
+					// translators: placeholder is for link to user profile
+					esc_html__(
+						// @codingStandardsIgnoreStart
+						'Trackserver needs an access key for online tracking with OsmAnd. We do not use WordPress ' .
+						'password here for security reasons. Since version 1.9 of Trackserver, the access key is unique to your ' .
+						'user account and it can be configured in %1$s.', 'trackserver'
+						// @codingStandardsIgnoreEnd
+					),
+					$link
+				),
 				esc_html__( 'WARNING', 'trackserver' ),
-				// translators: placeholder is for access key
-				sprintf( esc_html__(
-					// @codingStandardsIgnoreStart
-					'if you just upgraded to version 1.9 or higher, the OsmAnd access key has been ' .
-					'reset to a new random value. Your old key is no longer valid. If you use Trackserver with OsmAnd, please ' .
-					'make sure the key matches your settings in OsmAnd. Your current access key is: %1$s. Change it regularly. ' .
-					'You can find the full tracking URL in your Trackserver profile.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				), $osmand_key )
+				sprintf(
+					// translators: placeholder is for access key
+					esc_html__(
+						// @codingStandardsIgnoreStart
+						'if you just upgraded to version 1.9 or higher, the OsmAnd access key has been ' .
+						'reset to a new random value. Your old key is no longer valid. If you use Trackserver with OsmAnd, please ' .
+						'make sure the key matches your settings in OsmAnd. Your current access key is: %1$s. Change it regularly. ' .
+						'You can find the full tracking URL in your Trackserver profile.', 'trackserver'
+						// @codingStandardsIgnoreEnd
+					),
+					$osmand_key
+				)
 			);
 		}
 
@@ -1028,17 +1062,21 @@ EOF;
 				<br />
 EOF;
 
-			printf( $format,
-				// translators: placeholder is for link to strftime() manual
-				sprintf( esc_html__(
-					// @codingStandardsIgnoreStart
-					'Generated track name in %1$s format. OsmAnd online tracking does not support the concept of ' .
-					"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
-					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
-					'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
-					'and the same track will be used forever and all locations.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				), $link ),
+			printf(
+				$format,
+				sprintf(
+					// translators: placeholder is for link to strftime() manual
+					esc_html__(
+						// @codingStandardsIgnoreStart
+						'Generated track name in %1$s format. OsmAnd online tracking does not support the concept of ' .
+						"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
+						"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
+						'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
+						'and the same track will be used forever and all locations.', 'trackserver'
+						// @codingStandardsIgnoreEnd
+					),
+					$link
+				),
 				esc_html__( 'year', 'trackserver' ),
 				esc_html__( 'month', 'trackserver' ),
 				esc_html__( 'day', 'trackserver' ),
@@ -1055,7 +1093,8 @@ EOF;
 				<input type="text" size="25" name="trackserver_options[sendlocation_slug]" id="trackserver_sendlocation_slug" value="$val" autocomplete="off" /><br /><br />
 EOF;
 
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( "The URL slug for SendLocation, used in SendLocation's settings", 'trackserver' )
 			);
 		}
@@ -1071,17 +1110,21 @@ EOF;
 				<br />
 EOF;
 
-			printf( $format,
-				// translators: placeholder is for link to strftime() manual
-				sprintf( esc_html__(
-					// @codingStandardsIgnoreStart
-					'Generated track name in %1$s format. SendLocation online tracking does not support the concept of ' .
-					"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
-					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
-					'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
-					'and the same track will be used forever and all locations.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				), $link ),
+			printf(
+				$format,
+				sprintf(
+					// translators: placeholder is for link to strftime() manual
+					esc_html__(
+						// @codingStandardsIgnoreStart
+						'Generated track name in %1$s format. SendLocation online tracking does not support the concept of ' .
+						"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
+						"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
+						'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
+						'and the same track will be used forever and all locations.', 'trackserver'
+						// @codingStandardsIgnoreEnd
+					),
+					$link
+				),
 				esc_html__( 'year', 'trackserver' ),
 				esc_html__( 'month', 'trackserver' ),
 				esc_html__( 'day', 'trackserver' ),
@@ -1099,7 +1142,8 @@ EOF;
 				<strong>%2\$s:</strong> $url/$val/<br /><br />
 EOF;
 
-			printf( $format,
+			printf(
+				$format,
 				esc_html__( "The URL slug for OwnTracks, used in OwnTracks' settings", 'trackserver' ),
 				esc_html__( 'Preferences -> Connection -> Host', 'trackserver' )
 			);
@@ -1116,17 +1160,21 @@ EOF;
 				<br />
 EOF;
 
-			printf( $format,
-				// translators: placeholder is for link to strftime() manual
-				sprintf( esc_html__(
-					// @codingStandardsIgnoreStart
-					'Generated track name in %1$s format. OwnTracks online tracking does not support the concept of ' .
-					"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
-					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
-					'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
-					'and the same track will be used forever and all locations.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				), $link ),
+			printf(
+				$format,
+				sprintf(
+					// translators: placeholder is for link to strftime() manual
+					esc_html__(
+						// @codingStandardsIgnoreStart
+						'Generated track name in %1$s format. OwnTracks online tracking does not support the concept of ' .
+						"'tracks', there are only locations.  Trackserver needs to group these in tracks and automatically generates " .
+						"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
+						'can be specified here.  If you specify a constant string, without any strftime() format placeholders, one ' .
+						'and the same track will be used forever and all locations.', 'trackserver'
+						// @codingStandardsIgnoreEnd
+					),
+					$link
+				),
 				esc_html__( 'year', 'trackserver' ),
 				esc_html__( 'month', 'trackserver' ),
 				esc_html__( 'day', 'trackserver' ),
@@ -1202,82 +1250,130 @@ EOF;
 
 			// Settings for section 'trackserver-trackme'
 			add_settings_field(
-				'trackserver_trackme_slug', esc_html__( 'TrackMe URL slug', 'trackserver' ),
-				array( &$this, 'trackme_slug_html' ), 'trackserver', 'trackserver-trackme'
+				'trackserver_trackme_slug',
+				esc_html__( 'TrackMe URL slug', 'trackserver' ),
+				array( &$this, 'trackme_slug_html' ),
+				'trackserver',
+				'trackserver-trackme'
 			);
 			add_settings_field(
-				'trackserver_trackme_extension', esc_html__( 'TrackMe server extension', 'trackserver' ),
-				array( &$this, 'trackme_extension_html' ), 'trackserver', 'trackserver-trackme'
+				'trackserver_trackme_extension',
+				esc_html__( 'TrackMe server extension', 'trackserver' ),
+				array( &$this, 'trackme_extension_html' ),
+				'trackserver',
+				'trackserver-trackme'
 			);
 			add_settings_field(
-				'trackserver_trackme_password', esc_html__( 'TrackMe password', 'trackserver' ),
-				array( &$this, 'trackme_password_html' ), 'trackserver', 'trackserver-trackme'
+				'trackserver_trackme_password',
+				esc_html__( 'TrackMe password', 'trackserver' ),
+				array( &$this, 'trackme_password_html' ),
+				'trackserver',
+				'trackserver-trackme'
 			);
 
 			// Settings for section 'trackserver-mapmytracks'
 			add_settings_field(
-				'trackserver_mapmytracks_tag', esc_html__( 'MapMyTracks URL slug', 'trackserver' ),
-				array( &$this, 'mapmytracks_tag_html' ), 'trackserver', 'trackserver-mapmytracks'
+				'trackserver_mapmytracks_tag',
+				esc_html__( 'MapMyTracks URL slug', 'trackserver' ),
+				array( &$this, 'mapmytracks_tag_html' ),
+				'trackserver',
+				'trackserver-mapmytracks'
 			);
 
 			// Settings for section 'trackserver-osmand'
 			add_settings_field(
-				'trackserver_osmand_slug', esc_html__( 'OsmAnd URL slug', 'trackserver' ),
-				array( &$this, 'osmand_slug_html' ), 'trackserver', 'trackserver-osmand'
+				'trackserver_osmand_slug',
+				esc_html__( 'OsmAnd URL slug', 'trackserver' ),
+				array( &$this, 'osmand_slug_html' ),
+				'trackserver',
+				'trackserver-osmand'
 			);
 			add_settings_field(
-				'trackserver_osmand_key', esc_html__( 'OsmAnd access key', 'trackserver' ),
-				array( &$this, 'osmand_key_deprecation_html' ), 'trackserver', 'trackserver-osmand'
+				'trackserver_osmand_key',
+				esc_html__( 'OsmAnd access key', 'trackserver' ),
+				array( &$this, 'osmand_key_deprecation_html' ),
+				'trackserver',
+				'trackserver-osmand'
 			);
 			add_settings_field(
-				'trackserver_osmand_trackname_format', esc_html__( 'OsmAnd trackname format', 'trackserver' ),
-				array( &$this, 'osmand_trackname_format_html' ), 'trackserver', 'trackserver-osmand'
+				'trackserver_osmand_trackname_format',
+				esc_html__( 'OsmAnd trackname format', 'trackserver' ),
+				array( &$this, 'osmand_trackname_format_html' ),
+				'trackserver',
+				'trackserver-osmand'
 			);
 
 			// Settings for section 'trackserver-sendlocation'
 			add_settings_field(
-				'trackserver_sendlocation_slug', esc_html__( 'SendLocation URL slug', 'trackserver' ),
-				array( &$this, 'sendlocation_slug_html' ), 'trackserver', 'trackserver-sendlocation'
+				'trackserver_sendlocation_slug',
+				esc_html__( 'SendLocation URL slug', 'trackserver' ),
+				array( &$this, 'sendlocation_slug_html' ),
+				'trackserver',
+				'trackserver-sendlocation'
 			);
 			add_settings_field(
-				'trackserver_sendlocation_trackname_format', esc_html__( 'SendLocation trackname format', 'trackserver' ),
-				array( &$this, 'sendlocation_trackname_format_html' ), 'trackserver', 'trackserver-sendlocation'
+				'trackserver_sendlocation_trackname_format',
+				esc_html__( 'SendLocation trackname format', 'trackserver' ),
+				array( &$this, 'sendlocation_trackname_format_html' ),
+				'trackserver',
+				'trackserver-sendlocation'
 			);
 
 			// Settings for section 'trackserver-owntracks'
 			add_settings_field(
-				'trackserver_owntracks_slug', esc_html__( 'OwnTracks URL slug', 'trackserver' ),
-				array( &$this, 'owntracks_slug_html' ), 'trackserver', 'trackserver-owntracks'
+				'trackserver_owntracks_slug',
+				esc_html__( 'OwnTracks URL slug', 'trackserver' ),
+				array( &$this, 'owntracks_slug_html' ),
+				'trackserver',
+				'trackserver-owntracks'
 			);
 			add_settings_field(
-				'trackserver_owntracks_trackname_format', esc_html__( 'OwnTracks trackname format', 'trackserver' ),
-				array( &$this, 'owntracks_trackname_format_html' ), 'trackserver', 'trackserver-owntracks'
+				'trackserver_owntracks_trackname_format',
+				esc_html__( 'OwnTracks trackname format', 'trackserver' ),
+				array( &$this, 'owntracks_trackname_format_html' ),
+				'trackserver',
+				'trackserver-owntracks'
 			);
 
 			// Settings for section 'trackserver-httppost'
 			add_settings_field(
-				'trackserver_upload_tag', esc_html__( 'HTTP POST URL slug', 'trackserver' ),
-				array( &$this, 'upload_tag_html' ), 'trackserver', 'trackserver-httppost'
+				'trackserver_upload_tag',
+				esc_html__( 'HTTP POST URL slug', 'trackserver' ),
+				array( &$this, 'upload_tag_html' ),
+				'trackserver',
+				'trackserver-httppost'
 			);
 
 			// Settings for section 'trackserver-shortcode'
 			add_settings_field(
-				'trackserver_tile_url', esc_html__( 'OSM/Google tile server URL', 'trackserver' ),
-				array( &$this, 'tile_url_html' ), 'trackserver', 'trackserver-shortcode'
+				'trackserver_tile_url',
+				esc_html__( 'OSM/Google tile server URL', 'trackserver' ),
+				array( &$this, 'tile_url_html' ),
+				'trackserver',
+				'trackserver-shortcode'
 			);
 			add_settings_field(
-				'trackserver_attribution', esc_html__( 'Tile attribution', 'trackserver' ),
-				array( &$this, 'attribution_html' ), 'trackserver', 'trackserver-shortcode'
+				'trackserver_attribution',
+				esc_html__( 'Tile attribution', 'trackserver' ),
+				array( &$this, 'attribution_html' ),
+				'trackserver',
+				'trackserver-shortcode'
 			);
 
 			// Settings for section 'trackserver-advanced'
 			add_settings_field(
-				'trackserver_gettrack_slug', esc_html__( 'Gettrack URL slug', 'trackserver' ),
-				array( &$this, 'gettrack_slug_html' ), 'trackserver', 'trackserver-advanced'
+				'trackserver_gettrack_slug',
+				esc_html__( 'Gettrack URL slug', 'trackserver' ),
+				array( &$this, 'gettrack_slug_html' ),
+				'trackserver',
+				'trackserver-advanced'
 			);
 			add_settings_field(
-				'trackserver_enable_proxy', esc_html__( 'Enable proxy', 'trackserver' ),
-				array( &$this, 'enable_proxy_html' ), 'trackserver', 'trackserver-advanced'
+				'trackserver_enable_proxy',
+				esc_html__( 'Enable proxy', 'trackserver' ),
+				array( &$this, 'enable_proxy_html' ),
+				'trackserver',
+				'trackserver-advanced'
 			);
 		}
 
@@ -1288,24 +1384,40 @@ EOF;
 			$this->options_page_url = menu_page_url( $this->options_page, false );
 
 			// A dedicated menu in the main tree
-			add_menu_page( esc_html__( 'Trackserver Options', 'trackserver' ), esc_html__( 'Trackserver', 'trackserver' ),
-				'manage_options', 'trackserver-options', array( &$this, 'options_page_html' ),
+			add_menu_page(
+				esc_html__( 'Trackserver Options', 'trackserver' ),
+				esc_html__( 'Trackserver', 'trackserver' ),
+				'manage_options',
+				'trackserver-options',
+				array( &$this, 'options_page_html' ),
 				TRACKSERVER_PLUGIN_URL . 'img/trackserver.png'
 			);
 
 			add_submenu_page(
-				'trackserver-options', esc_html__( 'Trackserver Options', 'trackserver' ),
-				esc_html__( 'Options', 'trackserver' ), 'manage_options', 'trackserver-options', array( &$this, 'options_page_html' )
+				'trackserver-options',
+				esc_html__( 'Trackserver Options', 'trackserver' ),
+				esc_html__( 'Options', 'trackserver' ),
+				'manage_options',
+				'trackserver-options',
+				array( &$this, 'options_page_html' )
 			);
 
 			$page2 = add_submenu_page(
-				'trackserver-options', esc_html__( 'Manage tracks', 'trackserver' ),
-				esc_html__( 'Manage tracks', 'trackserver' ), 'use_trackserver', 'trackserver-tracks', array( &$this, 'manage_tracks_html' )
+				'trackserver-options',
+				esc_html__( 'Manage tracks', 'trackserver' ),
+				esc_html__( 'Manage tracks', 'trackserver' ),
+				'use_trackserver',
+				'trackserver-tracks',
+				array( &$this, 'manage_tracks_html' )
 			);
 
 			$page3 = add_submenu_page(
-				'trackserver-options', esc_html__( 'Your profile', 'trackserver' ),
-				esc_html__( 'Your profile', 'trackserver' ), 'use_trackserver', 'trackserver-yourprofile', array( &$this, 'yourprofile_html' )
+				'trackserver-options',
+				esc_html__( 'Your profile', 'trackserver' ),
+				esc_html__( 'Your profile', 'trackserver' ),
+				'use_trackserver',
+				'trackserver-yourprofile',
+				array( &$this, 'yourprofile_html' )
 			);
 
 			// Early action to set up the 'Manage tracks' page and handle bulk actions.
@@ -1676,10 +1788,12 @@ EOF;
 
 			if ( count( $validated_track_ids ) > 0 || count( $validated_user_ids ) > 0 ) {
 
-				$query         = json_encode( array(
-					'id'   => $validated_track_ids,
-					'live' => $validated_user_ids,
-				) );
+				$query         = json_encode(
+					array(
+						'id'   => $validated_track_ids,
+						'live' => $validated_user_ids,
+					)
+				);
 				$query         = base64_encode( $query );
 				$query_nonce   = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
 				$alltracks_url = get_home_url( null, $this->url_prefix . '/' . $this->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=" . $this->track_format . "&maxage=$maxage&_wpnonce=$query_nonce" );
@@ -1870,10 +1984,12 @@ EOF;
 					$track_format = $atts['format'];
 				}
 
-				$query         = json_encode( array(
-					'id'   => $validated_track_ids,
-					'live' => $validated_user_ids,
-				) );
+				$query         = json_encode(
+					array(
+						'id'   => $validated_track_ids,
+						'live' => $validated_user_ids,
+					)
+				);
 				$query         = base64_encode( $query );
 				$query_nonce   = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
 				$alltracks_url = get_home_url( null, $this->url_prefix . '/' . $this->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&maxage=$maxage&_wpnonce=$query_nonce" );
@@ -2734,10 +2850,14 @@ EOF;
 
 			$username = $user->user_login;
 			$table    = _get_meta_table( 'user' );
-			// @codingStandardsIgnoreLine
-			$sql = $wpdb->prepare ( "SELECT user_id, meta_key, meta_value FROM $table WHERE meta_key='ts_owntracks_share' AND (" .
-				'meta_value=%s OR meta_value LIKE %s OR meta_value LIKE %s OR meta_value LIKE %s)',
-				$username, '%,' . $wpdb->esc_like( $username ), '%,' . $wpdb->esc_like( $username ) . ',%', $wpdb->esc_like( $username ) . ',%'
+			$sql      = $wpdb->prepare(
+				// @codingStandardsIgnoreLine
+				"SELECT user_id, meta_key, meta_value FROM $table WHERE meta_key='ts_owntracks_share' AND (" .
+					'meta_value=%s OR meta_value LIKE %s OR meta_value LIKE %s OR meta_value LIKE %s)',
+				$username,
+				'%,' . $wpdb->esc_like( $username ),
+				'%,' . $wpdb->esc_like( $username ) . ',%',
+				$wpdb->esc_like( $username ) . ',%'
 			);
 			// @codingStandardsIgnoreLine
 			$res = $wpdb->get_results( $sql, ARRAY_A );

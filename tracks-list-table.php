@@ -10,11 +10,13 @@ class Tracks_List_Table extends WP_List_Table {
 			$this->options = $options;
 
 			// Set parent defaults.
-			parent::__construct( array(
-				'singular' => 'track',    // Singular name of the listed records.
-				'plural'   => 'tracks',   // Plural name of the listed records.
-				'ajax'     => false,      // Does this table support ajax?
-			) );
+			parent::__construct(
+				array(
+					'singular' => 'track',    // Singular name of the listed records.
+					'plural'   => 'tracks',   // Plural name of the listed records.
+					'ajax'     => false,      // Does this table support ajax?
+				)
+			);
 	}
 
 	function column_default( $item, $column_name ) {
@@ -198,11 +200,13 @@ class Tracks_List_Table extends WP_List_Table {
 		/**
 		 * REQUIRED. We also have to register our pagination options & calculations.
 		 */
-		$this->set_pagination_args( array(
-			'total_items' => $total_items,                       // WE have to calculate the total number of items.
-			'per_page'    => $per_page,                          // WE have to determine how many items to show on a page.
-			'total_pages' => ceil( $total_items / $per_page ),   // WE have to calculate the total number of pages.
-		) );
+		$this->set_pagination_args(
+			array(
+				'total_items' => $total_items,                       // WE have to calculate the total number of items.
+				'per_page'    => $per_page,                          // WE have to determine how many items to show on a page.
+				'total_pages' => ceil( $total_items / $per_page ),   // WE have to calculate the total number of pages.
+			)
+		);
 
 	}
 }
