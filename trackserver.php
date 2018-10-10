@@ -88,6 +88,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			'tile_url'                      => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 			'attribution'                   => '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			'db_version'                    => false,
+			'fetchmode_all'                 => true,
 		);
 
 		var $user_meta_defaults = array(
@@ -869,6 +870,28 @@ EOF;
 			);
 		}
 
+		function fetchmode_all_html() {
+			$checked = ( $this->options['fetchmode_all'] ? 'checked' : '' );
+			$format  = '<input type="checkbox" name="trackserver_options[fetchmode_all]" id="trackserver_fetchmode_all" ' . $checked . '> %1$s<br /><br />';
+			printf(
+				$format,
+				esc_html__( 'Check this to enable the mode where Trackserver gets all track data in a single HTTP request when displaying a map.' )
+			);
+			echo esc_html__(
+				// @codingStandardsIgnoreStart
+				'Disabling this mode will make Trackserver use a separate HTTP request ' .
+				'for each single track. This may have a positive or a negative ' .
+				'effect on the loading speed of Trackserver maps and tracks. If ' .
+				'some of your maps have multiple tracks with many, many locations, ' .
+				'unchecking this and disabling the single request mode may improve ' .
+				'the performance. On the other hand, if your users are on slow or ' .
+				'high-latency networks, enabling single request mode may give ' .
+				'better results. You can safely switch between modes to see what works ' .
+				'best for you.'
+				// @codingStandardsIgnoreEnd
+			);
+		}
+
 		function trackme_slug_html() {
 			$val     = $this->printf_htmlspecialchars( $this->options['trackme_slug'] );
 			$url     = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
@@ -1230,7 +1253,8 @@ EOF;
 		}
 
 		function sanitize_option_values( $options ) {
-			$options['enable_proxy'] = (bool) $options['enable_proxy'];
+			$options['enable_proxy']  = (bool) $options['enable_proxy'];
+			$options['fetchmode_all'] = (bool) $options['fetchmode_all'];
 			return $options;
 		}
 
@@ -1372,6 +1396,13 @@ EOF;
 				'trackserver_enable_proxy',
 				esc_html__( 'Enable proxy', 'trackserver' ),
 				array( &$this, 'enable_proxy_html' ),
+				'trackserver',
+				'trackserver-advanced'
+			);
+			add_settings_field(
+				'trackserver_enable_fetchmode_all',
+				esc_html__( 'Single request mode', 'trackserver' ),
+				array( &$this, 'fetchmode_all_html' ),
 				'trackserver',
 				'trackserver-advanced'
 			);
@@ -1781,13 +1812,16 @@ EOF;
 				$is_live = true;
 			}
 
-			$tracks        = array();
-			$alltracks_url = false;
-			$default_lat   = '51.443168';
-			$default_lon   = '5.447200';
+			$tracks              = array();
+			$alltracks_url       = false;
+			$default_lat         = '51.443168';
+			$default_lon         = '5.447200';
+			$gettrack_url_prefix = get_home_url( null, $this->url_prefix . '/' . $this->options['gettrack_slug'] . '/' );
 
 			if ( count( $validated_track_ids ) > 0 || count( $validated_user_ids ) > 0 ) {
 
+				$live_tracks   = $this->get_live_tracks( $validated_user_ids, $maxage );
+				$all_track_ids = array_merge( $validated_track_ids, $live_tracks );
 				$query         = json_encode(
 					array(
 						'id'   => $validated_track_ids,
@@ -1796,36 +1830,43 @@ EOF;
 				);
 				$query         = base64_encode( $query );
 				$query_nonce   = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
-				$alltracks_url = get_home_url( null, $this->url_prefix . '/' . $this->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=" . $this->track_format . "&maxage=$maxage&_wpnonce=$query_nonce" );
+				$alltracks_url = $gettrack_url_prefix . '?query=' . rawurlencode( $query ) . "&p=$post_id&format=" .
+					$this->track_format . "&maxage=$maxage&_wpnonce=$query_nonce";
+				$following     = false;
 
-				foreach ( $validated_track_ids as $validated_id ) {
+				//foreach ( $validated_track_ids as $validated_id ) {
+				foreach ( $all_track_ids as $validated_id ) {
 
-					// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
-					// https://core.trac.wordpress.org/ticket/4221
-					$nonce      = wp_create_nonce( 'gettrack_' . $validated_id . '_p' . $post_id );
-					$track_type = $this->track_format;
+					// For the first live track, set 'follow' to true
+					if ( in_array( $validated_id, $live_tracks ) && ! $following ) {
+						$following = true;
+						$follow    = true;
+					} else {
+						$follow = false;
+					}
 
-					$tracks[] = array(
-						'track_id'   => $validated_id,
-						'track_type' => $track_type,
-						'style'      => $this->get_style(),
-						'points'     => $this->get_points(),
-						'markers'    => $this->get_markers(),
-					);
-				}
-
-				$live_tracks = $this->get_live_tracks( $validated_user_ids, $maxage );
-				foreach ( $live_tracks as $validated_id ) {
-					$tracks[] = array(
+					$trk = array(
 						'track_id'   => $validated_id,
 						'track_type' => $this->track_format,
 						'style'      => $this->get_style(),
 						'points'     => $this->get_points(),
 						'markers'    => $this->get_markers(),
+						'follow'     => $follow,
 					);
+
+					// If the 'fetchmode_all' option is false, do not use $query, but fetch each track via its own URL
+					if ( ! $this->options['fetchmode_all'] ) {
+						// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
+						// https://core.trac.wordpress.org/ticket/4221
+						$nonce             = wp_create_nonce( 'gettrack_' . $validated_id . '_p' . $post_id );
+						$trk['track_type'] = 'polylinexhr';
+						$trk['track_url']  = $gettrack_url_prefix . '?id=' . $validated_id . "&p=$post_id&format=" .
+							$this->track_format . "&maxage=$maxage&_wpnonce=$nonce";
+					}
+
+					$tracks[] = $trk;
 				}
 
-				$all_track_ids = array_merge( $validated_track_ids, $live_tracks );
 				if ( count( $all_track_ids ) ) {
 					$sql_in = "('" . implode( "','", $all_track_ids ) . "')";
 					$sql    = 'SELECT AVG(latitude) FROM ' . $this->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
@@ -1897,9 +1938,12 @@ EOF;
 				'is_live'      => $is_live,
 				'continuous'   => $continuous,
 				'infobar'      => $infobar,
-				'alltracks'    => $alltracks_url,
 				'fit'          => $fit,
 			);
+
+			if ( $this->options['fetchmode_all'] ) {
+				$mapdata['alltracks'] = $alltracks_url;
+			}
 
 			if ( $infobar ) {
 				if ( in_array( $atts['infobar'], array( 't', 'true', 'y', 'yes' ) ) ) {
@@ -3830,8 +3874,9 @@ EOF;
 					);
 				}
 				$tracks[ $id ]['points'][] = array( $row['latitude'], $row['longitude'] );
-				$tracks[ $id ]['metadata'] = $this->get_metadata( $row, $extra_metadata );
 			}
+			$tracks[ $id ]['metadata'] = $this->get_metadata( $row, $extra_metadata );
+
 			// Convert points to Polyline
 			foreach ( $tracks as $id => $values ) {
 				$tracks[ $id ]['track'] = Polyline::encode( $values['points'] );

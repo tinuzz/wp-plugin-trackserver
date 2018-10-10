@@ -56,15 +56,7 @@ var Trackserver = (function () {
 
         process_data: function (data, options) {
             var o = typeof data === 'string' ?  JSON.parse(data) : data;
-            this.set_mydata(options.div_id, options.track_id, 'timestamp', o.metadata.last_trkpt_time);
-            this.set_mydata(options.div_id, options.track_id, 'altitude', o.metadata.last_trkpt_altitude);
-            this.set_mydata(options.div_id, options.track_id, 'speed_ms', o.metadata.last_trkpt_speed_ms);
-            this.set_mydata(options.div_id, options.track_id, 'speed_kmh', o.metadata.last_trkpt_speed_kmh);
-            this.set_mydata(options.div_id, options.track_id, 'speed_mph', o.metadata.last_trkpt_speed_mph);
-            this.set_mydata(options.div_id, options.track_id, 'distance', o.metadata.distance);
-            this.set_mydata(options.div_id, options.track_id, 'userid', o.metadata.userid);
-            this.set_mydata(options.div_id, options.track_id, 'userlogin', o.metadata.userlogin);
-            this.set_mydata(options.div_id, options.track_id, 'displayname', o.metadata.displayname);
+            this.set_mydata(options.div_id, options.track_id, 'metadata', o.metadata);
             return o.track;
         },
 
@@ -185,6 +177,7 @@ var Trackserver = (function () {
                     var old_markers = this.options.old_markers;
                     var do_markers  = mymapdata.tracks[track_index].markers;
                     var do_points   = mymapdata.tracks[track_index].points;
+                    var do_follow   = mymapdata.tracks[track_index].follow;
 
                     // ...and then delete the old one, to prevent flickering
                     if (old_track) {
@@ -193,22 +186,14 @@ var Trackserver = (function () {
 
                     var layer_ids = _this.get_sorted_keys( this._layers );
 
-                    if (alltracks && alltracks[track_id]) {
-                        var timestamp   = alltracks[track_id].metadata.last_trkpt_time;
-                        var altitude    = alltracks[track_id].metadata.last_trkpt_altitude;
-                        var speed_ms    = alltracks[track_id].metadata.last_trkpt_speed_ms;
-                        var speed_kmh   = alltracks[track_id].metadata.last_trkpt_speed_kmh;
-                        var speed_mph   = alltracks[track_id].metadata.last_trkpt_speed_mph;
-                        var distance    = alltracks[track_id].metadata.distance;
-                        var userid      = alltracks[track_id].metadata.userid;
-                        var userlogin   = alltracks[track_id].metadata.userlogin;
-                        var displayname = alltracks[track_id].metadata.displayname;
-                        var follow_id   = alltracks[track_id].metadata.follow;
+                    var follow_id = 0;
+                    var stored_follow_id = _this.get_mydata(div_id, 'all', 'follow_id');
 
-                        var stored_follow_id = _this.get_mydata(div_id, 'all', 'follow_id');
-                        if (stored_follow_id ) {
-                            follow_id = stored_follow_id;
-                        }
+                    if (do_follow) {
+                        follow_id = track_id;
+                    }
+                    if (stored_follow_id ) {
+                        follow_id = stored_follow_id;
                     }
 
                     var id, layer, start_latlng, end_latlng, start_marker, end_marker, point_layer;
@@ -336,18 +321,26 @@ var Trackserver = (function () {
                             this._map.setView(end_latlng, this._map.getZoom());
 
                             if (mymapdata.infobar) {
+
+                                if (alltracks && alltracks[track_id]) {
+                                    metadata = alltracks[track_id].metadata;
+                                }
+                                else {
+                                    metadata = _this.get_mydata(div_id, track_id, 'metadata');
+                                }
+
                                 infobar_text = mymapdata.infobar_tpl;
                                 infobar_text = infobar_text.replace(/\{lat\}/gi, end_latlng.lat);
                                 infobar_text = infobar_text.replace(/\{lon\}/gi, end_latlng.lng);
-                                infobar_text = infobar_text.replace(/\{timestamp\}/gi, timestamp);
-                                infobar_text = infobar_text.replace(/\{altitude\}/gi, altitude);
-                                infobar_text = infobar_text.replace(/\{speedms\}/gi, speed_ms);
-                                infobar_text = infobar_text.replace(/\{speedkmh\}/gi, speed_kmh);
-                                infobar_text = infobar_text.replace(/\{speedmph\}/gi, speed_mph);
-                                infobar_text = infobar_text.replace(/\{distance\}/gi, distance);
-                                infobar_text = infobar_text.replace(/\{userid\}/gi, userid);
-                                infobar_text = infobar_text.replace(/\{userlogin\}/gi, userlogin);
-                                infobar_text = infobar_text.replace(/\{displayname\}/gi, displayname);
+                                infobar_text = infobar_text.replace(/\{timestamp\}/gi, metadata.last_trkpt_time);
+                                infobar_text = infobar_text.replace(/\{altitude\}/gi, metadata.last_trkpt_altitude);
+                                infobar_text = infobar_text.replace(/\{speedms\}/gi, metadata.last_trkpt_speed_ms);
+                                infobar_text = infobar_text.replace(/\{speedkmh\}/gi, metadata.last_trkpt_speed_kmh);
+                                infobar_text = infobar_text.replace(/\{speedmph\}/gi, metadata.last_trkpt_speed_mph);
+                                infobar_text = infobar_text.replace(/\{distance\}/gi, metadata.distance);
+                                infobar_text = infobar_text.replace(/\{userid\}/gi, metadata.userid);
+                                infobar_text = infobar_text.replace(/\{userlogin\}/gi, metadata.userlogin);
+                                infobar_text = infobar_text.replace(/\{displayname\}/gi, metadata.displayname);
                                 mymapdata.infobar_div.innerHTML = infobar_text;
                             }
                         }
