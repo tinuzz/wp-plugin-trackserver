@@ -3698,15 +3698,6 @@ EOF;
 			$user_track_ids      = $this->get_live_tracks( $validated_user_ids, $maxage );
 			$track_ids           = array_merge( $validated_track_ids, $user_track_ids );
 
-			$follow = false;
-			if ( count( $user_track_ids ) > 0 ) {
-				$follow = $user_track_ids[0];
-			}
-
-			$extra_metadata = array(
-				'follow' => $follow,
-			);
-
 			// @codingStandardsIgnoreStart
 			$sql_in = "('" . implode( "','", $track_ids ) . "')";
 			$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->tbl_locations .
@@ -3717,7 +3708,7 @@ EOF;
 			if ( $format == 'gpx' ) {
 				$this->send_as_gpx( $res );
 			} else {
-				$this->send_alltracks( $res, $extra_metadata ); // default to 'alltracks' internal format
+				$this->send_alltracks( $res ); // default to 'alltracks' internal format
 			}
 
 		}
@@ -3860,7 +3851,7 @@ EOF;
 			$this->send_as_json( $encoded, $metadata );
 		}
 
-		function send_alltracks( $res, $extra_metadata ) {
+		function send_alltracks( $res ) {
 
 			// Include polyline encoder
 			require_once TRACKSERVER_PLUGIN_DIR . 'class-polyline.php';
@@ -3875,7 +3866,7 @@ EOF;
 				}
 				$tracks[ $id ]['points'][] = array( $row['latitude'], $row['longitude'] );
 			}
-			$tracks[ $id ]['metadata'] = $this->get_metadata( $row, $extra_metadata );
+			$tracks[ $id ]['metadata'] = $this->get_metadata( $row );
 
 			// Convert points to Polyline
 			foreach ( $tracks as $id => $values ) {
@@ -3974,7 +3965,7 @@ EOF;
 		 *
 		 * @since 2.2
 		 */
-		function get_metadata( $row, $extra_metadata = array() ) {
+		function get_metadata( $row ) {
 			$metadata = array(
 				'last_trkpt_time'      => $row['occurred'],
 				'last_trkpt_altitude'  => $row['altitude'],
@@ -3988,7 +3979,7 @@ EOF;
 				$metadata['userlogin']   = $this->get_user_id( (int) $row['user_id'], 'user_login' );
 				$metadata['displayname'] = $this->get_user_id( (int) $row['user_id'], 'display_name' );
 			}
-			return array_merge( $metadata, $extra_metadata );
+			return $metadata;
 		}
 
 		/**
