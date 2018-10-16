@@ -3982,6 +3982,8 @@ EOF;
 				'last_trkpt_speed_kmh' => number_format( (float) $row['speed'] * 3.6, 2 ),
 				'last_trkpt_speed_mph' => number_format( (float) $row['speed'] * 2.23693629, 2 ),
 				'distance'             => $row['distance'],
+				'distance_m'             => $row['distance'],
+				'distance_km'             => number_format ( (float) $row['distance'] / 1000.0, 3),
 			);
 			if ( $row['user_id'] ) {
 				$metadata['userid']      = $row['user_id'];
@@ -4387,7 +4389,7 @@ EOF;
 				$format,
 				esc_html__( 'With live tracking, an information bar can be shown on the map, displaying some data from the latest trackpoint. ' .
 				'Here you can format the content of the infobar. Possible replacement tags are {lat}, {lon}, {timestamp}, {altitude}, ' .
-				'{speedms}, {speedkmh}, {speedmph}, {userid}, {userlogin}, {displayname}.', 'trackserver' )
+				'{speedms}, {speedkmh}, {speedmph}, {distancem}, {distancekm}, {userid}, {userlogin}, {displayname}.', 'trackserver' )
 			);
 			// @codingStandardsIgnoreEnd
 		}
