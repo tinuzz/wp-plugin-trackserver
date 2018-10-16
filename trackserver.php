@@ -4376,12 +4376,30 @@ EOF;
 			// @codingStandardsIgnoreStart
 			printf(
 				$format,
-				esc_html__( 'With live tracking, an information bar can be shown on the map, displaying some data from the latest trackpoint. ' .
-				'Here you can format the content of the infobar. Possible replacement tags are {lat}, {lon}, {timestamp}, {altitude}, ' .
-				'{speedms}, {speedkmh}, {speedmph}, {userid}, {userlogin}, {displayname}.', 'trackserver' )
+				esc_html__(
+					'With live tracking, an information bar can be shown on the map, displaying some data from the track and the latest trackpoint. ' .
+					'Here you can format the content of the infobar.', 'trackserver'
+				)
 			);
 			// @codingStandardsIgnoreEnd
+			echo esc_html__( 'Possible replacement tags are:', 'trackserver' ) . '<br>';
+			echo '{lat}, {lon} - ' . esc_html__( 'the last known coordinates', 'trackserver' ) . '<br>';
+			echo '{timestamp} - ' . esc_html__( 'the timestamp of the last update', 'trackserver' ) . '<br>';
+			echo '{userid} - ' . esc_html__( 'the numeric user id of the track owner', 'trackserver' ) . '<br>';
+			echo '{userlogin} - ' . esc_html__( 'the username of the track owner', 'trackserver' ) . '<br>';
+			echo '{displayname} - ' . esc_html__( 'the display name of the track owner', 'trackserver' ) . '<br>';
+			echo '{altitudem} - ' . esc_html__( 'the altitude in meters', 'trackserver' ) . '<br>';
+			echo '{altitudeft} - ' . esc_html__( 'the altitude in feet', 'trackserver' ) . '<br>';
+			echo '{altitudeft} - ' . esc_html__( 'the altitude in feet', 'trackserver' ) . '<br>';
+			echo '{speedms}, {speedms1}, {speedms2} - ' . esc_html__( 'last known speed in m/s, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
+			echo '{speedkmh}, {speedkmh1}, {speedkmh2} - ' . esc_html__( 'last known speed in km/h, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
+			echo '{speedmph}, {speedmph1}, {speedmph2} - ' . esc_html__( 'last known speed in mi/h, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
+			echo '{distancem} - ' . esc_html__( 'track total distance in meters', 'trackserver' ) . '<br>';
+			echo '{distanceyd} - ' . esc_html__( 'track total distance in yards', 'trackserver' ) . '<br>';
+			echo '{distancekm}, {distancekm1}, {distancekm2} - ' . esc_html__( 'track total distance in km, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
+			echo '{distancemi}, {distancemi1}, {distancemi2} - ' . esc_html__( 'track total distance in miles, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
 		}
+
 
 		/**
 		 * Output HTML for managing geofences

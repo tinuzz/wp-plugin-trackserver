@@ -241,6 +241,10 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
+= UNRELEASED =
+
+* Add some replacement tags for the infobar. All relevant metric and imperial units are now represented, and some of the tags now have different variants for specifying the number of decimals. Please see the text near the form field in your Trackserver profile for more information. Backwards-incompatible change: the distance and speed tags now have 0 decimals by default, that used to be 2.
+
 = v4.1 =
 Release data: 8 October 2018
 
