@@ -184,6 +184,11 @@ var Trackserver = (function () {
                         featuregroup.removeLayer (old_track);
                     }
 
+                    var popup = _this.get_mydata(div_id, 'all', 'errorpopup');
+                    if (popup) {
+                      popup.remove();
+                    }
+
                     var layer_ids = _this.get_sorted_keys( this._layers );
 
                     var follow_id = 0;
@@ -374,13 +379,16 @@ var Trackserver = (function () {
                 .on('error', function(err) {
                     console.log(err);
                     var extra = '';
-                    if ( track_type !== 'polyline' ) extra = track_ref;
+                    if ( track_type !== 'polyline' && track_type != 'polylinexhr' ) {
+                      extra = track_ref;
+                    }
                     var str = err.error.status + ' ' + err.error.statusText + ' - ' + extra;
                     var popup = L.popup()
                         .setLatLng(mymapdata.center)
                         .setContent("Track could not be loaded:<br />" + str).openOn(this._map);
+                    _this.set_mydata(div_id, 'all', 'errorpopup', popup);
                     //this._map.fitBounds(featuregroup.getBounds());
-                    this._map.setView(mymapdata.center, 6);
+                    this._map.setView(mymapdata.center, this._map.getZoom());
                 })
                 /*
                 .on('click', function(e) {
