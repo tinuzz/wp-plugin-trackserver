@@ -3967,12 +3967,10 @@ EOF;
 		 */
 		function get_metadata( $row ) {
 			$metadata = array(
-				'last_trkpt_time'      => $row['occurred'],
-				'last_trkpt_altitude'  => $row['altitude'],
-				'last_trkpt_speed_ms'  => number_format( $row['speed'], 2 ),
-				'last_trkpt_speed_kmh' => number_format( (float) $row['speed'] * 3.6, 2 ),
-				'last_trkpt_speed_mph' => number_format( (float) $row['speed'] * 2.23693629, 2 ),
-				'distance'             => $row['distance'],
+				'last_trkpt_time'     => $row['occurred'],
+				'last_trkpt_altitude' => $row['altitude'],
+				'last_trkpt_speed_ms' => number_format( $row['speed'], 3 ),
+				'distance'            => $row['distance'],
 			);
 			if ( $row['user_id'] ) {
 				$metadata['userid']      = $row['user_id'];
@@ -4389,7 +4387,6 @@ EOF;
 			echo '{userlogin} - ' . esc_html__( 'the username of the track owner', 'trackserver' ) . '<br>';
 			echo '{displayname} - ' . esc_html__( 'the display name of the track owner', 'trackserver' ) . '<br>';
 			echo '{altitudem} - ' . esc_html__( 'the altitude in meters', 'trackserver' ) . '<br>';
-			echo '{altitudeft} - ' . esc_html__( 'the altitude in feet', 'trackserver' ) . '<br>';
 			echo '{altitudeft} - ' . esc_html__( 'the altitude in feet', 'trackserver' ) . '<br>';
 			echo '{speedms}, {speedms1}, {speedms2} - ' . esc_html__( 'last known speed in m/s, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
 			echo '{speedkmh}, {speedkmh1}, {speedkmh2} - ' . esc_html__( 'last known speed in km/h, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
