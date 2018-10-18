@@ -241,9 +241,11 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
-= UNRELEASED =
+= v4.2 =
+Release date: 18 October 2018
 
 * Add some replacement tags for the infobar. All relevant metric and imperial units are now represented, and some of the tags now have different variants for specifying the number of decimals. Please see the text near the form field in your Trackserver profile for more information. Backwards-incompatible change: the distance and speed tags now have 0 decimals by default, that used to be 2.
+* After a network error, remove error popup from the map on the next succesful track load.
 * Updated Leaflet to version 1.3.4.
 
 = v4.1 =
