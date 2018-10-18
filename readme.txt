@@ -241,6 +241,11 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
+= v4.2.1 =
+Release date: 18 October 2018
+
+* Update Dutch translation for changes in v4.2
+
 = v4.2 =
 Release date: 18 October 2018
 
