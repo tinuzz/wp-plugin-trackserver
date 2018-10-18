@@ -4022,10 +4022,19 @@ EOF;
 				update_user_meta( $user_id, 'ts_tracks_admin_view', $view );
 			}
 
+			// Get / set the value for the number of tracks per page from the selectbox
+			$per_page = (int) get_user_meta( $user_id, 'ts_tracks_admin_per_page', true );
+			$per_page = ( $per_page == 0 ? 20 : $per_page );
+			if ( isset( $_REQUEST['per_page'] ) ) {
+				$per_page = (int) $_REQUEST['per_page'];
+				update_user_meta( $user_id, 'ts_tracks_admin_per_page', $per_page );
+			}
+
 			$list_table_options = array(
 				'tbl_tracks'    => $this->tbl_tracks,
 				'tbl_locations' => $this->tbl_locations,
 				'view'          => $view,
+				'per_page'      => $per_page,
 			);
 
 			$this->tracks_list_table = new Tracks_List_Table( $list_table_options );

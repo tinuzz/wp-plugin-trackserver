@@ -110,10 +110,13 @@ class Tracks_List_Table extends WP_List_Table {
 
 		$this->usercache = $wpdb->get_results( $sql, OBJECT_K ); // WPCS: unprepared SQL OK
 
-		$view               = $this->options['view'];
-		$author_select_name = "author-$which";
-		$author_select_id   = "author-select-$which";
-		$addtrack_button_id = "addtrack-button-$which";
+		$view                = $this->options['view'];
+		$author_select_name  = "author-$which";
+		$author_select_id    = "author-select-$which";
+		$addtrack_button_id  = "addtrack-button-$which";
+		$perpage_select_name = "per-page-$which";
+		$perpage_select_id   = "per-page-select-$which";
+		$perpage_values      = array( 20, 50, 100 );
 
 		echo '<div class="alignleft actions" style="padding-bottom: 1px; line-height: 32px">';
 		echo '<input id="' . $addtrack_button_id . '" class="button action" style="margin: 1px 8px 0 0" type="button" value="' . esc_attr__( 'Upload tracks', 'trackserver' ) . '" name="">';
@@ -130,20 +133,25 @@ class Tracks_List_Table extends WP_List_Table {
 			echo '</select>';
 		}
 		echo '</div>';
+
 		echo '<div class="tablenav-pages"> &nbsp;';
 		echo '<span class="paging-input"> Show ';
-		echo '<select name="per-page-' . $which . '" class="postform">' .
-			'<option value="20" selected>20</option>' .
-			'<option value="50">50</option>' .
-			'<option value="100">100</option>' .
-			'</select> items';
+		echo '<select name="' . $perpage_select_name . '" id="' . $perpage_select_id . '" class="postform">';
+		foreach ( $perpage_values as $npp ) {
+			echo '<option value="' . $npp . '"';
+			if ( $npp == $this->options['per_page'] ) {
+				echo ' selected';
+			}
+			echo '>' . $npp . '</option>';
+		}
+		echo '</select> items';
 		echo '</span></div>';
 	}
 
 	function prepare_items() {
 		global $wpdb;
 
-		$per_page = 20;
+		$per_page = $this->options['per_page'];
 		$columns  = $this->get_columns();
 		$hidden   = array( 'nonce' );
 		$sortable = $this->get_sortable_columns();

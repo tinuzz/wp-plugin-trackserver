@@ -277,6 +277,17 @@ var TrackserverAdmin = (function () {
                 .submit();
             });
 
+            jQuery('#per-page-select-top,#per-page-select-bottom').change( function () {
+                var per_page = jQuery('#' + this.id).val();
+                jQuery('#trackserver-tracks').append(
+                    jQuery('<input>').attr({
+                        type: 'hidden',
+                        name: 'per_page',
+                        value: per_page
+                    }))
+                .submit();
+            });
+
             jQuery('#addtrack-button-top,#addtrack-button-bottom').click( function () {
                 ts_tb_show('ts-upload-modal', 'Upload GPX files', 600, 400);
                 return false;

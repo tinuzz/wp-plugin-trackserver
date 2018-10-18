@@ -241,6 +241,10 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
+= UNRELEASED =
+
+* Make the 'Show x items' selector in the 'Manage tracks' page actually do something.
+
 = v4.2.2 =
 Release date: 18 October 2018
 
