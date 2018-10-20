@@ -1862,16 +1862,16 @@ EOF;
 
 						// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
 						// https://core.trac.wordpress.org/ticket/4221
-						$nonce             = wp_create_nonce( 'gettrack_' . $validated_id . '_p' . $post_id );
+						$nonce = wp_create_nonce( 'gettrack_' . $validated_id . '_p' . $post_id );
 
-						switch( $this->track_format ) {
+						switch ( $this->track_format ) {
 							case 'geojson':
 								$trk['track_type'] = 'geojson';
 								break;
 							default:
 								$trk['track_type'] = 'polylinexhr';
 						}
-						$trk['track_url']  = $gettrack_url_prefix . '?id=' . $validated_id . "&p=$post_id&format=" .
+						$trk['track_url'] = $gettrack_url_prefix . '?id=' . $validated_id . "&p=$post_id&format=" .
 							$this->track_format . "&maxage=$maxage&_wpnonce=$nonce";
 					}
 
@@ -3816,8 +3816,7 @@ EOF;
 
 				if ( $format == 'gpx' ) {
 					$this->send_as_gpx( $res );
-				}
-				elseif ( $format == 'geojson' ) {
+				} elseif ( $format == 'geojson' ) {
 					$this->send_as_geojson( $res );
 				} else {
 					$this->send_as_polyline( $res ); // default to 'polyline'
