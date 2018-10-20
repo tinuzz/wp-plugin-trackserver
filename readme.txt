@@ -244,6 +244,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 = UNRELEASED =
 
 * Make the 'Show x items' selector in the 'Manage tracks' page actually do something.
+* Re-enstate GeoJSON support for the 'gettrack' method (not for 'gettrack_query')
 
 = v4.2.2 =
 Release date: 18 October 2018
