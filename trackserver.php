@@ -1850,7 +1850,7 @@ EOF;
 
 					$trk = array(
 						'track_id'   => $validated_id,
-						'track_type' => $this->track_format,
+						'track_type' => 'polyline',     // the handle_gettrack_query method only supports polyline
 						'style'      => $this->get_style(),
 						'points'     => $this->get_points(),
 						'markers'    => $this->get_markers(),
@@ -1859,10 +1859,18 @@ EOF;
 
 					// If the 'fetchmode_all' option is false, do not use $query, but fetch each track via its own URL
 					if ( ! $this->options['fetchmode_all'] ) {
+
 						// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
 						// https://core.trac.wordpress.org/ticket/4221
 						$nonce             = wp_create_nonce( 'gettrack_' . $validated_id . '_p' . $post_id );
-						$trk['track_type'] = 'polylinexhr';
+
+						switch( $this->track_format ) {
+							case 'geojson':
+								$trk['track_type'] = 'geojson';
+								break;
+							default:
+								$trk['track_type'] = 'polylinexhr';
+						}
 						$trk['track_url']  = $gettrack_url_prefix . '?id=' . $validated_id . "&p=$post_id&format=" .
 							$this->track_format . "&maxage=$maxage&_wpnonce=$nonce";
 					}
@@ -3808,6 +3816,9 @@ EOF;
 
 				if ( $format == 'gpx' ) {
 					$this->send_as_gpx( $res );
+				}
+				elseif ( $format == 'geojson' ) {
+					$this->send_as_geojson( $res );
 				} else {
 					$this->send_as_polyline( $res ); // default to 'polyline'
 				}
