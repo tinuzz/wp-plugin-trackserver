@@ -139,6 +139,9 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			// Bootstrap
 			$this->add_actions();
 			if ( is_admin() ) {
+				require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-admin.php';
+				$this->admin = new Trackserver_Admin( $this );
+				$this->admin->add_actions();
 				$this->add_admin_actions();
 			}
 		}
@@ -730,6 +733,7 @@ EOF;
 		 *
 		 * @since 1.0
 		 */
+		/*
 		function trackme_settings_html() {
 			$howto    = esc_html__( 'How to use TrackMe', 'trackserver' );
 			$download = esc_html__( 'Download TrackMe', 'trackserver' );
@@ -742,6 +746,7 @@ EOF;
 				<br />
 EOF;
 		}
+		*/
 
 		/**
 		 * Output HTML for the Mapmytracks settings section.
@@ -895,6 +900,7 @@ EOF;
 			);
 		}
 
+		/*
 		function trackme_slug_html() {
 			$val     = $this->printf_htmlspecialchars( $this->options['trackme_slug'] );
 			$url     = $this->printf_htmlspecialchars( site_url( null ) . $this->url_prefix );
@@ -988,6 +994,7 @@ EOF;
 				)
 			);
 		}
+		*/
 
 		function mapmytracks_tag_html() {
 			$val     = $this->printf_htmlspecialchars( $this->options['mapmytracks_tag'] );
@@ -1263,10 +1270,10 @@ EOF;
 
 		function register_settings() {
 			// All options in one array
-			register_setting( 'trackserver-options', 'trackserver_options', array( &$this, 'sanitize_option_values' ) );
+			//register_setting( 'trackserver-options', 'trackserver_options', array( &$this, 'sanitize_option_values' ) );
 
 			// Add sections
-			add_settings_section( 'trackserver-trackme', esc_html__( 'TrackMe settings', 'trackserver' ), array( &$this, 'trackme_settings_html' ), 'trackserver' );
+			//add_settings_section( 'trackserver-trackme', esc_html__( 'TrackMe settings', 'trackserver' ), array( &$this, 'trackme_settings_html' ), 'trackserver' );
 			add_settings_section( 'trackserver-mapmytracks', esc_html__( 'OruxMaps MapMyTracks settings', 'trackserver' ), array( &$this, 'mapmytracks_settings_html' ), 'trackserver' );
 			add_settings_section( 'trackserver-osmand', esc_html__( 'OsmAnd online tracking settings', 'trackserver' ), array( &$this, 'osmand_settings_html' ), 'trackserver' );
 			add_settings_section( 'trackserver-sendlocation', esc_html__( 'SendLocation settings', 'trackserver' ), array( &$this, 'sendlocation_settings_html' ), 'trackserver' );
@@ -1276,6 +1283,7 @@ EOF;
 			add_settings_section( 'trackserver-advanced', esc_html__( 'Advanced settings', 'trackserver' ), array( &$this, 'advanced_settings_html' ), 'trackserver' );
 
 			// Settings for section 'trackserver-trackme'
+			/*
 			add_settings_field(
 				'trackserver_trackme_slug',
 				esc_html__( 'TrackMe URL slug', 'trackserver' ),
@@ -1297,6 +1305,7 @@ EOF;
 				'trackserver',
 				'trackserver-trackme'
 			);
+			*/
 
 			// Settings for section 'trackserver-mapmytracks'
 			add_settings_field(
@@ -4351,7 +4360,7 @@ EOF;
 			);
 			// @codingStandardsIgnoreEnd
 
-			$this->trackme_settings_html();
+			$this->admin->settings->trackme_settings_html();
 		}
 
 		function owntracks_share_friends_html() {
