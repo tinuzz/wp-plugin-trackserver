@@ -2,7 +2,7 @@
 Contributors: tinuzz
 Donate link: http://www.grendelman.net/wp/trackserver-wordpress-plugin/
 Tags: gps, gpx, map, leaflet, track, mobile, tracking
-Requires at least: 4.0
+Requires at least: 4.7
 Tested up to: 4.9
 Stable tag: trunk
 License: GPLv2 or later
@@ -243,6 +243,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 = UNRELEASED =
 
+* Trackserver now only supports WP 4.7 or higher.
 * Make the 'Show x items' selector in the 'Manage tracks' page actually do something.
 * Re-enstate GeoJSON support for the 'gettrack' method (not for 'gettrack_query')
 
