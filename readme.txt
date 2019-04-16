@@ -174,6 +174,12 @@ Before v1.9, all of Trackserver's settings were stored in a single, global place
 
 In version 1.9, user profile settings were introduced as a place for per-user settings, like access keys. There is a separate page in the WordPress admin for the Trackserver profile (called 'Your profile' in English), that is accessible by all users that have the right (capability) to use Trackerver.
 
+= What is an embedded map? =
+
+In version 4.3, a feature called 'Embedded maps' was introduced. Embedded maps are a custom WordPress post type, which are intended to have no other content than a map, filling up the entire browser window, or the container they are loaded in. They bypass your active WordPress theme and use a custom template that displays <i>only</i> the content of your 'Embedded map' post, without any headers, sidebars or even styling. This allows you to embed the map with your tracks in another website using an <i>iframe</i>. Trackserver will tell you the HTML code to use for embedding the map. They also look great on mobile devices, if all you really care about is the map and what's on it.
+
+I'm not sure about the usefulness of this feature to everyone who uses Trackserver, but personally I use it for mixing interactive maps with photos and videos in my online photo album.
+
 = What changed for TrackMe authentication 1.9? =
 
 TrackMe, like OsmAnd, uses HTTP GET requests for communication with Trackserver.  This means that all data from the app, including your password, becomes part of the URL. Because URLs are not generally considered secret, and may be logged in access logs and what not, this is quite insecure, even with HTTPS.
@@ -243,9 +249,15 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 = UNRELEASED =
 
+Added:
+* Custom post type 'tsmap' for creating embedded maps.
+
+Changed:
 * Trackserver now only supports WP 4.7 or higher.
-* Make the 'Show x items' selector in the 'Manage tracks' page actually do something.
 * Re-enstate GeoJSON support for the 'gettrack' method (not for 'gettrack_query')
+
+Fixed:
+* Make the 'Show x items' selector in the 'Manage tracks' page actually do something.
 
 = v4.2.2 =
 Release date: 18 October 2018

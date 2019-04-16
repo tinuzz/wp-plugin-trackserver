@@ -226,6 +226,12 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			// Media upload
 			add_filter( 'upload_mimes', array( &$this, 'upload_mimes' ) );
 			add_filter( 'media_send_to_editor', array( &$this, 'media_send_to_editor' ), 10, 3 );
+
+			// Custom post type for embedded maps
+			add_action( 'init', array( &$this, 'register_tsmap_post_type' ) );
+			add_filter( 'single_template', array( &$this, 'get_tsmap_single_template' ) );
+			add_filter( '404_template', array( &$this, 'get_tsmap_404_template' ) );
+
 		}
 
 		/**
@@ -236,13 +242,15 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		function add_admin_actions() {
 
 			add_action( 'admin_init', array( &$this, 'admin_init' ) );
-			add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
+			add_action( 'admin_menu', array( &$this, 'admin_menu' ), 9 );
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'add_settings_link' ) );
 			add_action( 'admin_head', array( &$this, 'admin_head' ) );  // CSS for table styling
 			add_action( 'admin_post_trackserver_save_track', array( &$this, 'admin_post_save_track' ) );
 			add_action( 'admin_post_trackserver_upload_track', array( &$this, 'admin_post_upload_track' ) );
 			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
 			add_action( 'wp_ajax_trackserver_save_track', array( &$this, 'admin_ajax_save_modified_track' ) );
+			add_action( 'add_meta_boxes', array( &$this, 'admin_add_meta_boxes' ) );
+			add_filter( 'default_content', array( &$this, 'embedded_map_default_content' ), 10, 2 );
 
 			// WordPress MU
 			add_action( 'wpmu_new_blog', array( &$this, 'wpmu_new_blog' ) );
@@ -667,6 +675,9 @@ EOF;
 
 			if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == 'true' ) {
 				echo '<div class="updated"><p>' . esc_html__( 'Settings updated', 'trackserver' ) . '</p></div>';
+
+				// Flush rewrite rules, for when embedded maps slug has been changed
+				flush_rewrite_rules();
 			}
 
 			?>
@@ -1087,11 +1098,16 @@ EOF;
 		 * @since 1.0
 		 **/
 		function handle_shortcode( $atts ) {
-			global $wpdb;
+			global $wpdb, $post;
+
+			$default_height = '480px';
+			if ( $post->post_type == 'tsmap' ) {
+				$default_height = '100%';
+			}
 
 			$defaults = array(
 				'width'      => '100%',
-				'height'     => '480px',
+				'height'     => $default_height,
 				'align'      => '',
 				'class'      => '',
 				'id'         => false,
@@ -4397,6 +4413,99 @@ EOF;
 
 		function printf_htmlspecialchars( $input ) {
 			return str_replace( '%', '%%', htmlspecialchars( $input ) );
+		}
+
+		function register_tsmap_post_type() {
+
+			$slug = $this->options['embedded_slug'];
+
+			register_post_type(
+				'tsmap',
+				array(
+					'label'               => esc_html__( 'Embedded maps', 'trackserver' ),
+					'labels'              => array(
+						'singular_name' => esc_html__( 'embedded map', 'trackserver' ),
+						'add_new_item'  => esc_html__( 'Add new embedded map', 'trackserver' ),  // Translate!!
+						'edit_item'     => esc_html__( 'Edit embedded map', 'trackserver' ),
+						'search_items'  => esc_html__( 'Search embedded maps', 'trackserver' ),
+						'not_found'     => esc_html__( 'No embedded maps found', 'trackserver' ),
+					),
+					'public'              => true,
+					'exclude_from_search' => true,
+					'show_ui'             => true,
+					'capability_type'     => 'post',
+					'hierarchical'        => false,
+					'query_var'           => false,
+					'supports'            => array( 'title', 'editor', 'author' ),
+					'show_in_menu'        => 'trackserver-options',
+					'rewrite'             => array( 'slug' => $slug ),
+				)
+			);
+		}
+
+		function get_tsmap_single_template( $template ) {
+			global $post;
+			if ( $post->post_type == 'tsmap' ) {
+				$template = dirname( __FILE__ ) . '/embedded-template.php';
+			}
+			return $template;
+		}
+
+		function get_tsmap_404_template( $template ) {
+			global $wp;
+			$slug = $this->options['embedded_slug'];
+			if (
+				( substr( $wp->request, 0, strlen( $slug ) + 1 ) == "${slug}/" ) || // match trailing slash to not match it as a prefix
+				( isset( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] == $slug )
+			) {
+				$template = dirname( __FILE__ ) . '/embedded-404.php';
+			}
+			return $template;
+		}
+
+		function admin_add_meta_boxes() {
+			add_meta_box(
+				'ts_embedded_meta_box',
+				esc_html__( 'Embed HTML', 'trackserver' ),      // Title
+				array( &$this, 'ts_embedded_meta_box_html' ),   // Callback
+				'tsmap'                                         // Post type
+			);
+		}
+
+		function ts_embedded_meta_box_html( $post ) {
+			// The is_ssl() check should not be necessary, but somehow, get_permalink() doesn't correctly return a https URL by itself
+			$url    = set_url_scheme( get_permalink( $post ), ( is_ssl() ? 'https' : 'http' ) );
+			$code   = '<iframe src="' . $url . '" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>';
+			$status = get_post_status( $post->ID );
+
+			_e( 'To embed this map in a web page outside WordPress, include the following HTML in the page: ', 'trackserver' );
+			echo '<br><br>';
+			echo '<div style="font-family: monospace; background-color: #dddddd">';
+			echo esc_html( $code );
+			echo '</div><br>';
+			_e( 'Please note:', 'trackserver' );
+			echo '<br>';
+			echo '<ul style="list-style: square; margin-left: 20px;">';
+			if ( in_array( $status, array( 'draft', 'auto-draft', 'future' ) ) ) {
+				echo '<li>';
+				_e( 'This map has not been published. Publishing it may cause the permalink URL to change.', 'trackserver' );
+				echo '</li>';
+			}
+			echo '<li>';
+			_e( "Make sure your WordPress doesn't forbid framing the map with a too-strict <i>X-Frame-Options</i> header.", 'trackserver' );
+			echo '</li></ul>';
+			_e( 'This is what the last saved version of the embedded map looks like:' );
+			echo '<br><br>';
+			echo '<iframe src="' . $url . '" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>';
+		}
+
+		function embedded_map_default_content( $content, $post ) {
+			switch ( $post->post_type ) {
+				case 'tsmap':
+					$content = '[tsmap]';
+					break;
+			}
+			return $content;
 		}
 
 	} // class
