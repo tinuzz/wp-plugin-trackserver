@@ -24,7 +24,8 @@ class Tracks_List_Table extends WP_List_Table {
 			return ' <a href="#TB_inline?width=&inlineId=ts-edit-modal" title="' . esc_attr__( 'Edit track properties', 'trackserver' ) .
 				'" class="thickbox" data-id="' . $item['id'] . '" data-action="edit">' . esc_html__( 'Edit', 'trackserver' ) . '</a>';
 		} elseif ( $column_name == 'view' ) {
-			return ' <a href="#TB_inline?width=&inlineId=ts-view-modal" title="' . htmlspecialchars( $item['name'] ) .
+			// Unfortunately, the double HTML escaping is necessary to prevent ThickBox from rendering it as HTML.
+			return ' <a href="#TB_inline?width=&inlineId=ts-view-modal" name="' . htmlspecialchars( htmlspecialchars( $item['name'] ) ) .
 				'" class="thickbox" data-id="' . $item['id'] . '" data-action="view">' . esc_html__( 'View', 'trackserver' ) . '</a>';
 		} elseif ( $column_name == 'nonce' ) {
 			return wp_create_nonce( 'manage_track_' . $item['id'] );

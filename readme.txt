@@ -261,6 +261,7 @@ Changed:
 Fixed:
 * Make the 'Show x items' selector in the 'Manage tracks' page actually do something.
 * Escape HTML entities in the infobar.
+* Escape HTML in track names when viewing maps in the WordPress backend.
 
 = v4.2.2 =
 Release date: 18 October 2018
