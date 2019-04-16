@@ -362,6 +362,10 @@ var Trackserver = (function () {
                                 infobar_text = infobar_text.replace(/\{userid\}/gi, metadata.userid);
                                 infobar_text = infobar_text.replace(/\{userlogin\}/gi, metadata.userlogin);
                                 infobar_text = infobar_text.replace(/\{displayname\}/gi, metadata.displayname);
+                                infobar_text = infobar_text.replace(/\{trackname\}/gi, metadata.trackname);
+
+                                // Escape HTML entities &, < and >
+                                infobar_text = infobar_text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
                                 mymapdata.infobar_div.innerHTML = infobar_text;
                             }
                         }

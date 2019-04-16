@@ -251,6 +251,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 Added:
 * Custom post type 'tsmap' for creating embedded maps.
+* Infobar template placeholder for track name: {trackname}.
 
 Changed:
 * Trackserver now only supports WP 4.7 or higher.
@@ -259,6 +260,7 @@ Changed:
 
 Fixed:
 * Make the 'Show x items' selector in the 'Manage tracks' page actually do something.
+* Escape HTML entities in the infobar.
 
 = v4.2.2 =
 Release date: 18 October 2018

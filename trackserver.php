@@ -3333,6 +3333,7 @@ EOF;
 				'last_trkpt_altitude' => $row['altitude'],
 				'last_trkpt_speed_ms' => number_format( $row['speed'], 3 ),
 				'distance'            => $row['distance'],
+				'trackname'           => $row['name'],
 			);
 			if ( $row['user_id'] ) {
 				$metadata['userid']      = $row['user_id'];
@@ -3757,6 +3758,7 @@ EOF;
 			echo '{userid} - ' . esc_html__( 'the numeric user id of the track owner', 'trackserver' ) . '<br>';
 			echo '{userlogin} - ' . esc_html__( 'the username of the track owner', 'trackserver' ) . '<br>';
 			echo '{displayname} - ' . esc_html__( 'the display name of the track owner', 'trackserver' ) . '<br>';
+			echo '{trackname} - ' . esc_html__( 'the name of the track', 'trackserver' ) . '<br>';
 			echo '{altitudem} - ' . esc_html__( 'the altitude in meters', 'trackserver' ) . '<br>';
 			echo '{altitudeft} - ' . esc_html__( 'the altitude in feet', 'trackserver' ) . '<br>';
 			echo '{speedms}, {speedms1}, {speedms2} - ' . esc_html__( 'last known speed in m/s, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
