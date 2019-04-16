@@ -339,8 +339,8 @@ EOF;
 		 */
 		function load_common_scripts() {
 
-			wp_enqueue_style( 'leaflet', TRACKSERVER_JSLIB . 'leaflet-1.3.4/leaflet.css' );
-			wp_enqueue_script( 'leaflet', TRACKSERVER_JSLIB . 'leaflet-1.3.4/leaflet.js', array(), false, true );
+			wp_enqueue_style( 'leaflet', TRACKSERVER_JSLIB . 'leaflet-1.4.0/leaflet.css' );
+			wp_enqueue_script( 'leaflet', TRACKSERVER_JSLIB . 'leaflet-1.4.0/leaflet.js', array(), false, true );
 			wp_enqueue_style( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/leaflet.fullscreen.css' );
 			wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/Leaflet.fullscreen.min.js', array(), false, true );
 			wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), TRACKSERVER_VERSION, true );
