@@ -256,7 +256,7 @@ Added:
 Changed:
 * Trackserver now only supports WP 4.7 or higher.
 * Re-enstate GeoJSON support for the 'gettrack' method (not for 'gettrack_query')
-* Updated Leaflet to version 1.4.0.
+* Updated Leaflet, first to version 1.4.0 and then to 1.5.1.
 
 Fixed:
 * Make the 'Show x items' selector in the 'Manage tracks' page actually do something.
