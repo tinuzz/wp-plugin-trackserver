@@ -1438,6 +1438,7 @@ EOF;
 			$trackme_uri        = $base_uri . '/' . $tag . '/requests.' . $ext;
 			$trackme_export_uri = $base_uri . '/' . $tag . '/export.' . $ext;
 			$trackme_cloud_uri  = $base_uri . '/' . $tag . '/cloud.' . $ext;
+			$trackme_uri_pttrn  = '/^(?<base_uri>\/.+)\/(?<slug>[^\/]+)\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/(?<method>requests|export|cloud)\.(?<ext>.+)/';
 
 			if ( $request_uri == $trackme_uri ) {
 				$this->handle_trackme_request();
@@ -1450,8 +1451,42 @@ EOF;
 			}
 
 			if ( $request_uri == $trackme_cloud_uri ) {
-				$this->handle_trackme_cloud();
+				$this->handle_trackme_cloud_error();
 				die();
+			}
+
+			$n = preg_match( $trackme_uri_pttrn, $request_uri, $matches );
+			if ( $n == 1 ) {
+
+				if (
+					$matches['base_uri'] == $base_uri &&
+					$matches['slug'] == $tag &&
+					$matches['ext'] == $ext
+				) {
+
+					if ( $matches['method'] == 'requests' ) {
+						$this->handle_trackme_request();
+						die();
+					}
+
+					if ( $matches['method'] == 'export' ) {
+						$this->handle_trackme_export();
+						die();
+					}
+
+					if ( $matches['method'] == 'cloud' ) {
+						$this->handle_trackme_cloud( $matches['username'], $matches['password'] );
+						die();
+					}
+
+					// No fallback necessary, since the regexp will not match for unknown methods.
+
+				}
+				else {
+					// Inform user about incorrect slug or ext.
+					$this->http_terminate( 501, 'The configured URL Header or Server Extension are incorrect.' );
+				}
+
 			}
 
 			$tag = $this->options['mapmytracks_tag'];
@@ -1516,10 +1551,12 @@ EOF;
 		 *
 		 * @since 1.0
 		 */
-		function validate_trackme_login() {
+		function validate_trackme_login( $username = '', $password = '') {
 
-			$username = urldecode( $_GET['u'] );
-			$password = urldecode( $_GET['p'] );
+			if ( $username == '' ) {
+				$username = urldecode( $_GET['u'] );
+				$password = urldecode( $_GET['p'] );
+			}
 
 			if ( $username == '' || $password == '' ) {
 				$this->trackme_result( 3 );
@@ -1579,7 +1616,7 @@ EOF;
 		}
 
 		/**
-		 * Handle TrackMe cloud requests. Not currently implemented.
+		 * Handle TrackMe cloud requests. Not implemented with 'old style' URL.
 		 *
 		 * Cloud sharing functions do not send authentication data, only a unique
 		 * ID ($_GET['id']) This makes it difficult to implement in Trackserver,
@@ -1597,17 +1634,58 @@ EOF;
 		 *
 		 * @since 4.1
 		 */
-		function handle_trackme_cloud() {
+		function handle_trackme_cloud_error() {
 
 			switch ( $_GET['a'] ) {
 				case 'update':
-					$this->http_terminate( 501, 'Cloud sharing is not supported by the server.' );
+					$this->http_terminate( 501, 'For cloud sharing you need to update your server URL, see Trackserver FAQ.' );
 					break;
 				case 'show':
-					$this->http_terminate( 501, '"Show Cloud People" is not supported by the server.' );
+					$this->http_terminate( 501, 'For "Show Cloud People" you need to update your server URL, see Trackserver FAQ.' );
 					break;
 			}
 			$this->http_terminate( 501, 'The action you requested is not supported by the server.' );
+		}
+
+		function handle_trackme_cloud_show( $user_id ) {
+			// output.=$row['id']."|".$row['latitude']."|".$row['longitude']."|".$row['dateoccurred']."|".$row['accuracy']."|".$row['distance']."|".$row['displayname']."|".$row['public']."\n"; 
+			$message = '3e667e823680ffc|51.44419123|5.44549656|2019-08-13 23:00:07|21.506|401.25244209465865|Trackserver Test|1';
+			$this->trackme_result( 0, $message );  // This will not return
+		}
+
+		/**
+		 * Handle TrackMe cloud requests with new URL style, containing username and secret.
+		 *
+		 * @since 4.3
+		 */
+		function handle_trackme_cloud( $username, $password ) {
+
+			// If this function returns, we're OK
+			$user_id = $this->validate_trackme_login( $username, $password);
+
+			// Delegate the action to another function
+			switch ( $_GET['a'] ) {
+				case 'update':
+
+					// For 'update', we use the same method as the regular 'upload'
+					// request, but we have to pass it a generated trip name.  We use a
+					// 'strftime' format, like with OsmAnd. Hardcoded for now (see
+					// $trip_name_format below), could become an option later.
+
+					$occurred  = urldecode( $_GET['do'] );
+					if ( ! $this->validate_timestamp( $occurred ) ) {
+						$occurred = current_time( 'Y-m-d H:i:s' );
+					}
+					$ts = strtotime( $occurred );  // Is this reliable?
+					$trip_name_format = 'TrackMe Cloud %F';
+					$trip_name = strftime( $trip_name_format, $ts );
+
+					$this->handle_trackme_upload( $user_id, $trip_name );
+					break;
+				case 'show':
+					$this->handle_trackme_cloud_show( $user_id );
+					break;
+			}
 		}
 
 		/**
@@ -1654,13 +1732,16 @@ EOF;
 		 *
 		 * Sample request:
 		 * /wp/trackme/requests.z?a=upload&u=martijn&p=xxx&lat=51.44820629&long=5.47286778&do=2015-01-03%2022:22:15&db=8&tn=Auto_2015.01.03_10.22.06&sp=0.000&alt=55.000
+		 * /wp/trackme/user/pass/cloud.z?a=update&dn=&id=b58a2ee83df23c6c&lat=56.02039449483999&long=9.892328306551947&do=2019-08-13%2021:29:20&pub=1&db=8&acc=6.0&ang=131.72496&sp=0.0015707234&alt=63.35264873008489
 		 *
 		 * @since 1.0
 		 */
-		function handle_trackme_upload( $user_id ) {
+		function handle_trackme_upload( $user_id, $trip_name = '' ) {
 			global $wpdb;
 
-			$trip_name = urldecode( $_GET['tn'] );
+			if ( $trip_name == '' ) {
+				$trip_name = urldecode( $_GET['tn'] );
+			}
 			$occurred  = urldecode( $_GET['do'] );
 
 			if ( $trip_name != '' ) {
