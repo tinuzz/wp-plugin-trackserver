@@ -207,6 +207,22 @@ If a device or an app does use HTTP as a transport, adding support for it in Tra
 
 If a device or an app uses a different transport, support could be added by implementing some sort of middleware. For example, [OwnTracks](http://owntracks.org/) uses MQTT and ships with a script ([m2s](https://github.com/owntracks/backend/tree/master/m2s)) for storing the data. Storage methods in m2s are pluggable, so one could write an m2s-plugin for shipping the data to Trackserver.
 
+= How does TrackMe Cloud Sharing work with Trackserver? =
+
+TrackMe has a feature called 'Cloud Sharing', that is meant to enable users to follow other users' locations on a map. The TrackMe app uses a different method to send location updates than for regular tracking updates. Also, it sends Cloud Sharing requests without authentication credentials, which made it hard to implement in Trackserver. Given that TrackMe sends authentication credentials in an insecure way in any case, I decided to implement a workaround for the missing credentials, by embedding them in the server URL. So, in stead of sending a request like this:
+
+https://example.com/trackme/requests.z?username=myuser&password=mypass
+
+we configure TrackMe to send requests like this:
+
+https://example.com/trackme/myuser/mypass/requests.z?username=&password=
+
+This way, it also works for cloud sharing requests, and we can get the username and password from the URL.
+
+If you have been using TrackMe with the old style Server URL, and you try to use the cloud sharing feature, you will see a message along the lines of 'For cloud sharing you need to update your server URL, see Trackserver FAQ.'. This means you have to update the settings in the TrackMe app to contain your username and TrackMe password in the server URL. The complete server URL can be found in your Trackserver profile as always, and the old style URL is now deprecated. Switching to the new style URL also means, that the username and password that you set in the app will no longer be used, and you can leave those settings empty.
+
+Please also read the FAQ above: 'What changed for TrackMe authentication 1.9'. The new URL scheme is slightly more insecure in some cases, since with the new scheme it is even more certain that your TrackMe password will end up in the server's access logs. Other than that, there is no difference. Remember to always use HTTPS, and change your TrackMe password often, since it will give full read/write access to your Trackserver tracks.
+
 = What about security? =
 
 == Using Trackserver ==
