@@ -1465,12 +1465,12 @@ EOF;
 				) {
 
 					if ( $matches['method'] == 'requests' ) {
-						$this->handle_trackme_request();
+						$this->handle_trackme_request( $matches['username'], $matches['password'] );
 						die();
 					}
 
 					if ( $matches['method'] == 'export' ) {
-						$this->handle_trackme_export();
+						$this->handle_trackme_export( $matches['username'], $matches['password'] );
 						die();
 					}
 
@@ -1549,7 +1549,7 @@ EOF;
 		 *
 		 * @since 1.0
 		 */
-		function validate_trackme_login( $username = '', $password = '' ) {
+		function validate_trackme_login( $username, $password ) {
 
 			if ( $username == '' ) {
 				$username = urldecode( $_GET['u'] );
@@ -1580,10 +1580,10 @@ EOF;
 		 * Handle TrackMe GET requests. It validates the user and password and
 		 * delegates the requested action to a dedicated function
 		 */
-		function handle_trackme_request() {
+		function handle_trackme_request( $username = '', $password = '' ) {
 
 			// If this function returns, we're OK
-			$user_id = $this->validate_trackme_login();
+			$user_id = $this->validate_trackme_login( $username, $password );
 
 			// Delegate the action to another function
 			switch ( $_GET['a'] ) {
@@ -1608,7 +1608,7 @@ EOF;
 		 *
 		 * @since 1.0
 		 */
-		function handle_trackme_export() {
+		function handle_trackme_export( $username = '', $password = '' ) {
 			http_response_code( 501 );
 			echo 'Export is not supported by the server.';
 		}
