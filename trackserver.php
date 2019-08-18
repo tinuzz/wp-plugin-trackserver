@@ -1645,9 +1645,42 @@ EOF;
 			$this->http_terminate( 501, 'The action you requested is not supported by the server.' );
 		}
 
+		/**
+		 * Handle TrackMe Cloud Sharing 'show' requests.
+		 *
+		 * This function shares functionality and some code with create_owntracks_response(),
+		 * so maybe these functions should be merged into one. The query in this
+		 * function only gets tracks that have been updated in the last 3660 seconds,
+		 * the 'occurred' date is requested in regular date format and the output format is
+		 * different, obviously.
+		 *
+		 * TrackMe will only display users that have sent an update in the last 60 minutes.
+		 *
+		 * @since 4.3
+		 */
 		function handle_trackme_cloud_show( $user_id ) {
-			// output.=$row['id']."|".$row['latitude']."|".$row['longitude']."|".$row['dateoccurred']."|".$row['accuracy']."|".$row['distance']."|".$row['displayname']."|".$row['public']."\n";
-			$message = '3e667e823680ffc|51.44419123|5.44549656|2019-08-13 23:00:07|21.506|401.25244209465865|Trackserver Test|1';
+			global $wpdb;
+
+			$user      = get_user_by( 'id', $user_id );
+			$user_ids  = $this->get_owntracks_friends( $user );
+			$track_ids = $this->get_live_tracks( $user_ids, 3660 );
+			$message   = '';
+
+			foreach ( $track_ids as $track_id ) {
+				// @codingStandardsIgnoreStart
+				$sql = $wpdb->prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
+					$this->tbl_locations . ' l INNER JOIN ' . $this->tbl_tracks .
+					' t ON l.trip_id = t.id WHERE trip_id=%d AND l.hidden = 0 ORDER BY occurred DESC LIMIT 0,1', $track_id
+				);
+				$res = $wpdb->get_row( $sql, ARRAY_A );
+				// @codingStandardsIgnoreEnd
+
+				$ruser    = get_user_by( 'id', $res['user_id'] );
+				$deviceid = substr( md5( $res['user_id'] ), -15 );
+				// output.=$row['id']."|".$row['latitude']."|".$row['longitude']."|".$row['dateoccurred']."|".$row['accuracy']."|".$row['distance']."|".$row['displayname']."|".$row['public']."\n";
+				$message .= "$deviceid|" . $res['latitude'] . '|' . $res['longitude'] . '|' . $res['occurred'] . '|0|0|' . $ruser->display_name . "|1\n";
+			}
+
 			$this->trackme_result( 0, $message );  // This will not return
 		}
 
