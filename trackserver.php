@@ -1481,12 +1481,10 @@ EOF;
 
 					// No fallback necessary, since the regexp will not match for unknown methods.
 
-				}
-				else {
+				} else {
 					// Inform user about incorrect slug or ext.
 					$this->http_terminate( 501, 'The configured URL Header or Server Extension are incorrect.' );
 				}
-
 			}
 
 			$tag = $this->options['mapmytracks_tag'];
@@ -1551,7 +1549,7 @@ EOF;
 		 *
 		 * @since 1.0
 		 */
-		function validate_trackme_login( $username = '', $password = '') {
+		function validate_trackme_login( $username = '', $password = '' ) {
 
 			if ( $username == '' ) {
 				$username = urldecode( $_GET['u'] );
@@ -1648,7 +1646,7 @@ EOF;
 		}
 
 		function handle_trackme_cloud_show( $user_id ) {
-			// output.=$row['id']."|".$row['latitude']."|".$row['longitude']."|".$row['dateoccurred']."|".$row['accuracy']."|".$row['distance']."|".$row['displayname']."|".$row['public']."\n"; 
+			// output.=$row['id']."|".$row['latitude']."|".$row['longitude']."|".$row['dateoccurred']."|".$row['accuracy']."|".$row['distance']."|".$row['displayname']."|".$row['public']."\n";
 			$message = '3e667e823680ffc|51.44419123|5.44549656|2019-08-13 23:00:07|21.506|401.25244209465865|Trackserver Test|1';
 			$this->trackme_result( 0, $message );  // This will not return
 		}
@@ -1661,24 +1659,24 @@ EOF;
 		function handle_trackme_cloud( $username, $password ) {
 
 			// If this function returns, we're OK
-			$user_id = $this->validate_trackme_login( $username, $password);
+			$user_id = $this->validate_trackme_login( $username, $password );
 
 			// Delegate the action to another function
 			switch ( $_GET['a'] ) {
+
+				// For 'update', we use the same method as the regular 'upload'
+				// request, but we have to pass it a generated trip name.  We use a
+				// 'strftime' format, like with OsmAnd. Hardcoded for now (see
+				// $trip_name_format below), could become an option later.
+
 				case 'update':
-
-					// For 'update', we use the same method as the regular 'upload'
-					// request, but we have to pass it a generated trip name.  We use a
-					// 'strftime' format, like with OsmAnd. Hardcoded for now (see
-					// $trip_name_format below), could become an option later.
-
-					$occurred  = urldecode( $_GET['do'] );
+					$occurred = urldecode( $_GET['do'] );
 					if ( ! $this->validate_timestamp( $occurred ) ) {
 						$occurred = current_time( 'Y-m-d H:i:s' );
 					}
-					$ts = strtotime( $occurred );  // Is this reliable?
+					$ts               = strtotime( $occurred );  // Is this reliable?
 					$trip_name_format = 'TrackMe Cloud %F';
-					$trip_name = strftime( $trip_name_format, $ts );
+					$trip_name        = strftime( $trip_name_format, $ts );
 
 					$this->handle_trackme_upload( $user_id, $trip_name );
 					break;
@@ -1742,7 +1740,7 @@ EOF;
 			if ( $trip_name == '' ) {
 				$trip_name = urldecode( $_GET['tn'] );
 			}
-			$occurred  = urldecode( $_GET['do'] );
+			$occurred = urldecode( $_GET['do'] );
 
 			if ( $trip_name != '' ) {
 				$trip_id = $this->get_track_by_name( $user_id, $trip_name );
