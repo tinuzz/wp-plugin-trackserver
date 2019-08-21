@@ -3422,9 +3422,15 @@ EOF;
 				$trkpt->setAttribute( 'lat', $row['latitude'] );
 				$trkpt->setAttribute( 'lon', $row['longitude'] );
 
-				$timezone_offset = new DateInterval( 'PT' . ( (int) get_option( 'gmt_offset' ) * 3600 ) . 'S' );
+				$offset_seconds  = (int) get_option( 'gmt_offset' ) * 3600;
+				$timezone_offset = new DateInterval( 'PT' . abs( $offset_seconds ) . 'S' );
 				$occurred        = new DateTime( $row['occurred'] );  // A DateTime object in local time
-				$occurred        = $occurred->sub( $timezone_offset );
+
+				if ( $offset_seconds < 0 ) {
+					$occurred = $occurred->add( $timezone_offset );
+				} else {
+					$occurred = $occurred->sub( $timezone_offset );
+				}
 				$occ_iso         = $occurred->format( 'c' );
 				$trkpt->appendChild( $dom->createElement( 'time', $occ_iso ) );
 			}

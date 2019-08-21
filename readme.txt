@@ -281,6 +281,7 @@ Fixed:
 * Make the 'Show x items' selector in the 'Manage tracks' page actually do something.
 * Escape HTML entities in the infobar.
 * Escape HTML in track names when viewing maps in the WordPress backend.
+* A bug with converting timestamps to UTC for GPX output. Thanks to @jeremybeckett for reporting it.
 
 = v4.2.2 =
 Release date: 18 October 2018
