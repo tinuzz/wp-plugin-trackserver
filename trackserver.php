@@ -3807,7 +3807,7 @@ EOF;
 			$format = <<<EOF
 				%1\$s<br />
 				<input type="text" size="25" name="ts_user_meta[ts_trackme_key]" id="trackserver_trackme_key" value="$key" autocomplete="off" /><br /><br />
-				<strong>%2\$s:</strong> $url/$slug<br />
+				<strong>%2\$s:</strong> $url/$slug/$username/$key<br />
 				<strong>%3\$s:</strong> $extn<br /><br />
 EOF;
 
