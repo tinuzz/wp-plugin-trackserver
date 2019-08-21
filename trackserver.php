@@ -13,6 +13,7 @@ Domain path: /lang
 License: GPL2
 
 === RELEASE NOTES ===
+2019-08-21 - v4.2.3 - Bugfix release
 2018-10-18 - v4.2.2 - fix critical bug in 4.2/4.2.1
 2018-10-18 - v4.2.1 - dutch translation update
 2018-10-18 - v4.2 - small improvements, leaflet 1.3.4
@@ -3431,7 +3432,7 @@ EOF;
 				} else {
 					$occurred = $occurred->sub( $timezone_offset );
 				}
-				$occ_iso         = $occurred->format( 'c' );
+				$occ_iso = $occurred->format( 'c' );
 				$trkpt->appendChild( $dom->createElement( 'time', $occ_iso ) );
 			}
 
