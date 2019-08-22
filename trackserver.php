@@ -273,7 +273,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			if ( ! $wp_rewrite->using_permalinks() || $wp_rewrite->using_index_permalinks() ) {
 				$this->url_prefix = '/' . $wp_rewrite->index;
 			}
-			load_plugin_textdomain( 'trackserver', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 
 			$this->init_user_meta();
 		}
@@ -4538,6 +4537,10 @@ EOF;
 
 		function register_tsmap_post_type() {
 
+			// Load the MO file for the current language. This has nothing to do with the custom post type,
+			// but this function is actually the handler for the 'init' hook, that's why it is here.
+			load_plugin_textdomain( 'trackserver', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
+
 			$slug = $this->options['embedded_slug'];
 
 			register_post_type(
@@ -4615,7 +4618,7 @@ EOF;
 			echo '<li>';
 			_e( "Make sure your WordPress doesn't forbid framing the map with a too-strict <i>X-Frame-Options</i> header.", 'trackserver' );
 			echo '</li></ul>';
-			_e( 'This is what the last saved version of the embedded map looks like:' );
+			_e( 'This is what the last saved version of the embedded map looks like:', 'trackserver' );
 			echo '<br><br>';
 			echo '<iframe src="' . $url . '" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>';
 		}
