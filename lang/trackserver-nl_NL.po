@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackserver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-22 23:46+0200\n"
-"PO-Revision-Date: 2019-08-22 23:48+0200\n"
+"POT-Creation-Date: 2019-08-25 23:59+0200\n"
+"PO-Revision-Date: 2019-08-26 00:00+0200\n"
 "Last-Translator: Martijn Grendelman <m@rtijn.net>\n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -38,7 +38,7 @@ msgstr "ID"
 msgid "User"
 msgstr "Gebruiker"
 
-#: ../tracks-list-table.php:61 ../trackserver.php:3543
+#: ../tracks-list-table.php:61 ../trackserver.php:3560
 msgid "Name"
 msgstr "Naam"
 
@@ -58,15 +58,15 @@ msgstr "Punten"
 msgid "Distance"
 msgstr "Afstand"
 
-#: ../tracks-list-table.php:66 ../trackserver.php:3547
+#: ../tracks-list-table.php:66 ../trackserver.php:3564
 msgid "Source"
 msgstr "Bron"
 
-#: ../tracks-list-table.php:67 ../trackserver.php:3551
+#: ../tracks-list-table.php:67 ../trackserver.php:3568
 msgid "Comment"
 msgstr "Opmerking"
 
-#: ../tracks-list-table.php:88 ../trackserver.php:3559
+#: ../tracks-list-table.php:88 ../trackserver.php:3576
 msgid "Delete"
 msgstr "Verwijderen"
 
@@ -86,152 +86,152 @@ msgstr "Herberekenen"
 msgid "Upload tracks"
 msgstr "Tracks uploaden"
 
-#: ../trackserver.php:362
+#: ../trackserver.php:369
 msgid "No tracks to display."
 msgstr "Geen tracks om weer te geven."
 
-#: ../trackserver.php:419
+#: ../trackserver.php:426
 msgid "Are you sure?"
 msgstr "Weet u het zeker?"
 
-#: ../trackserver.php:420
+#: ../trackserver.php:427
 msgid "deletion"
 msgstr "verwijderen"
 
-#: ../trackserver.php:421
+#: ../trackserver.php:428
 msgid "merging"
 msgstr "samenvoegen"
 
-#: ../trackserver.php:422
+#: ../trackserver.php:429
 msgid "recalculation"
 msgstr "herberekenen"
 
-#: ../trackserver.php:423 ../trackserver.php:424
+#: ../trackserver.php:430 ../trackserver.php:431
 msgid "downloading"
 msgstr "downloaden"
 
-#: ../trackserver.php:425
+#: ../trackserver.php:432
 msgid "track"
 msgstr "track"
 
-#: ../trackserver.php:426
+#: ../trackserver.php:433
 msgid "tracks"
 msgstr "tracks"
 
-#: ../trackserver.php:427
+#: ../trackserver.php:434
 msgid "Edit track"
 msgstr "Track bewerken"
 
-#: ../trackserver.php:428
+#: ../trackserver.php:435
 msgid "Delete point"
 msgstr "Punt verwijderen"
 
-#: ../trackserver.php:429
+#: ../trackserver.php:436
 msgid "Split track here"
 msgstr "Track hier splitsen"
 
-#: ../trackserver.php:430
+#: ../trackserver.php:437
 msgid "Save changes"
 msgstr "Wijzigingen opslaan"
 
-#: ../trackserver.php:431
+#: ../trackserver.php:438
 msgid "There are unsaved changes. Save?"
 msgstr "Track is gewijzigd. Wijzigingen opslaan?"
 
-#: ../trackserver.php:432 ../trackserver.php:3556 ../trackserver.php:3582
+#: ../trackserver.php:439 ../trackserver.php:3573 ../trackserver.php:3599
 msgid "Save"
 msgstr "Opslaan"
 
-#: ../trackserver.php:433 ../trackserver.php:3916
+#: ../trackserver.php:440 ../trackserver.php:3933
 msgid "Discard"
 msgstr "Negeren"
 
-#: ../trackserver.php:434 ../trackserver.php:3557 ../trackserver.php:3583
+#: ../trackserver.php:441 ../trackserver.php:3574 ../trackserver.php:3600
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: ../trackserver.php:436
+#: ../trackserver.php:443
 #, php-format
 msgid "For %1$s, select %2$s %3$s at minimum"
 msgstr "Voor %1$s, selecteer minimaal %2$s %3$s"
 
-#: ../trackserver.php:668 ../trackserver.php:3525 ../trackserver.php:3620
-#: ../trackserver.php:3983
+#: ../trackserver.php:685 ../trackserver.php:3542 ../trackserver.php:3637
+#: ../trackserver.php:4000
 msgid "You do not have sufficient permissions to access this page."
 msgstr "U heeft niet voldoende rechten om deze pagina te raadplegen."
 
-#: ../trackserver.php:674 ../trackserver.php:767 ../trackserver.php:777
+#: ../trackserver.php:691 ../trackserver.php:784 ../trackserver.php:794
 msgid "Trackserver Options"
 msgstr "Trackserver Instellingen"
 
-#: ../trackserver.php:678
+#: ../trackserver.php:695
 msgid "Settings updated"
 msgstr "Instellingen opgeslagen"
 
-#: ../trackserver.php:691
+#: ../trackserver.php:708
 msgid "Update options"
 msgstr "Opties bijwerken"
 
-#: ../trackserver.php:703 ../class-trackserver-settings.php:31
+#: ../trackserver.php:720 ../class-trackserver-settings.php:31
 #: ../class-trackserver-settings.php:252
 msgid "TrackMe settings"
 msgstr "TrackMe instellingen"
 
-#: ../trackserver.php:705 ../class-trackserver-settings.php:61
+#: ../trackserver.php:722 ../class-trackserver-settings.php:61
 #: ../class-trackserver-settings.php:364
 msgid "OruxMaps MapMyTracks settings"
 msgstr "OruxMaps MapMyTracks instellingen"
 
-#: ../trackserver.php:707 ../class-trackserver-settings.php:411
+#: ../trackserver.php:724 ../class-trackserver-settings.php:411
 msgid "OsmAnd settings"
 msgstr "OsmAnd instellingen"
 
-#: ../trackserver.php:709 ../class-trackserver-settings.php:528
+#: ../trackserver.php:726 ../class-trackserver-settings.php:528
 msgid "AutoShare settings"
 msgstr "AutoShare instellingen"
 
-#: ../trackserver.php:739
+#: ../trackserver.php:756
 msgid "Settings"
 msgstr "Instellingen"
 
-#: ../trackserver.php:768
+#: ../trackserver.php:785
 msgid "Trackserver"
 msgstr "Trackserver"
 
-#: ../trackserver.php:778
+#: ../trackserver.php:795
 msgid "Options"
 msgstr "Instellingen"
 
-#: ../trackserver.php:786 ../trackserver.php:787 ../trackserver.php:3609
+#: ../trackserver.php:803 ../trackserver.php:804 ../trackserver.php:3626
 msgid "Manage tracks"
 msgstr "Tracks beheren"
 
-#: ../trackserver.php:795 ../trackserver.php:796
+#: ../trackserver.php:812 ../trackserver.php:813
 msgid "Your profile"
 msgstr "Uw profiel"
 
-#: ../trackserver.php:2947
+#: ../trackserver.php:2964
 #, php-format
 msgid "File '%1$s': imported %2$s points from %3$s track(s) in %4$s seconds."
 msgstr ""
 "File '%1$s': %2$s punten uit %3$s track(s) geimporteerd in %4$s seconden."
 
-#: ../trackserver.php:2957
+#: ../trackserver.php:2974
 #, php-format
 msgid "ERROR: File '%1$s' could not be validated as GPX 1.1"
 msgstr "ERROR: File '%1$s' kon niet als GPX 1.1 gevalideerd worden"
 
-#: ../trackserver.php:2961
+#: ../trackserver.php:2978
 #, php-format
 msgid "ERROR: Upload '%1$s' failed"
 msgstr "ERROR: Upload '%1$s' mislukt"
 
-#: ../trackserver.php:2964
+#: ../trackserver.php:2981
 #, php-format
 msgid "ERROR: Only .gpx files accepted; discarding '%1$s'"
 msgstr "ERROR: Alleen .gpx bestanden toegestaan; '%1$s' wordt verwijderd"
 
-#: ../trackserver.php:3570
+#: ../trackserver.php:3587
 msgid ""
 "Merge all points of multiple tracks into one track. Please specify the name "
 "for the merged track."
@@ -239,72 +239,72 @@ msgstr ""
 "Voeg alle punten van meerdere tracks samen in een enkele track. Geef de naam "
 "op voor de samengevoegde track."
 
-#: ../trackserver.php:3575
+#: ../trackserver.php:3592
 msgid "Merged track name"
 msgstr "Naam van samengevoegde track"
 
-#: ../trackserver.php:3580
+#: ../trackserver.php:3597
 msgid "Warning: this action cannot be undone!"
 msgstr "Waarschuwing: deze bewerking kan niet ongedaan worden gemaakt!"
 
-#: ../trackserver.php:3594
+#: ../trackserver.php:3611
 msgid "Select files"
 msgstr "Bestanden selecteren"
 
-#: ../trackserver.php:3596
+#: ../trackserver.php:3613
 msgid "Upload"
 msgstr "Uploaden"
 
-#: ../trackserver.php:3600
+#: ../trackserver.php:3617
 msgid "Selected files"
 msgstr "Geselecteerde bestanden"
 
-#: ../trackserver.php:3628
+#: ../trackserver.php:3645
 #, php-format
 msgid "Trackserver profile for %s"
 msgstr "Trackserver profiel voor %s"
 
-#: ../trackserver.php:3642 ../class-trackserver-settings.php:52
+#: ../trackserver.php:3659 ../class-trackserver-settings.php:52
 msgid "TrackMe password"
 msgstr "TrackMe wachtwoord"
 
-#: ../trackserver.php:3652
+#: ../trackserver.php:3669
 msgid "MapMyTracks profile"
 msgstr "MapMyTracks profiel"
 
-#: ../trackserver.php:3662 ../class-trackserver-settings.php:91
+#: ../trackserver.php:3679 ../class-trackserver-settings.php:91
 msgid "OsmAnd access key"
 msgstr "OsmAnd toegangscode"
 
-#: ../trackserver.php:3672
+#: ../trackserver.php:3689
 msgid "SendLocation access key"
 msgstr "SendLocation toegangscode"
 
-#: ../trackserver.php:3682
+#: ../trackserver.php:3699
 msgid "OwnTracks share with Friends"
 msgstr "OwnTracks delen met Vrienden"
 
-#: ../trackserver.php:3692
+#: ../trackserver.php:3709
 msgid "OwnTracks follow Friends"
 msgstr "OwnTracks volg Vrienden"
 
-#: ../trackserver.php:3702
+#: ../trackserver.php:3719
 msgid "Shortcode infobar template"
 msgstr "Informatiebalk template"
 
-#: ../trackserver.php:3712
+#: ../trackserver.php:3729
 msgid "Geofencing"
 msgstr "Geofencing"
 
-#: ../trackserver.php:3722
+#: ../trackserver.php:3739
 msgid "Update profile"
 msgstr "Profiel bijwerken"
 
-#: ../trackserver.php:3742 ../class-trackserver-settings.php:390
+#: ../trackserver.php:3759 ../class-trackserver-settings.php:390
 msgid "Full custom URL"
 msgstr "Volledige custom URL"
 
-#: ../trackserver.php:3764
+#: ../trackserver.php:3781
 msgid ""
 "An access key for online tracking. We do not use WordPress password here for "
 "security reasons. The key should be added, together with your WordPress "
@@ -317,11 +317,11 @@ msgstr ""
 "hieronder afgebeeld, in OsmAnd wordt ingesteld voor online tracking. "
 "Verander de code regelmatig."
 
-#: ../trackserver.php:3767 ../class-trackserver-settings.php:658
+#: ../trackserver.php:3784 ../class-trackserver-settings.php:658
 msgid "Full URL"
 msgstr "Volledige URL"
 
-#: ../trackserver.php:3791
+#: ../trackserver.php:3808
 msgid ""
 "An access key for online tracking. We do not use WordPress password here for "
 "security reasons. The key should be added, together with your WordPress "
@@ -334,11 +334,11 @@ msgstr ""
 "hieronder afgebeeld, in SendLocation wordt ingesteld voor online tracking. "
 "Verander de code regelmatig."
 
-#: ../trackserver.php:3794
+#: ../trackserver.php:3811
 msgid "Your personal server and script"
 msgstr "Uw persoonlijke server en script"
 
-#: ../trackserver.php:3817
+#: ../trackserver.php:3834
 msgid ""
 "A password for online tracking. We do not use WordPress password here for "
 "security reasons. Change this regularly."
@@ -346,15 +346,15 @@ msgstr ""
 "Een wachtwoord voor online tracking. Het WordPress wachtwoord wordt niet "
 "gebruikt om veiligheidsredenen. Verander de code regelmatig."
 
-#: ../trackserver.php:3818
+#: ../trackserver.php:3835
 msgid "URL header"
 msgstr "URL header"
 
-#: ../trackserver.php:3819
+#: ../trackserver.php:3836
 msgid "Server extension"
 msgstr "Server extensie"
 
-#: ../trackserver.php:3832
+#: ../trackserver.php:3849
 msgid ""
 "A comma-separated list of WordPress usernames, whom you want to share your "
 "location with. Users who use OwnTracks will see your latest location on the "
@@ -368,7 +368,7 @@ msgstr ""
 "delen van je laatste lokatie met andere OwnTracks gebruikers. Toegang tot je "
 "track-data op andere manieren wordt hiermee niet toegestaan."
 
-#: ../trackserver.php:3839
+#: ../trackserver.php:3856
 #, php-format
 msgid ""
 "See <a href=\"%1$s\" target=\"_blank\">the description of the Friends "
@@ -377,7 +377,7 @@ msgstr ""
 "Zie <a href=\"%1$s\" target=\"_blank\">de beschrijving van het Friends "
 "feature in de OwnTracks handleiding</a> voor meer informatie."
 
-#: ../trackserver.php:3849
+#: ../trackserver.php:3866
 msgid ""
 "A comma-separated list of WordPress usernames, whom you want to follow with "
 "OwnTracks. These users must share their location with you, by listing your "
@@ -392,7 +392,7 @@ msgstr ""
 "lokatie met je delen. Je kunt gebruikers uitsluiten door hun gebruikersnaam "
 "door een \"!\" (uitroepteken) vooraf te laten gaan."
 
-#: ../trackserver.php:3869
+#: ../trackserver.php:3886
 msgid ""
 "With live tracking, an information bar can be shown on the map, displaying "
 "some data from the track and the latest trackpoint. Here you can format the "
@@ -402,75 +402,75 @@ msgstr ""
 "wat gegevens over het laatste trackpunt. Hier kunt u de inhoud van de "
 "informatiebalk vormgeven."
 
-#: ../trackserver.php:3874
+#: ../trackserver.php:3891
 msgid "Possible replacement tags are:"
 msgstr "Mogelijke tags die vervangen worden zijn:"
 
-#: ../trackserver.php:3875
+#: ../trackserver.php:3892
 msgid "the last known coordinates"
 msgstr "de laatst bekende coordinaten"
 
-#: ../trackserver.php:3876
+#: ../trackserver.php:3893
 msgid "the timestamp of the last update"
 msgstr "het tijdstip van de laatste update"
 
-#: ../trackserver.php:3877
+#: ../trackserver.php:3894
 msgid "the numeric user id of the track owner"
 msgstr "het numerieke gebruikers-ID van de track-eigenaar"
 
-#: ../trackserver.php:3878
+#: ../trackserver.php:3895
 msgid "the username of the track owner"
 msgstr "de gebruikersnaam van de track-eigenaar"
 
-#: ../trackserver.php:3879
+#: ../trackserver.php:3896
 msgid "the display name of the track owner"
 msgstr "de weergavenaam van de track-eigenaar"
 
-#: ../trackserver.php:3880
+#: ../trackserver.php:3897
 msgid "the name of the track"
 msgstr "de naam van de track"
 
-#: ../trackserver.php:3881
+#: ../trackserver.php:3898
 msgid "the altitude in meters"
 msgstr "de hoogte in meters"
 
-#: ../trackserver.php:3882
+#: ../trackserver.php:3899
 msgid "the altitude in feet"
 msgstr "de hoogte in voet"
 
-#: ../trackserver.php:3883
+#: ../trackserver.php:3900
 msgid "last known speed in m/s, with 0, 1 or 2 decimals"
 msgstr "laatst bekende snelheid in m/s, met 0, 1 of 2 decimalen"
 
-#: ../trackserver.php:3884
+#: ../trackserver.php:3901
 msgid "last known speed in km/h, with 0, 1 or 2 decimals"
 msgstr "laatst bekende snelheid in km/u, met 0, 1 of 2 decimalen"
 
-#: ../trackserver.php:3885
+#: ../trackserver.php:3902
 msgid "last known speed in mi/h, with 0, 1 or 2 decimals"
 msgstr "laatst bekende snelheid in mi/u, met 0, 1 of 2 decimalen"
 
-#: ../trackserver.php:3886
+#: ../trackserver.php:3903
 msgid "track total distance in meters"
 msgstr "totale track-afstand in meters"
 
-#: ../trackserver.php:3887
+#: ../trackserver.php:3904
 msgid "track total distance in yards"
 msgstr "totale track-afstand in yards"
 
-#: ../trackserver.php:3888
+#: ../trackserver.php:3905
 msgid "track total distance in km, with 0, 1 or 2 decimals"
 msgstr "totale track-afstand in km, met 0, 1 of 2 decimalen"
 
-#: ../trackserver.php:3889
+#: ../trackserver.php:3906
 msgid "track total distance in miles, with 0, 1 or 2 decimals"
 msgstr "totale track-afstand in mijlen, met 0, 1 of 2 decimalen"
 
-#: ../trackserver.php:3915
+#: ../trackserver.php:3932
 msgid "Hide"
 msgstr "Verbergen"
 
-#: ../trackserver.php:3924
+#: ../trackserver.php:3941
 msgid ""
 "Track updates that fall within the specified radius (in meters) from the "
 "center point, will be marked as hidden or discarded, depending on the "
@@ -492,31 +492,31 @@ msgstr ""
 "fence te kiezen. Vergeet niet om een radius in te stellen en je profiel "
 "daarna op te slaan."
 
-#: ../trackserver.php:3952
+#: ../trackserver.php:3969
 msgid "Center latitude"
 msgstr "Middelpunt breedtegraad"
 
-#: ../trackserver.php:3955
+#: ../trackserver.php:3972
 msgid "Longitude"
 msgstr "Lengtegraad"
 
-#: ../trackserver.php:3958
+#: ../trackserver.php:3975
 msgid "Radius"
 msgstr "Radius"
 
-#: ../trackserver.php:3961
+#: ../trackserver.php:3978
 msgid "Action"
 msgstr "Actie"
 
-#: ../trackserver.php:3968
+#: ../trackserver.php:3985
 msgid "Geofences"
 msgstr "Geofences"
 
-#: ../trackserver.php:3969
+#: ../trackserver.php:3986
 msgid "View geofences"
 msgstr "Geofences bekijken"
 
-#: ../trackserver.php:3973
+#: ../trackserver.php:3990
 msgid ""
 "It seems you have made changes to the geofences. Don't forget to update your "
 "profile!"
@@ -524,74 +524,74 @@ msgstr ""
 "Het lijkt erop dat je aanpassingen hebt gedaan aan de geofences. Vergeet "
 "niet om je profiel op te slaan!"
 
-#: ../trackserver.php:4023
+#: ../trackserver.php:4040
 msgid "It seems you have insufficient permissions to manage track ID "
 msgstr "U heeft niet voldoende rechten om deze track te beheren"
 
-#: ../trackserver.php:4203
+#: ../trackserver.php:4220
 msgid "Profile updated"
 msgstr "Profeil bijgewerkt"
 
-#: ../trackserver.php:4205
+#: ../trackserver.php:4222
 msgid "ERROR: could not update user profile"
 msgstr "FOUT: gebruikersprofiel kon niet worden bijgewerkt"
 
-#: ../trackserver.php:4325
+#: ../trackserver.php:4342
 #, php-format
 msgid "Deleted %1$d location(s) in %2$d track(s)."
 msgstr "%1$d locatie(s) in %2$d track(s) verwijderd."
 
-#: ../trackserver.php:4328
+#: ../trackserver.php:4345
 msgid "No tracks deleted"
 msgstr "Geen tracks verwijderd"
 
-#: ../trackserver.php:4357
+#: ../trackserver.php:4374
 #, php-format
 msgid "Merged %1$d location(s) from %2$d track(s) into '%3$s'."
 msgstr "%1$d locatie(s) in %2$d track(s) samengevoegd in '%3$s'."
 
-#: ../trackserver.php:4360
+#: ../trackserver.php:4377
 msgid "Need >= 2 tracks to merge, got only %1\\$d"
 msgstr ">= 2 tracks nodig om samen te voegen, kreeg er slechts %1$d"
 
-#: ../trackserver.php:4387
+#: ../trackserver.php:4404
 #, php-format
 msgid "Recalculated track stats for %1$d track(s) in %2$d seconds"
 msgstr "Track stats voor %1$d track(s) herberekend in %2$d seconden"
 
-#: ../trackserver.php:4390
+#: ../trackserver.php:4407
 msgid "No tracks found to recalculate"
 msgstr "Geen tracks gevonden voor herberekenen"
 
-#: ../trackserver.php:4546
+#: ../trackserver.php:4563
 msgid "Embedded maps"
 msgstr "Ingesloten kaarten"
 
-#: ../trackserver.php:4548
+#: ../trackserver.php:4565
 msgid "embedded map"
 msgstr "ingesloten kaart"
 
-#: ../trackserver.php:4549
+#: ../trackserver.php:4566
 msgid "Add new embedded map"
 msgstr "Een ingesloten kaart toevoegen"
 
-#: ../trackserver.php:4550
+#: ../trackserver.php:4567
 msgid "Edit embedded map"
 msgstr "Ingesloten kaart bewerken"
 
-#: ../trackserver.php:4551
+#: ../trackserver.php:4568
 msgid "Search embedded maps"
 msgstr "Ingesloten kaarten zoeken"
 
-#: ../trackserver.php:4552
+#: ../trackserver.php:4569
 msgid "No embedded maps found"
 msgstr "Geen ingesloten kaarten gevonden"
 
-#: ../trackserver.php:4590
+#: ../class-trackserver-admin.php:54
 msgid "Embed HTML"
 msgstr "Insluiten HTML"
 
-#: ../trackserver.php:4602
+#: ../class-trackserver-admin.php:72
 msgid ""
 "To embed this map in a web page outside WordPress, include the following "
 "HTML in the page: "
@@ -599,11 +599,11 @@ msgstr ""
 "Om deze kaart in te sluiten in een webpagina buiten WordPress, kunt u de "
 "volgende HTML gebruiken:"
 
-#: ../trackserver.php:4607
+#: ../class-trackserver-admin.php:76
 msgid "Please note:"
 msgstr "Let op:"
 
-#: ../trackserver.php:4612
+#: ../class-trackserver-admin.php:80
 msgid ""
 "This map has not been published. Publishing it may cause the permalink URL "
 "to change."
@@ -611,15 +611,16 @@ msgstr ""
 "Deze kaart is nog niet gepubliceerd. Publiceren kan ervoor zorgen dat de "
 "permalink URL verandert."
 
-#: ../trackserver.php:4616
+#: ../class-trackserver-admin.php:85
+#, php-format
 msgid ""
 "Make sure your WordPress doesn't forbid framing the map with a too-strict "
-"<i>X-Frame-Options</i> header."
+"%1$s header."
 msgstr ""
 "Zorg ervoor dat WordPress het weergeven van de kaart in een frame niet "
-"verbiedt met een te restrictieve <i>X-Frame-Options</i> header."
+"verbiedt met een te restrictieve %1$s header."
 
-#: ../trackserver.php:4618
+#: ../class-trackserver-admin.php:87
 msgid "This is what the last saved version of the embedded map looks like:"
 msgstr "Zo ziet de laatst opgeslagen versie van de ingesloten kaart eruit:"
 
