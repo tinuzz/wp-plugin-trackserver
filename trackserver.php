@@ -229,7 +229,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			add_filter( 'media_send_to_editor', array( &$this, 'media_send_to_editor' ), 10, 3 );
 
 			// Custom post type for embedded maps
-			add_action( 'init', array( &$this, 'register_tsmap_post_type' ) );
+			add_action( 'init', array( &$this, 'wp_init' ) );
 			add_filter( 'single_template', array( &$this, 'get_tsmap_single_template' ) );
 			add_filter( '404_template', array( &$this, 'get_tsmap_404_template' ) );
 
@@ -255,6 +255,16 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			// WordPress MU
 			add_action( 'wpmu_new_blog', array( &$this, 'wpmu_new_blog' ) );
 			add_filter( 'wpmu_drop_tables', array( &$this, 'wpmu_drop_tables' ) );
+		}
+
+		/**
+		 * Handler for 'init' action.
+		 *
+		 * @since 4.3
+		 */
+		function wp_init() {
+			$this->load_textdomain();
+			$this->register_tsmap_post_type();
 		}
 
 		/**
@@ -654,6 +664,16 @@ EOF;
 					}
 				}
 			}
+		}
+
+		/**
+		 * Function to load the gettext domain for this plugin. Called from the 'init' hook.
+		 *
+		 * @since 4.3
+		 */
+		function load_textdomain() {
+			// Load the MO file for the current language.
+			load_plugin_textdomain( 'trackserver', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 		}
 
 		/**
@@ -4535,10 +4555,6 @@ EOF;
 		}
 
 		function register_tsmap_post_type() {
-
-			// Load the MO file for the current language. This has nothing to do with the custom post type,
-			// but this function is actually the handler for the 'init' hook, that's why it is here.
-			load_plugin_textdomain( 'trackserver', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 
 			$slug = $this->options['embedded_slug'];
 
