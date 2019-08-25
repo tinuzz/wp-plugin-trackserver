@@ -250,7 +250,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			add_action( 'admin_post_trackserver_upload_track', array( &$this, 'admin_post_upload_track' ) );
 			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
 			add_action( 'wp_ajax_trackserver_save_track', array( &$this, 'admin_ajax_save_modified_track' ) );
-			add_action( 'add_meta_boxes', array( &$this, 'admin_add_meta_boxes' ) );
 			add_filter( 'default_content', array( &$this, 'embedded_map_default_content' ), 10, 2 );
 
 			// WordPress MU
@@ -4585,42 +4584,6 @@ EOF;
 				$template = dirname( __FILE__ ) . '/embedded-404.php';
 			}
 			return $template;
-		}
-
-		function admin_add_meta_boxes() {
-			add_meta_box(
-				'ts_embedded_meta_box',
-				esc_html__( 'Embed HTML', 'trackserver' ),      // Title
-				array( &$this, 'ts_embedded_meta_box_html' ),   // Callback
-				'tsmap'                                         // Post type
-			);
-		}
-
-		function ts_embedded_meta_box_html( $post ) {
-			// The is_ssl() check should not be necessary, but somehow, get_permalink() doesn't correctly return a https URL by itself
-			$url    = set_url_scheme( get_permalink( $post ), ( is_ssl() ? 'https' : 'http' ) );
-			$code   = '<iframe src="' . $url . '" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>';
-			$status = get_post_status( $post->ID );
-
-			_e( 'To embed this map in a web page outside WordPress, include the following HTML in the page: ', 'trackserver' );
-			echo '<br><br>';
-			echo '<div style="font-family: monospace; background-color: #dddddd">';
-			echo esc_html( $code );
-			echo '</div><br>';
-			_e( 'Please note:', 'trackserver' );
-			echo '<br>';
-			echo '<ul style="list-style: square; margin-left: 20px;">';
-			if ( in_array( $status, array( 'draft', 'auto-draft', 'future' ) ) ) {
-				echo '<li>';
-				_e( 'This map has not been published. Publishing it may cause the permalink URL to change.', 'trackserver' );
-				echo '</li>';
-			}
-			echo '<li>';
-			_e( "Make sure your WordPress doesn't forbid framing the map with a too-strict <i>X-Frame-Options</i> header.", 'trackserver' );
-			echo '</li></ul>';
-			_e( 'This is what the last saved version of the embedded map looks like:', 'trackserver' );
-			echo '<br><br>';
-			echo '<iframe src="' . $url . '" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>';
 		}
 
 		function embedded_map_default_content( $content, $post ) {
