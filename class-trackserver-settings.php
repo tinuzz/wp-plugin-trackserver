@@ -268,27 +268,13 @@ EOF;
 		$format = <<<EOF
 			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
 			<input type="text" size="25" name="trackserver_options[trackme_slug]" id="trackserver_trackme_slug" value="$val" autocomplete="off" /><br /><br />
-			<strong>%2\$s:</strong> $url/$val/&lt;%4\$s&gt;/&lt;%5\$s&gt;<br /><br />
-			%3\$s<br /><br />
+			<strong>%2\$s:</strong> $url/$val/&lt;<strong>%3\$s</strong>&gt;/&lt;<strong>%4\$s</strong>&gt;<br /><br />
 EOF;
 
 		printf(
 			$format,
 			esc_html__( "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe", 'trackserver' ),
 			esc_html__( 'Full URL header', 'trackserver' ),
-			sprintf(
-				// translators: placeholders are for product name and version, and link to Wikipedia page
-				esc_html__(
-					// @codingStandardsIgnoreStart
-					'Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS connections. ' .
-					'If your WordPress install is hosted on a HTTPS URL that depends on SNI, please use HTTP. This is a ' .
-					'problem with %1$s that Trackserver cannot fix.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				),
-				'TrackMe',
-				'2.00.1',
-				$link
-			),
 			esc_html__( 'username' ),
 			esc_html__( 'password' )
 		);
