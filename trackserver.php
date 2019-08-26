@@ -245,12 +245,10 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			add_action( 'admin_init', array( &$this, 'admin_init' ) );
 			add_action( 'admin_menu', array( &$this, 'admin_menu' ), 9 );
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'add_settings_link' ) );
-			add_action( 'admin_head', array( &$this, 'admin_head' ) );  // CSS for table styling
 			add_action( 'admin_post_trackserver_save_track', array( &$this, 'admin_post_save_track' ) );
 			add_action( 'admin_post_trackserver_upload_track', array( &$this, 'admin_post_upload_track' ) );
 			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
 			add_action( 'wp_ajax_trackserver_save_track', array( &$this, 'admin_ajax_save_modified_track' ) );
-			add_filter( 'default_content', array( &$this, 'embedded_map_default_content' ), 10, 2 );
 
 			// WordPress MU
 			add_action( 'wpmu_new_blog', array( &$this, 'wpmu_new_blog' ) );
@@ -282,29 +280,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			if ( ! $wp_rewrite->using_permalinks() || $wp_rewrite->using_index_permalinks() ) {
 				$this->url_prefix = '/' . $wp_rewrite->index;
 			}
-
 			$this->init_user_meta();
-		}
-
-		/**
-		 * Print some CSS in the header of the admin panel.
-		 *
-		 * @since 1.0
-		 */
-		function admin_head() {
-			echo <<<EOF
-				<style type="text/css">
-					.wp-list-table .column-id { width: 50px; }
-					.wp-list-table .column-user_id { width: 100px; }
-					.wp-list-table .column-tstart { width: 150px; }
-					.wp-list-table .column-tend { width: 150px; }
-					.wp-list-table .column-numpoints { width: 50px; }
-					.wp-list-table .column-distance { width: 60px; }
-					.wp-list-table .column-edit { width: 50px; }
-					.wp-list-table .column-view { width: 50px; }
-					#addtrack { margin: 1px 8px 0 0; }
-				</style>\n
-EOF;
 		}
 
 		/**
@@ -4600,15 +4576,6 @@ EOF;
 				$template = dirname( __FILE__ ) . '/embedded-404.php';
 			}
 			return $template;
-		}
-
-		function embedded_map_default_content( $content, $post ) {
-			switch ( $post->post_type ) {
-				case 'tsmap':
-					$content = '[tsmap]';
-					break;
-			}
-			return $content;
 		}
 
 	} // class

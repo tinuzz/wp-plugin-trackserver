@@ -21,7 +21,9 @@ class Trackserver_Admin {
 
 	public function add_actions() {
 		add_action( 'admin_init', array( &$this, 'admin_init' ) );
+		add_action( 'admin_head', array( &$this, 'admin_head' ) );
 		add_action( 'add_meta_boxes', array( &$this, 'add_meta_boxes' ) );
+		add_filter( 'default_content', array( &$this, 'embedded_map_default_content' ), 10, 2 );
 	}
 
 	/**
@@ -35,6 +37,27 @@ class Trackserver_Admin {
 	}
 
 	private function trackserver_install() {
+	}
+
+	/**
+	 * Print some CSS in the header of the admin panel.
+	 *
+	 * @since 1.0
+	 */
+	function admin_head() {
+		echo <<<EOF
+			<style type="text/css">
+				.wp-list-table .column-id { width: 50px; }
+				.wp-list-table .column-user_id { width: 100px; }
+				.wp-list-table .column-tstart { width: 150px; }
+				.wp-list-table .column-tend { width: 150px; }
+				.wp-list-table .column-numpoints { width: 50px; }
+				.wp-list-table .column-distance { width: 60px; }
+				.wp-list-table .column-edit { width: 50px; }
+				.wp-list-table .column-view { width: 50px; }
+				#addtrack { margin: 1px 8px 0 0; }
+			</style>\n
+EOF;
 	}
 
 	private function register_settings() {
@@ -87,6 +110,19 @@ class Trackserver_Admin {
 		esc_html_e( 'This is what the last saved version of the embedded map looks like:', 'trackserver' );
 		echo '<br><br>';
 		echo '<iframe src="' . $url . '" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>';
+	}
+
+	/**
+	 * Handler for 'default_content' filter. Sets the default content of a new
+	 * embedded map to an empty [tsmap] shortcode.
+	 */
+	function embedded_map_default_content( $content, $post ) {
+		switch ( $post->post_type ) {
+			case 'tsmap':
+				$content = '[tsmap]';
+				break;
+		}
+		return $content;
 	}
 
 }
