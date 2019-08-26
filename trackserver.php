@@ -755,7 +755,7 @@ EOF;
 		 */
 		function add_settings_link( $links ) {
 			$settings_link = '<a href="admin.php?page=trackserver-options">' . esc_html__( 'Settings', 'trackserver' ) . '</a>';
-			array_unshift( $links, $settings_link );
+			array_push( $links, $settings_link );
 			return $links;
 		}
 
