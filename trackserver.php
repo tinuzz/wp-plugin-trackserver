@@ -2043,7 +2043,16 @@ EOF;
 
 			// Timestamp is sent in milliseconds, and in UTC. Use substr() to truncate the timestamp,
 			// because dividing by 1000 causes an integer overflow on 32-bit systems.
-			$ts = intval( substr( urldecode( $_GET['timestamp'] ), 0, -3 ) );
+			$timestamp = urldecode( $_GET['timestamp'] );
+			if ( strlen( $timestamp ) > 10 ) {
+				$timestamp = substr( $timestamp, 0, -3 );
+			}
+			$ts = intval( $timestamp );
+
+			// If no timestamp is given, we generate one.
+			if ( $ts <= 0 ) {
+				$ts = time();
+			}
 
 			if ( $ts > 0 ) {
 
