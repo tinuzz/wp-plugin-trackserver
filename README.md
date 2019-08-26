@@ -17,6 +17,7 @@ and protocols are supported for getting tracks into trackserver:
 * [TrackMe](http://www.luisespinosa.com/trackme_eng.html)
 * [MapMyTracks protocol](https://github.com/MapMyTracks/api) for example using [OruxMaps](http://www.oruxmaps.com/index_en.html)
 * [OsmAnd](http://osmand.net/) live tracking
+* [PhoneTrack-Android](https://gitlab.com/eneiluj/phonetrack-android) also works with OsmAnd's protocol (Trackserver >= 4.3)
 * [SendLocation](https://itunes.apple.com/bm/app/sendlocation/id377724446?mt=8)
 * [OwnTracks](http://owntracks.org/) (experimental support)
 * HTTP POST, for example using [AutoShare](https://play.google.com/store/apps/details?id=com.dngames.autoshare)

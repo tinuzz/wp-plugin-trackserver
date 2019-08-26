@@ -21,6 +21,7 @@ Unlike other plugins that are about maps and tracks, Trackserver's main focus is
 * [TrackMe][trackme]
 * [MapMyTracks protocol][mapmytracks], for example using [OruxMaps][oruxmaps], including upload functionality
 * [OsmAnd's][osmand] live tracking protocol
+* [PhoneTrack-Android][phonetrack] also works with OsmAnd's protocol (Trackserver >= 4.3)
 * [SendLocation][sendlocation]
 * [OwnTracks][owntracks] (experimental support)
 * HTTP POST, for example using [AutoShare][autoshare]
@@ -36,6 +37,7 @@ See the FAQ section for more information on the shortcode's supported attributes
 [trackme]: http://www.luisespinosa.com/trackme_eng.html
 [mapmytracks]: https://github.com/MapMyTracks/api
 [osmand]: http://osmand.net/
+[phonetrack]: https://gitlab.com/eneiluj/phonetrack-android
 [oruxmaps]: http://www.oruxmaps.com/index_en.html
 [sendlocation]: https://itunes.apple.com/bm/app/sendlocation/id377724446?mt=8
 [owntracks]: http://owntracks.org/
@@ -271,6 +273,7 @@ Added:
 * Custom post type 'tsmap' for creating embedded maps.
 * Infobar template placeholder for track name: {trackname}.
 * Experimental support for TrackMe Cloud Sharing.
+* Support for PhoneTrack-Android, via the OsmAnd protocol.
 
 Changed:
 * Trackserver now only supports WP 4.7 or higher.
