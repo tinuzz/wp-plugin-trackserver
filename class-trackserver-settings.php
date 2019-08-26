@@ -268,7 +268,7 @@ EOF;
 		$format = <<<EOF
 			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
 			<input type="text" size="25" name="trackserver_options[trackme_slug]" id="trackserver_trackme_slug" value="$val" autocomplete="off" /><br /><br />
-			<strong>%2\$s:</strong> $url/$val<br /><br />
+			<strong>%2\$s:</strong> $url/$val/&lt;%4\$s&gt;/&lt;%5\$s&gt;<br /><br />
 			%3\$s<br /><br />
 EOF;
 
@@ -288,7 +288,9 @@ EOF;
 				'TrackMe',
 				'2.00.1',
 				$link
-			)
+			),
+			esc_html__( 'username' ),
+			esc_html__( 'password' )
 		);
 	}
 
