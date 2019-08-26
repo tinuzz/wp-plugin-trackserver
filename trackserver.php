@@ -3682,21 +3682,21 @@ EOF;
 							<tr>
 								<th scope="row">
 									<label>
-										<?php esc_html_e( 'OwnTracks share with Friends', 'trackserver' ); ?>
+										<?php esc_html_e( 'Share via TrackMe Cloud Sharing / OwnTracks Friends', 'trackserver' ); ?>
 									</label>
 								</th>
 								<td>
-									<?php $this->owntracks_share_friends_html(); ?>
+									<?php $this->share_friends_html(); ?>
 								</td>
 							</tr>
 							<tr>
 								<th scope="row">
 									<label>
-										<?php esc_html_e( 'OwnTracks follow Friends', 'trackserver' ); ?>
+										<?php esc_html_e( 'Follow users via TrackMe Cloud Sharing / OwnTracks Friends', 'trackserver' ); ?>
 									</label>
 								</th>
 								<td>
-									<?php $this->owntracks_follow_friends_html(); ?>
+									<?php $this->follow_friends_html(); ?>
 								</td>
 							</tr>
 							<tr>
@@ -3826,16 +3826,16 @@ EOF;
 			$this->admin->settings->trackme_settings_html();
 		}
 
-		function owntracks_share_friends_html() {
+		function share_friends_html() {
 			$current_user = wp_get_current_user();
 			$value        = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_owntracks_share', true ) );
 			$link_url     = 'http://owntracks.org/booklet/features/friends/';
 
 			// @codingStandardsIgnoreStart
 			echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to share your location with. ' .
-				'Users who use OwnTracks will see your latest location on the map, if they follow you. This setting is only ' .
-				'about sharing your latest (live) location with OwnTracks users. It does not grant access to your track data in ' .
-				'any other way.', 'trackserver'
+				'Users who use OwnTracks or TrackMe\'s "Show Cloud People" feature will see your latest location on the map, ' .
+				'if they follow you. This setting is only about sharing your latest (live) location with TrackMe and ' .
+				'OwnTracks users. It does not grant access to your track data in any other way.', 'trackserver'
 			) . '<br /><br />';
 			// translators: placeholder is for a http link URL
 			echo sprintf(
@@ -3845,14 +3845,15 @@ EOF;
 			echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_share]" value="' . $value . '" autocomplete="off" /><br /><br />';
 		}
 
-		function owntracks_follow_friends_html() {
+		function follow_friends_html() {
 			$current_user = wp_get_current_user();
 			$value        = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_owntracks_follow', true ) );
 			// @codingStandardsIgnoreStart
-			echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to follow with OwnTracks. ' .
-				'These users must share their location with you, by listing your username in the "share with users" setting above. ' .
-				'Leave this setting empty to follow all users that share their location with you. You can exclude users by prefixing their ' .
-				'username with a "!" (exclamation mark).', 'trackserver'
+			echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to follow with TrackMe\'s ' .
+				'"Show Cloud People" feature or with OwnTracks. These users must share their location with you, by listing ' .
+				'your username in the "Share via ..." setting above and publishing their location to Trackserver with one ' .
+				'of the supported apps. Leave this setting empty to follow all users that share their location with you. ' .
+				'You can exclude users by prefixing their username with a "!" (exclamation mark).', 'trackserver'
 			) . '<br />';
 			// @codingStandardsIgnoreEnd
 			echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_follow]" value="' . $value . '" autocomplete="off" /><br /><br />';

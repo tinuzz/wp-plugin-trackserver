@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackserver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-25 23:59+0200\n"
+"POT-Creation-Date: 2019-08-26 23:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: ../tracks-list-table.php:61 ../trackserver.php:3560
+#: ../tracks-list-table.php:61 ../trackserver.php:3546
 msgid "Name"
 msgstr ""
 
@@ -57,15 +57,15 @@ msgstr ""
 msgid "Distance"
 msgstr ""
 
-#: ../tracks-list-table.php:66 ../trackserver.php:3564
+#: ../tracks-list-table.php:66 ../trackserver.php:3550
 msgid "Source"
 msgstr ""
 
-#: ../tracks-list-table.php:67 ../trackserver.php:3568
+#: ../tracks-list-table.php:67 ../trackserver.php:3554
 msgid "Comment"
 msgstr ""
 
-#: ../tracks-list-table.php:88 ../trackserver.php:3576
+#: ../tracks-list-table.php:88 ../trackserver.php:3562
 msgid "Delete"
 msgstr ""
 
@@ -85,222 +85,222 @@ msgstr ""
 msgid "Upload tracks"
 msgstr ""
 
-#: ../trackserver.php:369
+#: ../trackserver.php:346
 msgid "No tracks to display."
 msgstr ""
 
-#: ../trackserver.php:426
+#: ../trackserver.php:403
 msgid "Are you sure?"
 msgstr ""
 
-#: ../trackserver.php:427
+#: ../trackserver.php:404
 msgid "deletion"
 msgstr ""
 
-#: ../trackserver.php:428
+#: ../trackserver.php:405
 msgid "merging"
 msgstr ""
 
-#: ../trackserver.php:429
+#: ../trackserver.php:406
 msgid "recalculation"
 msgstr ""
 
-#: ../trackserver.php:430 ../trackserver.php:431
+#: ../trackserver.php:407 ../trackserver.php:408
 msgid "downloading"
 msgstr ""
 
-#: ../trackserver.php:432
+#: ../trackserver.php:409
 msgid "track"
 msgstr ""
 
-#: ../trackserver.php:433
+#: ../trackserver.php:410
 msgid "tracks"
 msgstr ""
 
-#: ../trackserver.php:434
+#: ../trackserver.php:411
 msgid "Edit track"
 msgstr ""
 
-#: ../trackserver.php:435
+#: ../trackserver.php:412
 msgid "Delete point"
 msgstr ""
 
-#: ../trackserver.php:436
+#: ../trackserver.php:413
 msgid "Split track here"
 msgstr ""
 
-#: ../trackserver.php:437
+#: ../trackserver.php:414
 msgid "Save changes"
 msgstr ""
 
-#: ../trackserver.php:438
+#: ../trackserver.php:415
 msgid "There are unsaved changes. Save?"
 msgstr ""
 
-#: ../trackserver.php:439 ../trackserver.php:3573 ../trackserver.php:3599
+#: ../trackserver.php:416 ../trackserver.php:3559 ../trackserver.php:3585
 msgid "Save"
 msgstr ""
 
-#: ../trackserver.php:440 ../trackserver.php:3933
+#: ../trackserver.php:417 ../trackserver.php:3920
 msgid "Discard"
 msgstr ""
 
-#: ../trackserver.php:441 ../trackserver.php:3574 ../trackserver.php:3600
+#: ../trackserver.php:418 ../trackserver.php:3560 ../trackserver.php:3586
 msgid "Cancel"
 msgstr ""
 
-#: ../trackserver.php:443
+#: ../trackserver.php:420
 #, php-format
 msgid "For %1$s, select %2$s %3$s at minimum"
 msgstr ""
 
-#: ../trackserver.php:685 ../trackserver.php:3542 ../trackserver.php:3637
-#: ../trackserver.php:4000
+#: ../trackserver.php:662 ../trackserver.php:3528 ../trackserver.php:3623
+#: ../trackserver.php:3987
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: ../trackserver.php:691 ../trackserver.php:784 ../trackserver.php:794
+#: ../trackserver.php:668 ../trackserver.php:761 ../trackserver.php:771
 msgid "Trackserver Options"
 msgstr ""
 
-#: ../trackserver.php:695
+#: ../trackserver.php:672
 msgid "Settings updated"
 msgstr ""
 
-#: ../trackserver.php:708
+#: ../trackserver.php:685
 msgid "Update options"
 msgstr ""
 
-#: ../trackserver.php:720 ../class-trackserver-settings.php:31
+#: ../trackserver.php:697 ../class-trackserver-settings.php:31
 #: ../class-trackserver-settings.php:252
 msgid "TrackMe settings"
 msgstr ""
 
-#: ../trackserver.php:722 ../class-trackserver-settings.php:61
-#: ../class-trackserver-settings.php:364
+#: ../trackserver.php:699 ../class-trackserver-settings.php:61
+#: ../class-trackserver-settings.php:352
 msgid "OruxMaps MapMyTracks settings"
 msgstr ""
 
-#: ../trackserver.php:724 ../class-trackserver-settings.php:411
+#: ../trackserver.php:701 ../class-trackserver-settings.php:399
 msgid "OsmAnd settings"
 msgstr ""
 
-#: ../trackserver.php:726 ../class-trackserver-settings.php:528
+#: ../trackserver.php:703 ../class-trackserver-settings.php:516
 msgid "AutoShare settings"
 msgstr ""
 
-#: ../trackserver.php:756
+#: ../trackserver.php:733
 msgid "Settings"
 msgstr ""
 
-#: ../trackserver.php:785
+#: ../trackserver.php:762
 msgid "Trackserver"
 msgstr ""
 
-#: ../trackserver.php:795
+#: ../trackserver.php:772
 msgid "Options"
 msgstr ""
 
-#: ../trackserver.php:803 ../trackserver.php:804 ../trackserver.php:3626
+#: ../trackserver.php:780 ../trackserver.php:781 ../trackserver.php:3612
 msgid "Manage tracks"
 msgstr ""
 
-#: ../trackserver.php:812 ../trackserver.php:813
+#: ../trackserver.php:789 ../trackserver.php:790
 msgid "Your profile"
 msgstr ""
 
-#: ../trackserver.php:2964
+#: ../trackserver.php:2950
 #, php-format
 msgid "File '%1$s': imported %2$s points from %3$s track(s) in %4$s seconds."
 msgstr ""
 
-#: ../trackserver.php:2974
+#: ../trackserver.php:2960
 #, php-format
 msgid "ERROR: File '%1$s' could not be validated as GPX 1.1"
 msgstr ""
 
-#: ../trackserver.php:2978
+#: ../trackserver.php:2964
 #, php-format
 msgid "ERROR: Upload '%1$s' failed"
 msgstr ""
 
-#: ../trackserver.php:2981
+#: ../trackserver.php:2967
 #, php-format
 msgid "ERROR: Only .gpx files accepted; discarding '%1$s'"
 msgstr ""
 
-#: ../trackserver.php:3587
+#: ../trackserver.php:3573
 msgid ""
 "Merge all points of multiple tracks into one track. Please specify the name "
 "for the merged track."
 msgstr ""
 
-#: ../trackserver.php:3592
+#: ../trackserver.php:3578
 msgid "Merged track name"
 msgstr ""
 
-#: ../trackserver.php:3597
+#: ../trackserver.php:3583
 msgid "Warning: this action cannot be undone!"
 msgstr ""
 
-#: ../trackserver.php:3611
+#: ../trackserver.php:3597
 msgid "Select files"
 msgstr ""
 
-#: ../trackserver.php:3613
+#: ../trackserver.php:3599
 msgid "Upload"
 msgstr ""
 
-#: ../trackserver.php:3617
+#: ../trackserver.php:3603
 msgid "Selected files"
 msgstr ""
 
-#: ../trackserver.php:3645
+#: ../trackserver.php:3631
 #, php-format
 msgid "Trackserver profile for %s"
 msgstr ""
 
-#: ../trackserver.php:3659 ../class-trackserver-settings.php:52
+#: ../trackserver.php:3645 ../class-trackserver-settings.php:52
 msgid "TrackMe password"
 msgstr ""
 
-#: ../trackserver.php:3669
+#: ../trackserver.php:3655
 msgid "MapMyTracks profile"
 msgstr ""
 
-#: ../trackserver.php:3679 ../class-trackserver-settings.php:91
+#: ../trackserver.php:3665 ../class-trackserver-settings.php:91
 msgid "OsmAnd access key"
 msgstr ""
 
-#: ../trackserver.php:3689
+#: ../trackserver.php:3675
 msgid "SendLocation access key"
 msgstr ""
 
-#: ../trackserver.php:3699
-msgid "OwnTracks share with Friends"
+#: ../trackserver.php:3685
+msgid "Share via TrackMe Cloud Sharing / OwnTracks Friends"
 msgstr ""
 
-#: ../trackserver.php:3709
-msgid "OwnTracks follow Friends"
+#: ../trackserver.php:3695
+msgid "Follow users via TrackMe Cloud Sharing / OwnTracks Friends"
 msgstr ""
 
-#: ../trackserver.php:3719
+#: ../trackserver.php:3705
 msgid "Shortcode infobar template"
 msgstr ""
 
-#: ../trackserver.php:3729
+#: ../trackserver.php:3715
 msgid "Geofencing"
 msgstr ""
 
-#: ../trackserver.php:3739
+#: ../trackserver.php:3725
 msgid "Update profile"
 msgstr ""
 
-#: ../trackserver.php:3759 ../class-trackserver-settings.php:390
+#: ../trackserver.php:3745 ../class-trackserver-settings.php:378
 msgid "Full custom URL"
 msgstr ""
 
-#: ../trackserver.php:3781
+#: ../trackserver.php:3767
 msgid ""
 "An access key for online tracking. We do not use WordPress password here for "
 "security reasons. The key should be added, together with your WordPress "
@@ -308,11 +308,11 @@ msgid ""
 "displayed below. Change this regularly."
 msgstr ""
 
-#: ../trackserver.php:3784 ../class-trackserver-settings.php:658
+#: ../trackserver.php:3770 ../class-trackserver-settings.php:646
 msgid "Full URL"
 msgstr ""
 
-#: ../trackserver.php:3808
+#: ../trackserver.php:3794
 msgid ""
 "An access key for online tracking. We do not use WordPress password here for "
 "security reasons. The key should be added, together with your WordPress "
@@ -320,125 +320,128 @@ msgid ""
 "displayed below. Change this regularly."
 msgstr ""
 
-#: ../trackserver.php:3811
+#: ../trackserver.php:3797
 msgid "Your personal server and script"
 msgstr ""
 
-#: ../trackserver.php:3834
+#: ../trackserver.php:3820
 msgid ""
 "A password for online tracking. We do not use WordPress password here for "
 "security reasons. Change this regularly."
 msgstr ""
 
-#: ../trackserver.php:3835
+#: ../trackserver.php:3821
 msgid "URL header"
 msgstr ""
 
-#: ../trackserver.php:3836
+#: ../trackserver.php:3822
 msgid "Server extension"
 msgstr ""
 
-#: ../trackserver.php:3849
+#: ../trackserver.php:3835
 msgid ""
 "A comma-separated list of WordPress usernames, whom you want to share your "
-"location with. Users who use OwnTracks will see your latest location on the "
-"map, if they follow you. This setting is only about sharing your latest "
-"(live) location with OwnTracks users. It does not grant access to your track "
-"data in any other way."
+"location with. Users who use OwnTracks or TrackMe's \"Show Cloud People\" "
+"feature will see your latest location on the map, if they follow you. This "
+"setting is only about sharing your latest (live) location with TrackMe and "
+"OwnTracks users. It does not grant access to your track data in any other "
+"way."
 msgstr ""
 
-#: ../trackserver.php:3856
+#: ../trackserver.php:3842
 #, php-format
 msgid ""
 "See <a href=\"%1$s\" target=\"_blank\">the description of the Friends "
 "feature in the OwnTracks booklet</a> for more information."
 msgstr ""
 
-#: ../trackserver.php:3866
+#: ../trackserver.php:3852
 msgid ""
 "A comma-separated list of WordPress usernames, whom you want to follow with "
-"OwnTracks. These users must share their location with you, by listing your "
-"username in the \"share with users\" setting above. Leave this setting empty "
-"to follow all users that share their location with you. You can exclude "
-"users by prefixing their username with a \"!\" (exclamation mark)."
+"TrackMe's \"Show Cloud People\" feature or with OwnTracks. These users must "
+"share their location with you, by listing your username in the \"Share "
+"via ...\" setting above and publishing their location to Trackserver with "
+"one of the supported apps. Leave this setting empty to follow all users that "
+"share their location with you. You can exclude users by prefixing their "
+"username with a \"!\" (exclamation mark)."
 msgstr ""
 
-#: ../trackserver.php:3886
+#: ../trackserver.php:3873
 msgid ""
 "With live tracking, an information bar can be shown on the map, displaying "
 "some data from the track and the latest trackpoint. Here you can format the "
 "content of the infobar."
 msgstr ""
 
-#: ../trackserver.php:3891
+#: ../trackserver.php:3878
 msgid "Possible replacement tags are:"
 msgstr ""
 
-#: ../trackserver.php:3892
+#: ../trackserver.php:3879
 msgid "the last known coordinates"
 msgstr ""
 
-#: ../trackserver.php:3893
+#: ../trackserver.php:3880
 msgid "the timestamp of the last update"
 msgstr ""
 
-#: ../trackserver.php:3894
+#: ../trackserver.php:3881
 msgid "the numeric user id of the track owner"
 msgstr ""
 
-#: ../trackserver.php:3895
+#: ../trackserver.php:3882
 msgid "the username of the track owner"
 msgstr ""
 
-#: ../trackserver.php:3896
+#: ../trackserver.php:3883
 msgid "the display name of the track owner"
 msgstr ""
 
-#: ../trackserver.php:3897
+#: ../trackserver.php:3884
 msgid "the name of the track"
 msgstr ""
 
-#: ../trackserver.php:3898
+#: ../trackserver.php:3885
 msgid "the altitude in meters"
 msgstr ""
 
-#: ../trackserver.php:3899
+#: ../trackserver.php:3886
 msgid "the altitude in feet"
 msgstr ""
 
-#: ../trackserver.php:3900
+#: ../trackserver.php:3887
 msgid "last known speed in m/s, with 0, 1 or 2 decimals"
 msgstr ""
 
-#: ../trackserver.php:3901
+#: ../trackserver.php:3888
 msgid "last known speed in km/h, with 0, 1 or 2 decimals"
 msgstr ""
 
-#: ../trackserver.php:3902
+#: ../trackserver.php:3889
 msgid "last known speed in mi/h, with 0, 1 or 2 decimals"
 msgstr ""
 
-#: ../trackserver.php:3903
+#: ../trackserver.php:3890
 msgid "track total distance in meters"
 msgstr ""
 
-#: ../trackserver.php:3904
+#: ../trackserver.php:3891
 msgid "track total distance in yards"
 msgstr ""
 
-#: ../trackserver.php:3905
+#: ../trackserver.php:3892
 msgid "track total distance in km, with 0, 1 or 2 decimals"
 msgstr ""
 
-#: ../trackserver.php:3906
+#: ../trackserver.php:3893
 msgid "track total distance in miles, with 0, 1 or 2 decimals"
 msgstr ""
 
-#: ../trackserver.php:3932
+#: ../trackserver.php:3919
 msgid "Hide"
 msgstr ""
 
-#: ../trackserver.php:3941
+#: ../trackserver.php:3928
 msgid ""
 "Track updates that fall within the specified radius (in meters) from the "
 "center point, will be marked as hidden or discarded, depending on the "
@@ -450,127 +453,127 @@ msgid ""
 "and update your profile afterwards."
 msgstr ""
 
-#: ../trackserver.php:3969
+#: ../trackserver.php:3956
 msgid "Center latitude"
 msgstr ""
 
-#: ../trackserver.php:3972
+#: ../trackserver.php:3959
 msgid "Longitude"
 msgstr ""
 
-#: ../trackserver.php:3975
+#: ../trackserver.php:3962
 msgid "Radius"
 msgstr ""
 
-#: ../trackserver.php:3978
+#: ../trackserver.php:3965
 msgid "Action"
 msgstr ""
 
-#: ../trackserver.php:3985
+#: ../trackserver.php:3972
 msgid "Geofences"
 msgstr ""
 
-#: ../trackserver.php:3986
+#: ../trackserver.php:3973
 msgid "View geofences"
 msgstr ""
 
-#: ../trackserver.php:3990
+#: ../trackserver.php:3977
 msgid ""
 "It seems you have made changes to the geofences. Don't forget to update your "
 "profile!"
 msgstr ""
 
-#: ../trackserver.php:4040
+#: ../trackserver.php:4027
 msgid "It seems you have insufficient permissions to manage track ID "
 msgstr ""
 
-#: ../trackserver.php:4220
+#: ../trackserver.php:4207
 msgid "Profile updated"
 msgstr ""
 
-#: ../trackserver.php:4222
+#: ../trackserver.php:4209
 msgid "ERROR: could not update user profile"
 msgstr ""
 
-#: ../trackserver.php:4342
+#: ../trackserver.php:4329
 #, php-format
 msgid "Deleted %1$d location(s) in %2$d track(s)."
 msgstr ""
 
-#: ../trackserver.php:4345
+#: ../trackserver.php:4332
 msgid "No tracks deleted"
 msgstr ""
 
-#: ../trackserver.php:4374
+#: ../trackserver.php:4361
 #, php-format
 msgid "Merged %1$d location(s) from %2$d track(s) into '%3$s'."
 msgstr ""
 
-#: ../trackserver.php:4377
+#: ../trackserver.php:4364
 msgid "Need >= 2 tracks to merge, got only %1\\$d"
 msgstr ""
 
-#: ../trackserver.php:4404
+#: ../trackserver.php:4391
 #, php-format
 msgid "Recalculated track stats for %1$d track(s) in %2$d seconds"
 msgstr ""
 
-#: ../trackserver.php:4407
+#: ../trackserver.php:4394
 msgid "No tracks found to recalculate"
 msgstr ""
 
-#: ../trackserver.php:4563
+#: ../trackserver.php:4550
 msgid "Embedded maps"
 msgstr ""
 
-#: ../trackserver.php:4565
+#: ../trackserver.php:4552
 msgid "embedded map"
 msgstr ""
 
-#: ../trackserver.php:4566
+#: ../trackserver.php:4553
 msgid "Add new embedded map"
 msgstr ""
 
-#: ../trackserver.php:4567
+#: ../trackserver.php:4554
 msgid "Edit embedded map"
 msgstr ""
 
-#: ../trackserver.php:4568
+#: ../trackserver.php:4555
 msgid "Search embedded maps"
 msgstr ""
 
-#: ../trackserver.php:4569
+#: ../trackserver.php:4556
 msgid "No embedded maps found"
 msgstr ""
 
-#: ../class-trackserver-admin.php:54
+#: ../class-trackserver-admin.php:77
 msgid "Embed HTML"
 msgstr ""
 
-#: ../class-trackserver-admin.php:72
+#: ../class-trackserver-admin.php:95
 msgid ""
 "To embed this map in a web page outside WordPress, include the following "
 "HTML in the page: "
 msgstr ""
 
-#: ../class-trackserver-admin.php:76
+#: ../class-trackserver-admin.php:99
 msgid "Please note:"
 msgstr ""
 
-#: ../class-trackserver-admin.php:80
+#: ../class-trackserver-admin.php:103
 msgid ""
 "This map has not been published. Publishing it may cause the permalink URL "
 "to change."
 msgstr ""
 
-#: ../class-trackserver-admin.php:85
+#: ../class-trackserver-admin.php:108
 #, php-format
 msgid ""
 "Make sure your WordPress doesn't forbid framing the map with a too-strict "
 "%1$s header."
 msgstr ""
 
-#: ../class-trackserver-admin.php:87
+#: ../class-trackserver-admin.php:110
 msgid "This is what the last saved version of the embedded map looks like:"
 msgstr ""
 
@@ -674,37 +677,36 @@ msgstr ""
 msgid "Download TrackMe"
 msgstr ""
 
-#: ../class-trackserver-settings.php:265 ../class-trackserver-settings.php:377
+#: ../class-trackserver-settings.php:265 ../class-trackserver-settings.php:365
 msgid "http://en.wikipedia.org/wiki/Server_Name_Indication"
 msgstr ""
 
-#: ../class-trackserver-settings.php:277
+#: ../class-trackserver-settings.php:276
 msgid "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe"
 msgstr ""
 
-#: ../class-trackserver-settings.php:278
+#: ../class-trackserver-settings.php:277
 msgid "Full URL header"
 msgstr ""
 
-#: ../class-trackserver-settings.php:283
-#, php-format
-msgid ""
-"Note about HTTPS: %1$s as of v%2$s does not support %3$s for HTTPS "
-"connections. If your WordPress install is hosted on a HTTPS URL that depends "
-"on SNI, please use HTTP. This is a problem with %1$s that Trackserver cannot "
-"fix."
+#: ../class-trackserver-settings.php:278
+msgid "username"
 msgstr ""
 
-#: ../class-trackserver-settings.php:306
+#: ../class-trackserver-settings.php:279
+msgid "password"
+msgstr ""
+
+#: ../class-trackserver-settings.php:294
 msgid "The Server extension in TrackMe's settings"
 msgstr ""
 
-#: ../class-trackserver-settings.php:307 ../class-trackserver-settings.php:345
-#: ../class-trackserver-settings.php:459
+#: ../class-trackserver-settings.php:295 ../class-trackserver-settings.php:333
+#: ../class-trackserver-settings.php:447
 msgid "WARNING"
 msgstr ""
 
-#: ../class-trackserver-settings.php:310
+#: ../class-trackserver-settings.php:298
 msgid ""
 "the default value in TrackMe is 'php', but this will most likely NOT work, "
 "so better change it to something else. Anything will do, as long as the "
@@ -714,11 +716,11 @@ msgid ""
 "setting in TrackMe to match the value you put here."
 msgstr ""
 
-#: ../class-trackserver-settings.php:326 ../class-trackserver-settings.php:445
+#: ../class-trackserver-settings.php:314 ../class-trackserver-settings.php:433
 msgid "your Trackserver profile"
 msgstr ""
 
-#: ../class-trackserver-settings.php:336
+#: ../class-trackserver-settings.php:324
 #, php-format
 msgid ""
 "Since version 1.9, Trackserver needs a separate password for online tracking "
@@ -728,7 +730,7 @@ msgid ""
 "enter in the Password field in TrackMe's settings!!"
 msgstr ""
 
-#: ../class-trackserver-settings.php:348
+#: ../class-trackserver-settings.php:336
 msgid ""
 "if you just upgraded to version 1.9 or higher and you have been using "
 "Trackserver with TrackMe, you should update the password in TrackMe to match "
@@ -737,19 +739,19 @@ msgid ""
 "sufficiently secure."
 msgstr ""
 
-#: ../class-trackserver-settings.php:362
+#: ../class-trackserver-settings.php:350
 msgid "How to use OruxMaps MapMyTracks"
 msgstr ""
 
-#: ../class-trackserver-settings.php:363
+#: ../class-trackserver-settings.php:351
 msgid "Download OruxMaps"
 msgstr ""
 
-#: ../class-trackserver-settings.php:389
+#: ../class-trackserver-settings.php:377
 msgid "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps"
 msgstr ""
 
-#: ../class-trackserver-settings.php:395
+#: ../class-trackserver-settings.php:383
 #, php-format
 msgid ""
 "Note about HTTPS: older versions of %1$s and/or Android may or may not "
@@ -759,19 +761,19 @@ msgid ""
 "Trackserver cannot fix."
 msgstr ""
 
-#: ../class-trackserver-settings.php:409
+#: ../class-trackserver-settings.php:397
 msgid "How to use OsmAnd"
 msgstr ""
 
-#: ../class-trackserver-settings.php:410
+#: ../class-trackserver-settings.php:398
 msgid "Download OsmAnd"
 msgstr ""
 
-#: ../class-trackserver-settings.php:432
+#: ../class-trackserver-settings.php:420
 msgid "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd"
 msgstr ""
 
-#: ../class-trackserver-settings.php:452
+#: ../class-trackserver-settings.php:440
 #, php-format
 msgid ""
 "Trackserver needs an access key for online tracking with OsmAnd. We do not "
@@ -780,7 +782,7 @@ msgid ""
 "configured in %1$s."
 msgstr ""
 
-#: ../class-trackserver-settings.php:464
+#: ../class-trackserver-settings.php:452
 #, php-format
 msgid ""
 "if you just upgraded to version 1.9 or higher, the OsmAnd access key has "
@@ -790,12 +792,12 @@ msgid ""
 "find the full tracking URL in your Trackserver profile."
 msgstr ""
 
-#: ../class-trackserver-settings.php:477 ../class-trackserver-settings.php:564
-#: ../class-trackserver-settings.php:614
+#: ../class-trackserver-settings.php:465 ../class-trackserver-settings.php:552
+#: ../class-trackserver-settings.php:602
 msgid "http://php.net/manual/en/function.strftime.php"
 msgstr ""
 
-#: ../class-trackserver-settings.php:492
+#: ../class-trackserver-settings.php:480
 #, php-format
 msgid ""
 "Generated track name in %1$s format. OsmAnd online tracking does not support "
@@ -807,43 +809,43 @@ msgid ""
 "and all locations."
 msgstr ""
 
-#: ../class-trackserver-settings.php:501 ../class-trackserver-settings.php:588
-#: ../class-trackserver-settings.php:638
+#: ../class-trackserver-settings.php:489 ../class-trackserver-settings.php:576
+#: ../class-trackserver-settings.php:626
 msgid "year"
 msgstr ""
 
-#: ../class-trackserver-settings.php:502 ../class-trackserver-settings.php:589
-#: ../class-trackserver-settings.php:639
+#: ../class-trackserver-settings.php:490 ../class-trackserver-settings.php:577
+#: ../class-trackserver-settings.php:627
 msgid "month"
 msgstr ""
 
-#: ../class-trackserver-settings.php:503 ../class-trackserver-settings.php:590
-#: ../class-trackserver-settings.php:640
+#: ../class-trackserver-settings.php:491 ../class-trackserver-settings.php:578
+#: ../class-trackserver-settings.php:628
 msgid "day"
 msgstr ""
 
-#: ../class-trackserver-settings.php:504 ../class-trackserver-settings.php:591
-#: ../class-trackserver-settings.php:641
+#: ../class-trackserver-settings.php:492 ../class-trackserver-settings.php:579
+#: ../class-trackserver-settings.php:629
 msgid "hour"
 msgstr ""
 
-#: ../class-trackserver-settings.php:512
+#: ../class-trackserver-settings.php:500
 msgid "Download OwnTracks"
 msgstr ""
 
-#: ../class-trackserver-settings.php:526
+#: ../class-trackserver-settings.php:514
 msgid "How to use AutoShare"
 msgstr ""
 
-#: ../class-trackserver-settings.php:527
+#: ../class-trackserver-settings.php:515
 msgid "Download AutoShare"
 msgstr ""
 
-#: ../class-trackserver-settings.php:558
+#: ../class-trackserver-settings.php:546
 msgid "The URL slug for SendLocation, used in SendLocation's settings"
 msgstr ""
 
-#: ../class-trackserver-settings.php:579
+#: ../class-trackserver-settings.php:567
 #, php-format
 msgid ""
 "Generated track name in %1$s format. SendLocation online tracking does not "
@@ -855,15 +857,15 @@ msgid ""
 "and all locations."
 msgstr ""
 
-#: ../class-trackserver-settings.php:607
+#: ../class-trackserver-settings.php:595
 msgid "The URL slug for OwnTracks, used in OwnTracks' settings"
 msgstr ""
 
-#: ../class-trackserver-settings.php:608
+#: ../class-trackserver-settings.php:596
 msgid "Preferences -> Connection -> Host"
 msgstr ""
 
-#: ../class-trackserver-settings.php:629
+#: ../class-trackserver-settings.php:617
 #, php-format
 msgid ""
 "Generated track name in %1$s format. OwnTracks online tracking does not "
@@ -875,48 +877,48 @@ msgid ""
 "and all locations."
 msgstr ""
 
-#: ../class-trackserver-settings.php:657
+#: ../class-trackserver-settings.php:645
 msgid "The URL slug for upload via HTTP POST"
 msgstr ""
 
-#: ../class-trackserver-settings.php:676
+#: ../class-trackserver-settings.php:664
 msgid "Please check with your map tile provider what attribution is required."
 msgstr ""
 
-#: ../class-trackserver-settings.php:691
+#: ../class-trackserver-settings.php:679
 msgid "The URL slug for embedded maps"
 msgstr ""
 
-#: ../class-trackserver-settings.php:694
+#: ../class-trackserver-settings.php:682
 msgid ""
 "Warning: if you change this, links to existing embedded maps will be "
 "invalidated."
 msgstr ""
 
-#: ../class-trackserver-settings.php:710
+#: ../class-trackserver-settings.php:698
 msgid ""
 "The URL slug for the 'gettrack' API, used by Trackserver's shortcode [tsmap]"
 msgstr ""
 
-#: ../class-trackserver-settings.php:711
+#: ../class-trackserver-settings.php:699
 msgid "There is generally no need to change this."
 msgstr ""
 
-#: ../class-trackserver-settings.php:717
+#: ../class-trackserver-settings.php:705
 msgid "https://wordpress.org/plugins/trackserver/faq/"
 msgstr ""
 
-#: ../class-trackserver-settings.php:718
+#: ../class-trackserver-settings.php:706
 msgid "FAQ about security"
 msgstr ""
 
-#: ../class-trackserver-settings.php:728
+#: ../class-trackserver-settings.php:716
 msgid ""
 "Check this to enable the proxy for external tracks, which can be used by "
 "prefixing their URL with 'proxy:'"
 msgstr ""
 
-#: ../class-trackserver-settings.php:733
+#: ../class-trackserver-settings.php:721
 #, php-format
 msgid ""
 "This will enable your authors to invoke HTTP requests originating from your "
@@ -924,13 +926,13 @@ msgid ""
 "to use harmful URLs. Please see the %1$s for more information."
 msgstr ""
 
-#: ../class-trackserver-settings.php:748
+#: ../class-trackserver-settings.php:736
 msgid ""
 "Check this to enable the mode where Trackserver gets all track data in a "
 "single HTTP request when displaying a map."
 msgstr ""
 
-#: ../class-trackserver-settings.php:752
+#: ../class-trackserver-settings.php:740
 msgid ""
 "Disabling this mode will make Trackserver use a separate HTTP request for "
 "each single track. This may have a positive or a negative effect on the "
