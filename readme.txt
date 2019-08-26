@@ -560,4 +560,4 @@ Release date: 2 January 2015
 
 == Upgrade Notice ==
 
-1.9 - This release resets the OsmAnd access key and changes the TrackMe authentication! Please read the changelog and the FAQ, and review your new Trackserver profile for user-specific settings.
+* 4.3 - The TrackMe 'URL header' setting has changed, to support Cloud Sharing. Please read the FAQ.
