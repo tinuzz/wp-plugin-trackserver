@@ -2067,6 +2067,8 @@ EOF;
 				// Get track name from strftime format string
 				$trackname = strftime( $this->options['osmand_trackname_format'], $ts );
 
+				$source = ( isset( $_GET['source'] ) ? urldecode( $_GET['source'] ) : 'OsmAnd' );
+
 				if ( $trackname != '' ) {
 					$track_id = $this->get_track_by_name( $user_id, $trackname );
 					if ( $track_id == null ) {
@@ -2074,7 +2076,7 @@ EOF;
 							'user_id' => $user_id,
 							'name'    => $trackname,
 							'created' => $occurred,
-							'source'  => 'OsmAnd',
+							'source'  => $source,
 						);
 						$format = array( '%d', '%s', '%s', '%s' );
 
