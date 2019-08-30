@@ -2038,8 +2038,13 @@ EOF;
 		function handle_osmand_request() {
 			global $wpdb;
 
-			// If this function returns, we're OK
-			$user_id = $this->validate_user_meta_key();
+			// Try HTTP Basic auth first. This can return a user ID, or NULL.
+			$user_id = $this->try_http_basicauth();
+
+			if ( is_null( $user_id ) ) {
+				// If this function returns, we're OK
+				$user_id = $this->validate_user_meta_key();
+			}
 
 			// Timestamp is sent in milliseconds, and in UTC. Use substr() to truncate the timestamp,
 			// because dividing by 1000 causes an integer overflow on 32-bit systems.
@@ -2560,6 +2565,26 @@ EOF;
 				return false;
 			}
 			$this->http_terminate( '403', 'Username or password incorrect' );
+		}
+
+		/**
+		 * Validate HTTP basic authentication, only if a username and password were sent in the request.
+		 *
+		 * If no username is found, return NULL.
+		 *
+		 * This function is meant to be used, where HTTP basic auth is optional,
+		 * and authentication will be handled by another mechanism if it is not
+		 * used. The actual validation is delegated to validate_http_basicauth().
+		 *
+		 * By default, invalid credentials will terminate the request.
+		 *
+		 * @since 4.3
+		 */
+		function try_http_basicauth( $return = false, $what = 'id' ) {
+			if ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
+				return $this->validate_http_basicauth( $return, $what );
+			}
+			return NULL;
 		}
 
 		/**
