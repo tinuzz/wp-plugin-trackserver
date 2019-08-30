@@ -7,6 +7,11 @@ General:
 - Track statistics, like distance, average speed, etc.
 - implement shortcode to display TrackMe/OsmAnd password (feature request through WP forum)
 - implement generic HTTP GET interface and/or CelltracGTS/Free support
+- uLogger support
+- implement one universal URL endpoint for Trackserver, that handles all the protocols
+- implement 'access keys' to replace individual app passwords. They should also work for Basic auth, in addition to WP password.
+- support GET/POST parameters for source, comment, track name prefix
+- comment field for location entries, to be used for extra data that's available in some apps, like battery level, etc.
 
 Frontend:
 - query tracks by string match with wildcards, instead of just by id
@@ -14,20 +19,21 @@ Frontend:
 - avatar support for live tracks (like in OwnTracks)
 - live tracking tooltip format template
 - track decorations, for example with the [PolylineDecorator](https://github.com/bbecquet/Leaflet.PolylineDecorator) plugin
-- infobar tags for total elapsed time, average speed
+- infobar tags for total elapsed time, average speed, number of points
 
 Admin backend:
 - add user profile setting for default map center (replace hardcoded coordinates)
 - file tracks in folders/collections
 - add waypoints
-- add HOWTO screen for OwnTracks
-- add HOWTO screen for LocusMaps
+- add HOWTO screens for OwnTracks, LocusMaps and other supported apps
 - add a Users page for Trackserver user profile management by WP admins
 - add a button to create a 'Trackserver_Subscriber' role, which is Subscriber + 'use_trackserver'
 - bulk action to remove / reapply geofences
 - reverse geofence support
-- tracks list table pagination
 - map profiles, [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers) plugin ?
+- Move OsmAnd / SendLocation / OwnTracks trackname format from Options to Profile
+- For OwnTracks / TrackMe cloud sharing, add a profile settings for share last location duration (TrackMe limit is 1h)
+- delete or chown location data when removing users from WordPress
 
 Javascript:
 - better live tracking tooltip handling
