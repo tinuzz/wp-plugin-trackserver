@@ -315,11 +315,12 @@ var Trackserver = (function () {
 
                     // For live tracks, set the center of the map to the last
                     // point of the track we are supposed to follow according
-                    // to the 'follow' metadata paramter. For ordinary tracks,
+                    // to the 'follow' metadata parameter. For ordinary tracks,
                     // wait for all tracks to be drawn and then set the
                     // viewport of the map to contain all of them.
 
                     if (mymapdata.is_live) {
+
                         if (track_id == follow_id) {
 
                             // Center the map on the last point / current position
