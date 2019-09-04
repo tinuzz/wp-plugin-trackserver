@@ -65,7 +65,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @access private
 		 * @var int $db_version
 		 */
-		var $db_version = 17;
+		var $db_version = 24;
 
 		/**
 		 * Default values for options. See class constructor for more.
@@ -610,6 +610,19 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				if ( ! in_array( 'hidden', $colnames_locations ) ) {
 					$upgrade_sql[17] = 'ALTER TABLE ' . $this->tbl_locations . " ADD `hidden` TINYINT(1) NOT NULL DEFAULT '0' AFTER `comment`";
 				}
+
+				// Change the default value for timestamps to be compatible with MySQL 5.7+
+				$upgrade_sql[18] = 'ALTER TABLE ' . $this->tbl_locations . " ALTER occurred SET DEFAULT '1971-01-01 00:00:00', ALTER created SET DEFAULT '1971-01-01 00:00:00'";
+				$upgrade_sql[19] = 'ALTER TABLE ' . $this->tbl_tracks . " ALTER created SET DEFAULT '1971-01-01 00:00:00'";
+
+				// Change the charset of the text columns in the tracks table, to be able to hold unicode content.
+				$upgrade_sql[20] = 'ALTER TABLE ' . $this->tbl_tracks . ' CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
+				$upgrade_sql[21] = 'ALTER TABLE ' . $this->tbl_tracks . ' CHANGE `name` `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL';
+				$upgrade_sql[22] = 'ALTER TABLE ' . $this->tbl_tracks . ' CHANGE `source` `source` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL';
+				$upgrade_sql[23] = 'ALTER TABLE ' . $this->tbl_tracks . ' CHANGE `comment` `comment` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL';
+
+				// Add multi-column index on the locations table.
+				$upgrade_sql[24] = 'ALTER TABLE ' . $this->tbl_locations . ' ADD INDEX `trip_id_occurred` (`trip_id`, `occurred`)';
 
 				for ( $i = $installed_version + 1; $i <= $this->db_version; $i++ ) {
 					if ( array_key_exists( $i, $upgrade_sql ) ) {
