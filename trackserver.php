@@ -462,7 +462,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					KEY `trip_id` (`trip_id`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-				$wpdb->query( $sql ); // WPCS: unprepared SQL OK
+				$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 				$sql = 'CREATE TABLE IF NOT EXISTS ' . $this->tbl_tracks . " (
 					`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -477,7 +477,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					KEY `user_id` (`user_id`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-				$wpdb->query( $sql ); // WPCS: unprepared SQL OK
+				$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 				$this->update_option( 'db_version', $this->db_version );
 			}
@@ -577,12 +577,12 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 				// Get a list of column names for the tracks table
 				$sql = 'SELECT * FROM ' . $this->tbl_tracks . ' LIMIT 0,1';
-				$wpdb->query( $sql ); // WPCS: unprepared SQL OK
+				$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				$colnames = $wpdb->get_col_info( 'name' );
 
 				// Get a list of column names for the locations table
 				$sql = 'SELECT * FROM ' . $this->tbl_tracks . ' LIMIT 0,1';
-				$wpdb->query( $sql ); // WPCS: unprepared SQL OK
+				$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				$colnames_locations = $wpdb->get_col_info( 'name' );
 
 				// Upgrade table if necessary. Add upgrade SQL statements here, and
@@ -613,7 +613,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 				for ( $i = $installed_version + 1; $i <= $this->db_version; $i++ ) {
 					if ( array_key_exists( $i, $upgrade_sql ) ) {
-						$wpdb->query( $upgrade_sql[ $i ] ); // WPCS: unprepared SQL OK
+						$wpdb->query( $upgrade_sql[ $i ] ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					}
 				}
 				$this->update_option( 'db_version', $this->db_version );
@@ -858,9 +858,9 @@ EOF;
 				$sql = 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE id IN ' . $sql_in;
 			} else {
 				// Otherwise, filter the list of posts against the author ID
-				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE id IN ' . $sql_in . ' AND user_id=%d;', $author_id ); // WPCS: unprepared SQL OK
+				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE id IN ' . $sql_in . ' AND user_id=%d;', $author_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			}
-			$validated_track_ids = $wpdb->get_col( $sql ); // WPCS: unprepared SQL OK
+			$validated_track_ids = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 			// Restore track order as given in the shortcode
 			$trk0 = array();
@@ -919,7 +919,7 @@ EOF;
 			if ( count( $user_ids ) > 0 ) {
 				$sql_in             = "('" . implode( "','", $user_ids ) . "')";
 				$sql                = 'SELECT DISTINCT(user_id) FROM ' . $this->tbl_tracks . ' WHERE user_id IN ' . $sql_in;
-				$validated_user_ids = $wpdb->get_col( $sql ); // WPCS: unprepared SQL OK
+				$validated_user_ids = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 				// Restore track order as given in the shortcode
 				$usr0 = array();
@@ -1225,12 +1225,12 @@ EOF;
 				if ( count( $all_track_ids ) ) {
 					$sql_in = "('" . implode( "','", $all_track_ids ) . "')";
 					$sql    = 'SELECT AVG(latitude) FROM ' . $this->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
-					$result = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
+					$result = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					if ( $result ) {
 						$default_lat = $result;
 					}
 					$sql    = 'SELECT AVG(longitude) FROM ' . $this->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
-					$result = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
+					$result = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					if ( $result ) {
 						$default_lon = $result;
 					}
@@ -1934,8 +1934,8 @@ EOF;
 			if ( $trip_name != '' ) {
 
 				// Try to find the trip
-				$sql     = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trip_name ); // WPCS: unprepared SQL OK
-				$trip_id = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
+				$sql     = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trip_name ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				$trip_id = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 				if ( $trip_id == null ) {
 					$this->trackme_result( 7 );   // Trip not found
@@ -2023,8 +2023,8 @@ EOF;
 		 */
 		function get_track_by_name( $user_id, $trackname ) {
 			global $wpdb;
-			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trackname ); // WPCS: unprepared SQL OK
-			return $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
+			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trackname ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			return $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		}
 
 		/**
@@ -2642,11 +2642,11 @@ EOF;
 		function handle_mapmytracks_update_activity( $user_id ) {
 			global $wpdb;
 
-			$sql     = $wpdb->prepare( 'SELECT id, user_id FROM ' . $this->tbl_tracks . ' WHERE id=%d', $_POST['activity_id'] ); // WPCS: unprepared SQL OK
-			$trip_id = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
+			$sql     = $wpdb->prepare( 'SELECT id, user_id FROM ' . $this->tbl_tracks . ' WHERE id=%d', $_POST['activity_id'] ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$trip_id = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			if ( $trip_id ) {
 				// Get the user ID for the trip from the cached result of previous query
-				$trip_owner = $wpdb->get_var( null, 1 ); // WPCS: unprepared SQL OK
+				$trip_owner = $wpdb->get_var( null, 1 ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 				// Check if the current login is actually the owner of the trip
 				if ( $trip_owner == $user_id ) {
@@ -2700,8 +2700,8 @@ EOF;
 						$track_ids = $result['track_ids'];
 						if ( count( $track_ids ) > 0 ) {
 							$in  = '(' . implode( ',', $track_ids ) . ')';
-							$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $user_id ); // WPCS: unprepared SQL OK
-							$wpdb->query( $sql ); // WPCS: unprepared SQL OK
+							$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+							$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 						}
 					}
 
@@ -2807,7 +2807,7 @@ EOF;
 				// Let's see how many rows we can put in a single MySQL INSERT query.
 				// A row is roughly 86 bytes, so lets's use 100 to be on the safe side.
 				$sql       = "SHOW VARIABLES LIKE 'max_allowed_packet'";  // returns 2 columns
-				$max_bytes = intval( $wpdb->get_var( $sql, 1 ) ); // we need the 2nd // WPCS: unprepared SQL OK
+				$max_bytes = intval( $wpdb->get_var( $sql, 1 ) ); // we need the 2nd // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 				if ( $max_bytes ) {
 					$max_rows = (int) ( $max_bytes / 100 );
@@ -2821,7 +2821,7 @@ EOF;
 				foreach ( $sqldata as $chunk ) {
 					$sql  = 'INSERT INTO ' . $this->tbl_locations . ' (trip_id, latitude, longitude, altitude, created, occurred, hidden) VALUES ';
 					$sql .= implode( ',', $chunk );
-					if ( $wpdb->query( $sql ) === false ) { // WPCS: unprepared SQL OK
+					if ( $wpdb->query( $sql ) === false ) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 						return false;
 					}
 				}
@@ -3033,8 +3033,8 @@ EOF;
 		 */
 		function get_track_id_by_name( $name, $user_id ) {
 			global $wpdb;
-			$sql     = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE name=%s AND user_id=%d LIMIT 0,1', $name, $user_id ); // WPCS: unprepared SQL OK
-			$trip_id = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
+			$sql     = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE name=%s AND user_id=%d LIMIT 0,1', $name, $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$trip_id = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			return ( $trip_id ? $trip_id : false );
 		}
 
@@ -3150,7 +3150,7 @@ EOF;
 				$sql .= " AND uu.endts > '$ts'";
 			}
 
-			$res       = $wpdb->get_results( $sql, OBJECT_K ); // WPCS: unprepared SQL OK
+			$res       = $wpdb->get_results( $sql, OBJECT_K ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$track_ids = array();
 			foreach ( $user_ids as $uid ) {
 				if ( array_key_exists( $uid, $res ) ) {
@@ -4107,7 +4107,7 @@ EOF;
 							$delete_ids[] = $loc_ids[ $loc_index ]->id;
 						} elseif ( $mod['action'] == 'move' ) {
 							$qfmt  = 'UPDATE ' . $this->tbl_locations . ' SET latitude=%s, longitude=%s WHERE id=%d';
-							$sql[] = $wpdb->prepare( $qfmt, $mod['lat'], $mod['lng'], $loc_ids[ $loc_index ]->id ); // WPCS: unprepared SQL OK
+							$sql[] = $wpdb->prepare( $qfmt, $mod['lat'], $mod['lng'], $loc_ids[ $loc_index ]->id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 						}
 					}
 
@@ -4118,7 +4118,7 @@ EOF;
 
 					// If a query fails, give up immediately
 					foreach ( $sql as $query ) {
-						if ( $wpdb->query( $query ) === false ) { // WPCS: unprepared SQL OK
+						if ( $wpdb->query( $query ) === false ) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 							break;
 						}
 						$i++;
@@ -4260,12 +4260,12 @@ EOF;
 			if ( count( $track_ids ) > 0 ) {
 
 				$in  = '(' . implode( ',', $track_ids ) . ')';
-				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id ); // WPCS: unprepared SQL OK
+				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 				if ( current_user_can( 'trackserver_admin' ) ) {
 					$sql = 'SELECT id FROM ' . $this->tbl_tracks . " WHERE id IN $in";
 				}
-				return $wpdb->get_col( $sql ); // WPCS: unprepared SQL OK
+				return $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			}
 			return array();
 		}
@@ -4291,9 +4291,9 @@ EOF;
 			}
 			$in  = '(' . implode( ',', $track_ids ) . ')';
 			$sql = 'DELETE FROM ' . $this->tbl_locations . " WHERE trip_id IN $in";
-			$nl  = $wpdb->query( $sql ); // WPCS: unprepared SQL OK
+			$nl  = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$sql = 'DELETE FROM ' . $this->tbl_tracks . " WHERE id IN $in";
-			$nt  = $wpdb->query( $sql ); // WPCS: unprepared SQL OK
+			$nt  = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			return array(
 				'locations' => $nl,
 				'tracks'    => $nt,
@@ -4372,13 +4372,13 @@ EOF;
 					// How useful is it to escape integers?
 					array_walk( $rest, array( $wpdb, 'escape_by_ref' ) );
 					$in   = '(' . implode( ',', $rest ) . ')';
-					$sql  = $wpdb->prepare( 'UPDATE ' . $this->tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id ); // WPCS: unprepared SQL OK
-					$nl   = $wpdb->query( $sql ); // WPCS: unprepared SQL OK
+					$sql  = $wpdb->prepare( 'UPDATE ' . $this->tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+					$nl   = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					$sql  = 'DELETE FROM ' . $this->tbl_tracks . " WHERE id IN $in";
-					$nt   = $wpdb->query( $sql ); // WPCS: unprepared SQL OK
+					$nt   = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					$name = stripslashes( $_REQUEST['merged_name'] );
-					$sql  = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . ' SET name=%s WHERE id=%d', $name, $id ); // WPCS: unprepared SQL OK
-					$wpdb->query( $sql ); // WPCS: unprepared SQL OK
+					$sql  = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . ' SET name=%s WHERE id=%d', $name, $id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+					$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 					// TODO: consider checking for duplicate points that we created ourselves when splitting a track,
 					// (see wpdb_split_track()) and remove them. We'd need 2 or 3 queries and some ugly code for that.
@@ -4526,8 +4526,8 @@ EOF;
 		function calculate_distance_speed( $track_id ) {
 			global $wpdb;
 
-			$sql = $wpdb->prepare( 'SELECT id, latitude, longitude, speed, occurred FROM ' . $this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $track_id ); // WPCS: unprepared SQL OK
-			$res = $wpdb->get_results( $sql, ARRAY_A ); // WPCS: unprepared SQL OK
+			$sql = $wpdb->prepare( 'SELECT id, latitude, longitude, speed, occurred FROM ' . $this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $track_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$res = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 			$oldlat   = false;
 			$distance = 0;

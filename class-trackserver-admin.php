@@ -98,7 +98,7 @@ EOF;
 		echo '</div><br>';
 		esc_html_e( 'Please note:', 'trackserver' );
 		echo '<br><ul style="list-style: square; margin-left: 20px;">';
-		if ( in_array( $status, array( 'draft', 'auto-draft', 'future' ) ) ) {
+		if ( in_array( $status, array( 'draft', 'auto-draft', 'future' ), true ) ) {
 			echo '<li>';
 			esc_html_e( 'This map has not been published. Publishing it may cause the permalink URL to change.', 'trackserver' );
 			echo '</li>';

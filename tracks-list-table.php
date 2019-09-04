@@ -20,16 +20,16 @@ class Tracks_List_Table extends WP_List_Table {
 	}
 
 	function column_default( $item, $column_name ) {
-		if ( $column_name == 'edit' ) {
+		if ( $column_name === 'edit' ) {
 			return ' <a href="#TB_inline?width=&inlineId=ts-edit-modal" title="' . esc_attr__( 'Edit track properties', 'trackserver' ) .
 				'" class="thickbox" data-id="' . $item['id'] . '" data-action="edit">' . esc_html__( 'Edit', 'trackserver' ) . '</a>';
-		} elseif ( $column_name == 'view' ) {
+		} elseif ( $column_name === 'view' ) {
 			// Unfortunately, the double HTML escaping is necessary to prevent ThickBox from rendering it as HTML.
 			return ' <a href="#TB_inline?width=&inlineId=ts-view-modal" name="' . htmlspecialchars( htmlspecialchars( $item['name'] ) ) .
 				'" class="thickbox" data-id="' . $item['id'] . '" data-action="view">' . esc_html__( 'View', 'trackserver' ) . '</a>';
-		} elseif ( $column_name == 'nonce' ) {
+		} elseif ( $column_name === 'nonce' ) {
 			return wp_create_nonce( 'manage_track_' . $item['id'] );
-		} elseif ( $column_name == 'user_id' ) {
+		} elseif ( $column_name === 'user_id' ) {
 			if ( ! isset( $this->usercache[ $item['user_id'] ] ) ) {
 				$user          = get_userdata( $item['user_id'] );
 				$u             = new stdClass();
@@ -109,7 +109,7 @@ class Tracks_List_Table extends WP_List_Table {
 			$this->options['tbl_tracks'] . ' t LEFT JOIN ' .
 			$wpdb->users . ' u  ON t.user_id = u.ID ORDER BY user_login';
 
-		$this->usercache = $wpdb->get_results( $sql, OBJECT_K ); // WPCS: unprepared SQL OK
+		$this->usercache = $wpdb->get_results( $sql, OBJECT_K ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		$view                = $this->options['view'];
 		$author_select_name  = "author-$which";
@@ -126,7 +126,7 @@ class Tracks_List_Table extends WP_List_Table {
 			echo '<option value="0">All users</option>';
 			foreach ( $this->usercache as $u ) {
 				echo '<option class="level-0" value="' . $u->user_id . '"';
-				if ( $u->user_id == $view ) {
+				if ( (int) $u->user_id === (int) $view ) {
 					echo ' selected';
 				}
 				echo '>' . htmlspecialchars( $u->user_login ) . '</option>';
@@ -140,7 +140,7 @@ class Tracks_List_Table extends WP_List_Table {
 		echo '<select name="' . $perpage_select_name . '" id="' . $perpage_select_id . '" class="postform">';
 		foreach ( $perpage_values as $npp ) {
 			echo '<option value="' . $npp . '"';
-			if ( $npp == $this->options['per_page'] ) {
+			if ( $npp === $this->options['per_page'] ) {
 				echo ' selected';
 			}
 			echo '>' . $npp . '</option>';
@@ -160,12 +160,12 @@ class Tracks_List_Table extends WP_List_Table {
 		// This should be prettier.
 		$orderby = 'tstart';
 		if ( ! empty( $_REQUEST['orderby'] ) &&
-			in_array( $_REQUEST['orderby'], array( 'id', 'user_id', 'name', 'tstart', 'tend', 'source' ) ) ) {
+			in_array( $_REQUEST['orderby'], array( 'id', 'user_id', 'name', 'tstart', 'tend', 'source' ), true ) ) {
 				$orderby = $_REQUEST['orderby'];
 		}
 		$order = 'DESC';
 		if ( ! empty( $_REQUEST['order'] ) &&
-			in_array( $_REQUEST['order'], array( 'asc', 'desc' ) ) ) {
+			in_array( $_REQUEST['order'], array( 'asc', 'desc' ), true ) ) {
 				$order = $_REQUEST['order'];
 		}
 
@@ -175,7 +175,7 @@ class Tracks_List_Table extends WP_List_Table {
 
 		$where = "user_id='" . get_current_user_id() . "'";
 		if ( current_user_can( 'trackserver_admin' ) ) {
-			if ( 0 == (int) $this->options['view'] ) {
+			if ( 0 === (int) $this->options['view'] ) {
 				$where = 1;
 			} else {
 				$where = "user_id='" . $this->options['view'] . "'";
@@ -189,7 +189,7 @@ class Tracks_List_Table extends WP_List_Table {
 			$this->options['tbl_tracks'] . ' t LEFT JOIN ' . $this->options['tbl_locations'] .
 			" l ON l.trip_id = t.id WHERE $where GROUP BY t.id ORDER BY $orderby $order LIMIT $offset,$limit";
 
-		$data = $wpdb->get_results( $sql, ARRAY_A ); // WPCS: unprepared SQL OK
+		$data = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		/*
 		 * REQUIRED for pagination. Let's check how many items are in our data array.
@@ -198,7 +198,7 @@ class Tracks_List_Table extends WP_List_Table {
 		 * in your own package classes.
 		 */
 		$sql         = 'SELECT count(id) FROM ' . $this->options['tbl_tracks'] . " WHERE $where";
-		$total_items = $wpdb->get_var( $sql ); // WPCS: unprepared SQL OK
+		$total_items = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		/*
 		 * REQUIRED. Now we can add our *sorted* data to the items property, where
