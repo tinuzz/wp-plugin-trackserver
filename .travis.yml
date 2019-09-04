@@ -34,6 +34,7 @@ before_script:
     fi
   - |
     if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
+      composer global require "squizlabs/php_codesniffer=*"
       composer global require dealerdirect/phpcodesniffer-composer-installer
       composer global require wp-coding-standards/wpcs
     fi
