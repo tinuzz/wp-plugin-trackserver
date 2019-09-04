@@ -37,14 +37,10 @@ before_script:
       composer global require "squizlabs/php_codesniffer=*"
       composer global require dealerdirect/phpcodesniffer-composer-installer
       composer global require wp-coding-standards/wpcs
-      echo -n "PWD: "
-      pwd
     fi
 
 script:
   - |
     if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
-      echo "PATH: $PATH"
-      ls -l $HOME/.config/composer/vendor/bin/
       phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
     fi
