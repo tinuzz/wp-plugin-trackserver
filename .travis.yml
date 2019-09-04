@@ -44,5 +44,7 @@ before_script:
 script:
   - |
     if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
-      phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
+      echo "PATH: $PATH"
+      ls -l $HOME/.composer/vendor/bin/
+      $HOME/.composer/vendor/bin/phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
     fi
