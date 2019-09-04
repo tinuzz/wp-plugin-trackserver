@@ -2700,7 +2700,7 @@ EOF;
 						$track_ids = $result['track_ids'];
 						if ( count( $track_ids ) > 0 ) {
 							$in  = '(' . implode( ',', $track_ids ) . ')';
-							$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+							$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 							$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 						}
 					}
@@ -2806,8 +2806,8 @@ EOF;
 
 				// Let's see how many rows we can put in a single MySQL INSERT query.
 				// A row is roughly 86 bytes, so lets's use 100 to be on the safe side.
-				$sql       = "SHOW VARIABLES LIKE 'max_allowed_packet'";  // returns 2 columns
-				$max_bytes = intval( $wpdb->get_var( $sql, 1 ) ); // we need the 2nd // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				$sql       = "SHOW VARIABLES LIKE 'max_allowed_packet'";  // returns 2 columns, we need the second
+				$max_bytes = intval( $wpdb->get_var( $sql, 1 ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 				if ( $max_bytes ) {
 					$max_rows = (int) ( $max_bytes / 100 );
@@ -4260,7 +4260,7 @@ EOF;
 			if ( count( $track_ids ) > 0 ) {
 
 				$in  = '(' . implode( ',', $track_ids ) . ')';
-				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . " WHERE user_id=%d AND id IN $in", $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 				if ( current_user_can( 'trackserver_admin' ) ) {
 					$sql = 'SELECT id FROM ' . $this->tbl_tracks . " WHERE id IN $in";
@@ -4372,7 +4372,7 @@ EOF;
 					// How useful is it to escape integers?
 					array_walk( $rest, array( $wpdb, 'escape_by_ref' ) );
 					$in   = '(' . implode( ',', $rest ) . ')';
-					$sql  = $wpdb->prepare( 'UPDATE ' . $this->tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+					$sql  = $wpdb->prepare( 'UPDATE ' . $this->tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 					$nl   = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					$sql  = 'DELETE FROM ' . $this->tbl_tracks . " WHERE id IN $in";
 					$nt   = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
