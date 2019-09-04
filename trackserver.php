@@ -2586,7 +2586,7 @@ EOF;
 			if ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
 				return $this->validate_http_basicauth( $return, $what );
 			}
-			return NULL;
+			return null;
 		}
 
 		/**
