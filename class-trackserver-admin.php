@@ -94,7 +94,7 @@ EOF;
 
 		esc_html_e( 'To embed this map in a web page outside WordPress, include the following HTML in the page: ', 'trackserver' );
 		echo '<br><br><div style="font-family: monospace; background-color: #dddddd">';
-	 	esc_html_e( $code );
+		echo esc_html( $code );
 		echo '</div><br>';
 		esc_html_e( 'Please note:', 'trackserver' );
 		echo '<br><ul style="list-style: square; margin-left: 20px;">';
