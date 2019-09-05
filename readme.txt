@@ -272,18 +272,29 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 Added:
 * Custom post type 'tsmap' for creating embedded maps.
 * Infobar template placeholder for track name: {trackname}.
-* Experimental support for TrackMe Cloud Sharing.
-* Support for PhoneTrack-Android, via the OsmAnd protocol.
+* Experimental support for TrackMe Cloud Sharing. To use this, you have to change the 'URL header' setting in TrackMe. Please see the Trackserver FAQ for details.
+* Support for PhoneTrack-Android via the OsmAnd protocol.
+* Support for optional HTTP Basic Authentication on the OsmAnd protocol.
+* Support for setting the 'Source' field of a track via a URL parameter in the OsmAnd protocol.
+* Support for unicode characters in text fields through charset/collation changes in DB tables.
 
 Changed:
 * Trackserver now only supports WP 4.7 or higher.
 * Re-enstate GeoJSON support for the 'gettrack' method (not for 'gettrack_query')
 * Updated Leaflet, first to version 1.4.0 and then to 1.5.1.
+* Start restructuring the plugin code into multiple classes.
+* The 'Share with friend / Follow friends' feature that was tied to OwnTracks now also applies to Trackme Cloud Sharing.
 
 Fixed:
 * Make the 'Show x items' selector in the 'Manage tracks' page actually do something.
 * Escape HTML entities in the infobar.
 * Escape HTML in track names when viewing maps in the WordPress backend.
+* Translation of strings related to Embedded maps by loading the translation domain earlier.
+* An issue where we tried to translate a piece of HTML code.
+* Coding style updates, update WPCS to v2.1.1.
+* Change the default value of timestamp fields in the database, for compatibility with MySQL 5.7+ / NO_ZERO_IN_DATE.
+* Add a multicolumn index on the locations table, for better performance of certain database queries.
+* Missing metadata on all but the last live track in a map. Thanks to @pisoni for reporting it and suggesting a fix. The fix does incur a performance penalty though.
 
 = v4.2.3 =
 Release date: 21 August 2019
