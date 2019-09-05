@@ -3383,8 +3383,8 @@ EOF;
 					);
 				}
 				$tracks[ $id ]['points'][] = array( $row['latitude'], $row['longitude'] );
+				$tracks[ $id ]['metadata'] = $this->get_metadata( $row );   // Overwrite the value on every row, so the last row remains
 			}
-			$tracks[ $id ]['metadata'] = $this->get_metadata( $row );
 
 			// Convert points to Polyline
 			foreach ( $tracks as $id => $values ) {
