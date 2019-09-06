@@ -270,6 +270,8 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 = v4.3 =
 
+This release requires WordPress v4.7 or higher.
+
 Added:
 * Custom post type 'tsmap' for creating embedded maps.
 * Infobar template placeholder for track name: {trackname}.
