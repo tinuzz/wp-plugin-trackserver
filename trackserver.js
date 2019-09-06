@@ -178,6 +178,7 @@ var Trackserver = (function () {
                     var do_markers  = mymapdata.tracks[track_index].markers;
                     var do_points   = mymapdata.tracks[track_index].points;
                     var do_follow   = mymapdata.tracks[track_index].follow;
+                    var markersize  = mymapdata.tracks[track_index].markersize;
 
                     // ...and then delete the old one, to prevent flickering
                     if (old_track) {
@@ -258,11 +259,11 @@ var Trackserver = (function () {
                             end_marker_color = '#c30002';         // red
 
                             if (do_markers === true || do_markers == 'start') {
-                                start_marker = new _this.Mapicon(start_latlng, { fillColor: start_marker_color }).addTo(featuregroup);
+                                start_marker = new _this.Mapicon(start_latlng, { fillColor: start_marker_color, radius: markersize }).addTo(featuregroup);
                                 markers.push(start_marker);
                             }
                             if (do_markers === true || do_markers == 'end') {
-                                end_marker = new _this.Mapicon(end_latlng, { fillColor: end_marker_color, track_id: track_id }).addTo(featuregroup).bringToBack();
+                                end_marker = new _this.Mapicon(end_latlng, { fillColor: end_marker_color, radius: markersize, track_id: track_id }).addTo(featuregroup).bringToBack();
                                 if (mymapdata.is_live) {
                                     end_marker.on('click', function(e) {
                                         _this.set_mydata(div_id, 'all', 'follow_id', this.options.track_id);

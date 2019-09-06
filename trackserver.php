@@ -1072,6 +1072,30 @@ EOF;
 		}
 
 		/**
+		 * Return the value of 'markersize' for a track based on shortcode attribute
+		 *
+		 * @since 4.3
+		 */
+		function get_markersize( $atts = false, $shift = true ) {
+
+			// Initialize if argument is given
+			if ( is_array( $atts ) ) {
+				$this->markersize = ( $atts['markersize'] ? explode( ',', $atts['markersize'] ) : false );
+			}
+
+			$p = false;
+			if ( is_array( $this->markersize ) ) {
+				$p = ( $shift ? array_shift( $this->markersize ) : $this->markersize[0] );
+				if ( empty( $this->markersize ) ) {
+					$this->markersize[] = $p;
+				}
+			}
+
+			$markersize = ( (int) $p > 0 ? $p : 5 );    //default: 5
+			return $markersize;
+		}
+
+		/**
 		 * Return maxage in seconds for a time expression
 		 *
 		 * Takes an expression like 120s, 5m, 3h, 7d and turns it into seconds. No unit equals seconds.
@@ -1125,6 +1149,7 @@ EOF;
 				'gpx'        => false,
 				'kml'        => false,
 				'markers'    => true,
+				'markersize' => false,
 				'continuous' => true,
 				'color'      => false,
 				'weight'     => false,
@@ -1161,10 +1186,11 @@ EOF;
 				$atts['track'] = $atts['id'];
 			}
 
-			$style   = $this->get_style( $atts, false );     // result is not used
-			$points  = $this->get_points( $atts, false );    // result is not used
-			$markers = $this->get_markers( $atts, false );  // result is not used
-			$maxage  = $this->get_maxage( $atts['maxage'] );
+			$style      = $this->get_style( $atts, false );     // result is not used
+			$points     = $this->get_points( $atts, false );    // result is not used
+			$markers    = $this->get_markers( $atts, false );  // result is not used
+			$markersize = $this->get_markersize( $atts, false );  // result is not used
+			$maxage     = $this->get_maxage( $atts['maxage'] );
 
 			list( $validated_track_ids, $validated_user_ids ) = $this->validate_ids( $atts );
 
@@ -1211,6 +1237,7 @@ EOF;
 						'style'      => $this->get_style(),
 						'points'     => $this->get_points(),
 						'markers'    => $this->get_markers(),
+						'markersize' => $this->get_markersize(),
 						'follow'     => $follow,
 					);
 
@@ -1263,6 +1290,7 @@ EOF;
 							'style'      => $this->get_style(),
 							'points'     => $this->get_points(),
 							'markers'    => $this->get_markers(),
+							'markersize' => $this->get_markersize(),
 						);
 						$j++;
 					}
@@ -1282,6 +1310,7 @@ EOF;
 							'style'      => $this->get_style(),
 							'points'     => $this->get_points(),
 							'markers'    => $this->get_markers(),
+							'markersize' => $this->get_markersize(),
 						);
 						$j++;
 					}

@@ -104,6 +104,7 @@ For the [tsmap] shortcode:
 The following attributes apply to tracks that are drawn on the map. Each of them can contain multiple values, separated by commas (or colons, in the case of 'dash'), to be applied to different tracks in order. If there a are less values than tracks, the last value will be applied to the remaining tracks.
 
 * markers: one or more of the following values: true (default) or false (or 'f', 'no' or 'n') to disable start/end markers on the track. The value can also be 'start', 's', 'end' or 'e', to draw markers only for the start or the end of a track respectively.
+* markersize: one or more integer values, separated by commas, to use as the size / radius of the start/end markers of the track. Default is 5.
 * color: one or more colors, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
 * weight: one or more weights, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
 * opacity: one or more opacities, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
@@ -277,6 +278,7 @@ Added:
 * Support for optional HTTP Basic Authentication on the OsmAnd protocol.
 * Support for setting the 'Source' field of a track via a URL parameter in the OsmAnd protocol.
 * Support for unicode characters in text fields through charset/collation changes in DB tables.
+* Shortcode attribute 'markersize', for specifying the size (radius) of start/end markers on tracks.
 
 Changed:
 * Trackserver now only supports WP 4.7 or higher.
