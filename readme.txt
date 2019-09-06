@@ -268,7 +268,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
-= UNRELEASED =
+= v4.3 =
 
 Added:
 * Custom post type 'tsmap' for creating embedded maps.
