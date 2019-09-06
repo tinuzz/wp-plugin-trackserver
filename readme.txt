@@ -230,7 +230,7 @@ In Trackserver, Cloud Sharing behaves a little differently than in the official 
 
 = What about security? =
 
-== Using Trackserver ==
+**Using Trackserver**
 
 The plugin uses a few custom Wordpress capabilities ('use_trackserver', 'trackserver_publish' and 'trackserver_admin') to manage the various levels of access within Trackserver:
 
@@ -244,7 +244,7 @@ Tracks can only be published in Wordpress posts or pages, and cannot be download
 
 Regarding the use of apps for live tracking and uploading to Wordpress, please read the considerations about authentication above.
 
-== External tracks proxy ==
+**External tracks proxy**
 
 Trackserver contains code that can proxy requests to- and serve content from remote 3rd-party servers. This allows authors to work around CORS restrictions. Instead of letting the visitor's browser get the GPX or KML from the remote server (which only works if the server implements CORS headers to allow the request), the request is sent to WordPress, where Trackserver will fetch the track from the remote server and send it to the browser.
 
