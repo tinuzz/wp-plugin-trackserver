@@ -269,6 +269,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 == Changelog ==
 
 = v4.3 =
+Release date: 6 September 2019
 
 This release requires WordPress v4.7 or higher.
 
