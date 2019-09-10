@@ -271,7 +271,8 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 = UNRELEASED =
 
 Fixed:
-* Database structure modifications that were missing on new installs of v4.3
+* Database structure modifications that were missing on new installs of v4.3.
+* The default trackformat was changed from polyline to geojson by mistake.
 
 = v4.3.1 =
 Release date: 10 September 2019

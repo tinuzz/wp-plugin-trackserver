@@ -54,7 +54,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		var $shortcode    = 'tsmap';
 		var $shortcode2   = 'tsscripts';
 		var $shortcode3   = 'tslink';
-		var $track_format = 'geojson';  // 'polyline'. 'geojson' is no longer supported.
+		var $track_format = 'polyline';  // 'polyline' or 'geojson'
 
 		/**
 		 * Class constructor.
@@ -576,7 +576,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				$upgrade_sql[28] = 'ALTER TABLE ' . $this->tbl_tracks . ' CHANGE `comment` `comment` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL';
 
 				// Add multi-column index on the locations table if missing. This index can be missing on new installs between 4.3 and 4.3.2.
-				$sql = 'SHOW INDEX FROM ' . $this->tbl_locations . " WHERE Key_name='trip_id_occurred'";
+				$sql     = 'SHOW INDEX FROM ' . $this->tbl_locations . " WHERE Key_name='trip_id_occurred'";
 				$indexes = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				if ( count( $indexes ) === 0 ) {
 					$upgrade_sql[29] = 'ALTER TABLE ' . $this->tbl_locations . ' ADD INDEX `trip_id_occurred` (`trip_id`, `occurred`)';
