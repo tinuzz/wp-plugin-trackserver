@@ -18,7 +18,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @access private
 		 * @var int $db_version
 		 */
-		var $db_version = 24;
+		var $db_version = 29;
 
 		/**
 		 * Default values for options. See class constructor for more.
@@ -412,7 +412,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					`hidden` tinyint(1) NOT NULL DEFAULT '0',
 					PRIMARY KEY (`id`),
 					KEY `occurred` (`occurred`),
-					KEY `trip_id` (`trip_id`)
+					KEY `trip_id` (`trip_id`),
+					KEY `trip_id_occurred` (`trip_id`,`occurred`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
 				$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -420,15 +421,15 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				$sql = 'CREATE TABLE IF NOT EXISTS ' . $this->tbl_tracks . " (
 					`id` int(11) NOT NULL AUTO_INCREMENT,
 					`user_id` int(11) NOT NULL,
-					`name` varchar(255) NOT NULL,
+					`name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
 					`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					`created` timestamp NOT NULL DEFAULT '1971-01-01 00:00:00',
-					`source` varchar(255) NOT NULL,
-					`comment` varchar(255) NOT NULL,
+					`source` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+					`comment` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
 					`distance` int(11) NOT NULL,
 					PRIMARY KEY (`id`),
 					KEY `user_id` (`user_id`)
-					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
 				$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
@@ -569,13 +570,17 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				$upgrade_sql[19] = 'ALTER TABLE ' . $this->tbl_tracks . " ALTER created SET DEFAULT '1971-01-01 00:00:00'";
 
 				// Change the charset of the text columns in the tracks table, to be able to hold unicode content.
-				$upgrade_sql[20] = 'ALTER TABLE ' . $this->tbl_tracks . ' CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
-				$upgrade_sql[21] = 'ALTER TABLE ' . $this->tbl_tracks . ' CHANGE `name` `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL';
-				$upgrade_sql[22] = 'ALTER TABLE ' . $this->tbl_tracks . ' CHANGE `source` `source` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL';
-				$upgrade_sql[23] = 'ALTER TABLE ' . $this->tbl_tracks . ' CHANGE `comment` `comment` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL';
+				$upgrade_sql[25] = 'ALTER TABLE ' . $this->tbl_tracks . ' CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
+				$upgrade_sql[26] = 'ALTER TABLE ' . $this->tbl_tracks . ' CHANGE `name` `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL';
+				$upgrade_sql[27] = 'ALTER TABLE ' . $this->tbl_tracks . ' CHANGE `source` `source` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL';
+				$upgrade_sql[28] = 'ALTER TABLE ' . $this->tbl_tracks . ' CHANGE `comment` `comment` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL';
 
-				// Add multi-column index on the locations table.
-				$upgrade_sql[24] = 'ALTER TABLE ' . $this->tbl_locations . ' ADD INDEX `trip_id_occurred` (`trip_id`, `occurred`)';
+				// Add multi-column index on the locations table if missing. This index can be missing on new installs between 4.3 and 4.3.2.
+				$sql = 'SHOW INDEX FROM ' . $this->tbl_locations . " WHERE Key_name='trip_id_occurred'";
+				$indexes = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				if ( count( $indexes ) === 0 ) {
+					$upgrade_sql[29] = 'ALTER TABLE ' . $this->tbl_locations . ' ADD INDEX `trip_id_occurred` (`trip_id`, `occurred`)';
+				}
 
 				for ( $i = $installed_version + 1; $i <= $this->db_version; $i++ ) {
 					if ( array_key_exists( $i, $upgrade_sql ) ) {
