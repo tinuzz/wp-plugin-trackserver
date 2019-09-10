@@ -178,7 +178,7 @@ var Trackserver = (function () {
                     var do_markers  = mymapdata.tracks[track_index].markers;
                     var do_points   = mymapdata.tracks[track_index].points;
                     var do_follow   = mymapdata.tracks[track_index].follow;
-                    var markersize  = mymapdata.tracks[track_index].markersize;
+                    var markersize  = mymapdata.tracks[track_index].markersize || 5;
 
                     // ...and then delete the old one, to prevent flickering
                     if (old_track) {
