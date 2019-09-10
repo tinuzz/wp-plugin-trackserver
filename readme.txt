@@ -268,7 +268,8 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
-= UNRELEASED =
+= v4.3.2 =
+Release date: 10 September 2019
 
 Fixed:
 * Database structure modifications that were missing on new installs of v4.3.
