@@ -268,6 +268,15 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
+= UNRELEASED =
+
+Changed:
+* Some code restructuring.
+
+Fixed:
+* A JavaScript conflict with the 'Leaflet Map' WordPress plugin.
+* Markers on maps in the WP admin were almost invisible due to undefined marker size.
+
 = v4.3 =
 Release date: 6 September 2019
 
