@@ -268,7 +268,8 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
-= UNRELEASED =
+= v4.3.1 =
+Release date: 10 September 2019
 
 Changed:
 * Some code restructuring.
