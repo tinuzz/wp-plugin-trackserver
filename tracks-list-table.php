@@ -149,7 +149,7 @@ class Tracks_List_Table extends WP_List_Table {
 		echo '</span></div>';
 	}
 
-	function prepare_items() {
+	function prepare_items( $search='' ) {
 		global $wpdb;
 
 		$per_page = $this->options['per_page'];
@@ -182,6 +182,12 @@ class Tracks_List_Table extends WP_List_Table {
 			}
 		}
 
+		if ( ! empty( $search ) ) {
+			$like   = '%' . esc_sql( $wpdb->esc_like( $search ) ) . '%';
+			$like   = str_replace( "\\\\_", "\\_", $like );    // underscores are double-escaped without this
+			$where .=  " AND (t.name LIKE '$like' OR t.source LIKE '$like' OR t.comment LIKE '$like')";
+		}
+
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
 		$sql = 'SELECT t.id, t.name, t.source, t.comment, user_id, min(l.occurred) as tstart, max(l.occurred) ' .
@@ -197,7 +203,7 @@ class Tracks_List_Table extends WP_List_Table {
 		 * without filtering. We'll need this later, so you should always include it
 		 * in your own package classes.
 		 */
-		$sql         = 'SELECT count(id) FROM ' . $this->options['tbl_tracks'] . " WHERE $where";
+		$sql         = 'SELECT count(id) FROM ' . $this->options['tbl_tracks'] . " t WHERE $where";
 		$total_items = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		/*

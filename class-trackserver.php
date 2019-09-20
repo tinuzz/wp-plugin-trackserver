@@ -3557,7 +3557,9 @@ EOF;
 
 			add_thickbox();
 			$this->setup_tracks_list_table();
-			$this->tracks_list_table->prepare_items();
+
+			$search = ( isset( $_REQUEST['s'] ) ? wp_unslash( $_REQUEST['s'] ) : '' );
+			$this->tracks_list_table->prepare_items( $search );
 
 			$url = admin_url() . 'admin-post.php';
 
@@ -3568,6 +3570,7 @@ EOF;
 							<table style="width: 100%">
 								<?php wp_nonce_field( 'manage_track' ); ?>
 								<input type="hidden" name="action" value="trackserver_save_track" />
+								<input type="hidden" name="s" value="<?php echo esc_attr( $search );  ?>" />
 								<input type="hidden" id="track_id" name="track_id" value="" />
 								<tr>
 									<th style="width: 150px;"><?php esc_html_e( 'Name', 'trackserver' ); ?></th>
@@ -3638,6 +3641,7 @@ EOF;
 					<div class="wrap">
 						<h2><?php esc_html_e( 'Manage tracks', 'trackserver' ); ?></h2>
 						<?php $this->notice_bulk_action_result(); ?>
+						<?php $this->tracks_list_table->search_box( esc_attr__( 'Search tracks', 'trackserver' ), 'search_tracks' ); ?>
 						<?php $this->tracks_list_table->display(); ?>
 					</div>
 				</form>
@@ -4056,7 +4060,13 @@ EOF;
 
 			// Redirect back to the admin page. This should be safe.
 			setcookie( 'ts_bulk_result', $message, time() + 300 );
-			wp_redirect( $_REQUEST['_wp_http_referer'] );
+
+			// Propagate search string to the redirect
+			$referer = remove_query_arg( array( '_wp_http_referer', '_wpnonce', 's' ), $_REQUEST['_wp_http_referer'] );
+			if ( isset( $_POST['s'] ) && ! empty( $_POST['s'] ) ) {
+				$referer = add_query_arg( 's', rawurlencode( wp_unslash( $_POST['s'] ) ), $referer );
+			}
+			wp_redirect( $referer );
 			exit;
 		}
 
@@ -4347,6 +4357,12 @@ EOF;
 			check_admin_referer( 'bulk-tracks' );
 			$track_ids = $this->filter_current_user_tracks( $_REQUEST['track'] );
 
+			// Propagate search string to the redirect
+			$referer = remove_query_arg( array( '_wp_http_referer', '_wpnonce', 's' ), $_REQUEST['_wp_http_referer'] );
+			if ( isset( $_POST['s'] ) && ! empty( $_POST['s'] ) ) {
+				$referer = add_query_arg( 's', rawurlencode( wp_unslash( $_POST['s'] ) ), $referer );
+			}
+
 			if ( $action === 'delete' ) {
 				if ( count( $track_ids ) > 0 ) {
 					$result = $this->wpdb_delete_tracks( $track_ids );
@@ -4359,7 +4375,7 @@ EOF;
 					$message = __( 'No tracks deleted', 'trackserver' );
 				}
 				setcookie( 'ts_bulk_result', $message, time() + 300 );
-				wp_redirect( $_REQUEST['_wp_http_referer'] );
+				wp_redirect( $referer );
 				exit;
 			}
 
@@ -4392,7 +4408,7 @@ EOF;
 					$message = sprintf( $format, $n );
 				}
 				setcookie( 'ts_bulk_result', $message, time() + 300 );
-				wp_redirect( $_REQUEST['_wp_http_referer'] );
+				wp_redirect( $referer );
 				exit;
 			}
 
@@ -4421,7 +4437,7 @@ EOF;
 					$message = __( 'No tracks found to recalculate', 'trackserver' );
 				}
 				setcookie( 'ts_bulk_result', $message, time() + 300 );
-				wp_redirect( $_REQUEST['_wp_http_referer'] );
+				wp_redirect( $referer );
 				exit;
 			}
 		}
