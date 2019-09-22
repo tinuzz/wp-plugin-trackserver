@@ -224,4 +224,8 @@ class Tracks_List_Table extends WP_List_Table {
 		);
 
 	}
+
+	function get_views() {
+		return array( 'all' => '<a href="'. admin_url() . 'admin.php?page=trackserver-tracks' . '">' . esc_html__( 'All tracks' ) . '</a>' );
+	}
 }

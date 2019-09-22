@@ -3641,6 +3641,7 @@ EOF;
 					<div class="wrap">
 						<h2><?php esc_html_e( 'Manage tracks', 'trackserver' ); ?></h2>
 						<?php $this->notice_bulk_action_result(); ?>
+						<?php $this->tracks_list_table->views(); ?>
 						<?php $this->tracks_list_table->search_box( esc_attr__( 'Search tracks', 'trackserver' ), 'search_tracks' ); ?>
 						<?php $this->tracks_list_table->display(); ?>
 					</div>
