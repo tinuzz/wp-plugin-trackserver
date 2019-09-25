@@ -21,6 +21,15 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		var $db_version = 29;
 
 		/**
+		 * LeafletJS version that Trackserver will use.
+		 *
+		 * @since 4.4
+		 * @access private
+		 * @var str $leaflet_version
+		 */
+		var $leaflet_version = '1.5.1';
+
+		/**
 		 * Default values for options. See class constructor for more.
 		 *
 		 * @since 1.0
@@ -277,8 +286,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		function load_common_scripts() {
 
-			wp_enqueue_style( 'leaflet_stylesheet', TRACKSERVER_JSLIB . 'leaflet-1.5.1/leaflet.css' );
-			wp_enqueue_script( 'leaflet_js', TRACKSERVER_JSLIB . 'leaflet-1.5.1/leaflet.js', array(), false, true );
+			wp_enqueue_style( 'leaflet_stylesheet', TRACKSERVER_JSLIB . 'leaflet-' . $this->leaflet_version . '/leaflet.css' );
+			wp_enqueue_script( 'leaflet_js', TRACKSERVER_JSLIB . 'leaflet-' . $this->leaflet_version . '/leaflet.js', array(), false, true );
 			wp_enqueue_style( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/leaflet.fullscreen.css' );
 			wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/Leaflet.fullscreen.min.js', array(), false, true );
 			wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), TRACKSERVER_VERSION, true );
@@ -290,8 +299,9 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.js', array(), TRACKSERVER_VERSION, true );
 
 			$settings = array(
-				'tile_url'    => $this->options['tile_url'],
-				'attribution' => $this->options['attribution'],
+				'tile_url'        => $this->options['tile_url'],
+				'attribution'     => $this->options['attribution'],
+				'leaflet_version' => $this->leaflet_version,
 			);
 			wp_localize_script( 'trackserver', 'trackserver_settings', $settings );
 
