@@ -190,8 +190,8 @@ class Tracks_List_Table extends WP_List_Table {
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-		$sql = 'SELECT t.id, t.name, t.source, t.comment, user_id, min(l.occurred) as tstart, max(l.occurred) ' .
-			'as tend, count(l.occurred) as numpoints, t.distance FROM ' .
+		$sql = 'SELECT t.id, t.name, t.source, t.comment, user_id, COALESCE(MIN(l.occurred), t.created) AS tstart, ' .
+			'COALESCE(MAX(l.occurred), t.created) AS tend, COALESCE(COUNT(l.occurred), 0) AS numpoints, t.distance FROM ' .
 			$this->options['tbl_tracks'] . ' t LEFT JOIN ' . $this->options['tbl_locations'] .
 			" l ON l.trip_id = t.id WHERE $where GROUP BY t.id ORDER BY $orderby $order LIMIT $offset,$limit";
 
