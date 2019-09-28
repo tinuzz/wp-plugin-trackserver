@@ -27,8 +27,10 @@
 	background-position: 0 0;
 }
 
-.leaflet-vertex-icon {
-	border-radius: 50%;
+.leaflet-div-icon.leaflet-vertex-icon {
+	border: 1px solid black;
+	border-radius: 40%;
+	background: white;
 	width: 6px;
 	height: 6px;
 }
