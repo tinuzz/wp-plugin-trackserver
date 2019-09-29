@@ -7,8 +7,8 @@ if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
 class Trackserver_Track {
 
 	// Database fields
-	private $id       = null;
-	private $user_id  = null;
+	public  $id       = null;
+	public  $user_id  = null;
 	private $name     = '';
 	private $created  = null;
 	private $source   = '';
@@ -25,7 +25,7 @@ class Trackserver_Track {
 	 */
 	public function __construct( $trackserver, $id = null, $user_id = null ) {
 		$this->trackserver = $trackserver;
-		$this->user_id     = $user_id;
+		$this->user_id     = (int) $user_id;
 
 		if ( ! ( is_null( $id ) || is_null( $user_id ) ) ) {
 			$this->get( (int) $id, (int) $user_id );
@@ -44,19 +44,19 @@ class Trackserver_Track {
 		global $wpdb;
 
 		if ( user_can( $user_id, 'trackserver_publish' ) ) {
-			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->trackserver->tbl_tracks . ' WHERE id=%d', $id );
+			$sql = $wpdb->prepare( 'SELECT * FROM ' . $this->trackserver->tbl_tracks . ' WHERE id=%d', $id );
 		} else {
-			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->trackserver->tbl_tracks . ' WHERE id=%d AND user_id=%d;', $id, $user_id );
+			$sql = $wpdb->prepare( 'SELECT * FROM ' . $this->trackserver->tbl_tracks . ' WHERE id=%d AND user_id=%d;', $id, $user_id );
 		}
 		$row = $wpdb->get_row( $sql, ARRAY_A );
-		if ( ! is_null( $result ) ) {
-			$this->id       = $row['id'];
-			$this->user_id  = $row['user_id'];
-			$this->name     = $row['name'];
-			$this->created  = $row['created'];
-			$this->source   = $row['source'];
-			$this->comment  = $row['comment'];
-			$this->distance = $row['distance'];
+		if ( ! is_null( $row ) ) {
+			$this->id       = (int) $row['id'];
+			$this->user_id  = (int) $row['user_id'];
+			$this->name     = (string) $row['name'];
+			$this->created  = (string) $row['created'];
+			$this->source   = (string) $row['source'];
+			$this->comment  = (string) $row['comment'];
+			$this->distance = (int) $row['distance'];
 			return true;
 		}
 		return false;
