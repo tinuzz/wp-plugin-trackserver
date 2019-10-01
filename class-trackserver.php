@@ -37,6 +37,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @var array $option_defaults
 		 */
 		var $option_defaults = array(
+			'trackserver_slug'              => 'trackserver',
 			'trackme_slug'                  => 'trackme',
 			'trackme_extension'             => 'z',
 			'mapmytracks_tag'               => 'mapmytracks',
