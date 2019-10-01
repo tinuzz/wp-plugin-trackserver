@@ -2580,6 +2580,38 @@ EOF;
 		}
 
 		/**
+		 * Validate WordPress credentials.
+		 *
+		 * With valid credentials, this function returns the authenticated user's
+		 * ID by default, or a WP_User object on request (3rd argument). Otherwise,
+		 * it returns false.
+		 *
+		 * @since 4.4
+		 */
+		function validate_wp_user_pass( $username = '', $password = '', $what = 'id' ) {
+
+			if ( $username == '' || $password == '' ) {
+				return false;
+			}
+
+			$user = get_user_by( 'login', $username );
+
+			if ( $user ) {
+				$hash    = $user->data->user_pass;
+				$user_id = intval( $user->ID );
+
+				if ( wp_check_password( $password, $hash, $user_id ) ) {
+					if ( user_can( $user_id, 'use_trackserver' ) ) {
+						return ( $what == 'object' ? $user : $user_id );
+					} else {
+						return false;
+					}
+				}
+			}
+			return false;
+		}
+
+		/**
 		 * Validate HTTP basic authentication, only if a username and password were sent in the request.
 		 *
 		 * If no username is found, return NULL.
