@@ -262,8 +262,6 @@ EOF;
 	function trackme_slug_html() {
 		$val     = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackme_slug'] );
 		$url     = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-		$linkurl = esc_attr__( 'http://en.wikipedia.org/wiki/Server_Name_Indication', 'trackserver' );
-		$link    = "<a href=\"$linkurl\">SNI</a>";
 
 		$format = <<<EOF
 			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
