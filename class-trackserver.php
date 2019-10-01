@@ -3613,7 +3613,7 @@ EOF;
 							<table style="width: 100%">
 								<?php wp_nonce_field( 'manage_track' ); ?>
 								<input type="hidden" name="action" value="trackserver_save_track" />
-								<input type="hidden" name="s" value="<?php echo esc_attr( $search );  ?>" />
+								<input type="hidden" name="s" value="<?php echo esc_attr( $search ); ?>" />
 								<input type="hidden" id="track_id" name="track_id" value="" />
 								<tr>
 									<th style="width: 150px;"><?php esc_html_e( 'Name', 'trackserver' ); ?></th>
