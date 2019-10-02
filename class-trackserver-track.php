@@ -23,12 +23,12 @@ class Trackserver_Track {
 	 *
 	 * @since 4.4
 	 */
-	public function __construct( $trackserver, $id = null, $user_id = null, $restrict = true ) {
+	public function __construct( $trackserver, $value = null, $user_id = null, $field = 'id', $restrict = true ) {
 		$this->trackserver = $trackserver;
 		$this->user_id     = (int) $user_id;
 
-		if ( ! ( is_null( $id ) || is_null( $user_id ) ) ) {
-			$this->get_by( 'id', (int) $id, (int) $user_id, $restrict );
+		if ( ! ( is_null( $value ) || is_null( $user_id ) ) ) {
+			$this->get_by( $field, (string) $value, (int) $user_id, $restrict );
 		}
 	}
 
