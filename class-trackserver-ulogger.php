@@ -151,53 +151,40 @@ class Trackserver_Ulogger {
 	 */
 	private function handle_addpos() {
 		$user_id = $this->session_user();
-		$track   = new Trackserver_Track( $this->trackserver, $_POST['trackid'], $user_id );
+		$track   = new Trackserver_Track( $this->trackserver, $_POST['trackid'], $user_id );  // $restrict = true
 
 		if ( $track->id ) {
 
-			// For privileged users, $track->user_id could be different, so check if
-			// the current login is actually the owner of the track.
-			if ( (int) $track->user_id === (int) $user_id ) {
+			if ( ! ( empty( $_POST['lat'] ) || empty( $_POST['lon'] ) || empty( $_POST['time'] ) ) ) {
 
-				if ( ! ( empty( $_POST['lat'] ) || empty( $_POST['lon'] ) || empty( $_POST['time'] ) ) ) {
+				$loc = new Trackserver_Location( $this->trackserver, $track->id, $user_id );
 
-					$loc = new Trackserver_Location( $this->trackserver, $track->id );
+				$ts   = (int) $_POST['time'];
+				$ts  += $this->trackserver->utc_to_local_offset( $ts );
 
-					$ts   = (int) $_POST['time'];
-					$ts  += $this->trackserver->utc_to_local_offset( $ts );
+				$loc->set( 'latitude', $_POST['lat'] );
+				$loc->set( 'longitude', $_POST['lon'] );
+				$loc->set( 'occurred', date( 'Y-m-d H:i:s', $ts ) );
 
-					$loc->set( 'latitude', $_POST['lat'] );
-					$loc->set( 'longitude', $_POST['lon'] );
-					$loc->set( 'occurred', date( 'Y-m-d H:i:s', $ts ) );
+				if ( ! empty ( $_POST['altitude'] ) ) {
+					$loc->set( 'altitude', $_POST['altitude'] );
+				}
+				if ( ! empty ( $_POST['speed'] ) ) {
+					$loc->set( 'speed', $_POST['speed'] );
+				}
+				if ( ! empty ( $_POST['bearing'] ) ) {
+					$loc->set( 'heading', $_POST['bearing'] );
+				}
 
-					if ( ! empty ( $_POST['altitude'] ) ) {
-						$loc->set( 'altitude', $_POST['altitude'] );
-					}
-					if ( ! empty ( $_POST['speed'] ) ) {
-						$loc->set( 'speed', $_POST['speed'] );
-					}
-					if ( ! empty ( $_POST['bearing'] ) ) {
-						$loc->set( 'heading', $_POST['bearing'] );
-					}
-
-					$fenced = $this->trackserver->is_geofenced( $user_id, $data );
-					if ( $fenced == 'discard' ) {
-						return $this->send_response();
-					}
-					$loc->set( 'hidden', ( $fenced == 'hide' ? 1 : 0 ) );
-
-					if ( $loc->save() ) {
-						//$track->calculate_distance();  // not implemented yet
-						$this->trackserver->calculate_distance( $track_id );
-						return $this->send_response();
-					} else {
-						return $this->send_response( array( 'message' => 'Server error' ) );
-					}
+				if ( $loc->save() ) {
+					//$track->calculate_distance();  // not implemented yet
+					$this->trackserver->calculate_distance( $track_id );
+					return $this->send_response();
 				} else {
-					return $this->send_response( array( 'message' => 'Missing required parameter' ) );
+					return $this->send_response( array( 'message' => 'Server error' ) );
 				}
 			} else {
-				return $this->send_response( array( 'message' => 'Illegal track ID' ) );
+				return $this->send_response( array( 'message' => 'Missing required parameter' ) );
 			}
 		} else {
 			return $this->send_response( array( 'message' => 'Unknown track ID' ) );
