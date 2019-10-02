@@ -9,11 +9,11 @@ class Trackserver_Track {
 	// Database fields
 	public  $id       = null;
 	public  $user_id  = null;
-	private $name     = '';
-	private $created  = null;
-	private $source   = '';
-	private $comment  = '';
-	private $distance = 0;
+	public  $name     = '';
+	public  $created  = null;
+	public  $source   = '';
+	public  $comment  = '';
+	public  $distance = 0;
 
 	// Trackserver object
 	private $trackserver;
