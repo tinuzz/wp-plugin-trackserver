@@ -1587,6 +1587,8 @@ EOF;
 		 * delegates the requested action to a dedicated function
 		 */
 		function handle_trackme_request( $username = '', $password = '' ) {
+			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-track.php';
+			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
 
 			// If this function returns, we're OK
 			$user_id = $this->validate_trackme_login( $username, $password );
@@ -1776,84 +1778,49 @@ EOF;
 		function handle_trackme_upload( $user_id, $trip_name = '' ) {
 			global $wpdb;
 
-			if ( $trip_name == '' ) {
+			if ( $trip_name === '' ) {
 				$trip_name = urldecode( $_GET['tn'] );
 			}
 			$occurred = urldecode( $_GET['do'] );
 
-			if ( $trip_name != '' ) {
-				$trip_id = $this->get_track_by_name( $user_id, $trip_name );
+			if ( ! empty( $trip_name ) ) {
+				$track = new Trackserver_Track( $this, $trip_name, $user_id, 'name' );
+				$trip_id = $track->id;
 
 				if ( $trip_id == null ) {
 
-					if ( ! $this->validate_timestamp( $occurred ) ) {
-						$occurred = current_time( 'Y-m-d H:i:s' );
-					}
+					$track->set( 'name', $trip_name );
+					$track->set( 'source', 'TrackMe' );
 
-					$data   = array(
-						'user_id' => $user_id,
-						'name'    => $trip_name,
-						'created' => $occurred,
-						'source'  => 'TrackMe',
-					);
-					$format = array( '%d', '%s', '%s', '%s' );
-
-					if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
-						$trip_id = $wpdb->insert_id;
-					} else {
+					if ( ! $trip_id = $track->save() ) {
 						$this->trackme_result( 6 ); // Unable to create trip
 					}
 				}
 
-				if ( intval( $trip_id ) > 0 ) {
+				if ( intval( $track->id ) > 0 ) {
 
-					$latitude  = $_GET['lat'];
-					$longitude = $_GET['long'];
-					$altitude  = ( isset( $_GET['alt'] ) ? urldecode( $_GET['alt'] ) : '' );
-					$speed     = ( isset( $_GET['sp'] ) ? urldecode( $_GET['sp'] ) : '' );
-					$heading   = ( isset( $_GET['ang'] ) ? urldecode( $_GET['ang'] ) : '' );
-					//$comment   = urldecode( $_GET['comments'] );
-					//$batterystatus = urldecode( $_GET['bs'] );
-					$now = current_time( 'Y-m-d H:i:s' );
+					if ( ! ( empty( $_GET['lat'] ) || empty( $_GET['long'] ) ) and $this->validate_timestamp( $occurred ) ) {
+						$loc = new Trackserver_Location( $this, $track->id, $user_id );
+						$loc->set( 'latitude', $_GET['lat'] );
+						$loc->set( 'longitude', $_GET['long'] );
+						$loc->set( 'occurred', $occurred );
 
-					if ( $latitude != '' && $longitude != '' && $this->validate_timestamp( $occurred ) ) {
-						$data   = array(
-							'trip_id'   => $trip_id,
-							'latitude'  => $latitude,
-							'longitude' => $longitude,
-							'created'   => $now,
-							'occurred'  => $occurred,
-						);
-						$format = array( '%d', '%s', '%s', '%s', '%s' );
-
-						if ( $altitude != '' ) {
-							$data['altitude'] = $altitude;
-							$format[]         = '%s';
+						if ( ! empty ( $_GET['alt'] ) ) {
+							$loc->set( 'altitude', $_GET['alt'] );
 						}
-						if ( $speed != '' ) {
-							$data['speed'] = $speed;
-							$format[]      = '%s';
+						if ( ! empty ( $_GET['sp'] ) ) {
+							$loc->set( 'speed', $_GET['sp'] );
 						}
-						if ( $heading != '' ) {
-							$data['heading'] = $heading;
-							$format[]        = '%s';
+						if ( ! empty ( $_GET['ang'] ) ) {
+							$loc->set( 'heading', $_GET['ang'] );
 						}
-
-						$fenced = $this->is_geofenced( $user_id, $data );
-						if ( $fenced == 'discard' ) {
-							$this->trackme_result( 0 );  // this will not return
-						}
-						$data['hidden'] = ( $fenced == 'hide' ? 1 : 0 );
-						$format[]       = '%d';
-
-						if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
-							$this->calculate_distance( $trip_id );
+						if ( $loc->save() ) {
+							$this->calculate_distance( $track->id );
 							$this->trackme_result( 0 );
-						} else {
-							$this->trackme_result( 7, $wpdb->last_error );
 						}
 					}
 				}
+				$this->trackme_result( 7, 'Server error' );
 			} else {
 				$this->trackme_result( 6 ); // No trip name specified. This should not happen.
 			}
