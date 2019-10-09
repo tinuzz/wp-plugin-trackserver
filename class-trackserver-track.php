@@ -7,15 +7,15 @@ if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
 class Trackserver_Track {
 
 	// Database fields
-	public  $id       = null;
-	public  $user_id  = null;
-	public  $name     = '';
-	public  $created  = null;
-	public  $source   = '';
-	public  $comment  = '';
-	public  $distance = 0;
+	public $id        = null;
+	public $user_id   = null;
+	public $name      = '';
+	public $created   = null;
+	public $source    = '';
+	public $comment   = '';
+	public $distance  = 0;
+	public $trackdata = null;
 
-	// Trackserver object
 	private $trackserver;
 	private $tbl_tracks;
 	private $tbl_locations;

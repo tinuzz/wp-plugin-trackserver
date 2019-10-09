@@ -1776,23 +1776,22 @@ EOF;
 		 * @since 1.0
 		 */
 		function handle_trackme_upload( $user_id, $trip_name = '' ) {
-			global $wpdb;
-
 			if ( $trip_name === '' ) {
 				$trip_name = urldecode( $_GET['tn'] );
 			}
 			$occurred = urldecode( $_GET['do'] );
 
 			if ( ! empty( $trip_name ) ) {
-				$track = new Trackserver_Track( $this, $trip_name, $user_id, 'name' );
+				$track   = new Trackserver_Track( $this, $trip_name, $user_id, 'name' );
 				$trip_id = $track->id;
 
-				if ( $trip_id == null ) {
+				if ( is_null( $trip_id ) ) {
 
 					$track->set( 'name', $trip_name );
 					$track->set( 'source', 'TrackMe' );
 
-					if ( ! $trip_id = $track->save() ) {
+					$trip_id = $track->save();
+					if ( empty( $trip_id ) ) {
 						$this->trackme_result( 6 ); // Unable to create trip
 					}
 				}
@@ -1805,13 +1804,13 @@ EOF;
 						$loc->set( 'longitude', $_GET['long'] );
 						$loc->set( 'occurred', $occurred );
 
-						if ( ! empty ( $_GET['alt'] ) ) {
+						if ( ! empty( $_GET['alt'] ) ) {
 							$loc->set( 'altitude', $_GET['alt'] );
 						}
-						if ( ! empty ( $_GET['sp'] ) ) {
+						if ( ! empty( $_GET['sp'] ) ) {
 							$loc->set( 'speed', $_GET['sp'] );
 						}
-						if ( ! empty ( $_GET['ang'] ) ) {
+						if ( ! empty( $_GET['ang'] ) ) {
 							$loc->set( 'heading', $_GET['ang'] );
 						}
 						if ( $loc->save() ) {
