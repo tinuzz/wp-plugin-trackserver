@@ -157,5 +157,28 @@ class Trackserver_Track {
 		return $this->trackdata;
 	}
 
+	/**
+	 * Permanently remove a track and all its locations from the database. There
+	 * is no checking for errors.
+	 *
+	 * @since 4.4
+	 */
+	public function delete() {
+		global $wpdb;
+
+		if ( is_null( $this->id ) ) {
+			return false;
+		}
+		$loc_where  = array(
+			'trip_id' => $this->id,
+		);
+		$trip_where = array(
+			'id' => $this->id,
+		);
+		$wpdb->delete( $this->tbl_locations, $loc_where );
+		$wpdb->delete( $this->tbl_tracks, $trip_where );
+		return true;
+	}
+
 }  // class
 

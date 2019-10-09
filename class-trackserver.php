@@ -1889,29 +1889,17 @@ EOF;
 		 * supplied name, all locations and the trip record for the ID are deleted from the database.
 		 *
 		 * @since 1.0
+		 * @since 4.4 Use Trackserver_Track class
 		 */
 		function handle_trackme_deletetrip( $user_id ) {
-			global $wpdb;
-
 			$trip_name = urldecode( $_GET['tn'] );
-
-			if ( $trip_name != '' ) {
-
-				// Try to find the trip
-				$sql     = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trip_name ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				$trip_id = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-
-				if ( $trip_id == null ) {
+			if ( ! empty( $trip_name ) ) {
+				$track   = new Trackserver_Track( $this, $trip_name, $user_id, 'name' );
+				$trip_id = $track->id;
+				if ( is_null( $trip_id ) ) {
 					$this->trackme_result( 7 );   // Trip not found
 				} else {
-					$loc_where  = array(
-						'trip_id' => $trip_id,
-					);
-					$trip_where = array(
-						'id' => $trip_id,
-					);
-					$wpdb->delete( $this->tbl_locations, $loc_where );
-					$wpdb->delete( $this->tbl_tracks, $trip_where );
+					$track->delete();
 					$this->trackme_result( 0 );   // Trip deleted
 				}
 			} else {
