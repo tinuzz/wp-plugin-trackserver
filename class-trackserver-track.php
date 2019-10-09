@@ -138,6 +138,11 @@ class Trackserver_Track {
 		$this->$what = $value;
 	}
 
+	/**
+	 * Get the track's location data from the database, store it on the instance and return it.
+	 *
+	 * @since 4.4
+	 */
 	public function get_trackdata() {
 		global $wpdb;
 
