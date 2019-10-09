@@ -7,17 +7,17 @@ if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
 class Trackserver_Location {
 
 	// Database fields
-	private $id        = null;
-	private $track_id  = null;
-	private $latitude  = null;
-	private $longitude = null;
-	private $altitude  = 0;
-	private $speed     = 0;
-	private $heading   = 0;
-	private $created   = null;
-	private $occurred  = null;
-	private $comment   = '';
-	private $hidden    = 0;
+	public $id        = null;
+	public $track_id  = null;
+	public $latitude  = null;
+	public $longitude = null;
+	public $altitude  = 0;
+	public $speed     = 0;
+	public $heading   = 0;
+	public $created   = null;
+	public $occurred  = null;
+	public $comment   = '';
+	public $hidden    = 0;
 
 	private $trackserver;
 	private $user_id;
