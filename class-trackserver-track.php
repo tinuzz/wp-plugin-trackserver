@@ -138,5 +138,24 @@ class Trackserver_Track {
 		$this->$what = $value;
 	}
 
+	public function get_trackdata() {
+		global $wpdb;
+
+		if ( is_null( $this->id ) ) {
+			return array();
+		}
+
+		if ( is_null( $this->trackdata ) ) {
+			$sql = $wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				'SELECT id, latitude, longitude, altitude, speed, heading, occurred, comment FROM ' . $this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred',
+				$this->id
+			);
+			$this->trackdata = $wpdb->get_results( $sql, ARRAY_A );  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		}
+
+		return $this->trackdata;
+	}
+
 }  // class
 

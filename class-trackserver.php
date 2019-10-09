@@ -1823,7 +1823,6 @@ EOF;
 			} else {
 				$this->trackme_result( 6 ); // No trip name specified. This should not happen.
 			}
-
 		}
 
 		/**
@@ -1853,30 +1852,19 @@ EOF;
 		 * @since 1.7
 		 */
 		function handle_trackme_gettripfull( $user_id ) {
-			global $wpdb;
-
 			$trip_name = urldecode( $_GET['tn'] );
-			if ( $trip_name != '' ) {
+			if ( ! empty( $trip_name ) ) {
 
-				// Try to find the trip
-				// @codingStandardsIgnoreStart
-				$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trip_name );
-				$trip_id = $wpdb->get_var( $sql );
-				// @codingStandardsIgnoreEnd
+				$track = new Trackserver_Track( $this, $trip_name, $user_id, 'name' );
+				$trip_id = $track->id;
 
-				if ( $trip_id == null ) {
+				if ( is_null( $trip_id ) ) {
 					$this->trackme_result( 7 );   // Trip not found
 				} else {
-
-					// @codingStandardsIgnoreStart
-					$sql = $wpdb->prepare( 'SELECT id, latitude, longitude, altitude, speed, heading, occurred, comment FROM ' .
-						$this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $trip_id );
-					$res = $wpdb->get_results( $sql, ARRAY_A );
-					// @codingStandardsIgnoreEnd
-
+					$res    = $track->get_trackdata();
 					$output = '';
-					foreach ( $res as $row ) {
 
+					foreach ( $res as $row ) {
 						$output .= $row['latitude'] . '|' .
 							$row['longitude'] . '|' .
 							'|' . // ImageURL
@@ -1889,7 +1877,6 @@ EOF;
 							$row['heading'] . '|' .
 							"\n";
 					}
-
 					$this->trackme_result( 0, $output );
 				}
 			} else {
