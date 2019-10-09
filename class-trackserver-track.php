@@ -17,6 +17,8 @@ class Trackserver_Track {
 
 	// Trackserver object
 	private $trackserver;
+	private $tbl_tracks;
+	private $tbl_locations;
 
 	/**
 	 * Initialize the instance.
@@ -24,8 +26,11 @@ class Trackserver_Track {
 	 * @since 4.4
 	 */
 	public function __construct( $trackserver, $value = null, $user_id = null, $field = 'id', $restrict = true ) {
-		$this->trackserver = $trackserver;
-		$this->user_id     = (int) $user_id;
+		global $wpdb;
+		$this->trackserver   = $trackserver;
+		$this->user_id       = (int) $user_id;
+		$this->tbl_tracks    = $wpdb->prefix . 'ts_tracks';
+		$this->tbl_locations = $wpdb->prefix . 'ts_locations';
 
 		if ( ! ( is_null( $value ) || is_null( $user_id ) ) ) {
 			$this->get_by( $field, (string) $value, (int) $user_id, $restrict );
@@ -63,10 +68,10 @@ class Trackserver_Track {
 
 		if ( $restrict === false ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared
-			$sql = $wpdb->prepare( 'SELECT * FROM ' . $this->trackserver->tbl_tracks . " WHERE $db_column = %s ORDER BY updated DESC LIMIT 1", $value );
+			$sql = $wpdb->prepare( 'SELECT * FROM ' . $this->tbl_tracks . " WHERE $db_column = %s ORDER BY updated DESC LIMIT 1", $value );
 		} else {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared
-			$sql = $wpdb->prepare( 'SELECT * FROM ' . $this->trackserver->tbl_tracks . " WHERE user_id=%d AND $db_column = %s ORDER BY updated DESC LIMIT 1", $user_id, $value );
+			$sql = $wpdb->prepare( 'SELECT * FROM ' . $this->tbl_tracks . " WHERE user_id=%d AND $db_column = %s ORDER BY updated DESC LIMIT 1", $user_id, $value );
 		}
 
 		$row = $wpdb->get_row( $sql, ARRAY_A );  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -109,7 +114,7 @@ class Trackserver_Track {
 			$this->created   = current_time( 'Y-m-d H:i:s' );
 			$data['created'] = $this->created;
 
-			if ( $wpdb->insert( $this->trackserver->tbl_tracks, $data, $format ) ) {
+			if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
 				$this->id = $wpdb->insert_id;
 				return $this->id;
 			}
@@ -117,7 +122,7 @@ class Trackserver_Track {
 
 			$where     = array( 'id' => $this->id );
 			$where_fmt = array( '%d' );
-			if ( $wpdb->update( $this->trackserver->tbl_tracks, $data, $where, $format, $where_fmt ) ) {
+			if ( $wpdb->update( $this->tbl_tracks, $data, $where, $format, $where_fmt ) ) {
 				return $this->id;
 			}
 		}

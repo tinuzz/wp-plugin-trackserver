@@ -21,6 +21,8 @@ class Trackserver_Location {
 
 	private $trackserver;
 	private $user_id;
+	private $tbl_tracks;
+	private $tbl_locations;
 
 	/**
 	 * Initialize the instance.
@@ -28,9 +30,12 @@ class Trackserver_Location {
 	 * @since 4.4
 	 */
 	public function __construct( $trackserver, $track_id = null, $user_id = null ) {
-		$this->trackserver = $trackserver;
-		$this->track_id    = $track_id;
-		$this->user_id     = $user_id;   // Needed for geofencing
+		global $wpdb;
+		$this->trackserver   = $trackserver;
+		$this->track_id      = $track_id;
+		$this->user_id       = $user_id;   // Needed for geofencing
+		$this->tbl_tracks    = $wpdb->prefix . 'ts_tracks';
+		$this->tbl_locations = $wpdb->prefix . 'ts_locations';
 	}
 
 	/**
@@ -97,7 +102,7 @@ class Trackserver_Location {
 			$this->created   = current_time( 'Y-m-d H:i:s' );
 			$data['created'] = $this->created;
 
-			if ( $wpdb->insert( $this->trackserver->tbl_locations, $data, $format ) ) {
+			if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
 				$this->id = $wpdb->insert_id;
 				return true;
 			}
@@ -105,7 +110,7 @@ class Trackserver_Location {
 
 			$where     = array( 'id' => $this->id );
 			$where_fmt = array( '%d' );
-			if ( $wpdb->update( $this->trackserver->tbl_locations, $data, $where, $format, $where_fmt ) ) {
+			if ( $wpdb->update( $this->tbl_locations, $data, $where, $format, $where_fmt ) ) {
 				return true;
 			}
 		}
