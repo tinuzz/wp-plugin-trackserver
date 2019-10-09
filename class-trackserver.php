@@ -1988,7 +1988,8 @@ EOF;
 		 * @since 1.4
 		 */
 		function handle_osmand_request() {
-			global $wpdb;
+			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-track.php';
+			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
 
 			// Try HTTP Basic auth first. This can return a user ID, or NULL.
 			$user_id = $this->try_http_basicauth();
@@ -2021,66 +2022,39 @@ EOF;
 
 				$source = ( isset( $_GET['source'] ) ? urldecode( $_GET['source'] ) : 'OsmAnd' );
 
-				if ( $trackname != '' ) {
-					$track_id = $this->get_track_by_name( $user_id, $trackname );
-					if ( $track_id == null ) {
-						$data   = array(
-							'user_id' => $user_id,
-							'name'    => $trackname,
-							'created' => $occurred,
-							'source'  => $source,
-						);
-						$format = array( '%d', '%s', '%s', '%s' );
+				if ( ! empty( $trackname ) ) {
+					$track    = new Trackserver_Track( $this, $trackname, $user_id, 'name' );
 
-						if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
-							$track_id = $wpdb->insert_id;
-						} else {
+					if ( is_null( $track->id ) ) {
+						$track->set( 'name', $trackname );
+						$track->set( 'source', $source );
+
+						$track->save();
+						if ( empty( $track->id ) ) {
 							$this->http_terminate( 501, 'Database error' );
 						}
 					}
 
-					$latitude  = $_GET['lat'];
-					$longitude = $_GET['lon'];
-					$altitude  = urldecode( $_GET['altitude'] );
-					$speed     = urldecode( $_GET['speed'] );
-					$heading   = urldecode( $_GET['bearing'] );
-					$now       = current_time( 'Y-m-d H:i:s' );
+					if ( ! ( empty( $_GET['lat'] ) || empty( $_GET['lon'] ) ) ) {
+						$loc = new Trackserver_Location( $this, $track->id, $user_id );
+						$loc->set( 'latitude', $_GET['lat'] );
+						$loc->set( 'longitude', $_GET['lon'] );
+						$loc->set( 'occurred', $occurred );
 
-					if ( $latitude != '' && $longitude != '' ) {
-						$data   = array(
-							'trip_id'   => $track_id,
-							'latitude'  => $latitude,
-							'longitude' => $longitude,
-							'created'   => $now,
-							'occurred'  => $occurred,
-						);
-						$format = array( '%d', '%s', '%s', '%s', '%s' );
-
-						if ( $altitude != '' ) {
-							$data['altitude'] = $altitude;
-							$format[]         = '%s';
+						if ( ! empty( $_GET['altitude'] ) ) {
+							$loc->set( 'altitude', urldecode( $_GET['altitude'] ) );
 						}
-						if ( $speed != '' ) {
-							$data['speed'] = $speed;
-							$format[]      = '%s';
+						if ( ! empty( $_GET['speed'] ) ) {
+							$loc->set( 'speed', urldecode( $_GET['speed'] ) );
 						}
-						if ( $heading != '' ) {
-							$data['heading'] = $heading;
-							$format[]        = '%s';
+						if ( ! empty( $_GET['bearing'] ) ) {
+							$loc->set( 'heading', urldecode( $_GET['bearing'] ) );
 						}
-
-						$fenced = $this->is_geofenced( $user_id, $data );
-						if ( $fenced == 'discard' ) {
-							$this->http_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" ); // this will not return
-						}
-						$data['hidden'] = ( $fenced == 'hide' ? 1 : 0 );
-						$format[]       = '%d';
-
-						if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
-							$this->calculate_distance( $track_id );
-							$this->http_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" );
+						if ( $loc->save() ) {
+							$this->calculate_distance( $track->id );
+							$this->http_terminate( 200, "OK, track ID = $track->id, timestamp = $occurred" );
 						} else {
-							$this->http_terminate( 500, $wpdb->last_error );
+							$this->http_terminate( 501, 'Database error' );
 						}
 					}
 				}
