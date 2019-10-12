@@ -48,7 +48,8 @@ class Trackserver_Getrequest {
 			$user_id = $this->validate_user_meta_key();
 		}
 
-		$ts = 0;
+		$source = $this->get_source();
+		$ts     = 0;
 
 		// OsmAnd sends a timestamp in milliseconds, and in UTC. Use substr() to truncate the timestamp,
 		// because dividing by 1000 causes an integer overflow on 32-bit systems.
@@ -68,24 +69,9 @@ class Trackserver_Getrequest {
 		$ts      += $this->trackserver->utc_to_local_offset( $ts );
 		$occurred = date( 'Y-m-d H:i:s', $ts );
 
-    if ( ! empty ( $_SERVER['HTTP_USER_AGENT'] ) ) {
-      $source = strtok( $_SERVER['HTTP_USER_AGENT'], ';' );
-
-    } elseif ( array_key_exists( 'timestamp', $_GET ) ) {
-			$source = 'OsmAnd';
-
-		} elseif ( array_key_exists( 'deviceid', $_GET ) ) {
-			$source = 'SendLocation';
-
-		} else {
-			$source = __('Unknown', 'trackserver' );
-		}
-
-		$source = ( isset( $_GET['source'] ) ? rawurldecode( $_GET['source'] ) : $source );
-
 		// Get track name from strftime format string. Use the 'osmand' format. This format should be renamed.
 		// The 'sendlocation' format is now deprecated.
-		$trackname = strftime( $this->trackserver->options['osmand_trackname_format'], $ts );
+		$trackname = strftime( str_replace( '{source}', $source, $this->trackserver->options['osmand_trackname_format'] ), $ts );
 
 		if ( ! empty( $trackname ) ) {
 			$track = new Trackserver_Track( $this, $trackname, $user_id, 'name' );
@@ -164,6 +150,29 @@ class Trackserver_Getrequest {
 			}
 		}
 		$this->trackserver->http_terminate();
+	}
+
+	private function get_source() {
+		if ( ! empty( $_GET['source'] ) ) {
+			$source = rawurldecode( $_GET['source'] );
+
+		} elseif ( array_key_exists( 'timestamp', $_GET ) && strlen( $timestamp ) > 10 ) {
+			$source = 'OsmAnd';
+
+		} elseif ( array_key_exists( 'deviceid', $_GET ) ) {
+			$source = 'SendLocation';
+
+		} elseif ( array_key_exists( 'id', $_GET ) && array_key_exists( 'batt', $_GET ) ) {
+			$source = 'Traccar';
+
+		} elseif ( ! empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			$source = trim( strtok( $_SERVER['HTTP_USER_AGENT'], ';(' ) );
+
+		} else {
+			$source = __('Unknown', 'trackserver' );
+		}
+		return $source;
+
 	}
 
 }  // class
