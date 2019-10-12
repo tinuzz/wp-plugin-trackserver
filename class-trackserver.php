@@ -1517,14 +1517,6 @@ EOF;
 				die();
 			}
 
-			$tag = $this->options['gettrack_slug'];
-			$uri = $base_uri . '/' . $tag;
-
-			if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
-				$this->handle_gettrack();
-				die();
-			}
-
 			// Handle requests to the universal Trackserver URL
 			$req_uri = $this->get_request_uri();
 			$slug    = $this->options['trackserver_slug'];
@@ -1533,6 +1525,9 @@ EOF;
 			$pattern2 = '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/?$/';
 
 			$protocols = array(
+				'gettrack' => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $this->options['gettrack_slug'], '/' ) . ')\/?$/',
+				),
 				'trackmeold' => array(
 					'pattern' => '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/(?<method>requests|export|cloud)\.(?<ext>.+)/',
 				),
@@ -1543,19 +1538,15 @@ EOF;
 					'pattern' => '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/client\/index\.php/',
 				),
 				'get1' => array(
-					'method'  => 'GET',
 					'pattern' => $pattern1,
 				),
 				'get2' => array(
-					'method'  => 'GET',
 					'pattern' => $pattern2,
 				),
 				'osmand' => array(
-					'method'  => 'GET',
 					'pattern' => '/^(?<slug>' . preg_quote( $this->options['osmand_slug'], '/' ) . ')\/?$/',
 				),
 				'sendlocation' => array(
-					'method'  => 'GET',
 					'pattern' => '/^(?<slug>' . preg_quote( $this->options['sendlocation_slug'], '/' ) . ')\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/?$/',
 				),
 			);
@@ -1572,7 +1563,10 @@ EOF;
 						$password = null;
 					}
 
-					if ( $proto === 'ulogger' ) {
+					if ( $proto === 'gettrack' ) {
+						$this->handle_gettrack();
+
+					} elseif ( $proto === 'ulogger' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-ulogger.php';
 						$client = new Trackserver_Ulogger( $this );
 						$client->handle_request();
