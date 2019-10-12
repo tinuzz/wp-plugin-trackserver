@@ -1551,6 +1551,44 @@ EOF;
 		}
 
 		/**
+		 * A function to get the real request URI, stripped of all the basics. What
+		 * this function returns is meant to be used to match against, for URIs
+		 * that Trackserver must handle.
+		 *
+		 * The code is borrowed from WP's own parse_request() function.
+		 *
+		 * @since 4.4
+		 */
+		function get_request_uri() {
+			$home_path       = trim( parse_url( home_url(), PHP_URL_PATH ), '/' ) . $this->url_prefix;
+			$home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
+
+			$pathinfo         = isset( $_SERVER['PATH_INFO'] ) ? $_SERVER['PATH_INFO'] : '';
+			list( $pathinfo ) = explode( '?', $pathinfo );
+			$pathinfo         = trim( $pathinfo, '/' );
+			$pathinfo         = preg_replace( $home_path_regex, '', $pathinfo );
+			$pathinfo         = trim( $pathinfo, '/' );
+
+			list( $request_uri ) = explode( '?', $_SERVER['REQUEST_URI'] );
+			$request_uri         = str_replace( $pathinfo, '', $request_uri );
+			$request_uri         = trim( $request_uri, '/' );
+			$request_uri         = preg_replace( $home_path_regex, '', $request_uri );
+			$request_uri         = trim( $request_uri, '/' );
+
+			// The requested permalink is in $pathinfo for path info requests and $request_uri for other requests.
+			if ( ! empty( $pathinfo ) && ! preg_match( '|^.*' . preg_quote( $wp_rewrite->index, '|' ) . '$|', $pathinfo ) ) {
+				$requested_path = $pathinfo;
+			} else {
+				// If the request uri is the index, blank it out so that we don't try to match it against a rule.
+				if ( $request_uri == $wp_rewrite->index ) {
+					$request_uri = '';
+				}
+				$requested_path = $request_uri;
+			}
+			return $requested_path;
+		}
+
+		/**
 		 * Validate the credentials in a Trackme request aginast the user's key
 		 *
 		 * @since 1.0
