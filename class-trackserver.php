@@ -1836,7 +1836,7 @@ EOF;
 
 				if ( intval( $track->id ) > 0 ) {
 
-					if ( ! ( empty( $_GET['lat'] ) || empty( $_GET['long'] ) ) and $this->validate_timestamp( $occurred ) ) {
+					if ( ! ( empty( $_GET['lat'] ) || empty( $_GET['long'] ) ) && $this->validate_timestamp( $occurred ) ) {
 						$loc = new Trackserver_Location( $this, $track->id, $user_id );
 						$loc->set( 'latitude', $_GET['lat'] );
 						$loc->set( 'longitude', $_GET['long'] );
