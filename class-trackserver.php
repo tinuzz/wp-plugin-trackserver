@@ -1487,8 +1487,8 @@ EOF;
 
 					// No fallback necessary, since the regexp will not match for unknown methods.
 
-				} else {
-					// Inform user about incorrect slug or ext.
+				} elseif ( $matches['slug'] == $tag ) {
+					// Inform user about incorrect ext. Don't hijack other slugs.
 					$this->http_terminate( 501, 'The configured URL Header or Server Extension are incorrect.' );
 				}
 			}
