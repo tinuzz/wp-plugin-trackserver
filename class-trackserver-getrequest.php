@@ -20,21 +20,21 @@ class Trackserver_Getrequest {
 	public function __construct( $trackserver, $username, $password ) {
 		$this->trackserver = $trackserver;
 
-		if ( is_null( $username ) && ! empty( $_GET['username'] ) ) {
-			$username = $_GET['username'];
+		if ( is_null( $username ) && ! empty( $_REQUEST['username'] ) ) {
+			$username = $_REQUEST['username'];
 		}
-		if ( is_null( $password ) && ! empty( $_GET['key'] ) ) {
-			$password = $_GET['key'];
+		if ( is_null( $password ) && ! empty( $_REQUEST['key'] ) ) {
+			$password = $_REQUEST['key'];
 		}
-		if ( is_null( $password ) && ! empty( $_GET['password'] ) ) {
-			$password = $_GET['password'];
+		if ( is_null( $password ) && ! empty( $_REQUEST['password'] ) ) {
+			$password = $_REQUEST['password'];
 		}
 		$this->username = $username;
 		$this->password = $password;
 	}
 
 	/**
-	 * Handle a generic GET request, as sent by OsmAnd and SendLocation.
+	 * Handle a generic GET/POST request, as sent by OsmAnd, SendLocation and others.
 	 *
 	 * @since 4.4
 	 */
@@ -53,8 +53,8 @@ class Trackserver_Getrequest {
 
 		// OsmAnd sends a timestamp in milliseconds, and in UTC. Use substr() to truncate the timestamp,
 		// because dividing by 1000 causes an integer overflow on 32-bit systems.
-    if ( array_key_exists( 'timestamp', $_GET ) ) {
-			$timestamp = rawurldecode( $_GET['timestamp'] );
+    if ( array_key_exists( 'timestamp', $_REQUEST ) ) {
+			$timestamp = rawurldecode( $_REQUEST['timestamp'] );
 			if ( strlen( $timestamp ) > 10 ) {
 				$timestamp = substr( $timestamp, 0, -3 );
 			}
@@ -86,25 +86,25 @@ class Trackserver_Getrequest {
 				}
 			}
 
-			if ( ! ( empty( $_GET['lat'] ) || empty( $_GET['lon'] ) ) ) {
+			if ( ! ( empty( $_REQUEST['lat'] ) || empty( $_REQUEST['lon'] ) ) ) {
 				$loc = new Trackserver_Location( $this, $track->id, $user_id );
 
 				// SendLocation sometimes uses commas as decimal separators (issue #12)
-				$loc->set( 'latitude', str_replace( ',', '.', rawurldecode( $_GET['lat'] ) ) );
-				$loc->set( 'longitude', str_replace( ',', '.', rawurldecode( $_GET['lon'] ) ) );
+				$loc->set( 'latitude', str_replace( ',', '.', rawurldecode( $_REQUEST['lat'] ) ) );
+				$loc->set( 'longitude', str_replace( ',', '.', rawurldecode( $_REQUEST['lon'] ) ) );
 				$loc->set( 'occurred', $occurred );
 
-				if ( ! empty( $_GET['altitude'] ) ) {
-					$loc->set( 'altitude', str_replace( ',', '.', rawurldecode( $_GET['altitude'] ) ) );
+				if ( ! empty( $_REQUEST['altitude'] ) ) {
+					$loc->set( 'altitude', str_replace( ',', '.', rawurldecode( $_REQUEST['altitude'] ) ) );
 				}
-				if ( ! empty( $_GET['speed'] ) ) {
-					$loc->set( 'speed', str_replace( ',', '.', rawurldecode( $_GET['speed'] ) ) );
+				if ( ! empty( $_REQUEST['speed'] ) ) {
+					$loc->set( 'speed', str_replace( ',', '.', rawurldecode( $_REQUEST['speed'] ) ) );
 				}
-				if ( ! empty( $_GET['bearing'] ) ) {
-					$loc->set( 'heading', str_replace( ',', '.', rawurldecode( $_GET['bearing'] ) ) );
+				if ( ! empty( $_REQUEST['bearing'] ) ) {
+					$loc->set( 'heading', str_replace( ',', '.', rawurldecode( $_REQUEST['bearing'] ) ) );
 				}
-				if ( ! empty( $_GET['heading'] ) ) {
-					$loc->set( 'heading', str_replace( ',', '.', rawurldecode( $_GET['heading'] ) ) );
+				if ( ! empty( $_REQUEST['heading'] ) ) {
+					$loc->set( 'heading', str_replace( ',', '.', rawurldecode( $_REQUEST['heading'] ) ) );
 				}
 				if ( $loc->save() ) {
 					$this->trackserver->calculate_distance( $track->id );
@@ -153,16 +153,16 @@ class Trackserver_Getrequest {
 	}
 
 	private function get_source() {
-		if ( ! empty( $_GET['source'] ) ) {
-			$source = rawurldecode( $_GET['source'] );
+		if ( ! empty( $_REQUEST['source'] ) ) {
+			$source = rawurldecode( $_REQUEST['source'] );
 
-		} elseif ( array_key_exists( 'timestamp', $_GET ) && strlen( $timestamp ) > 10 ) {
+		} elseif ( array_key_exists( 'timestamp', $_REQUEST ) && strlen( $timestamp ) > 10 ) {
 			$source = 'OsmAnd';
 
-		} elseif ( array_key_exists( 'deviceid', $_GET ) ) {
+		} elseif ( array_key_exists( 'deviceid', $_REQUEST ) ) {
 			$source = 'SendLocation';
 
-		} elseif ( array_key_exists( 'id', $_GET ) && array_key_exists( 'batt', $_GET ) ) {
+		} elseif ( array_key_exists( 'id', $_REQUEST ) && array_key_exists( 'batt', $_REQUEST ) ) {
 			$source = 'Traccar';
 
 		} elseif ( ! empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
