@@ -140,7 +140,7 @@ class Trackserver_Getrequest {
 	 *
 	 * @since 4.4
 	 */
-	function validate_user_meta_key() {
+	private function validate_user_meta_key() {
 
 		if ( empty( $this->username ) ) {
 			$this->trackserver->http_terminate();
