@@ -1501,20 +1501,6 @@ EOF;
 				die();
 			}
 
-			$slug     = $this->options['sendlocation_slug'];
-			$base_esc = str_replace( '/', '\\/', $base_uri );
-
-			// <base uri>/<slug>/<username>/<access key>
-			$uri_pattern = '/^' . $base_esc . '\/' . $slug . '\/([^\/]+)\/([^\/]+)/';
-
-			$n = preg_match( $uri_pattern, $request_uri, $matches );
-			if ( $n == 1 ) {
-				$username = $matches[1];
-				$key      = $matches[2];
-				$this->handle_sendlocation_request( $username, $key );
-				die();
-			}
-
 			$slug = $this->options['owntracks_slug'];
 			$uri  = $base_uri . '/' . $slug;
 
@@ -1568,6 +1554,10 @@ EOF;
 					'method'  => 'GET',
 					'pattern' => '/^(?<slug>' . preg_quote( $this->options['osmand_slug'], '/' ) . ')\/?$/',
 				),
+				'sendlocation' => array(
+					'method'  => 'GET',
+					'pattern' => '/^(?<slug>' . preg_quote( $this->options['sendlocation_slug'], '/' ) . ')\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/?$/',
+				),
 			);
 
 			foreach ( $protocols as $proto => $props ) {
@@ -1587,7 +1577,7 @@ EOF;
 						$client = new Trackserver_Ulogger( $this );
 						$client->handle_request();
 
-					} elseif ( $proto === 'get1' || $proto === 'get2' || $proto === 'osmand' ) {
+					} elseif ( $proto === 'get1' || $proto === 'get2' || $proto === 'osmand' || $proto === 'sendlocation' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-getrequest.php';
 						$client = new Trackserver_Getrequest( $this, $username, $password );
 						$client->handle_request();
@@ -2064,93 +2054,6 @@ EOF;
 			global $wpdb;
 			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trackname ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			return $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		}
-
-		/**
-		 * Handle SendLocation request
-		 *
-		 * @since 2.0
-		 */
-		function handle_sendlocation_request( $username, $key ) {
-			global $wpdb;
-
-			// If this function returns, we're OK. We use the same function as OsmAnd.
-			$user_id = $this->validate_user_meta_key( $username, $key, 'ts_sendlocation_key' );
-
-			// SendLocation doesn't send a timestamp
-			$ts       = current_time( 'timestamp' );
-			$occurred = date( 'Y-m-d H:i:s', $ts );
-
-			// Get track name from strftime format string
-			$trackname = strftime( $this->options['sendlocation_trackname_format'], $ts );
-
-			if ( $trackname != '' ) {
-				$track_id = $this->get_track_by_name( $user_id, $trackname );
-
-				if ( $track_id == null ) {
-					$data   = array(
-						'user_id' => $user_id,
-						'name'    => $trackname,
-						'created' => $occurred,
-						'source'  => 'SendLocation',
-					);
-					$format = array( '%d', '%s', '%s', '%s' );
-
-					if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
-						$track_id = $wpdb->insert_id;
-					} else {
-						$this->http_terminate( 501, 'Database error' );
-					}
-				}
-
-				// SendLocation sometimes uses commas as decimal separators (issue #12)
-				$latitude  = str_replace( ',', '.', $_GET['lat'] );
-				$longitude = str_replace( ',', '.', $_GET['lon'] );
-				$altitude  = str_replace( ',', '.', urldecode( $_GET['altitude'] ) );
-				$speed     = str_replace( ',', '.', urldecode( $_GET['speed'] ) );
-				$heading   = str_replace( ',', '.', urldecode( $_GET['heading'] ) );
-				$now       = $occurred;
-
-				if ( $latitude != '' && $longitude != '' ) {
-					$data   = array(
-						'trip_id'   => $track_id,
-						'latitude'  => $latitude,
-						'longitude' => $longitude,
-						'created'   => $now,
-						'occurred'  => $occurred,
-					);
-					$format = array( '%d', '%s', '%s', '%s', '%s' );
-
-					if ( $altitude != '' ) {
-						$data['altitude'] = $altitude;
-						$format[]         = '%s';
-					}
-					if ( $speed != '' ) {
-						$data['speed'] = $speed;
-						$format[]      = '%s';
-					}
-					if ( $heading != '' ) {
-						$data['heading'] = $heading;
-						$format[]        = '%s';
-					}
-
-					$fenced = $this->is_geofenced( $user_id, $data );
-					if ( $fenced == 'discard' ) {
-						$this->http_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" );  // This will not return
-					}
-					$data['hidden'] = ( $fenced == 'hide' ? 1 : 0 );
-					$format[]       = '%d';
-
-					if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
-						$this->calculate_distance( $track_id );
-						$this->http_terminate( 200, "OK, track ID = $track_id, timestamp = $occurred" );
-					} else {
-						$this->http_terminate( 500, $wpdb->last_error );
-					}
-				}
-			}
-
-			$this->http_terminate( 400, 'Bad request' );
 		}
 
 		/**
