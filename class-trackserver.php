@@ -1501,14 +1501,6 @@ EOF;
 				die();
 			}
 
-			$slug = $this->options['osmand_slug'];
-			$uri  = $base_uri . '/' . $slug;
-
-			if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
-				$this->handle_osmand_request();
-				die();
-			}
-
 			$slug     = $this->options['sendlocation_slug'];
 			$base_esc = str_replace( '/', '\\/', $base_uri );
 
@@ -1547,6 +1539,63 @@ EOF;
 				die();
 			}
 
+			// Handle requests to the universal Trackserver URL
+			$req_uri = $this->get_request_uri();
+			$slug    = $this->options['trackserver_slug'];
+
+			$pattern1 = '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/?$/';
+			$pattern2 = '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/?$/';
+
+			$protocols = array(
+				'trackmeold' => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/(?<method>requests|export|cloud)\.(?<ext>.+)/',
+				),
+				'trackme'    => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/(?<method>requests|export|cloud)\.(?<ext>.+)/',
+				),
+				'ulogger'    => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/client\/index\.php/',
+				),
+				'get1' => array(
+					'method'  => 'GET',
+					'pattern' => $pattern1,
+				),
+				'get2' => array(
+					'method'  => 'GET',
+					'pattern' => $pattern2,
+				),
+				'osmand' => array(
+					'method'  => 'GET',
+					'pattern' => '/^(?<slug>' . preg_quote( $this->options['osmand_slug'], '/' ) . ')\/?$/',
+				),
+			);
+
+			foreach ( $protocols as $proto => $props ) {
+				$n = preg_match( $props['pattern'], $req_uri, $matches );
+				if ( $n === 1 ) {
+
+					if ( ! empty( $matches['username'] ) ) {
+						$username = rawurldecode( stripslashes( $matches['username'] ) );
+						$password = rawurldecode( stripslashes( $matches['password'] ) );
+					} else {
+						$username = null;
+						$password = null;
+					}
+
+					if ( $proto === 'ulogger' ) {
+						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-ulogger.php';
+						$client = new Trackserver_Ulogger( $this );
+						$client->handle_request();
+
+					} elseif ( $proto === 'get1' || $proto === 'get2' || $proto === 'osmand' ) {
+						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-getrequest.php';
+						$client = new Trackserver_Getrequest( $this, $username, $password );
+						$client->handle_request();
+
+					}
+					die();
+				}
+			}
 			return $wp;
 		}
 
