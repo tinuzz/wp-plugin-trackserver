@@ -2493,12 +2493,14 @@ EOF;
 		/**
 		 * Validate WordPress credentials for basic HTTP authentication.
 		 *
-		 * If no crededtials are received, we send a 401 status code. If the
-		 * username or password are incorrect, we terminate (default) or return
-		 * false if so requested.
+		 * If no credentials are received, a 401 status code is sent. Validation is
+		 * delegated to validate_wp_user_pass(). If that function returns a trueish
+		 * value, we return it as is. Otherwise, we terminate the request (default)
+		 * or return false, if so requested.
 		 *
-		 * On success, the authenticated user's ID is returned. By passing 'object'
-		 * as the second argument, the WP_User object is returned instead.
+		 * On success, the return value is the validated user's ID. By passing
+		 * 'object' as the second argument, the WP_User object is requested and
+		 * returned instead.
 		 *
 		 * @since 1.0
 		 */
@@ -2510,26 +2512,11 @@ EOF;
 				die( "Authentication required\n" );
 			}
 
-			$user = get_user_by( 'login', $_SERVER['PHP_AUTH_USER'] );
-
-			if ( $user ) {
-				$hash    = $user->data->user_pass;
-				$user_id = intval( $user->ID );
-
-				if ( wp_check_password( $_SERVER['PHP_AUTH_PW'], $hash, $user_id ) ) {
-					if ( user_can( $user_id, 'use_trackserver' ) ) {
-						return ( $what == 'object' ? $user : $user_id );
-					} else {
-						if ( $return ) {
-							return false;
-						}
-						$this->http_terminate( '403', 'Insufficient permissions' );
-					}
-				}
+			$valid = $this->validate_wp_user_pass( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'], $what );
+			if ( $return || $valid !== false ) {
+				return $valid;
 			}
-			if ( $return ) {
-				return false;
-			}
+
 			$this->http_terminate( '403', 'Username or password incorrect' );
 		}
 
