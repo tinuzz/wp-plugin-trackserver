@@ -1718,8 +1718,7 @@ EOF;
 		 * @since 1.0
 		 */
 		function handle_trackme_export( $username = '', $password = '' ) {
-			http_response_code( 501 );
-			echo 'Export is not supported by the server.';
+			$this->http_terminate( 501, 'Export is not supported by the server.' );
 		}
 
 		/**
@@ -1751,7 +1750,7 @@ EOF;
 					$this->http_terminate( 501, 'For "Show Cloud People" you need to update your server URL, see Trackserver FAQ.' );
 					break;
 			}
-			$this->http_terminate( 501, 'The action you requested is not supported by the server.' );
+			$this->http_terminate( 501, 'The TrackMe Cloud action you requested is not supported by the server.' );
 		}
 
 		/**
@@ -1860,8 +1859,7 @@ EOF;
 				case 'get_activity':
 					break;
 				default:
-					http_response_code( 501 );
-					echo 'Illegal request.';
+					$this->http_terminate( 501, 'Unsupported MapMyTracks request.' );
 			}
 		}
 
