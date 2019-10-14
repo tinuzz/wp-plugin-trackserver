@@ -1428,96 +1428,23 @@ EOF;
 		}
 
 		/**
-		 * Handle the request. This does a simple string comparison on the request URI to see
-		 * if we need to handle the request. If so, it does. If not, it passes on the request.
+		 * Handle the request.
+		 *
+		 * This function compares the incoming request against a list of known
+		 * protcols. Protocols can be distinguished by URL (regexp-based),
+		 * mandatory GET/POST parameters, request method and Content-Type. If a
+		 * match is found, the appropriate request handler is called. If username
+		 * and access key are present in the URL, they are used. If no protocol is
+		 * matched, the request is passed on to WP.
 		 *
 		 * @since 1.0
+		 * @since 4.4 Use intelligent protocol matchers against a universal Trackserver slug
 		 */
 		function parse_request( $wp ) {
 
-			$url         = site_url( null, 'http' ) . $this->url_prefix;
-			$tag         = $this->options['trackme_slug'];
-			$ext         = $this->options['trackme_extension'];
-			$base_uri    = preg_replace( '/^http:\/\/[^\/]+/', '', $url );
-			$request_uri = strtok( $_SERVER['REQUEST_URI'], '?' );     // Strip querystring off request URI
+			// Handle requests to all the Trackserver URL paths. Requests will in principle match both GET
+			// and POST requests, unless a 'method' key is present in the protocol's properties.
 
-			$trackme_uri        = $base_uri . '/' . $tag . '/requests.' . $ext;
-			$trackme_export_uri = $base_uri . '/' . $tag . '/export.' . $ext;
-			$trackme_cloud_uri  = $base_uri . '/' . $tag . '/cloud.' . $ext;
-			$trackme_uri_pttrn  = '/^(?<base_uri>\/.+)\/(?<slug>[^\/]+)\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/(?<method>requests|export|cloud)\.(?<ext>.+)/';
-
-			if ( $request_uri == $trackme_uri ) {
-				$this->handle_trackme_request();
-				die();
-			}
-
-			if ( $request_uri == $trackme_export_uri ) {
-				$this->handle_trackme_export();
-				die();
-			}
-
-			if ( $request_uri == $trackme_cloud_uri ) {
-				$this->handle_trackme_cloud_error();
-				die();
-			}
-
-			$n = preg_match( $trackme_uri_pttrn, $request_uri, $matches );
-			if ( $n == 1 ) {
-
-				if (
-					$matches['base_uri'] == $base_uri &&
-					$matches['slug'] == $tag &&
-					$matches['ext'] == $ext
-				) {
-
-					if ( $matches['method'] == 'requests' ) {
-						$this->handle_trackme_request( $matches['username'], $matches['password'] );
-						die();
-					}
-
-					if ( $matches['method'] == 'export' ) {
-						$this->handle_trackme_export( $matches['username'], $matches['password'] );
-						die();
-					}
-
-					if ( $matches['method'] == 'cloud' ) {
-						$this->handle_trackme_cloud( $matches['username'], $matches['password'] );
-						die();
-					}
-
-					// No fallback necessary, since the regexp will not match for unknown methods.
-
-				} elseif ( $matches['slug'] == $tag ) {
-					// Inform user about incorrect ext. Don't hijack other slugs.
-					$this->http_terminate( 501, 'The configured URL Header or Server Extension are incorrect.' );
-				}
-			}
-
-			$tag = $this->options['mapmytracks_tag'];
-			$uri = $base_uri . '/' . $tag;
-
-			if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
-				$this->handle_mapmytracks_request();
-				die();
-			}
-
-			$slug = $this->options['owntracks_slug'];
-			$uri  = $base_uri . '/' . $slug;
-
-			if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
-				$this->handle_owntracks_request();
-				die();
-			}
-
-			$tag = $this->options['upload_tag'];
-			$uri = $base_uri . '/' . $tag;
-
-			if ( $request_uri == $uri || $request_uri == $uri . '/' ) {
-				$this->handle_upload();
-				die();
-			}
-
-			// Handle requests to the universal Trackserver URL
 			$req_uri = $this->get_request_uri();
 			$slug    = $this->options['trackserver_slug'];
 
@@ -1525,36 +1452,76 @@ EOF;
 			$pattern2 = '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/?$/';
 
 			$protocols = array(
-				'gettrack' => array(
+				'gettrack'     => array(
 					'pattern' => '/^(?<slug>' . preg_quote( $this->options['gettrack_slug'], '/' ) . ')\/?$/',
 				),
-				'trackmeold' => array(
-					'pattern' => '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/(?<method>requests|export|cloud)\.(?<ext>.+)/',
+				'trackmeold1'  => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/(?<method>requests|export|cloud)\.(?<ext>.*)/',
 				),
-				'trackme'    => array(
-					'pattern' => '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/(?<method>requests|export|cloud)\.(?<ext>.+)/',
+				'trackme1'     => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/(?<method>requests|export|cloud)\.(?<ext>.*)/',
 				),
-				'ulogger'    => array(
+				'ulogger'      => array(
 					'pattern' => '/^(?<slug>' . preg_quote( $slug, '/' ) . ')\/client\/index\.php/',
 				),
-				'get1' => array(
+				'mapmytracks1' => array(
+					'pattern' => $pattern2,
+					'params'  => array( 'request' ),
+				),
+				'upload1'      => array(
+					'pattern' => $pattern2,
+					'method'  => 'POST',
+					'enctype' => 'multipart/form-data',
+				),
+				'owntracks1'   => array(
+					'pattern' => $pattern2,
+					'method'  => 'POST',
+					'enctype' => 'application/json',
+				),
+				'get1'         => array(
 					'pattern' => $pattern1,
 				),
-				'get2' => array(
+				'get2'         => array(
 					'pattern' => $pattern2,
 				),
-				'osmand' => array(
+
+				// The matches below all use dedicated slugs and are DEPRECATED as of v5.0
+
+				'trackmeold2'  => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $this->options['trackme_slug'], '/' ) . ')\/(?<method>requests|export|cloud)\.(?<ext>.*)/',
+				),
+				'trackme2'     => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $this->options['trackme_slug'], '/' ) .
+						')\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/(?<method>requests|export|cloud)\.(?<ext>.*)/',
+				),
+				'mapmytracks2' => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $this->options['mapmytracks_tag'], '/' ) . ')\/?$/',
+				),
+				'osmand'       => array(
 					'pattern' => '/^(?<slug>' . preg_quote( $this->options['osmand_slug'], '/' ) . ')\/?$/',
 				),
 				'sendlocation' => array(
 					'pattern' => '/^(?<slug>' . preg_quote( $this->options['sendlocation_slug'], '/' ) . ')\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/?$/',
 				),
+				'upload2'      => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $this->options['upload_tag'], '/' ) . ')\/?$/',
+					'method'  => 'POST',
+					'enctype' => 'multipart/form-data',
+				),
+				'owntracks2'   => array(
+					'pattern' => '/^(?<slug>' . preg_quote( $this->options['owntracks_slug'], '/' ) . ')\/?$/',
+					'method'  => 'POST',
+					'enctype' => 'application/json',
+				),
 			);
 
 			foreach ( $protocols as $proto => $props ) {
+
+				// Match the URL
 				$n = preg_match( $props['pattern'], $req_uri, $matches );
 				if ( $n === 1 ) {
 
+					// Get credentials from the URL if present
 					if ( ! empty( $matches['username'] ) ) {
 						$username = rawurldecode( stripslashes( $matches['username'] ) );
 						$password = rawurldecode( stripslashes( $matches['password'] ) );
@@ -1563,8 +1530,38 @@ EOF;
 						$password = null;
 					}
 
+					// Check mandatory parameters
+					if ( ! empty( $props['params'] ) ) {
+						// Count the number of params that are present in $props['params'],
+						// but not in $_REQUEST. There should be none to match this protocol.
+						if ( count( array_diff_key( array_flip( $props['params'] ), $_REQUEST ) ) > 0 ) {
+							continue;
+						}
+					}
+
+					// Check mandatory HTTP request method
+					if ( ! empty( $props['method'] ) ) {
+						if ( $_SERVER['REQUEST_METHOD'] !== $props['method'] ) {
+							continue;
+						}
+					}
+
+					// Check mandatory Content-Type
+					if ( ! empty( $props['enctype'] ) ) {
+						$req_enctype = strtok( $_SERVER['CONTENT_TYPE'], ';' );    // Strip charset/boundary off header
+						if ( $req_enctype !== $props['enctype'] ) {
+							continue;
+						}
+					}
+
 					if ( $proto === 'gettrack' ) {
 						$this->handle_gettrack();
+
+					} elseif ( $proto === 'trackmeold1' || $proto === 'trackmeold2' || $proto === 'trackme1' || $proto === 'trackme2' ) {
+						$this->handle_trackme_protocol( $matches['method'], $username, $password );
+
+					} elseif ( $proto === 'mapmytracks1' || $proto === 'mapmytracks2' ) {
+						$this->handle_mapmytracks_request();
 
 					} elseif ( $proto === 'ulogger' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-ulogger.php';
@@ -1576,6 +1573,14 @@ EOF;
 						$client = new Trackserver_Getrequest( $this, $username, $password );
 						$client->handle_request();
 
+					} elseif ( $proto === 'upload1' || $proto === 'upload2' ) {
+						$this->handle_upload();
+
+					} elseif ( $proto === 'owntracks1' || $proto === 'owntracks2' ) {
+						$this->handle_owntracks_request();
+
+					} else {
+						$this->http_terminate( 500, 'BUG: Unhandled protocol. Please file a bug report.' );
 					}
 					die();
 				}
@@ -1628,7 +1633,7 @@ EOF;
 		 */
 		function validate_trackme_login( $username, $password ) {
 
-			if ( $username == '' ) {
+			if ( empty( $username ) ) {
 				$username = urldecode( $_GET['u'] );
 				$password = urldecode( $_GET['p'] );
 			}
@@ -1651,6 +1656,31 @@ EOF;
 					$this->trackme_result( 2 );  // User not found
 				}
 			}
+		}
+
+		function handle_trackme_protocol( $method, $username, $password ) {
+			if ( $method === 'requests' ) {
+				$this->handle_trackme_request( $username, $password );
+			}
+
+			if ( $method === 'export' ) {
+				$this->handle_trackme_export( $username, $password );
+			}
+
+			if ( $method === 'cloud' ) {
+
+				// handle_trackme_cloud() will validate credentials, but if the old-style URL is in use,
+				// no credentials will be available. We short-circuit this case to be able to give the
+				// user a useful error message.
+
+				if ( empty( $username ) || empty( $password ) ) {       // No credentials from the URL; values are null
+					if ( empty( $_GET['u'] ) || empty( $_GET['p'] ) ) {   // No credentials from GET parameters either
+						$this->handle_trackme_cloud_error();                // This will not return
+					}
+				}
+				$this->handle_trackme_cloud( $username, $password );
+			}
+			die();
 		}
 
 		/**
