@@ -1833,12 +1833,14 @@ EOF;
 		 * @since 1.0
 		 */
 		function handle_mapmytracks_request() {
+			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-track.php';
+			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
 
 			// Validate with '$return = true' so we can handle the auth failure.
 			$user_id = $this->validate_http_basicauth( true );
 
 			if ( $user_id === false ) {
-				return $this->mapmytracks_invalid_auth();
+				return $this->mapmytracks_error( 'unauthorized' );
 			}
 
 			switch ( $_POST['request'] ) {
@@ -2466,99 +2468,96 @@ EOF;
 		/**
 		 * Handle the 'start_activity' request for the MapMyTracks protocol.
 		 *
-		 * If no title / trip name is received, nothing is done. Received points
-		 * are validated. Trip is inserted with the first point's timstamp as start
-		 * time, or the current time if no valid points are received. Valid points
-		 * are inserted and and the new trip ID is returned in an XML message.
+		 * If no title / track name is received, an error is sent, otherwise track
+		 * is saved, received points are validated, valid points are inserted and
+		 * and the new trip ID is sent in an XML reponse.
+		 *
+		 * @since 1.0
+		 * @since 4.4 Delegate DB access to Trackserver_Track instance
+		 */
+		function handle_mapmytracks_start_activity( $user_id ) {
+			if ( ! empty( $_POST['title'] ) ) {
+
+				$track = new Trackserver_Track( $this->trackserver, null, $user_id );
+				$track->set( 'name', $_POST['title'] );
+				$track->set( 'source', $this->mapmytracks_get_source() );
+
+				if ( $track_id = $track->save() ) {
+					if ( ! empty( $_POST['points'] ) ) {
+						$points = $this->mapmytracks_parse_points( $_POST['points'] );
+						if ( $this->mapmytracks_insert_points( $points, $track_id, $user_id ) ) {
+							return $this->mapmytracks_response( 'activity_started', array( 'activity_id' => (string) $track_id ) );
+						}
+					}
+				}
+			}
+			$this->mapmytracks_error();
+		}
+
+		/**
+		 * Handle 'update_activity' request for the MapMyTracks protocol.
+		 *
+		 * It tries to instantiate a track object from the given activity_id. If that succeeds,
+		 * the location data is parsed and added to the track.
 		 *
 		 * @since 1.0
 		 */
-		function handle_mapmytracks_start_activity( $user_id ) {
-			global $wpdb;
-
-			$trip_name = $_POST['title'];
-			if ( $trip_name != '' ) {
-				$points = $this->mapmytracks_parse_points( $_POST['points'] );
-
-				if ( $points ) {
-					$ts = $points[0]['timestamp'];
-					// Stolen from 'current_time' in wp-include/functions.php
-					$occurred = date( 'Y-m-d H:i:s', $ts + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) );
-				} else {
-					$occurred = current_time( 'Y-m-d H:i:s' );
-				}
-
-				$source = $this->mapmytracks_get_source();
-				$data   = array(
-					'user_id' => $user_id,
-					'name'    => $trip_name,
-					'created' => $occurred,
-					'source'  => $source,
-				);
-				$format = array( '%d', '%s', '%s', '%s' );
-
-				if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
-					$trip_id = $wpdb->insert_id;
-					if ( $this->mapmytracks_insert_points( $points, $trip_id, $user_id ) ) {
-						$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
-						$xml->addChild( 'type', 'activity_started' );
-						$xml->addChild( 'activity_id', (string) $trip_id );
-						echo str_replace( array( "\r", "\n" ), '', $xml->asXML() );
-					}
-				}
-			}
-		}
-
-		/**
-		 * Function to handle 'update_activity' request for the MapMyTracks protocol. It checks if the supplied
-		 * activity_id is valid and owned by the current user before inserting the received points into the database.
-		 */
 		function handle_mapmytracks_update_activity( $user_id ) {
-			global $wpdb;
-
-			$sql     = $wpdb->prepare( 'SELECT id, user_id FROM ' . $this->tbl_tracks . ' WHERE id=%d', $_POST['activity_id'] ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$trip_id = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			if ( $trip_id ) {
-				// Get the user ID for the trip from the cached result of previous query
-				$trip_owner = $wpdb->get_var( null, 1 ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-
-				// Check if the current login is actually the owner of the trip
-				if ( $trip_owner == $user_id ) {
+			$track   = new Trackserver_Track( $this->trackserver, $_POST['activity_id'], $user_id );  // $restrict = true
+			if ( $track->id ) {
+				if ( ! empty( $_POST['points'] ) ) {
 					$points = $this->mapmytracks_parse_points( $_POST['points'] );
-					if ( $this->mapmytracks_insert_points( $points, $trip_id, $user_id ) ) {
-						$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
-						$xml->addChild( 'type', 'activity_updated' );
-						//echo $xml->asXML();
-						echo str_replace( array( "\r", "\n" ), '', $xml->asXML() );
+					if ( $this->mapmytracks_insert_points( $points, $track->id, $user_id ) ) {
+						return $this->mapmytracks_response( 'activity_updated' );
 					}
-					// Absence of a valid XML response causes OruxMaps to re-send the data in a subsequent request
 				}
 			}
+			$this->mapmytracks_error();
 		}
 
 		/**
-		 * Function to handle 'stop_activity' request for the MapMyTracks protocol. This doesn't
-		 * do anything, except return a bogus (but appropriate) XML message.
+		 * Handle 'stop_activity' request for the MapMyTracks protocol.
+		 *
+		 * This doesn't do anything, except return an appropriate XML message.
 		 */
 		function handle_mapmytracks_stop_activity( $user_id ) {
-			$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
-			$xml->addChild( 'type', 'activity_stopped' );
-			echo str_replace( array( "\r", "\n" ), '', $xml->asXML() );
+			return $this->mapmytracks_response( 'activity_stopped' );
 		}
 
 		/**
-		 * Function to send an XML message to the client in case of failed authentication or authorization.
+		 * Send a MapMyTracks error message. Reason is optional.
+		 *
+		 * @since 4.4
 		 */
-		function mapmytracks_invalid_auth() {
+		function mapmytracks_error( $reason = null ) {
+			$data = array();
+			if ( ! is_null( $reason ) ) {
+				$data = array( 'reason' => $reason );
+			}
+			return $this->mapmytracks_response( 'error', $data );
+		}
+
+		/**
+		 * Format a MapMyTracks XML response.
+		 *
+		 * A message must have a type, and it can have additional data.
+		 *
+		 * @since 4.4
+		 */
+		function mapmytracks_response( $type, $data = array() ) {
 			$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
-			$xml->addChild( 'type', 'error' );
-			$xml->addChild( 'reason', 'unauthorised' );
+			$xml->addChild( 'type', $type );
+			foreach ($data as $key => $value) {
+				$xml->addChild( $key, $value );
+			}
 			echo str_replace( array( "\r", "\n" ), '', $xml->asXML() );
 		}
 
 		/**
-		 * Function to handle 'upload_activity' request for the MapMyTracks protocol. It validates
-		 * and processes the input as GPX data, and returns an appropriate XML message.
+		 * Handle 'upload_activity' request for the MapMyTracks protocol.
+		 *
+		 * It validates and processes the input as GPX data, and returns an
+		 * appropriate XML message.
 		 */
 		function handle_mapmytracks_upload_activity( $user_id ) {
 			global $wpdb;
@@ -2578,13 +2577,10 @@ EOF;
 							$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 						}
 					}
-
-					// Output a success message
-					$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
-					$xml->addChild( 'type', 'success' );
-					echo str_replace( array( "\r", "\n" ), '', $xml->asXML() );
+					return $this->mapmytracks_response( 'success' );
 				}
 			}
+			$this->mapmytracks_error();
 		}
 
 		function mapmytracks_parse_points( $points ) {
