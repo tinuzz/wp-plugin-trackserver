@@ -2482,16 +2482,15 @@ EOF;
 				$track->set( 'name', $_POST['title'] );
 				$track->set( 'source', $this->mapmytracks_get_source() );
 
-				if ( $track_id = $track->save() ) {
-					if ( ! empty( $_POST['points'] ) ) {
-						$points = $this->mapmytracks_parse_points( $_POST['points'] );
-						if ( $this->mapmytracks_insert_points( $points, $track_id, $user_id ) ) {
-							return $this->mapmytracks_response( 'activity_started', array( 'activity_id' => (string) $track_id ) );
-						}
+				if ( $track->save() ) {
+					list( $result, $reason ) = $this->mapmytracks_process_points( $track->id, $user_id );
+					if ( $result ) {
+						return $this->mapmytracks_response( 'activity_started', array( 'activity_id' => (string) $track->id ) );
 					}
+					return $this->mapmytracks_error( $reason );
 				}
 			}
-			$this->mapmytracks_error();
+			return $this->mapmytracks_error( 'input error' );
 		}
 
 		/**
@@ -2505,14 +2504,13 @@ EOF;
 		function handle_mapmytracks_update_activity( $user_id ) {
 			$track   = new Trackserver_Track( $this->trackserver, $_POST['activity_id'], $user_id );  // $restrict = true
 			if ( $track->id ) {
-				if ( ! empty( $_POST['points'] ) ) {
-					$points = $this->mapmytracks_parse_points( $_POST['points'] );
-					if ( $this->mapmytracks_insert_points( $points, $track->id, $user_id ) ) {
-						return $this->mapmytracks_response( 'activity_updated' );
-					}
+				list( $result, $reason ) = $this->mapmytracks_process_points( $track->id, $user_id );
+				if ( $result ) {
+					return $this->mapmytracks_response( 'activity_updated' );
 				}
+				return $this->mapmytracks_error( $reason );
 			}
-			$this->mapmytracks_error();
+			return $this->mapmytracks_error( 'track not found' );
 		}
 
 		/**
@@ -2580,7 +2578,7 @@ EOF;
 					return $this->mapmytracks_response( 'success' );
 				}
 			}
-			$this->mapmytracks_error();
+			return $this->mapmytracks_error();
 		}
 
 		function mapmytracks_parse_points( $points ) {
@@ -2608,6 +2606,32 @@ EOF;
 			} else {
 				return false;  // Invalid input
 			}
+		}
+
+		/**
+		 * Process 'points' input from a MapMyTracks request.
+		 *
+		 * Parse the input from $_POST and save the points to the database. On
+		 * errors, abort the operation and inform the caller.
+		 *
+		 * @since 4.4
+		 */
+		function mapmytracks_process_points( $track_id, $user_id ) {
+			if ( empty( $_POST['points'] ) ) {
+				return array( true, '' );
+			}
+
+			$points = $this->mapmytracks_parse_points( $_POST['points'] );
+
+			if ( $points === false ) {
+				return array( false, 'input error' );
+			}
+
+			if ( $this->mapmytracks_insert_points( $points, $track_id, $user_id ) ) {
+				return array( true, '' );
+			}
+
+			return array( false, 'server error' );
 		}
 
 		/**
