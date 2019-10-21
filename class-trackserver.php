@@ -2583,9 +2583,12 @@ EOF;
 
 		function mapmytracks_parse_points( $points ) {
 
-			// Check the points syntax. It should match groups of four items, each containing only
-			// numbers, some also dots and dashes
-			$pattern = '/^(-?[\d.]+ -?[\d.]+ -?[\d.]+ [\d]+ ?)*$/';
+			// Check the points syntax. It should match groups of four items. The
+			// first three may contain numbers, dots, dashes and the letter 'E' (it
+			// appears that OruxMaps sometimes sends floats in the scientific
+			// notation, like '7.72E-4'). The last one is the timestamp, which may
+			// only contain numbers.
+			$pattern = '/^([\dE.-]+ [\dE.-]+ [\dE.-]+ [\d]+ ?)*$/';
 			$n       = preg_match( $pattern, $points );
 
 			if ( $n == 1 ) {
@@ -2595,9 +2598,9 @@ EOF;
 					if ( $all[ $i ] ) {
 
 						$parsed[] = array(
-							'latitude'  => $all[ $i ],
-							'longitude' => $all[ $i + 1 ],
-							'altitude'  => $all[ $i + 2 ],
+							'latitude'  => number_format( $all[ $i ], 6 ),
+							'longitude' => number_format( $all[ $i + 1 ], 6 ),
+							'altitude'  => number_format( $all[ $i + 2 ], 6 ),
 							'timestamp' => $all[ $i + 3 ],
 						);
 					}
