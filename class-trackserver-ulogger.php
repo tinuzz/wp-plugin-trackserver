@@ -69,7 +69,7 @@ class Trackserver_Ulogger {
 	private function send_response( $data = array() ) {
 		$response          = array();
 		$response['error'] = ( array_key_exists( 'message', $data ) ? true : false );
-		header('Content-Type: application/json');
+		header( 'Content-Type: application/json' );
 		echo json_encode( array_merge( $response, $data ) );
 	}
 
@@ -87,7 +87,7 @@ class Trackserver_Ulogger {
 			$user_id = $this->trackserver->validate_wp_user_pass( $_POST['user'], $_POST['pass'] );
 			if ( $user_id !== false ) {
 				session_start();
-				$_SESSION            = array();
+				$_SESSION                        = array();
 				$_SESSION['trackserver_user_id'] = $user_id;
 				return $this->send_response();
 				//return $this->send_response( array( "user_id" => $user_id ) );  // for debugging
@@ -131,15 +131,14 @@ class Trackserver_Ulogger {
 
 		if ( array_key_exists( 'HTTP_USER_AGENT', $_SERVER ) ) {
 			$track->set( 'source', strtok( $_SERVER['HTTP_USER_AGENT'], ';' ) );
-		}
-		else {
+		} else {
 			$track->set( 'source', 'uLogger' );
 		}
 
-		if ( $track_id = $track->save() ) {
+		$track_id = $track->save();
+		if ( $track_id ) {
 			return $this->send_response( array( 'trackid' => $track_id ) );
-		}
-		else {
+		} else {
 			return $this->send_response( array( 'message' => 'Server error' ) );
 		}
 	}
@@ -158,21 +157,20 @@ class Trackserver_Ulogger {
 			if ( ! ( empty( $_POST['lat'] ) || empty( $_POST['lon'] ) || empty( $_POST['time'] ) ) ) {
 
 				$loc = new Trackserver_Location( $this->trackserver, $track->id, $user_id );
-
-				$ts   = (int) $_POST['time'];
-				$ts  += $this->trackserver->utc_to_local_offset( $ts );
+				$ts  = (int) $_POST['time'];
+				$ts += $this->trackserver->utc_to_local_offset( $ts );
 
 				$loc->set( 'latitude', $_POST['lat'] );
 				$loc->set( 'longitude', $_POST['lon'] );
 				$loc->set( 'occurred', date( 'Y-m-d H:i:s', $ts ) );
 
-				if ( ! empty ( $_POST['altitude'] ) ) {
+				if ( ! empty( $_POST['altitude'] ) ) {
 					$loc->set( 'altitude', $_POST['altitude'] );
 				}
-				if ( ! empty ( $_POST['speed'] ) ) {
+				if ( ! empty( $_POST['speed'] ) ) {
 					$loc->set( 'speed', $_POST['speed'] );
 				}
-				if ( ! empty ( $_POST['bearing'] ) ) {
+				if ( ! empty( $_POST['bearing'] ) ) {
 					$loc->set( 'heading', $_POST['bearing'] );
 				}
 

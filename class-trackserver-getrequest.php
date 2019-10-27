@@ -53,7 +53,7 @@ class Trackserver_Getrequest {
 
 		// OsmAnd sends a timestamp in milliseconds, and in UTC. Use substr() to truncate the timestamp,
 		// because dividing by 1000 causes an integer overflow on 32-bit systems.
-    if ( array_key_exists( 'timestamp', $_REQUEST ) ) {
+		if ( array_key_exists( 'timestamp', $_REQUEST ) ) {
 			$timestamp = rawurldecode( $_REQUEST['timestamp'] );
 			if ( strlen( $timestamp ) > 10 ) {
 				$timestamp = substr( $timestamp, 0, -3 );
@@ -110,7 +110,6 @@ class Trackserver_Getrequest {
 					$this->trackserver->calculate_distance( $track->id );
 					$this->trackserver->http_terminate( 200, "OK, track ID = $track->id, timestamp = $occurred" );
 				} else {
-					var_dump($loc);
 					$this->trackserver->http_terminate( 501, 'Database error (loc)' );
 				}
 			}
@@ -169,7 +168,7 @@ class Trackserver_Getrequest {
 			$source = trim( strtok( $_SERVER['HTTP_USER_AGENT'], ';(' ) );
 
 		} else {
-			$source = __('Unknown', 'trackserver' );
+			$source = __( 'Unknown', 'trackserver' );
 		}
 		return $source;
 

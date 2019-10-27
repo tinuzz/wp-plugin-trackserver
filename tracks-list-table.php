@@ -149,7 +149,7 @@ class Tracks_List_Table extends WP_List_Table {
 		echo '</span></div>';
 	}
 
-	function prepare_items( $search='' ) {
+	function prepare_items( $search = '' ) {
 		global $wpdb;
 
 		$per_page = $this->options['per_page'];
@@ -184,8 +184,8 @@ class Tracks_List_Table extends WP_List_Table {
 
 		if ( ! empty( $search ) ) {
 			$like   = '%' . esc_sql( $wpdb->esc_like( $search ) ) . '%';
-			$like   = str_replace( "\\\\_", "\\_", $like );    // underscores are double-escaped without this
-			$where .=  " AND (t.name LIKE '$like' OR t.source LIKE '$like' OR t.comment LIKE '$like')";
+			$like   = str_replace( '\\\\_', '\\_', $like );    // underscores are double-escaped without this
+			$where .= " AND (t.name LIKE '$like' OR t.source LIKE '$like' OR t.comment LIKE '$like')";
 		}
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
@@ -226,6 +226,6 @@ class Tracks_List_Table extends WP_List_Table {
 	}
 
 	function get_views() {
-		return array( 'all' => '<a href="'. admin_url() . 'admin.php?page=trackserver-tracks' . '">' . esc_html__( 'All tracks' ) . '</a>' );
+		return array( 'all' => '<a href="' . admin_url() . 'admin.php?page=trackserver-tracks' . '">' . esc_html__( 'All tracks' ) . '</a>' );
 	}
 }
