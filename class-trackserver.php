@@ -1561,7 +1561,9 @@ EOF;
 						$this->handle_trackme_protocol( $matches['method'], $username, $password );
 
 					} elseif ( $proto === 'mapmytracks1' || $proto === 'mapmytracks2' ) {
-						$this->handle_mapmytracks_request();
+						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-mapmytracks.php';
+						$client = new Trackserver_Mapmytracks( $this );
+						$client->handle_request();
 
 					} elseif ( $proto === 'ulogger' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-ulogger.php';
@@ -1824,44 +1826,6 @@ EOF;
 				case 'show':
 					$this->handle_trackme_cloud_show( $user_id );
 					break;
-			}
-		}
-
-		/**
-		 * Handle Mapmytracks requests.
-		 *
-		 * @since 1.0
-		 */
-		function handle_mapmytracks_request() {
-			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-track.php';
-			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
-
-			// Validate with '$return = true' so we can handle the auth failure.
-			$user_id = $this->validate_http_basicauth( true );
-
-			if ( $user_id === false ) {
-				return $this->mapmytracks_error( 'unauthorized' );
-			}
-
-			switch ( $_POST['request'] ) {
-				case 'start_activity':
-					$this->handle_mapmytracks_start_activity( $user_id );
-					break;
-				case 'update_activity':
-					$this->handle_mapmytracks_update_activity( $user_id );
-					break;
-				case 'stop_activity':
-					$this->handle_mapmytracks_stop_activity( $user_id );
-					break;
-				case 'upload_activity':
-					$this->handle_mapmytracks_upload_activity( $user_id );
-					break;
-				case 'get_activities':
-					break;
-				case 'get_activity':
-					break;
-				default:
-					$this->http_terminate( 501, 'Unsupported MapMyTracks request.' );
 			}
 		}
 
