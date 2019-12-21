@@ -747,15 +747,7 @@ class Trackserver_Shortcode {
 	 * @since 2.2
 	 */
 	function send_as_polyline( $res ) {
-
-		// Include polyline encoder
-		require_once TRACKSERVER_PLUGIN_DIR . 'class-polyline.php';
-
-		$points = array();
-		foreach ( $res as $row ) {
-			$points[] = array( $row['latitude'], $row['longitude'] );
-		}
-		$encoded  = Polyline::encode( $points );
+		$encoded  = $this->polyline_encode( $res );
 		$metadata = $this->get_metadata( $row );
 		$this->send_as_json( $encoded, $metadata );
 	}
@@ -858,26 +850,24 @@ class Trackserver_Shortcode {
 	 */
 	function send_alltracks( $res ) {
 
-		// Include polyline encoder
-		require_once TRACKSERVER_PLUGIN_DIR . 'class-polyline.php';
-
 		$tracks = array();
 		foreach ( $res as $row ) {
 			$id = $row['trip_id'];
 			if ( ! array_key_exists( $id, $tracks ) ) {
 				$tracks[ $id ] = array(
-					'points' => array(),
+					'track'  => '',
 				);
+				// Reset the temporary state. This depends on the points of one track being grouped together!
+				$this->previous = array( 0, 0 );
+				$index = 0;
 			}
-			$tracks[ $id ]['points'][] = array( $row['latitude'], $row['longitude'] );
+			$tracks[ $id ]['track'] .= $this->polyline_get_chunk( $row['latitude'], $index );
+			$index++;
+			$tracks[ $id ]['track'] .= $this->polyline_get_chunk( $row['longitude'], $index );
+			$index++;
 			$tracks[ $id ]['metadata'] = $this->get_metadata( $row );   // Overwrite the value on every row, so the last row remains
 		}
 
-		// Convert points to Polyline
-		foreach ( $tracks as $id => $values ) {
-			$tracks[ $id ]['track'] = Polyline::encode( $values['points'] );
-			unset( $tracks[ $id ]['points'] );
-		}
 		header( 'Content-Type: application/json' );
 		echo json_encode( $tracks );
 	}
@@ -901,6 +891,53 @@ class Trackserver_Shortcode {
 			$metadata['displayname'] = $this->trackserver->get_user_id( (int) $row['user_id'], 'display_name' );
 		}
 		return $metadata;
+	}
+
+	/**
+	 * Apply Google Polyline algorithm to list of points. Takes a $wpdb result
+	 * set as input.
+	 *
+	 * This function was largely copied from E. McConville's Polyline encoder.
+	 * Because it works on a DB result set directly, it saves two time and CPU
+	 * consuming steps: first the assembly of an array of points thats could be
+	 * passed to the encoder, and second the mandatory flattening of that array.
+	 *
+	 * @since 4.4
+	 */
+	function polyline_encode( $res ) {
+		$encoded_string = '';
+		$index          = 0;
+		$this->previous = array( 0, 0 );
+
+		foreach ( $res as $row ) {
+			$encoded_string .= $this->polyline_get_chunk( $row['latitude'], $index );
+			$index++;
+			$encoded_string .= $this->polyline_get_chunk( $row['longitude'], $index );
+			$index++;
+		}
+		return $encoded_string;
+	}
+
+	/**
+	 * Return a polyline encoded chunk for a single number (either a latitude or a longitude).
+	 *
+	 * @since 4.4
+	 */
+	function polyline_get_chunk( $number, $index ) {
+		$precision                    = 5;               // Precision level
+		$number                       = (float) $number;
+		$number                       = (int) round( $number * pow( 10, $precision ) );
+		$diff                         = $number - $this->previous[ $index % 2 ];
+		$this->previous[ $index % 2 ] = $number;
+		$number                       = $diff;
+		$number                       = ( $number < 0 ) ? ~( $number << 1 ) : ( $number << 1 );
+		$chunk                        = '';
+		while ( $number >= 0x20 ) {
+			$chunk   .= chr( ( 0x20 | ( $number & 0x1f ) ) + 63 );
+			$number >>= 5;
+		}
+		$chunk          .= chr( $number + 63 );
+		return $chunk;
 	}
 
 } // Class
