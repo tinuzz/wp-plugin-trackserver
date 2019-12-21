@@ -611,11 +611,11 @@ class Trackserver_Shortcode {
 			// @codingStandardsIgnoreEnd
 
 			if ( $format == 'gpx' ) {
-				$this->trackserver->send_as_gpx( $res );
+				$this->send_as_gpx( $res );
 			} elseif ( $format == 'geojson' ) {
-				$this->trackserver->send_as_geojson( $res );
+				$this->send_as_geojson( $res );
 			} else {
-				$this->trackserver->send_as_polyline( $res ); // default to 'polyline'
+				$this->send_as_polyline( $res ); // default to 'polyline'
 			}
 		} else {
 			echo "ENOID\n";
@@ -671,9 +671,9 @@ class Trackserver_Shortcode {
 		// @codingStandardsIgnoreEnd
 
 		if ( $format == 'gpx' ) {
-			$this->trackserver->send_as_gpx( $res );
+			$this->send_as_gpx( $res );
 		} else {
-			$this->trackserver->send_alltracks( $res ); // default to 'alltracks' internal format
+			$this->send_alltracks( $res ); // default to 'alltracks' internal format
 		}
 	}
 
@@ -722,4 +722,185 @@ class Trackserver_Shortcode {
 		die();
 	}
 
-}
+	/**
+	 * Function to output a track with metadata as GeoJSON. Takes a $wpdb result set as input.
+	 *
+	 * @since 2.2
+	 */
+	function send_as_geojson( $res ) {
+		$points = array();
+		foreach ( $res as $row ) {
+			$points[] = array( $row['longitude'], $row['latitude'] );
+		}
+		$encoded  = array(
+			'type'        => 'LineString',
+			'coordinates' => $points,
+		);
+		$metadata = $this->get_metadata( $row );
+		$this->send_as_json( $encoded, $metadata );
+	}
+
+	/**
+	 * Function to output a track as Polyline, with metadata, encoded in JSON.
+	 * Takes a $wpdb result set as input.
+	 *
+	 * @since 2.2
+	 */
+	function send_as_polyline( $res ) {
+
+		// Include polyline encoder
+		require_once TRACKSERVER_PLUGIN_DIR . 'class-polyline.php';
+
+		$points = array();
+		foreach ( $res as $row ) {
+			$points[] = array( $row['latitude'], $row['longitude'] );
+		}
+		$encoded  = Polyline::encode( $points );
+		$metadata = $this->get_metadata( $row );
+		$this->send_as_json( $encoded, $metadata );
+	}
+
+	/**
+	 * Function to actually output data as JSON. Takes encoded location points and metadata
+	 * (both arrays) as input.
+	 *
+	 * @since 2.2
+	 */
+	function send_as_json( $encoded, $metadata ) {
+		$data = array(
+			'track'    => $encoded,
+			'metadata' => $metadata,
+		);
+		header( 'Content-Type: application/json' );
+		echo json_encode( $data );
+	}
+
+	/**
+	 * Send output as GPX 1.1. Takes a $wpdb result set as input.
+	 */
+	function send_as_gpx( $res ) {
+		$dom = new DOMDocument( '1.0', 'utf-8' );
+		// @codingStandardsIgnoreStart
+		$dom->preserveWhiteSpace = false;
+		$dom->formatOutput = true;
+		// @codingStandardsIgnoreEnd
+		$gpx = $dom->createElementNS( 'http://www.topografix.com/GPX/1/1', 'gpx' );
+		$dom->appendChild( $gpx );
+		$gpx->setAttributeNS( 'http://www.w3.org/2000/xmlns/', 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance' );
+		$gpx->setAttribute( 'creator', 'Trackserver ' . TRACKSERVER_VERSION );
+		$gpx->setAttribute( 'version', '1.1' );
+		$gpx->setAttributeNS( 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', 'http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd' );
+		$metadata = $dom->createElement( 'metadata' );
+		$gpx->appendChild( $metadata );
+		$author = $dom->createElement( 'author' );
+		$metadata->appendChild( $author );
+		$authorname = $dom->createElement( 'name' );
+		$author->appendChild( $authorname );
+		$home_url = get_home_url( null, '/', ( is_ssl() ? 'https' : 'http' ) );
+		$link     = $dom->createElement( 'link' );
+		$metadata->appendChild( $link );
+		$link->setAttribute( 'href', $home_url );
+
+		$first         = true;
+		$last_track_id = false;
+		foreach ( $res as $row ) {
+
+			// Once, for the first record. Add stuff to the <gpx> element, using the database results
+			if ( $first ) {
+				$authorname->appendChild( $dom->createCDATASection( $this->trackserver->get_user_id( (int) $row['user_id'], 'display_name' ) ) );
+				$first_track_id = $row['trip_id'];
+				$first          = false;
+			}
+
+			// For every track
+			if ( $row['trip_id'] != $last_track_id ) {
+				$trk = $dom->createElement( 'trk' );
+				$gpx->appendChild( $trk );
+				$name = $dom->createElement( 'name' );
+				$trk->appendChild( $name );
+				$name->appendChild( $dom->createCDATASection( $row['name'] ) );
+				if ( $row['comment'] ) {
+					$desc = $dom->createElement( 'desc' );
+					$trk->appendChild( $desc );
+					$desc->appendChild( $dom->createCDATASection( $row['comment'] ) );
+				}
+				$trkseg = $dom->createElement( 'trkseg' );
+				$trk->appendChild( $trkseg );
+				$last_track_id = $row['trip_id'];
+			}
+
+			$trkpt = $dom->createElement( 'trkpt' );
+			$trkseg->appendChild( $trkpt );
+			$trkpt->setAttribute( 'lat', $row['latitude'] );
+			$trkpt->setAttribute( 'lon', $row['longitude'] );
+
+			$offset_seconds  = (int) get_option( 'gmt_offset' ) * 3600;
+			$timezone_offset = new DateInterval( 'PT' . abs( $offset_seconds ) . 'S' );
+			$occurred        = new DateTime( $row['occurred'] );  // A DateTime object in local time
+
+			if ( $offset_seconds < 0 ) {
+				$occurred = $occurred->add( $timezone_offset );
+			} else {
+				$occurred = $occurred->sub( $timezone_offset );
+			}
+			$occ_iso = $occurred->format( 'c' );
+			$trkpt->appendChild( $dom->createElement( 'time', $occ_iso ) );
+		}
+
+		header( 'Content-Type: application/gpx+xml' );
+		header( 'Content-Disposition: filename="trackserver-' . $first_track_id . '.gpx"' );
+		echo $dom->saveXML();
+	}
+
+	/**
+	 * Encode the results of a gettrack query as polyline and send it, with
+	 * metadata, as JSON.  Takes a $wpdb result set as input.
+	 */
+	function send_alltracks( $res ) {
+
+		// Include polyline encoder
+		require_once TRACKSERVER_PLUGIN_DIR . 'class-polyline.php';
+
+		$tracks = array();
+		foreach ( $res as $row ) {
+			$id = $row['trip_id'];
+			if ( ! array_key_exists( $id, $tracks ) ) {
+				$tracks[ $id ] = array(
+					'points' => array(),
+				);
+			}
+			$tracks[ $id ]['points'][] = array( $row['latitude'], $row['longitude'] );
+			$tracks[ $id ]['metadata'] = $this->get_metadata( $row );   // Overwrite the value on every row, so the last row remains
+		}
+
+		// Convert points to Polyline
+		foreach ( $tracks as $id => $values ) {
+			$tracks[ $id ]['track'] = Polyline::encode( $values['points'] );
+			unset( $tracks[ $id ]['points'] );
+		}
+		header( 'Content-Type: application/json' );
+		echo json_encode( $tracks );
+	}
+
+	/**
+	 * Function to construct a metadata array from a $wpdb row.
+	 *
+	 * @since 2.2
+	 */
+	function get_metadata( $row ) {
+		$metadata = array(
+			'last_trkpt_time'     => $row['occurred'],
+			'last_trkpt_altitude' => $row['altitude'],
+			'last_trkpt_speed_ms' => number_format( $row['speed'], 3 ),
+			'distance'            => $row['distance'],
+			'trackname'           => $row['name'],
+		);
+		if ( $row['user_id'] ) {
+			$metadata['userid']      = $row['user_id'];
+			$metadata['userlogin']   = $this->trackserver->get_user_id( (int) $row['user_id'], 'user_login' );
+			$metadata['displayname'] = $this->trackserver->get_user_id( (int) $row['user_id'], 'display_name' );
+		}
+		return $metadata;
+	}
+
+} // Class
