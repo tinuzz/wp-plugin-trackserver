@@ -1056,7 +1056,8 @@ EOF;
 						Trackserver_Shortcode::getInstance( $this )->handle_gettrack();
 
 					} elseif ( $proto === 'trackmeold1' || $proto === 'trackmeold2' || $proto === 'trackme1' || $proto === 'trackme2' ) {
-						$this->handle_trackme_protocol( $matches['method'], $username, $password );
+						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-trackme.php';
+						Trackserver_Trackme::getInstance( $this )->handle_protocol( $matches['method'], $username, $password );
 
 					} elseif ( $proto === 'mapmytracks1' || $proto === 'mapmytracks2' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-mapmytracks.php';
@@ -1156,69 +1157,6 @@ EOF;
 					$this->trackme_result( 2 );  // User not found
 				}
 			}
-		}
-
-		function handle_trackme_protocol( $method, $username, $password ) {
-			if ( $method === 'requests' ) {
-				$this->handle_trackme_request( $username, $password );
-			}
-
-			if ( $method === 'export' ) {
-				$this->handle_trackme_export( $username, $password );
-			}
-
-			if ( $method === 'cloud' ) {
-
-				// handle_trackme_cloud() will validate credentials, but if the old-style URL is in use,
-				// no credentials will be available. We short-circuit this case to be able to give the
-				// user a useful error message.
-
-				if ( empty( $username ) || empty( $password ) ) {       // No credentials from the URL; values are null
-					if ( empty( $_GET['u'] ) || empty( $_GET['p'] ) ) {   // No credentials from GET parameters either
-						$this->handle_trackme_cloud_error();                // This will not return
-					}
-				}
-				$this->handle_trackme_cloud( $username, $password );
-			}
-			die();
-		}
-
-		/**
-		 * Handle TrackMe GET requests. It validates the user and password and
-		 * delegates the requested action to a dedicated function
-		 */
-		function handle_trackme_request( $username = '', $password = '' ) {
-			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-track.php';
-			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
-
-			// If this function returns, we're OK
-			$user_id = $this->validate_trackme_login( $username, $password );
-
-			// Delegate the action to another function
-			switch ( $_GET['a'] ) {
-				case 'upload':
-					$this->handle_trackme_upload( $user_id );
-					break;
-				case 'gettriplist':
-					$this->handle_trackme_gettriplist( $user_id );
-					break;
-				case 'gettripfull':
-				case 'gettriphighlights':
-					$this->handle_trackme_gettripfull( $user_id );
-					break;
-				case 'deletetrip':
-					$this->handle_trackme_deletetrip( $user_id );
-					break;
-			}
-		}
-
-		/**
-		 * Handle TrackMe export requests. Not currently implemented.
-		 *
-		 * @since 1.0
-		 */
-		function handle_trackme_export( $username = '', $password = '' ) {
-			$this->http_terminate( 501, 'Export is not supported by the server.' );
 		}
 
 		/**
