@@ -4,6 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-shortcode.php';
+
 if ( ! class_exists( 'Trackserver' ) ) {
 
 	/**
@@ -167,8 +169,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @since 1.0
 		 */
 		function add_actions() {
-
-			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-shortcode.php';
 
 			// Set up permalink-related values
 			add_action( 'wp_loaded', array( &$this, 'wp_loaded' ) );
