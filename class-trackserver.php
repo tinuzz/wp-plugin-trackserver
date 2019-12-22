@@ -75,6 +75,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		function __construct() {
 			global $wpdb;
+
 			$this->tbl_tracks    = $wpdb->prefix . 'ts_tracks';
 			$this->tbl_locations = $wpdb->prefix . 'ts_locations';
 			$this->init_options();
@@ -175,10 +176,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 			// Custom request parser; core protocol handler
 			add_action( 'parse_request', array( &$this, 'parse_request' ) );
-
-			// Add handler for TrackMe server via WP AJAX interface for both logged-in and not-logged-in users
-			add_action( 'wp_ajax_trackserver_trackme', array( &$this, 'handle_trackme_request' ) );
-			add_action( 'wp_ajax_nopriv_trackserver_trackme', array( &$this, 'handle_trackme_request' ) );
 
 			// Front-end JavaScript and CSS
 			add_action( 'wp_enqueue_scripts', array( &$this, 'wp_enqueue_scripts' ) );
