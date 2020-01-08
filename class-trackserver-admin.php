@@ -11,9 +11,12 @@ class Trackserver_Admin {
 
 	private $trackserver; // Reference to the main object
 	public  $settings;    // Reference to the settings object
+	private $tbl_tracks;
+	private $tbl_locations;
 
 	public function __construct( $trackserver ) {
 		$this->trackserver = $trackserver;
+		$this->set_table_refs();
 	}
 
 	/**
@@ -39,6 +42,18 @@ class Trackserver_Admin {
 		add_action( 'admin_head', array( &$this, 'admin_head' ) );
 		add_action( 'add_meta_boxes', array( &$this, 'add_meta_boxes' ) );
 		add_filter( 'default_content', array( &$this, 'embedded_map_default_content' ), 10, 2 );
+
+		// Still on the main plugin object
+		add_action( 'admin_menu', array( $this->trackserver, 'admin_menu' ), 9 );
+		add_action( 'admin_post_trackserver_save_track', array( $this->trackserver, 'admin_post_save_track' ) );
+		add_action( 'admin_post_trackserver_upload_track', array( $this->trackserver, 'admin_post_upload_track' ) );
+		add_action( 'admin_enqueue_scripts', array( $this->trackserver, 'admin_enqueue_scripts' ) );
+		add_action( 'wp_ajax_trackserver_save_track', array( $this->trackserver, 'admin_ajax_save_modified_track' ) );
+		add_filter( 'plugin_action_links_trackserver/trackserver.php', array( $this->trackserver, 'add_settings_link' ) );
+
+		// WordPress MU
+		add_action( 'wpmu_new_blog', array( &$this, 'wpmu_new_blog' ) );
+		add_filter( 'wpmu_drop_tables', array( &$this, 'wpmu_drop_tables' ) );
 	}
 
 	/**
@@ -51,7 +66,81 @@ class Trackserver_Admin {
 		$this->register_settings();
 	}
 
+	/**
+	 * Installer function.
+	 *
+	 * This runs on every admin request. It installs/update the database
+	 * tables and sets capabilities for user roles.
+	 *
+	 * @since 1.0
+	 *
+	 * @global object $wpdb The WordPress database interface
+	 */
 	private function trackserver_install() {
+		$this->trackserver->create_tables();
+		$this->trackserver->check_update_db();
+		$this->trackserver->set_capabilities();
+	}
+
+	/**
+	 * Handler for 'wpmu_new_blog'. Only accepts one argument.
+	 *
+	 * This action is called when a new blog is created in a WordPress
+	 * network. This function switches to the new blog, stores options with
+	 * default values and calls the installer function to create the database
+	 * tables and set user capabilities.
+	 *
+	 * @since 3.0
+	 */
+	function wpmu_new_blog( $blog_id ) {
+		if ( is_plugin_active_for_network( 'trackserver/trackserver.php' ) ) {
+			$this->switch_to_blog( $blog_id );
+			$this->trackserver->init_options();
+			$this->trackserver_install();
+			$this->restore_current_blog();
+		}
+	}
+
+	/**
+	 * Handler for 'wpmu_drop_tables'
+	 *
+	 * This filter adds Trackserver's database tables to the list of tables
+	 * to be dropped when a blog is deleted from a WordPress network.
+	 *
+	 * @since 3.0
+	 */
+	function wpmu_drop_tables( $tables ) {
+		$this->set_table_refs();
+		$tables[] = $this->tbl_tracks;
+		$tables[] = $this->tbl_locations;
+		return $tables;
+	}
+
+	/**
+	 * Update the DB table properties on $this. Admin actions that can be called
+	 * from the context of a different blog (network admin actions) need to call
+	 * this before using the 'tbl_*' properties
+	 */
+	function set_table_refs() {
+		global $wpdb;
+		$this->tbl_tracks    = $wpdb->prefix . 'ts_tracks';
+		$this->tbl_locations = $wpdb->prefix . 'ts_locations';
+	}
+
+	/**
+	/* Wrapper for switch_to_blog() that sets properties on $this
+	 */
+	function switch_to_blog( $blog_id ) {
+		switch_to_blog( $blog_id );
+		$this->set_table_refs();
+	}
+
+	/**
+	 * Wrapper for restore_current_blog() that sets properties on $this
+	 */
+	function restore_current_blog() {
+		restore_current_blog();
+		$this->set_table_refs();
 	}
 
 	/**
