@@ -6,10 +6,25 @@ if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
 
 class Trackserver_Settings {
 
+	// Singleton
+	protected static $instance;
+
 	private $trackserver; // Reference to the main object
 
 	public function __construct( $trackserver ) {
 		$this->trackserver = $trackserver;
+	}
+
+	/**
+	 * Create a singleton if it doesn't exist and return it.
+	 *
+	 * @since 5.0
+	 */
+	public static function get_instance( $trackserver ) {
+		if ( ! self::$instance ) {
+			self::$instance = new self( $trackserver );
+		}
+		return self::$instance;
 	}
 
 	public function register() {

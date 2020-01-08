@@ -62,8 +62,7 @@ EOF;
 
 	private function register_settings() {
 		require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-settings.php';
-		$this->settings = new Trackserver_Settings( $this->trackserver );
-		$this->settings->register();
+		Trackserver_Settings::get_instance( $this->trackserver )->register();
 	}
 
 	/**

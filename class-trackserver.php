@@ -730,6 +730,9 @@ EOF;
 		}
 
 		function admin_menu() {
+
+			require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-settings.php';
+
 			$page                   = add_options_page( 'Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-admin-menu', array( &$this, 'options_page_html' ) );
 			$page                   = str_replace( 'admin_page_', '', $page );
 			$this->options_page     = str_replace( 'settings_page_', '', $page );
@@ -2260,7 +2263,7 @@ EOF;
 
 			printf( $format, esc_html__( 'Full custom URL', 'trackserver' ) );
 
-			$this->admin->settings->mapmytracks_settings_html();
+			Trackserver_Settings::get_instance( $this )->mapmytracks_settings_html();
 		}
 
 		function osmand_key_html() {
@@ -2287,7 +2290,7 @@ EOF;
 			);
 			// @codingStandardsIgnoreEnd
 
-			$this->admin->settings->osmand_settings_html();
+			Trackserver_Settings::get_instance( $this )->osmand_settings_html();
 		}
 
 		function sendlocation_key_html() {
@@ -2339,7 +2342,7 @@ EOF;
 			);
 			// @codingStandardsIgnoreEnd
 
-			$this->admin->settings->trackme_settings_html();
+			Trackserver_Settings::get_instance( $this )->trackme_settings_html();
 		}
 
 		function share_friends_html() {
