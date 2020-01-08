@@ -182,7 +182,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			add_action( 'wp_footer', array( &$this, 'wp_footer' ) );
 
 			// Shortcodes
-			Trackserver_Shortcode::getInstance( $this );
+			Trackserver_Shortcode::get_instance( $this );
 
 			// Media upload
 			add_filter( 'upload_mimes', array( &$this, 'upload_mimes' ) );
@@ -1053,7 +1053,7 @@ EOF;
 					}
 
 					if ( $proto === 'gettrack' ) {
-						Trackserver_Shortcode::getInstance( $this )->handle_gettrack();
+						Trackserver_Shortcode::get_instance( $this )->handle_gettrack();
 
 					} elseif ( $proto === 'trackmeold1' || $proto === 'trackmeold2' || $proto === 'trackme1' || $proto === 'trackme2' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-trackme.php';

@@ -29,7 +29,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 4.4
 	 */
-	public static function getInstance( $trackserver ) {
+	public static function get_instance( $trackserver ) {
 		if ( ! self::$instance ) {
 			self::$instance = new self( $trackserver );
 		}
