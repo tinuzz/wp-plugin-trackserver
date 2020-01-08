@@ -42,6 +42,7 @@ class Trackserver_Admin {
 		add_action( 'admin_head', array( &$this, 'admin_head' ) );
 		add_action( 'add_meta_boxes', array( &$this, 'add_meta_boxes' ) );
 		add_filter( 'default_content', array( &$this, 'embedded_map_default_content' ), 10, 2 );
+		add_filter( 'plugin_row_meta', array( &$this, 'plugin_row_meta' ), 10, 4 );
 
 		// Still on the main plugin object
 		add_action( 'admin_menu', array( $this->trackserver, 'admin_menu' ), 9 );
@@ -226,6 +227,19 @@ EOF;
 				break;
 		}
 		return $content;
+	}
+
+	/**
+	 * Add some relevant links to the plugin meta data on the WordPress plugins page.
+	 *
+	 * @since 5.0
+	 */
+	public function plugin_row_meta( $links_array, $plugin_file_name, $plugin_data, $status ) {
+		if ( $plugin_file_name === 'trackserver/trackserver.php' ) {
+			$links_array[] = '<a href="https://www.grendelman.net/wp/trackserver-wordpress-plugin/" target="_blank">Homepage</a>';
+			$links_array[] = '<a href="https://github.com/tinuzz/wp-plugin-trackserver" target="_blank">Github</a>';
+		}
+		return $links_array;
 	}
 
 }
