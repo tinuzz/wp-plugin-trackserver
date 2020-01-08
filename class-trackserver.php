@@ -106,8 +106,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$this->add_actions();
 			if ( is_admin() ) {
 				require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-admin.php';
-				$this->admin = new Trackserver_Admin( $this );
-				$this->admin->add_actions();
+				Trackserver_Admin::get_instance( $this )->add_actions();
 				$this->add_admin_actions();
 			}
 		}
