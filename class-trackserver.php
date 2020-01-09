@@ -838,6 +838,7 @@ EOF;
 		 * @since 4.4
 		 */
 		function get_request_uri() {
+			global $wp_rewrite;
 			$home_path       = trim( parse_url( home_url(), PHP_URL_PATH ), '/' ) . $this->url_prefix;
 			$home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
 
