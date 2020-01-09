@@ -747,8 +747,7 @@ class Trackserver_Shortcode {
 	 * @since 2.2
 	 */
 	function send_as_polyline( $res ) {
-		$encoded  = $this->polyline_encode( $res );
-		$metadata = $this->get_metadata( $row );
+		list( $encoded, $metadata ) = $this->polyline_encode( $res );
 		$this->send_as_json( $encoded, $metadata );
 	}
 
@@ -915,7 +914,11 @@ class Trackserver_Shortcode {
 			$encoded_string .= $this->polyline_get_chunk( $row['longitude'], $index );
 			$index++;
 		}
-		return $encoded_string;
+
+		// Metadata stuff doesn't really belong here, but this is the only place
+		// where we have the last row of the result set available.
+		$metadata = $this->get_metadata( $row );
+		return array( $encoded_string, $metadata );
 	}
 
 	/**
