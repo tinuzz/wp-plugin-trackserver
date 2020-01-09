@@ -11,6 +11,8 @@ class Trackserver_Mapmytracks {
 
 	private $trackserver;  // Reference to the calling object
 	private $user_id;      // User ID of WP_User doing the request
+	private $tbl_tracks;
+	private $tbl_locations;
 
 	/**
 	 * Constructor.
@@ -18,7 +20,9 @@ class Trackserver_Mapmytracks {
 	 * @since 4.4
 	 */
 	public function __construct( $trackserver ) {
-		$this->trackserver = $trackserver;
+		$this->trackserver   = $trackserver;
+		$this->tbl_tracks    = $this->trackserver->tbl_tracks;
+		$this->tbl_locations = $this->trackserver->tbl_locations;
 	}
 
 	/**
@@ -182,7 +186,7 @@ class Trackserver_Mapmytracks {
 					$track_ids = $result['track_ids'];
 					if ( count( $track_ids ) > 0 ) {
 						$in	= '(' . implode( ',', $track_ids ) . ')';
-						$sql = $wpdb->prepare( 'UPDATE ' . $this->trackserver->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+						$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 						$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					}
 				}

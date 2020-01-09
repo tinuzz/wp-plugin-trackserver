@@ -29,8 +29,8 @@ class Trackserver_Track {
 		global $wpdb;
 		$this->trackserver   = $trackserver;
 		$this->user_id       = (int) $user_id;
-		$this->tbl_tracks    = $wpdb->prefix . 'ts_tracks';
-		$this->tbl_locations = $wpdb->prefix . 'ts_locations';
+		$this->tbl_tracks    = $this->trackserver->tbl_tracks;
+		$this->tbl_locations = $this->trackserver->tbl_locations;
 
 		if ( ! ( is_null( $value ) || is_null( $user_id ) ) ) {
 			$this->get_by( $field, (string) $value, (int) $user_id, $restrict );

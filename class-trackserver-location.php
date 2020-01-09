@@ -30,12 +30,11 @@ class Trackserver_Location {
 	 * @since 4.4
 	 */
 	public function __construct( $trackserver, $track_id = null, $user_id = null ) {
-		global $wpdb;
 		$this->trackserver   = $trackserver;
 		$this->track_id      = $track_id;
 		$this->user_id       = $user_id;   // Needed for geofencing
-		$this->tbl_tracks    = $wpdb->prefix . 'ts_tracks';
-		$this->tbl_locations = $wpdb->prefix . 'ts_locations';
+		$this->tbl_tracks    = $this->trackserver->tbl_tracks;
+		$this->tbl_locations = $this->trackserver->tbl_locations;
 	}
 
 	/**
