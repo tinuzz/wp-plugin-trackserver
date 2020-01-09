@@ -242,4 +242,4 @@ EOF;
 		return $links_array;
 	}
 
-}
+} // class

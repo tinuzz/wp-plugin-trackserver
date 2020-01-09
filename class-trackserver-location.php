@@ -126,5 +126,4 @@ class Trackserver_Location {
 		$this->$what = $value;
 	}
 
-}  // class
-
+} // class
