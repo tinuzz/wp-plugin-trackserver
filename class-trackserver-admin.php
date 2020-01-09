@@ -4,6 +4,9 @@ if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
 	die( 'No, sorry.' );
 }
 
+require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-db.php';
+require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-settings.php';
+
 class Trackserver_Admin {
 
 	// Singleton
@@ -68,7 +71,7 @@ class Trackserver_Admin {
 	}
 
 	/**
-	 * Installer function.
+	 * Installer.
 	 *
 	 * This runs on every admin request. It installs/update the database
 	 * tables and sets capabilities for user roles.
@@ -78,9 +81,10 @@ class Trackserver_Admin {
 	 * @global object $wpdb The WordPress database interface
 	 */
 	private function trackserver_install() {
-		$this->trackserver->create_tables();
-		$this->trackserver->check_update_db();
-		$this->trackserver->set_capabilities();
+		$db = Trackserver_Db::get_instance( $this->trackserver );
+		$db->create_tables();
+		$db->check_update_db();
+		$this->set_capabilities();
 	}
 
 	/**
@@ -118,6 +122,22 @@ class Trackserver_Admin {
 	}
 
 	/**
+	/* Wrapper for switch_to_blog() that sets properties on $this
+	 */
+	private function switch_to_blog( $blog_id ) {
+		switch_to_blog( $blog_id );
+		$this->set_table_refs();
+	}
+
+	/**
+	 * Wrapper for restore_current_blog() that sets properties on $this
+	 */
+	private function restore_current_blog() {
+		restore_current_blog();
+		$this->set_table_refs();
+	}
+
+	/**
 	 * Update the DB table properties on $this. Admin actions that can be called
 	 * from the context of a different blog (network admin actions) need to call
 	 * this before using the 'tbl_*' properties
@@ -129,19 +149,25 @@ class Trackserver_Admin {
 	}
 
 	/**
-	/* Wrapper for switch_to_blog() that sets properties on $this
+	 * Add capabilities for using Trackserver to WordPress roles.
+	 *
+	 * @since 1.3
 	 */
-	function switch_to_blog( $blog_id ) {
-		switch_to_blog( $blog_id );
-		$this->set_table_refs();
-	}
+	private function set_capabilities() {
+		$roles = array(
+			'administrator' => array( 'use_trackserver', 'trackserver_publish', 'trackserver_admin' ),
+			'editor'        => array( 'use_trackserver', 'trackserver_publish' ),
+			'author'        => array( 'use_trackserver' ),
+		);
 
-	/**
-	 * Wrapper for restore_current_blog() that sets properties on $this
-	 */
-	function restore_current_blog() {
-		restore_current_blog();
-		$this->set_table_refs();
+		foreach ( $roles as $rolename => $capnames ) {
+			$role = get_role( $rolename );
+			foreach ( $capnames as $cap ) {
+				if ( ! ( $role->has_cap( $cap ) ) ) {
+					$role->add_cap( $cap );
+				}
+			}
+		}
 	}
 
 	/**
@@ -166,7 +192,6 @@ EOF;
 	}
 
 	private function register_settings() {
-		require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-settings.php';
 		Trackserver_Settings::get_instance( $this->trackserver )->register();
 	}
 
