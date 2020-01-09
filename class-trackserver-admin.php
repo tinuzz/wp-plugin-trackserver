@@ -93,7 +93,7 @@ class Trackserver_Admin {
 	 *
 	 * @since 3.0
 	 */
-	function wpmu_new_blog( $blog_id ) {
+	public function wpmu_new_blog( $blog_id ) {
 		if ( is_plugin_active_for_network( 'trackserver/trackserver.php' ) ) {
 			$this->switch_to_blog( $blog_id );
 			$this->trackserver->init_options();
@@ -110,7 +110,7 @@ class Trackserver_Admin {
 	 *
 	 * @since 3.0
 	 */
-	function wpmu_drop_tables( $tables ) {
+	public function wpmu_drop_tables( $tables ) {
 		$this->set_table_refs();
 		$tables[] = $this->tbl_tracks;
 		$tables[] = $this->tbl_locations;
@@ -122,7 +122,7 @@ class Trackserver_Admin {
 	 * from the context of a different blog (network admin actions) need to call
 	 * this before using the 'tbl_*' properties
 	 */
-	function set_table_refs() {
+	private function set_table_refs() {
 		global $wpdb;
 		$this->tbl_tracks    = $wpdb->prefix . 'ts_tracks';
 		$this->tbl_locations = $wpdb->prefix . 'ts_locations';
@@ -149,7 +149,7 @@ class Trackserver_Admin {
 	 *
 	 * @since 1.0
 	 */
-	function admin_head() {
+	public function admin_head() {
 		echo <<<EOF
 			<style type="text/css">
 				.wp-list-table .column-id { width: 50px; }
@@ -220,7 +220,7 @@ EOF;
 	 * Handler for 'default_content' filter. Sets the default content of a new
 	 * embedded map to an empty [tsmap] shortcode.
 	 */
-	function embedded_map_default_content( $content, $post ) {
+	public function embedded_map_default_content( $content, $post ) {
 		switch ( $post->post_type ) {
 			case 'tsmap':
 				$content = '[tsmap]';
