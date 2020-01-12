@@ -376,46 +376,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			load_plugin_textdomain( 'trackserver', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 		}
 
-		/**
-		 * Output HTML for the Trackserver options page.
-		 *
-		 * @since 1.0
-		 */
-		function options_page_html() {
-			if ( ! current_user_can( 'manage_options' ) ) {
-				wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
-			}
-
-			add_thickbox();
-
-			echo '<div class="wrap"><h2>';
-			esc_html_e( 'Trackserver Options', 'trackserver' );
-			echo '</h2>';
-
-			if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == 'true' ) {
-				echo '<div class="updated"><p>' . esc_html__( 'Settings updated', 'trackserver' ) . '</p></div>';
-
-				// Flush rewrite rules, for when embedded maps slug has been changed
-				flush_rewrite_rules();
-			}
-
-			?>
-				<hr />
-				<form id="trackserver-options" name="trackserver-options" action="options.php" method="post">
-			<?php
-
-			settings_fields( 'trackserver-options' );
-			do_settings_sections( 'trackserver' );
-			submit_button( esc_attr__( 'Update options', 'trackserver' ), 'primary', 'submit' );
-
-			?>
-				</form>
-				<hr />
-			</div>
-			<?php
-			$this->howto_modals_html();
-		}
-
 		function howto_modals_html() {
 			$trackme_settings_img     = TRACKSERVER_PLUGIN_URL . 'img/trackme-settings.png';
 			$trackme_settings         = esc_attr__( 'TrackMe settings', 'trackserver' );

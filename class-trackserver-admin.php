@@ -46,9 +46,9 @@ class Trackserver_Admin {
 		add_action( 'add_meta_boxes', array( &$this, 'add_meta_boxes' ) );
 		add_filter( 'default_content', array( &$this, 'embedded_map_default_content' ), 10, 2 );
 		add_filter( 'plugin_row_meta', array( &$this, 'plugin_row_meta' ), 10, 4 );
+		add_action( 'admin_menu', array( &$this, 'admin_menu' ), 9 );
 
 		// Still on the main plugin object
-		add_action( 'admin_menu', array( $this->trackserver, 'admin_menu' ), 9 );
 		add_action( 'admin_post_trackserver_save_track', array( $this->trackserver, 'admin_post_save_track' ) );
 		add_action( 'admin_post_trackserver_upload_track', array( $this->trackserver, 'admin_post_upload_track' ) );
 		add_action( 'admin_enqueue_scripts', array( $this->trackserver, 'admin_enqueue_scripts' ) );
@@ -265,6 +265,360 @@ EOF;
 			$links_array[] = '<a href="https://github.com/tinuzz/wp-plugin-trackserver" target="_blank">Github</a>';
 		}
 		return $links_array;
+	}
+
+	public function admin_menu() {
+
+		require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-settings.php';
+
+		$page                   = add_options_page( 'Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-admin-menu', array( &$this, 'options_page_html' ) );
+		$page                   = str_replace( 'admin_page_', '', $page );
+		$this->options_page     = str_replace( 'settings_page_', '', $page );
+		$this->options_page_url = menu_page_url( $this->options_page, false );
+
+		// A dedicated menu in the main tree
+		add_menu_page(
+			esc_html__( 'Trackserver Options', 'trackserver' ),
+			esc_html__( 'Trackserver', 'trackserver' ),
+			'manage_options',
+			'trackserver-options',
+			array( &$this, 'options_page_html' ),
+			TRACKSERVER_PLUGIN_URL . 'img/trackserver.png'
+		);
+
+		add_submenu_page(
+			'trackserver-options',
+			esc_html__( 'Trackserver Options', 'trackserver' ),
+			esc_html__( 'Options', 'trackserver' ),
+			'manage_options',
+			'trackserver-options',
+			array( &$this, 'options_page_html' )
+		);
+
+		$page2 = add_submenu_page(
+			'trackserver-options',
+			esc_html__( 'Manage tracks', 'trackserver' ),
+			esc_html__( 'Manage tracks', 'trackserver' ),
+			'use_trackserver',
+			'trackserver-tracks',
+			array( &$this, 'manage_tracks_html' )
+		);
+
+		$page3 = add_submenu_page(
+			'trackserver-options',
+			esc_html__( 'Your profile', 'trackserver' ),
+			esc_html__( 'Your profile', 'trackserver' ),
+			'use_trackserver',
+			'trackserver-yourprofile',
+			array( &$this, 'yourprofile_html' )
+		);
+
+		// Early action to set up the 'Manage tracks' page and handle bulk actions.
+		add_action( 'load-' . $page2, array( &$this, 'load_manage_tracks' ) );
+
+		// Early action to set up the 'Your profile' page and handle POST
+		add_action( 'load-' . $page3, array( &$this, 'load_your_profile' ) );
+	}
+
+	/**
+	 * Output HTML for the Trackserver options page.
+	 *
+	 * @since 1.0
+	 */
+	public function options_page_html() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
+		}
+
+		add_thickbox();
+
+		echo '<div class="wrap"><h2>';
+		esc_html_e( 'Trackserver Options', 'trackserver' );
+		echo '</h2>';
+
+		if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == 'true' ) {
+			echo '<div class="updated"><p>' . esc_html__( 'Settings updated', 'trackserver' ) . '</p></div>';
+
+			// Flush rewrite rules, for when embedded maps slug has been changed
+			flush_rewrite_rules();
+		}
+
+		?>
+			<hr />
+			<form id="trackserver-options" name="trackserver-options" action="options.php" method="post">
+		<?php
+
+		settings_fields( 'trackserver-options' );
+		do_settings_sections( 'trackserver' );
+		submit_button( esc_attr__( 'Update options', 'trackserver' ), 'primary', 'submit' );
+
+		?>
+			</form>
+			<hr />
+		</div>
+		<?php
+		$this->trackserver->howto_modals_html();
+	}
+
+	function manage_tracks_html() {
+
+		if ( ! current_user_can( 'use_trackserver' ) ) {
+			wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
+		}
+
+		add_thickbox();
+		$this->trackserver->setup_tracks_list_table();
+
+		$search = ( isset( $_REQUEST['s'] ) ? wp_unslash( $_REQUEST['s'] ) : '' );
+		$this->trackserver->tracks_list_table->prepare_items( $search );
+
+		$url = admin_url() . 'admin-post.php';
+
+		?>
+			<div id="ts-edit-modal" style="display:none;">
+				<p>
+					<form id="trackserver-edit-track" method="post" action="<?php echo $url; ?>">
+						<table style="width: 100%">
+							<?php wp_nonce_field( 'manage_track' ); ?>
+							<input type="hidden" name="action" value="trackserver_save_track" />
+							<input type="hidden" name="s" value="<?php echo esc_attr( $search ); ?>" />
+							<input type="hidden" id="track_id" name="track_id" value="" />
+							<tr>
+								<th style="width: 150px;"><?php esc_html_e( 'Name', 'trackserver' ); ?></th>
+								<td><input id="input-track-name" name="name" type="text" style="width: 100%" /></td>
+							</tr>
+							<tr>
+								<th><?php esc_html_e( 'Source', 'trackserver' ); ?></th>
+								<td><input id="input-track-source" name="source" type="text" style="width: 100%" /></td>
+							</tr>
+							<tr>
+								<th><?php esc_html_e( 'Comment', 'trackserver' ); ?></th>
+								<td><textarea id="input-track-comment" name="comment" rows="3" style="width: 100%; resize: none;"></textarea></td>
+							</tr>
+						</table>
+						<br />
+						<input class="button action" type="submit" value="<?php esc_attr_e( 'Save', 'trackserver' ); ?>" name="save_track">
+						<input class="button action" type="button" value="<?php esc_attr_e( 'Cancel', 'trackserver' ); ?>" onClick="tb_remove(); return false;">
+						<input type="hidden" id="trackserver-edit-action" name="trackserver_action" value="save">
+						<a id="ts-delete-track" href="#" style="float: right; color: red" ><?php esc_html_e( 'Delete', 'trackserver' ); ?></a>
+					</form>
+				</p>
+			</div>
+			<div id="ts-view-modal" style="display:none;">
+					<div id="tsadminmapcontainer">
+						<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
+					</div>
+			</div>
+			<div id="ts-merge-modal" style="display:none;">
+				<p>
+					<?php esc_html__( 'Merge all points of multiple tracks into one track. Please specify the name for the merged track.', 'trackserver' ); ?>
+					<form method="post" action="<?php echo $url; ?>">
+						<table style="width: 100%">
+							<?php wp_nonce_field( 'manage_track' ); ?>
+							<tr>
+								<th style="width: 150px;"><?php esc_html_e( 'Merged track name', 'trackserver' ); ?></th>
+								<td><input id="input-merged-name" name="name" type="text" style="width: 100%" /></td>
+							</tr>
+						</table>
+						<br />
+						<span class="aligncenter"><i><?php esc_html_e( 'Warning: this action cannot be undone!', 'trackserver' ); ?></i></span><br />
+						<div class="alignright">
+							<input class="button action" type="button" value="<?php esc_attr_e( 'Save', 'trackserver' ); ?>" id="merge-submit-button">
+							<input class="button action" type="button" value="<?php esc_attr_e( 'Cancel', 'trackserver' ); ?>" onClick="tb_remove(); return false;">
+						</div>
+					</form>
+				</p>
+			</div>
+			<div id="ts-upload-modal" style="display:none;">
+				<div style="padding: 15px 0">
+					<form id="ts-upload-form" method="post" action="<?php echo $url; ?>" enctype="multipart/form-data">
+						<?php wp_nonce_field( 'upload_track' ); ?>
+						<input type="hidden" name="action" value="trackserver_upload_track" />
+						<input type="file" name="gpxfile[]" multiple="multiple" style="display: none" id="ts-file-input" />
+						<input type="button" class="button button-hero" value="<?php esc_attr_e( 'Select files', 'trackserver' ); ?>" id="ts-select-files-button" />
+						<!-- <input type="button" class="button button-hero" value="Upload" id="ts-upload-files-button" disabled="disabled" /> -->
+						<button type="button" class="button button-hero" value="<?php esc_attr_e( 'Upload', 'trackserver' ); ?>" id="ts-upload-files-button" disabled="disabled"><?php esc_html_e( 'Upload', 'trackserver' ); ?></button>
+					</form>
+					<br />
+					<br />
+					<?php esc_html_e( 'Selected files', 'trackserver' ); ?>:<br />
+					<div id="ts-upload-filelist" style="height: 200px; max-height: 200px; overflow-y: auto; border: 1px solid #dddddd; padding-left: 5px;"></div>
+					<br />
+					<div id="ts-upload-warning"></div>
+				</div>
+			</div>
+			<form id="trackserver-tracks" method="post">
+				<input type="hidden" name="page" value="trackserver-tracks" />
+				<div class="wrap">
+					<h2><?php esc_html_e( 'Manage tracks', 'trackserver' ); ?></h2>
+					<?php $this->trackserver->notice_bulk_action_result(); ?>
+					<?php $this->trackserver->tracks_list_table->views(); ?>
+					<?php $this->trackserver->tracks_list_table->search_box( esc_attr__( 'Search tracks', 'trackserver' ), 'search_tracks' ); ?>
+					<?php $this->trackserver->tracks_list_table->display(); ?>
+				</div>
+			</form>
+		<?php
+	}
+
+	public function yourprofile_html() {
+
+		if ( ! current_user_can( 'use_trackserver' ) ) {
+			wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
+		}
+
+		add_thickbox();
+
+		$user = wp_get_current_user();
+
+		// translators: placeholder is for a user's display name
+		$title = __( 'Trackserver profile for %s', 'trackserver' );
+		$title = sprintf( $title, $user->display_name );
+
+		?>
+		<div class="wrap">
+			<h2><?php echo esc_html( $title ); ?></h2>
+			<?php $this->trackserver->notice_bulk_action_result(); ?>
+			<form id="trackserver-profile" method="post">
+				<?php wp_nonce_field( 'your-profile' ); ?>
+				<table class="form-table">
+					<tbody>
+						<tr>
+							<th scope="row">
+								<label for="trackme_access_key">
+									<?php esc_html_e( 'TrackMe password', 'trackserver' ); ?>
+								</label>
+							</th>
+							<td>
+								<?php $this->trackserver->trackme_passwd_html(); ?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label for="mapmytracks_profile">
+									<?php esc_html_e( 'MapMyTracks profile', 'trackserver' ); ?>
+								</label>
+							</th>
+							<td>
+								<?php $this->trackserver->mapmytracks_profile_html(); ?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label for="osmand_access_key">
+									<?php esc_html_e( 'OsmAnd access key', 'trackserver' ); ?>
+								</label>
+							</th>
+							<td>
+								<?php $this->trackserver->osmand_key_html(); ?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label for="sendlocation_access_key">
+									<?php esc_html_e( 'SendLocation access key', 'trackserver' ); ?>
+								</label>
+							</th>
+							<td>
+								<?php $this->trackserver->sendlocation_key_html(); ?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label>
+									<?php esc_html_e( 'Share via TrackMe Cloud Sharing / OwnTracks Friends', 'trackserver' ); ?>
+								</label>
+							</th>
+							<td>
+								<?php $this->trackserver->share_friends_html(); ?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label>
+									<?php esc_html_e( 'Follow users via TrackMe Cloud Sharing / OwnTracks Friends', 'trackserver' ); ?>
+								</label>
+							</th>
+							<td>
+								<?php $this->trackserver->follow_friends_html(); ?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label for="infobar_template">
+									<?php esc_html_e( 'Shortcode infobar template', 'trackserver' ); ?>
+								</label>
+							</th>
+							<td>
+								<?php $this->trackserver->infobar_template_html(); ?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label for="geofence_center">
+									<?php esc_html_e( 'Geofencing', 'trackserver' ); ?>
+								</label>
+							</th>
+							<td>
+								<?php $this->trackserver->geofences_html(); ?>
+							</td>
+						</tr>
+					<tbody>
+				</table>
+				<p class="submit">
+					<input type="submit" value="<?php esc_html_e( 'Update profile', 'trackserver' ); ?>"
+						class="button button-primary" id="submit" name="submit">
+				</p>
+			</form>
+			<div id="ts-view-modal" style="display:none;">
+					<div id="tsadminmapcontainer">
+						<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
+					</div>
+			</div>
+		</div>
+		<?php
+		$this->trackserver->howto_modals_html();
+	}
+
+	/**
+	 * Handler for the load-$hook for the 'Manage tracks' page
+	 * It sets up the list table and processes any bulk actions
+	 */
+	public function load_manage_tracks() {
+		$this->trackserver->setup_tracks_list_table();
+		$action = $this->trackserver->tracks_list_table->get_current_action();
+		if ( $action ) {
+			$this->trackserver->process_bulk_action( $action );
+		}
+		// Set up bulk action result notice
+		$this->setup_bulk_action_result_msg();
+	}
+
+	/**
+	 * Handler for the load-$hook for the 'Trackserver profile' page.
+	 * It handles a POST (profile update) and sets up a result message.
+	 *
+	 * @since 1.9
+	 */
+	public function load_your_profile() {
+		// Handle POST from 'Trackserver profile' page
+		// $_POST['ts_user_meta'] holds all the values
+		if ( isset( $_POST['ts_user_meta'] ) ) {
+			check_admin_referer( 'your-profile' );
+			$this->trackserver->process_profile_update();
+		}
+
+		// Set up bulk action result notice
+		$this->setup_bulk_action_result_msg();
+	}
+
+	/**
+	 * Function to set up a bulk action result message to be displayed later.
+	 */
+	private function setup_bulk_action_result_msg() {
+		if ( isset( $_COOKIE['ts_bulk_result'] ) ) {
+			$this->trackserver->bulk_action_result_msg = stripslashes( $_COOKIE['ts_bulk_result'] );
+			setcookie( 'ts_bulk_result', '', time() - 3600 );
+		}
 	}
 
 } // class
