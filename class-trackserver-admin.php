@@ -6,6 +6,7 @@ if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
 
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-db.php';
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-settings.php';
+require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-profile.php';
 
 class Trackserver_Admin {
 
@@ -268,9 +269,6 @@ EOF;
 	}
 
 	public function admin_menu() {
-
-		require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-settings.php';
-
 		$page                   = add_options_page( 'Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-admin-menu', array( &$this, 'options_page_html' ) );
 		$page                   = str_replace( 'admin_page_', '', $page );
 		$this->options_page     = str_replace( 'settings_page_', '', $page );
@@ -310,7 +308,7 @@ EOF;
 			esc_html__( 'Your profile', 'trackserver' ),
 			'use_trackserver',
 			'trackserver-yourprofile',
-			array( &$this, 'yourprofile_html' )
+			array( Trackserver_Profile::get_instance( $this->trackserver ), 'yourprofile_html' )
 		);
 
 		// Early action to set up the 'Manage tracks' page and handle bulk actions.
@@ -458,125 +456,6 @@ EOF;
 				</div>
 			</form>
 		<?php
-	}
-
-	public function yourprofile_html() {
-
-		if ( ! current_user_can( 'use_trackserver' ) ) {
-			wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
-		}
-
-		add_thickbox();
-
-		$user = wp_get_current_user();
-
-		// translators: placeholder is for a user's display name
-		$title = __( 'Trackserver profile for %s', 'trackserver' );
-		$title = sprintf( $title, $user->display_name );
-
-		?>
-		<div class="wrap">
-			<h2><?php echo esc_html( $title ); ?></h2>
-			<?php $this->trackserver->notice_bulk_action_result(); ?>
-			<form id="trackserver-profile" method="post">
-				<?php wp_nonce_field( 'your-profile' ); ?>
-				<table class="form-table">
-					<tbody>
-						<tr>
-							<th scope="row">
-								<label for="trackme_access_key">
-									<?php esc_html_e( 'TrackMe password', 'trackserver' ); ?>
-								</label>
-							</th>
-							<td>
-								<?php $this->trackserver->trackme_passwd_html(); ?>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<label for="mapmytracks_profile">
-									<?php esc_html_e( 'MapMyTracks profile', 'trackserver' ); ?>
-								</label>
-							</th>
-							<td>
-								<?php $this->trackserver->mapmytracks_profile_html(); ?>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<label for="osmand_access_key">
-									<?php esc_html_e( 'OsmAnd access key', 'trackserver' ); ?>
-								</label>
-							</th>
-							<td>
-								<?php $this->trackserver->osmand_key_html(); ?>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<label for="sendlocation_access_key">
-									<?php esc_html_e( 'SendLocation access key', 'trackserver' ); ?>
-								</label>
-							</th>
-							<td>
-								<?php $this->trackserver->sendlocation_key_html(); ?>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<label>
-									<?php esc_html_e( 'Share via TrackMe Cloud Sharing / OwnTracks Friends', 'trackserver' ); ?>
-								</label>
-							</th>
-							<td>
-								<?php $this->trackserver->share_friends_html(); ?>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<label>
-									<?php esc_html_e( 'Follow users via TrackMe Cloud Sharing / OwnTracks Friends', 'trackserver' ); ?>
-								</label>
-							</th>
-							<td>
-								<?php $this->trackserver->follow_friends_html(); ?>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<label for="infobar_template">
-									<?php esc_html_e( 'Shortcode infobar template', 'trackserver' ); ?>
-								</label>
-							</th>
-							<td>
-								<?php $this->trackserver->infobar_template_html(); ?>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<label for="geofence_center">
-									<?php esc_html_e( 'Geofencing', 'trackserver' ); ?>
-								</label>
-							</th>
-							<td>
-								<?php $this->trackserver->geofences_html(); ?>
-							</td>
-						</tr>
-					<tbody>
-				</table>
-				<p class="submit">
-					<input type="submit" value="<?php esc_html_e( 'Update profile', 'trackserver' ); ?>"
-						class="button button-primary" id="submit" name="submit">
-				</p>
-			</form>
-			<div id="ts-view-modal" style="display:none;">
-					<div id="tsadminmapcontainer">
-						<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
-					</div>
-			</div>
-		</div>
-		<?php
-		$this->trackserver->howto_modals_html();
 	}
 
 	/**
