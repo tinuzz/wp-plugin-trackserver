@@ -529,11 +529,12 @@ EOF;
 
 		function detect_shortcode() {
 			global $wp_query;
-			$posts = $wp_query->posts;
+			if ($posts = $wp_query->posts) {
 
-			foreach ( $posts as $post ) {
-				if ( $this->has_shortcode( $post ) ) {
-					return true;
+				foreach ( $posts as $post ) {
+					if ( $this->has_shortcode( $post ) ) {
+						return true;
+					}
 				}
 			}
 			return false;
