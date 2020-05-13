@@ -330,7 +330,7 @@ EOF;
 			'discard' => esc_html__( 'Discard', 'trackserver' ),
 		);
 
-		if ( ! in_array( $default_geofence, $geofences ) ) {
+		if ( ! in_array( $default_geofence, $geofences, true ) ) {
 			$geofences[] = $default_geofence;
 		}
 
@@ -352,13 +352,13 @@ EOF;
 			$action                = $fence['action'];
 			$action_select_options = '';
 			foreach ( $actions as $k => $v ) {
-				$option_selected        = ( $action == $k ? 'selected' : '' );
+				$option_selected        = ( $action === $k ? 'selected' : '' );
 				$action_select_options .= '<option value="' . $k . '" ' . $option_selected . '>' . $v . '</option>';
 			}
 
 			// Mark all rows (and especially the '0,0,0' row) for easier finding in JavaScript
 			$itemdata = 'data-id="' . $i . '"';
-			if ( $lat == '0' && $lon == '0' && $radius == '0' && $action == 'hide' ) {
+			if ( $lat === '0' && $lon === '0' && $radius === '0' && $action === 'hide' ) {
 				$itemdata .= ' data-newentry';
 			}
 

@@ -60,7 +60,7 @@ class Trackserver_Shortcode {
 		$save_atts = $atts;
 
 		$default_height = '480px';
-		if ( $post->post_type == 'tsmap' ) {
+		if ( $post->post_type === 'tsmap' ) {
 			$default_height = '100%';
 		}
 
@@ -100,7 +100,7 @@ class Trackserver_Shortcode {
 		if ( $atts['class'] ) {
 			$classes[] = $atts['class'];
 		}
-		if ( in_array( $atts['align'], array( 'left', 'center', 'right', 'none' ) ) ) {
+		if ( in_array( $atts['align'], array( 'left', 'center', 'right', 'none' ), true ) ) {
 			$classes[] = 'align' . $atts['align'];
 		}
 
@@ -151,7 +151,7 @@ class Trackserver_Shortcode {
 			foreach ( $all_track_ids as $validated_id ) {
 
 				// For the first live track, set 'follow' to true
-				if ( in_array( $validated_id, $live_tracks ) && ! $following ) {
+				if ( in_array( $validated_id, $live_tracks, true ) && ! $following ) {
 					$following = true;
 					$follow    = true;
 				} else {
@@ -270,16 +270,15 @@ class Trackserver_Shortcode {
 		}
 
 		if ( $infobar ) {
-			if ( in_array( $atts['infobar'], array( 't', 'true', 'y', 'yes' ) ) ) {
+			if ( in_array( $atts['infobar'], array( 't', 'true', 'y', 'yes' ), true ) ) {
 				$mapdata['infobar_tpl'] = htmlspecialchars( $infobar_tpl );
 			} else {
 				$mapdata['infobar_tpl'] = $atts['infobar'];   // This value is already HTML escaped, because the post as a whole is stored in the database that way
 			}
 		}
 
-		$this->trackserver->mapdata[] = $mapdata;
-		$out             = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . $atts['width'] . '; height: ' . $atts['height'] . '; max-width: 100%"></div>';
-
+		$this->trackserver->mapdata[]    = $mapdata;
+		$out                             = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . $atts['width'] . '; height: ' . $atts['height'] . '; max-width: 100%"></div>';
 		$this->trackserver->need_scripts = true;
 
 		return $out;
@@ -346,7 +345,7 @@ class Trackserver_Shortcode {
 			$post_id = get_the_ID();
 
 			$track_format = 'gpx';
-			if ( $atts['format'] && in_array( $atts['format'], array( 'gpx' ) ) ) {
+			if ( $atts['format'] && in_array( $atts['format'], array( 'gpx' ), true ) ) {
 				$track_format = $atts['format'];
 			}
 
@@ -361,7 +360,7 @@ class Trackserver_Shortcode {
 			$alltracks_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&maxage=$maxage&_wpnonce=$query_nonce" );
 
 			$text = $atts['text'] . $content;
-			if ( $text == '' ) {
+			if ( $text === '' ) {
 				$text = 'download ' . $track_format;
 			}
 
@@ -379,7 +378,7 @@ class Trackserver_Shortcode {
 	 * restrictions. Please read the FAQ for important security information.
 	 */
 	private function proxy_url( $url, $post_id ) {
-		if ( substr( $url, 0, 6 ) == 'proxy:' ) {
+		if ( substr( $url, 0, 6 ) === 'proxy:' ) {
 			$track_base_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?', ( is_ssl() ? 'https' : 'http' ) );
 			$proxy          = base64_encode( substr( $url, 6 ) );
 			$proxy_nonce    = wp_create_nonce( 'proxy_' . $proxy . '_p' . $post_id );
@@ -524,7 +523,7 @@ class Trackserver_Shortcode {
 		preg_match_all( '/^(\d+)\s*(\w)?$/', $str, $matches );
 		$n = (int) $matches[1][0];
 		$u = strtolower( $matches[2][0] );
-		if ( $u == '' ) {
+		if ( $u === '' ) {
 			return $n;
 		}
 		$map = array(
@@ -552,7 +551,7 @@ class Trackserver_Shortcode {
 		if ( $atts['track'] ) {
 			$track_ids = explode( ',', $atts['track'] );
 			// Backward compatibility
-			if ( in_array( 'live', $track_ids ) ) {
+			if ( in_array( 'live', $track_ids, true ) ) {
 				$validated_user_ids[] = $author_id;
 			}
 			$validated_track_ids = $this->trackserver->validate_track_ids( $track_ids, $author_id );
@@ -610,9 +609,9 @@ class Trackserver_Shortcode {
 			$res = $wpdb->get_results( $sql, ARRAY_A );
 			// @codingStandardsIgnoreEnd
 
-			if ( $format == 'gpx' ) {
+			if ( $format === 'gpx' ) {
 				$this->send_as_gpx( $res );
-			} elseif ( $format == 'geojson' ) {
+			} elseif ( $format === 'geojson' ) {
 				$this->send_as_geojson( $res );
 			} else {
 				$this->send_as_polyline( $res ); // default to 'polyline'
@@ -670,7 +669,7 @@ class Trackserver_Shortcode {
 		$res = $wpdb->get_results( $sql, ARRAY_A );
 		// @codingStandardsIgnoreEnd
 
-		if ( $format == 'gpx' ) {
+		if ( $format === 'gpx' ) {
 			$this->send_as_gpx( $res );
 		} else {
 			$this->send_alltracks( $res ); // default to 'alltracks' internal format
@@ -703,10 +702,10 @@ class Trackserver_Shortcode {
 			$response = wp_remote_get( $url, $options );
 			if ( is_array( $response ) ) {
 				$rc = (int) wp_remote_retrieve_response_code( $response );
-				if ( $rc != 200 ) {
+				if ( $rc !== 200 ) {
 					header( 'HTTP/1.1 ' . $rc . ' ' . wp_remote_retrieve_response_message( $response ) );
 					$ct = wp_remote_retrieve_header( $response, 'content-type' );
-					if ( $ct != '' ) {
+					if ( $ct !== '' ) {
 						header( 'Content-Type: ' . $ct );
 					}
 				} else {
@@ -804,7 +803,7 @@ class Trackserver_Shortcode {
 			}
 
 			// For every track
-			if ( $row['trip_id'] != $last_track_id ) {
+			if ( $row['trip_id'] !== $last_track_id ) {
 				$trk = $dom->createElement( 'trk' );
 				$gpx->appendChild( $trk );
 				$name = $dom->createElement( 'name' );
@@ -854,11 +853,11 @@ class Trackserver_Shortcode {
 			$id = $row['trip_id'];
 			if ( ! array_key_exists( $id, $tracks ) ) {
 				$tracks[ $id ] = array(
-					'track'  => '',
+					'track' => '',
 				);
 				// Reset the temporary state. This depends on the points of one track being grouped together!
 				$this->previous = array( 0, 0 );
-				$index = 0;
+				$index          = 0;
 			}
 			$tracks[ $id ]['track'] .= $this->polyline_get_chunk( $row['latitude'], $index );
 			$index++;
@@ -939,7 +938,7 @@ class Trackserver_Shortcode {
 			$chunk   .= chr( ( 0x20 | ( $number & 0x1f ) ) + 63 );
 			$number >>= 5;
 		}
-		$chunk          .= chr( $number + 63 );
+		$chunk .= chr( $number + 63 );
 		return $chunk;
 	}
 

@@ -334,7 +334,7 @@ EOF;
 		esc_html_e( 'Trackserver Options', 'trackserver' );
 		echo '</h2>';
 
-		if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == 'true' ) {
+		if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] === 'true' ) {
 			echo '<div class="updated"><p>' . esc_html__( 'Settings updated', 'trackserver' ) . '</p></div>';
 
 			// Flush rewrite rules, for when embedded maps slug has been changed
