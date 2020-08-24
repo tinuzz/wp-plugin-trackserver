@@ -347,15 +347,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 EOF;
 		}
 
-		/**
-		 * Filter callback to add a link to the plugin's settings.
-		 */
-		function add_settings_link( $links ) {
-			$settings_link = '<a href="admin.php?page=trackserver-options">' . esc_html__( 'Settings', 'trackserver' ) . '</a>';
-			array_push( $links, $settings_link );
-			return $links;
-		}
-
 		function sanitize_option_values( $options ) {
 			$options['enable_proxy']  = (bool) $options['enable_proxy'];
 			$options['fetchmode_all'] = (bool) $options['fetchmode_all'];
@@ -1623,56 +1614,6 @@ EOF;
 				wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 			}
 			echo '<h2>Trackserver map profiles</h2>';
-		}
-
-		function admin_post_save_track() {
-			global $wpdb;
-
-			$track_id = (int) $_REQUEST['track_id'];
-			check_admin_referer( 'manage_track_' . $track_id );
-
-			if ( $this->current_user_can_manage( $track_id ) ) {
-
-				// Save track. Use stripslashes() on the data, because WP magically escapes it.
-				$name    = stripslashes( $_REQUEST['name'] );
-				$source  = stripslashes( $_REQUEST['source'] );
-				$comment = stripslashes( $_REQUEST['comment'] );
-
-				if ( $_REQUEST['trackserver_action'] == 'delete' ) {
-					$result  = $this->wpdb_delete_tracks( (int) $track_id );
-					$message = 'Track "' . $name . '" (ID=' . $track_id . ', ' .
-						$result['locations'] . ' locations) deleted';
-				} elseif ( $_REQUEST['trackserver_action'] == 'split' ) {
-					$vertex  = intval( $_REQUEST['vertex'] );  // not covered by nonce!
-					$r       = $this->wpdb_split_track( $track_id, $vertex );
-					$message = 'Track "' . $name . '" (ID=' . $track_id . ') has been split at point ' . $vertex . ' ' . $r;  // TODO: i18n
-				} else {
-					$data  = array(
-						'name'    => $name,
-						'source'  => $source,
-						'comment' => $comment,
-					);
-					$where = array(
-						'id' => $track_id,
-					);
-					$wpdb->update( $this->tbl_tracks, $data, $where, '%s', '%d' );
-
-					$message = 'Track "' . $name . '" (ID=' . $track_id . ') saved';
-				}
-			} else {
-				$message = __( 'It seems you have insufficient permissions to manage track ID ' ) . $track_id;
-			}
-
-			// Redirect back to the admin page. This should be safe.
-			setcookie( 'ts_bulk_result', $message, time() + 300 );
-
-			// Propagate search string to the redirect
-			$referer = remove_query_arg( array( '_wp_http_referer', '_wpnonce', 's' ), $_REQUEST['_wp_http_referer'] );
-			if ( isset( $_POST['s'] ) && ! empty( $_POST['s'] ) ) {
-				$referer = add_query_arg( 's', rawurlencode( wp_unslash( $_POST['s'] ) ), $referer );
-			}
-			wp_redirect( $referer );
-			exit;
 		}
 
 		/**
