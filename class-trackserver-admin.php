@@ -48,11 +48,11 @@ class Trackserver_Admin {
 		add_filter( 'default_content', array( &$this, 'embedded_map_default_content' ), 10, 2 );
 		add_filter( 'plugin_row_meta', array( &$this, 'plugin_row_meta' ), 10, 4 );
 		add_action( 'admin_menu', array( &$this, 'admin_menu' ), 9 );
+		add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
 
 		// Still on the main plugin object
 		add_action( 'admin_post_trackserver_save_track', array( $this->trackserver, 'admin_post_save_track' ) );
 		add_action( 'admin_post_trackserver_upload_track', array( $this->trackserver, 'admin_post_upload_track' ) );
-		add_action( 'admin_enqueue_scripts', array( $this->trackserver, 'admin_enqueue_scripts' ) );
 		add_action( 'wp_ajax_trackserver_save_track', array( $this->trackserver, 'admin_ajax_save_modified_track' ) );
 		add_filter( 'plugin_action_links_trackserver/trackserver.php', array( $this->trackserver, 'add_settings_link' ) );
 
@@ -168,6 +168,70 @@ class Trackserver_Admin {
 					$role->add_cap( $cap );
 				}
 			}
+		}
+	}
+
+	/**
+	 * Handler for 'admin_enqueue_scripts'. Load javascript and stylesheets
+	 * for the admin panel.
+	 *
+	 * @since 1.0
+	 *
+	 * @param string $hook The hook suffix for the current admin page.
+	 */
+	function admin_enqueue_scripts( $hook ) {
+
+		switch ( $hook ) {
+			case 'trackserver_page_trackserver-tracks':
+			case 'trackserver_page_trackserver-yourprofile':
+				$this->trackserver->load_common_scripts();
+
+				// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
+				$track_base_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?', ( is_ssl() ? 'https' : 'http' ) );
+				wp_localize_script( 'trackserver', 'track_base_url', $track_base_url );
+
+				// Enqueue the main script last
+				wp_enqueue_script( 'trackserver' );
+
+				// No break! The following goes for both hooks.
+				// The options page only has 'trackserver-admin.js'.
+
+			case 'toplevel_page_trackserver-options':
+				$settings = array(
+					'msg'  => array(
+						'areyousure'     => __( 'Are you sure?', 'trackserver' ),
+						'delete'         => __( 'deletion', 'trackserver' ),
+						'merge'          => __( 'merging', 'trackserver' ),
+						'recalc'         => __( 'recalculation', 'trackserver' ),
+						'dlgpx'          => __( 'downloading', 'trackserver' ),
+						'dlkml'          => __( 'downloading', 'trackserver' ),
+						'track'          => __( 'track', 'trackserver' ),
+						'tracks'         => __( 'tracks', 'trackserver' ),
+						'edittrack'      => __( 'Edit track', 'trackserver' ),
+						'deletepoint'    => __( 'Delete point', 'trackserver' ),
+						'splittrack'     => __( 'Split track here', 'trackserver' ),
+						'savechanges'    => __( 'Save changes', 'trackserver' ),
+						'unsavedchanges' => __( 'There are unsaved changes. Save?', 'trackserver' ),
+						'save'           => __( 'Save', 'trackserver' ),
+						'discard'        => __( 'Discard', 'trackserver' ),
+						'cancel'         => __( 'Cancel', 'trackserver' ),
+						/* translators: %1$s = action, %2$s = number and %3$s is 'track' or 'tracks' */
+						'selectminimum'  => __( 'For %1$s, select %2$s %3$s at minimum', 'trackserver' ),
+					),
+					'urls' => array(
+						'adminpost'    => admin_url() . 'admin-post.php',
+						'managetracks' => admin_url() . 'admin.php?page=trackserver-tracks',
+					),
+				);
+
+				// Enqueue leaflet-editable
+				wp_enqueue_script( 'leaflet-editable', TRACKSERVER_JSLIB . 'leaflet-editable-1.1.0/Leaflet.Editable.min.js', array(), false, true );
+
+				// Enqueue the admin js (Thickbox overrides) in the footer
+				wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox' ), TRACKSERVER_VERSION, true );
+				wp_localize_script( 'trackserver-admin', 'trackserver_admin_settings', $settings );
+				wp_enqueue_script( 'trackserver-admin' );
+				break;
 		}
 	}
 
