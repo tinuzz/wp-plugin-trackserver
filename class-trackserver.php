@@ -384,68 +384,6 @@ EOF;
 		}
 
 		/**
-		 * Function to return a user ID, given a user name or ID. Unknown users return false.
-		 *
-		 * @since 3.0
-		 */
-		function get_user_id( $user, $property = 'ID' ) {
-			if ( $user == '@' ) {
-				$user = get_the_author_meta( 'ID' );
-			}
-			if ( is_numeric( $user ) ) {
-				$field = 'id';
-				$user  = (int) $user;
-			} else {
-				$field = 'login';
-			}
-			$user = get_user_by( $field, $user );
-			if ( $user ) {
-				return ( $property == 'ID' ? (int) $user->$property : $user->$property );
-			} else {
-				return false;
-			}
-		}
-
-		/**
-		 * Validate users against the DB and the author's permission to publish.
-		 *
-		 * It turns user names into numeric IDs.
-		 *
-		 * @since 3.0
-		 */
-		function validate_user_ids( $user_ids, $author_id ) {
-			global $wpdb;
-
-			if ( count( $user_ids ) == 0 ) {
-				return array();
-			}
-
-			$user_ids = array_map( array( $this, 'get_user_id' ), $user_ids );  // Get numeric IDs
-			$user_ids = array_filter( $user_ids );   // Get rid of the falses.
-
-			if ( ! user_can( $author_id, 'trackserver_publish' ) ) {
-				$user_ids = array_intersect( $user_ids, array( $author_id ) );   // array containing 0 or 1 elements
-			}
-
-			if ( count( $user_ids ) > 0 ) {
-				$sql_in             = "('" . implode( "','", $user_ids ) . "')";
-				$sql                = 'SELECT DISTINCT(user_id) FROM ' . $this->tbl_tracks . ' WHERE user_id IN ' . $sql_in;
-				$validated_user_ids = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-
-				// Restore track order as given in the shortcode
-				$usr0 = array();
-				foreach ( $user_ids as $uid ) {
-					if ( in_array( $uid, $validated_user_ids ) ) {
-						$usr0[] = $uid;
-					}
-				}
-				return $usr0;
-			} else {
-				return array();
-			}
-		}
-
-		/**
 		 * Provision the JavaScript that initializes the map(s) with settings and data
 		 *
 		 * @since 2.0

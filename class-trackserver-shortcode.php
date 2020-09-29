@@ -559,7 +559,7 @@ class Trackserver_Shortcode {
 
 		if ( $atts['user'] ) {
 			$user_ids           = explode( ',', $atts['user'] );
-			$validated_user_ids = array_merge( $validated_user_ids, $this->trackserver->validate_user_ids( $user_ids, $author_id ) );
+			$validated_user_ids = array_merge( $validated_user_ids, $this->validate_user_ids( $user_ids, $author_id ) );
 		}
 		return array( $validated_track_ids, $validated_user_ids );
 	}
@@ -658,7 +658,7 @@ class Trackserver_Shortcode {
 		$track_ids           = $query->id;
 		$user_ids            = $query->live;
 		$validated_track_ids = $this->validate_track_ids( $track_ids, $author_id );
-		$validated_user_ids  = $this->trackserver->validate_user_ids( $user_ids, $author_id );
+		$validated_user_ids  = $this->validate_user_ids( $user_ids, $author_id );
 		$user_track_ids      = $this->trackserver->get_live_tracks( $validated_user_ids, $maxage );
 		$track_ids           = array_merge( $validated_track_ids, $user_track_ids );
 
@@ -797,7 +797,7 @@ class Trackserver_Shortcode {
 
 			// Once, for the first record. Add stuff to the <gpx> element, using the database results
 			if ( $first ) {
-				$authorname->appendChild( $dom->createCDATASection( $this->trackserver->get_user_id( (int) $row['user_id'], 'display_name' ) ) );
+				$authorname->appendChild( $dom->createCDATASection( $this->get_user_id( (int) $row['user_id'], 'display_name' ) ) );
 				$first_track_id = $row['trip_id'];
 				$first          = false;
 			}
@@ -885,8 +885,8 @@ class Trackserver_Shortcode {
 		);
 		if ( $row['user_id'] ) {
 			$metadata['userid']      = $row['user_id'];
-			$metadata['userlogin']   = $this->trackserver->get_user_id( (int) $row['user_id'], 'user_login' );
-			$metadata['displayname'] = $this->trackserver->get_user_id( (int) $row['user_id'], 'display_name' );
+			$metadata['userlogin']   = $this->get_user_id( (int) $row['user_id'], 'user_login' );
+			$metadata['displayname'] = $this->get_user_id( (int) $row['user_id'], 'display_name' );
 		}
 		return $metadata;
 	}
@@ -976,6 +976,69 @@ class Trackserver_Shortcode {
 			}
 		}
 		return $trk0;
+	}
+
+
+	/**
+	 * Validate users against the DB and the author's permission to publish.
+	 *
+	 * It turns user names into numeric IDs.
+	 *
+	 * @since 3.0
+	 */
+	function validate_user_ids( $user_ids, $author_id ) {
+		global $wpdb;
+
+		if ( count( $user_ids ) == 0 ) {
+			return array();
+		}
+
+		$user_ids = array_map( array( $this, 'get_user_id' ), $user_ids );  // Get numeric IDs
+		$user_ids = array_filter( $user_ids );   // Get rid of the falses.
+
+		if ( ! user_can( $author_id, 'trackserver_publish' ) ) {
+			$user_ids = array_intersect( $user_ids, array( $author_id ) );   // array containing 0 or 1 elements
+		}
+
+		if ( count( $user_ids ) > 0 ) {
+			$sql_in             = "('" . implode( "','", $user_ids ) . "')";
+			$sql                = 'SELECT DISTINCT(user_id) FROM ' . $this->trackserver->tbl_tracks . ' WHERE user_id IN ' . $sql_in;
+			$validated_user_ids = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+			// Restore track order as given in the shortcode
+			$usr0 = array();
+			foreach ( $user_ids as $uid ) {
+				if ( in_array( $uid, $validated_user_ids ) ) {
+					$usr0[] = $uid;
+				}
+			}
+			return $usr0;
+		} else {
+			return array();
+		}
+	}
+
+	/**
+	 * Function to return a user ID, given a user name or ID. Unknown users return false.
+	 *
+	 * @since 3.0
+	 */
+	function get_user_id( $user, $property = 'ID' ) {
+		if ( $user == '@' ) {
+			$user = get_the_author_meta( 'ID' );
+		}
+		if ( is_numeric( $user ) ) {
+			$field = 'id';
+			$user  = (int) $user;
+		} else {
+			$field = 'login';
+		}
+		$user = get_user_by( $field, $user );
+		if ( $user ) {
+			return ( $property == 'ID' ? (int) $user->$property : $user->$property );
+		} else {
+			return false;
+		}
 	}
 
 } // Class
