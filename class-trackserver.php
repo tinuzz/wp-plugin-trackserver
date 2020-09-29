@@ -347,12 +347,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 EOF;
 		}
 
-		function sanitize_option_values( $options ) {
-			$options['enable_proxy']  = (bool) $options['enable_proxy'];
-			$options['fetchmode_all'] = (bool) $options['fetchmode_all'];
-			return $options;
-		}
-
 		/**
 		 * Detect shortcode
 		 *
