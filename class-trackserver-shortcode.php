@@ -554,7 +554,7 @@ class Trackserver_Shortcode {
 			if ( in_array( 'live', $track_ids, true ) ) {
 				$validated_user_ids[] = $author_id;
 			}
-			$validated_track_ids = $this->trackserver->validate_track_ids( $track_ids, $author_id );
+			$validated_track_ids = $this->validate_track_ids( $track_ids, $author_id );
 		}
 
 		if ( $atts['user'] ) {
@@ -657,7 +657,7 @@ class Trackserver_Shortcode {
 		$query               = json_decode( $query );
 		$track_ids           = $query->id;
 		$user_ids            = $query->live;
-		$validated_track_ids = $this->trackserver->validate_track_ids( $track_ids, $author_id );
+		$validated_track_ids = $this->validate_track_ids( $track_ids, $author_id );
 		$validated_user_ids  = $this->trackserver->validate_user_ids( $user_ids, $author_id );
 		$user_track_ids      = $this->trackserver->get_live_tracks( $validated_user_ids, $maxage );
 		$track_ids           = array_merge( $validated_track_ids, $user_track_ids );
@@ -940,6 +940,42 @@ class Trackserver_Shortcode {
 		}
 		$chunk .= chr( $number + 63 );
 		return $chunk;
+	}
+
+	/**
+	 * Function to validate a list of track IDs against user ID and post ID.
+	 * It tries to leave the given order of IDs unchanged.
+	 *
+	 * @since 3.0
+	 */
+	function validate_track_ids( $track_ids, $author_id ) {
+		global $wpdb;
+
+		if ( count( $track_ids ) == 0 ) {
+			return array();
+		}
+
+		// Remove all non-numeric values from the tracks array and prepare query
+		$track_ids = array_map( 'intval', array_filter( $track_ids, 'is_numeric' ) );
+		$sql_in    = "('" . implode( "','", $track_ids ) . "')";
+
+		// If the author has the power, don't check the track's owner
+		if ( user_can( $author_id, 'trackserver_publish' ) ) {
+			$sql = 'SELECT id FROM ' . $this->trackserver->tbl_tracks . ' WHERE id IN ' . $sql_in;
+		} else {
+			// Otherwise, filter the list of posts against the author ID
+			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->trackserver->tbl_tracks . ' WHERE id IN ' . $sql_in . ' AND user_id=%d;', $author_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		}
+		$validated_track_ids = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		// Restore track order as given in the shortcode
+		$trk0 = array();
+		foreach ( $track_ids as $tid ) {
+			if ( in_array( $tid, $validated_track_ids ) ) {
+				$trk0[] = $tid;
+			}
+		}
+		return $trk0;
 	}
 
 } // Class
