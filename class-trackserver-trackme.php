@@ -202,7 +202,7 @@ class Trackserver_Trackme {
 
 			case 'update':
 				$occurred = urldecode( $_GET['do'] );
-				if ( ! $this->trackserver->validate_timestamp( $occurred ) ) {
+				if ( ! $this->validate_timestamp( $occurred ) ) {
 					$occurred = current_time( 'Y-m-d H:i:s' );
 				}
 				$ts               = strtotime( $occurred );  // Is this reliable?
@@ -290,7 +290,7 @@ class Trackserver_Trackme {
 
 			if ( intval( $track->id ) > 0 ) {
 
-				if ( ! ( empty( $_GET['lat'] ) || empty( $_GET['long'] ) ) && $this->trackserver->validate_timestamp( $occurred ) ) {
+				if ( ! ( empty( $_GET['lat'] ) || empty( $_GET['long'] ) ) && $this->validate_timestamp( $occurred ) ) {
 					$loc = new Trackserver_Location( $this->trackserver, $track->id, $user_id );
 					$loc->set( 'latitude', $_GET['lat'] );
 					$loc->set( 'longitude', $_GET['long'] );
@@ -397,6 +397,19 @@ class Trackserver_Trackme {
 		} else {
 			$this->trackme_result( 6 ); // No trip name specified. This should not happen.
 		}
+	}
+
+	/**
+	 * Validate a timestamp supplied by a client.
+	 *
+	 * It checks if the timestamp is in the required format and if the
+	 * timestamp is unchanged after parsing.
+	 *
+	 * @since 1.0
+	 */
+	private function validate_timestamp( $ts ) {
+		$d = DateTime::createFromFormat( 'Y-m-d H:i:s', $ts );
+		return $d && ( $d->format( 'Y-m-d H:i:s' ) == $ts );
 	}
 
 } // class

@@ -903,19 +903,6 @@ EOF;
 		}
 
 		/**
-		 * Validate a timestamp supplied by a client.
-		 *
-		 * It checks if the timestamp is in the required format and if the
-		 * timestamp is unchanged after parsing.
-		 *
-		 * @since 1.0
-		 */
-		function validate_timestamp( $ts ) {
-			$d = DateTime::createFromFormat( 'Y-m-d H:i:s', $ts );
-			return $d && ( $d->format( 'Y-m-d H:i:s' ) == $ts );
-		}
-
-		/**
 		 * Validate WordPress credentials for basic HTTP authentication.
 		 *
 		 * If no credentials are received, a 401 status code is sent. Validation is
