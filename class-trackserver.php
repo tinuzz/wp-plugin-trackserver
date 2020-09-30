@@ -613,17 +613,6 @@ EOF;
 		}
 
 		/**
-		 * Get a track ID from the database given its name and a user ID
-		 *
-		 * @since 2.0
-		 */
-		function get_track_by_name( $user_id, $trackname ) {
-			global $wpdb;
-			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE user_id=%d AND name=%s', $user_id, $trackname ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			return $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		}
-
-		/**
 		 * Handle a request from OwnTracks
 		 *
 		 * After validating the HTTP basic authentication, a track name is
@@ -676,9 +665,9 @@ EOF;
 				$trackname = strftime( $this->options['owntracks_trackname_format'], $ts );
 
 				if ( $trackname != '' ) {
-					$track_id = $this->get_track_by_name( $user_id, $trackname );
+					$track_id = $this->get_track_id_by_name( $trackname, $user_id );
 
-					if ( $track_id == null ) {
+					if ( $track_id === false ) {
 						$data   = array(
 							'user_id' => $user_id,
 							'name'    => $trackname,
