@@ -613,40 +613,6 @@ EOF;
 		}
 
 		/**
-		 * Validate credentials for OsmAnd and SendLocation. It checks the
-		 * WordPress username and the access key from the user profile against the values
-		 * specified in the request (OsmAnd) or given in the function parameters (SendLocation).
-		 *
-		 * @since 2.0
-		 */
-		function validate_user_meta_key( $username = false, $key = false, $meta_key = 'ts_osmand_key' ) {
-
-			if ( ! $username ) {
-				$username = urldecode( $_GET['username'] );
-				$key      = urldecode( $_GET['key'] );
-			}
-
-			if ( $username == '' ) {
-				$this->http_terminate();
-			}
-
-			$user = get_user_by( 'login', $username );
-			if ( $user ) {
-				$user_id  = intval( $user->data->ID );
-				$user_key = get_user_meta( $user_id, $meta_key, true );
-
-				if ( $key != $user_key ) {
-					$this->http_terminate();
-				}
-
-				if ( user_can( $user_id, 'use_trackserver' ) ) {
-					return $user_id;
-				}
-			}
-			$this->http_terminate();
-		}
-
-		/**
 		 * Get a track ID from the database given its name and a user ID
 		 *
 		 * @since 2.0
