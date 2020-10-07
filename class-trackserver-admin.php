@@ -592,7 +592,7 @@ EOF;
 					$result['locations'] . ' locations) deleted';
 			} elseif ( $_REQUEST['trackserver_action'] == 'split' ) {
 				$vertex  = intval( $_REQUEST['vertex'] );  // not covered by nonce!
-				$r       = $this->trackserver->wpdb_split_track( $track_id, $vertex );
+				$r       = $this->wpdb_split_track( $track_id, $vertex );
 				$message = 'Track "' . $name . '" (ID=' . $track_id . ') has been split at point ' . $vertex . ' ' . $r;  // TODO: i18n
 			} else {
 				$data  = array(
@@ -715,6 +715,43 @@ EOF;
 			setcookie( 'ts_bulk_result', $message, time() + 300 );
 			wp_redirect( $referer );
 			exit;
+		}
+	}
+
+	function wpdb_split_track( $track_id, $point ) {
+		global $wpdb;
+
+		$split_id_arr = $this->trackserver->get_location_ids_by_index( $track_id, array( $point ) );
+		if ( count( $split_id_arr ) > 0 ) {  // should be exactly 1
+			$split_id = $split_id_arr[ $point ]->id;
+
+			// @codingStandardsIgnoreStart
+			$sql = $wpdb->prepare( 'SELECT occurred FROM ' . $this->tbl_locations . ' WHERE id=%s', $split_id );
+			$occurred = $wpdb->get_var( $sql );
+
+			// Duplicate track record
+			$sql = $wpdb->prepare( 'INSERT INTO ' . $this->tbl_tracks .
+				" (user_id, name, created, source, comment) SELECT user_id, CONCAT(name, ' #2'), created," .
+				" source, comment FROM " . $this->tbl_tracks . " WHERE id=%s", $track_id );
+			$wpdb->query( $sql );
+			$new_id = $wpdb->insert_id;
+
+			// Update locations with the new track ID
+			$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_locations . ' SET trip_id=%s WHERE trip_id=%s AND occurred > %s', $new_id, $track_id, $occurred );
+			$wpdb->query( $sql );
+
+			// Duplicate the split-point to the new track
+			$sql = $wpdb->prepare(
+				'INSERT INTO ' . $this->tbl_locations .
+				" (trip_id, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment) " .
+				" SELECT %s, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment FROM " .
+				$this->tbl_locations . ' WHERE id=%s', $new_id, $split_id
+			);
+			$wpdb->query( $sql );
+			// @codingStandardsIgnoreEnd
+
+			$this->trackserver->calculate_distance( $new_id );
+			return print_r( $new_id, true );
 		}
 	}
 

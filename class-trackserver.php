@@ -1652,43 +1652,6 @@ EOF;
 			);
 		}
 
-		function wpdb_split_track( $track_id, $point ) {
-			global $wpdb;
-
-			$split_id_arr = $this->get_location_ids_by_index( $track_id, array( $point ) );
-			if ( count( $split_id_arr ) > 0 ) {  // should be exactly 1
-				$split_id = $split_id_arr[ $point ]->id;
-
-				// @codingStandardsIgnoreStart
-				$sql = $wpdb->prepare( 'SELECT occurred FROM ' . $this->tbl_locations . ' WHERE id=%s', $split_id );
-				$occurred = $wpdb->get_var( $sql );
-
-				// Duplicate track record
-				$sql = $wpdb->prepare( 'INSERT INTO ' . $this->tbl_tracks .
-					" (user_id, name, created, source, comment) SELECT user_id, CONCAT(name, ' #2'), created," .
-					" source, comment FROM " . $this->tbl_tracks . " WHERE id=%s", $track_id );
-				$wpdb->query( $sql );
-				$new_id = $wpdb->insert_id;
-
-				// Update locations with the new track ID
-				$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_locations . ' SET trip_id=%s WHERE trip_id=%s AND occurred > %s', $new_id, $track_id, $occurred );
-				$wpdb->query( $sql );
-
-				// Duplicate the split-point to the new track
-				$sql = $wpdb->prepare(
-					'INSERT INTO ' . $this->tbl_locations .
-					" (trip_id, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment) " .
-					" SELECT %s, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment FROM " .
-					$this->tbl_locations . ' WHERE id=%s', $new_id, $split_id
-				);
-				$wpdb->query( $sql );
-				// @codingStandardsIgnoreEnd
-
-				$this->calculate_distance( $new_id );
-				return print_r( $new_id, true );
-			}
-		}
-
 		/**
 		 * Function to display the bulk_action_result_msg
 		 */
