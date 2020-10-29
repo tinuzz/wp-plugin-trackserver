@@ -35,6 +35,7 @@ For more information, please see:
 * [Introducing Trackserver WordPress plugin](https://www.grendelman.net/wp/introducing-trackserver-wordpress-plugin/) (11 February 2015)
 * [Trackserver v2.0 released](https://www.grendelman.net/wp/trackserver-v2-0-released/) (23 December 2015)
 * [Trackserver v3.0 released](https://www.grendelman.net/wp/trackserver-v3-0-released/) (27 February 2017)
+* [Trackserver v4.0 released](https://www.grendelman.net/wp/trackserver-v4-0-released/) (22 February 2018)
 
 # Requirements
 
