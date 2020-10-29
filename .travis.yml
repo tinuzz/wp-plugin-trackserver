@@ -20,10 +20,10 @@ cache:
 
 matrix:
   include:
-    - php: 7.1
+    - php: 7.4
       env: WP_VERSION=latest
       env: WP_TRAVISCI=phpcs
-    - php: 7.0
+    - php: 7.3
       env: WP_VERSION=latest
 
 before_script:
