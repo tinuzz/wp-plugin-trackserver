@@ -1,5 +1,5 @@
-sudo: false
-
+os: linux
+dist: xenial
 language: php
 
 services:
@@ -18,11 +18,10 @@ cache:
   - composer
   - $HOME/.composer/cache
 
-matrix:
+jobs:
   include:
     - php: 7.4
-      env: WP_VERSION=latest
-      env: WP_TRAVISCI=phpcs
+      env: WP_VERSION=latest WP_TRAVISCI=phpcs
     - php: 7.3
       env: WP_VERSION=latest
 
