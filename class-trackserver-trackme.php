@@ -234,7 +234,7 @@ class Trackserver_Trackme {
 		global $wpdb;
 
 		$user      = get_user_by( 'id', $user_id );
-		$user_ids  = $this->trackserver->get_owntracks_friends( $user );
+		$user_ids  = $this->trackserver->get_followed_users( $user );
 		$track_ids = $this->trackserver->get_live_tracks( $user_ids, 3660 );
 		$message   = '';
 

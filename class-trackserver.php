@@ -548,7 +548,8 @@ EOF;
 						$this->handle_upload();
 
 					} elseif ( $proto === 'owntracks1' || $proto === 'owntracks2' ) {
-						$this->handle_owntracks_request();
+						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-owntracks.php';
+						Trackserver_OwnTracks::get_instance( $this )->handle_request();
 
 					} else {
 						$this->http_terminate( 500, 'BUG: Unhandled protocol. Please file a bug report.' );
@@ -613,137 +614,7 @@ EOF;
 		}
 
 		/**
-		 * Handle a request from OwnTracks
-		 *
-		 * After validating the HTTP basic authentication, a track name is
-		 * constructed from the strftime() format string in the settings and the
-		 * track is created if it doesn't exist. The JSON payload from OwnTracks is
-		 * parsed and the location data is stored. A response containing Locations
-		 * and Cards for Friends is returned to the client.
-		 *
-		 * @since 4.0
-		 */
-		function handle_owntracks_request() {
-			global $wpdb;
-
-			$user_id = $this->validate_http_basicauth();
-			$payload = file_get_contents( 'php://input' );
-			// @codingStandardsIgnoreLine
-			$json = @json_decode( $payload, true );
-
-			//Array
-			//(
-			//    [_type] => location
-			//    [tid] => te
-			//    [acc] => 21
-			//    [batt] => 24
-			//    [conn] => w
-			//    [lat] => 51.448285
-			//    [lon] => 5.4727492
-			//    [t] => u
-			//    [tst] => 1505766127
-			//)
-
-			//Array
-			//(
-			//    [_type] => waypoint
-			//    [desc] => Thuis
-			//    [lat] => 51.4481325
-			//    [lon] => 5.47281640625
-			//    [tst] => 1505766855
-			//)
-
-			if ( isset( $json['_type'] ) && $json['_type'] == 'location' ) {
-
-				// Largely copied from SendLocation handling
-				$ts       = $json['tst'];
-				$offset   = $this->utc_to_local_offset( $ts );
-				$ts      += $offset;
-				$occurred = date( 'Y-m-d H:i:s', $ts );
-
-				// Get track name from strftime format string
-				$trackname = strftime( $this->options['owntracks_trackname_format'], $ts );
-
-				if ( $trackname != '' ) {
-					$track_id = $this->get_track_id_by_name( $trackname, $user_id );
-
-					if ( $track_id === false ) {
-						$data   = array(
-							'user_id' => $user_id,
-							'name'    => $trackname,
-							'created' => $occurred,
-							'source'  => 'OwnTracks',
-						);
-						$format = array( '%d', '%s', '%s', '%s' );
-
-						if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
-							$track_id = $wpdb->insert_id;
-						} else {
-							$this->http_terminate( 501, 'Database error' );
-						}
-					}
-
-					$latitude  = $json['lat'];
-					$longitude = $json['lon'];
-					$now       = $occurred;
-
-					if ( $latitude != '' && $longitude != '' ) {
-						$data   = array(
-							'trip_id'   => $track_id,
-							'latitude'  => $latitude,
-							'longitude' => $longitude,
-							'created'   => $now,
-							'occurred'  => $occurred,
-						);
-						$format = array( '%d', '%s', '%s', '%s', '%s' );
-
-						if ( $json['alt'] != '' ) {
-							$data['altitude'] = $json['alt'];
-							$format[]         = '%s';
-						}
-
-						$fenced = $this->is_geofenced( $user_id, $data );
-						if ( $fenced == 'discard' ) {
-							$this->http_terminate( 200, '[]' );  // This will not return
-						}
-						$data['hidden'] = ( $fenced == 'hide' ? 1 : 0 );
-						$format[]       = '%d';
-
-						if ( $wpdb->insert( $this->tbl_locations, $data, $format ) ) {
-							$this->calculate_distance( $track_id );
-						} else {
-							$this->http_terminate( 501, 'Database error' );
-						}
-					}
-				}
-			}
-			$response = $this->create_owntracks_response( $user_id );
-			$this->http_terminate( 200, $response );
-		}
-
-		/**
-		 * Return a 2 character string, to be used as the Tracker ID (TID) in OwnTracks.
-		 *
-		 * Depending on what data is available, we use the user's first name, last name
-		 * or login name to create the TID.
-		 *
-		 * @since 4.1
-		 */
-		function get_owntracks_tid( $user ) {
-			if ( $user->first_name && $user->last_name ) {
-				$tid = $user->first_name[0] . $user->last_name[0];
-			} elseif ( $user->first_name ) {
-				$tid = substr( $user->first_name, 0, 2 );
-			} elseif ( $user->last_name ) {
-				$tid = substr( $user->last_name, 0, 2 );
-			} else {
-				$tid = substr( $user->user_login, 0, 2 );
-			}
-			return $tid;
-		}
-
-		/**
-		 * Return a list of user IDs that share their OwnTracks location with us.
+		 * Return a list of user IDs that share their location with us.
 		 *
 		 * The function does a query directly on the 'usermeta' table, which is ugly.
 		 * We want to match a given username against a comma-separated list of usernames.
@@ -761,7 +632,7 @@ EOF;
 		 *
 		 * @since 4.1
 		 */
-		function get_owntracks_users_sharing( $user ) {
+		function get_users_sharing( $user ) {
 			global  $wpdb;
 
 			$username = $user->user_login;
@@ -785,7 +656,7 @@ EOF;
 		}
 
 		/**
-		 * Return an array of user IDs who are our OwnTracks Friends.
+		 * Return an array of user IDs who we follow, that are sharing with us.
 		 *
 		 * The list of users sharing their location with us is filtered for the
 		 * users we are following. An empty list means we follow all users. If
@@ -795,8 +666,8 @@ EOF;
 		 *
 		 * @since 4.1
 		 */
-		function get_owntracks_friends( $user ) {
-			$friends   = $this->get_owntracks_users_sharing( $user );
+		function get_followed_users( $user ) {
+			$friends   = $this->get_users_sharing( $user );
 			$following = get_user_meta( $user->ID, 'ts_owntracks_follow', true );
 			if ( empty( $following ) ) {
 				return $friends;
@@ -826,80 +697,6 @@ EOF;
 				$friends = array_diff( $friends, $dont_follow );
 			}
 			return array_values( $friends );   // strip explicit keys
-		}
-
-		function get_owntracks_avatar( $user_id ) {
-			// TODO: cache the image in usermeta and serve it from there if available
-
-			$avatar_data = get_avatar_data( $user_id, array( 'size' => 40 ) );
-			$url         = $avatar_data['url'] . '&d=404';  // ask for a 404 if there is no image
-
-			$options  = array(
-				'httpversion' => '1.1',
-				'user-agent'  => 'WordPress/Trackserver ' . TRACKSERVER_VERSION . '; https://github.com/tinuzz/wp-plugin-trackserver',
-			);
-			$response = wp_remote_get( $url, $options );
-			if ( is_array( $response ) ) {
-				$rc = (int) wp_remote_retrieve_response_code( $response );
-				if ( $rc == 200 ) {
-					return base64_encode( wp_remote_retrieve_body( $response ) );
-				}
-			}
-			return false;
-		}
-
-		/**
-		 * Create a response for the OwnTracks request.
-		 *
-		 * For all of our Friends (users that share with us, minus the users that
-		 * we do not follow), construct a location object and a card object, put it
-		 * all in a list and return the result as JSON.
-		 *
-		 * @since 4.1
-		 */
-		function create_owntracks_response( $author_id ) {
-			global $wpdb;
-
-			$user      = get_user_by( 'id', $author_id );
-			$user_ids  = $this->get_owntracks_friends( $user );
-			$track_ids = $this->get_live_tracks( $user_ids );
-			$objects   = array();
-
-			foreach ( $track_ids as $track_id ) {
-				// @codingStandardsIgnoreStart
-				$sql = $wpdb->prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, UNIX_TIMESTAMP(occurred) AS tst, t.user_id, t.name, t.distance, t.comment FROM ' .
-					$this->tbl_locations . ' l INNER JOIN ' . $this->tbl_tracks .
-					' t ON l.trip_id = t.id WHERE trip_id=%d AND l.hidden = 0 ORDER BY occurred DESC LIMIT 0,1', $track_id
-				);
-				$res = $wpdb->get_row( $sql, ARRAY_A );
-				// @codingStandardsIgnoreEnd
-
-				$ruser = get_user_by( 'id', $res['user_id'] );
-				$tid   = $this->get_owntracks_tid( $ruser );
-
-				$objects[] = array(
-					'_type' => 'location',
-					'lat'   => $res['latitude'],
-					'lon'   => $res['longitude'],
-					'tid'   => $tid,
-					'tst'   => $res['tst'],
-					'topic' => 'owntracks/' . $res['user_id'] . '/mobile',
-				);
-
-				$card = array(
-					'_type' => 'card',
-					'name'  => $ruser->display_name,
-					'tid'   => $tid,
-				);
-
-				$face = $this->get_owntracks_avatar( $ruser->ID );
-				if ( $face ) {
-					$card['face'] = $face;
-				}
-
-				$objects[] = $card;
-			}
-			return json_encode( $objects );
 		}
 
 		/**
