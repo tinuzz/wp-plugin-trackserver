@@ -25,7 +25,7 @@ jobs:
     - php: 7.3
       env: WP_VERSION=latest
 
-before_script:
+install:
   - export PATH="$HOME/.config/composer/vendor/bin:$PATH"
   - |
     if [[ ! -z "$WP_VERSION" ]] ; then
