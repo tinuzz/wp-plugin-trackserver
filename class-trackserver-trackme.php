@@ -275,15 +275,14 @@ class Trackserver_Trackme {
 
 		if ( ! empty( $trip_name ) ) {
 			$track   = new Trackserver_Track( $this->trackserver, $trip_name, $user_id, 'name' );
-			$trip_id = $track->id;
 
-			if ( is_null( $trip_id ) ) {
+			if ( is_null( $track->id ) ) {
 
 				$track->set( 'name', $trip_name );
 				$track->set( 'source', 'TrackMe' );
+				$track->save();
 
-				$trip_id = $track->save();
-				if ( empty( $trip_id ) ) {
+				if ( empty( $track->id ) ) {
 					$this->trackme_result( 6 ); // Unable to create trip
 				}
 			}
