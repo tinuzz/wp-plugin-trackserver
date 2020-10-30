@@ -146,7 +146,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			if ( current_user_can( 'use_trackserver' ) ) {
 				$user_id = get_current_user_id();
 				foreach ( $this->user_meta_defaults as $key => $value ) {
-					if ( get_user_meta( $user_id, $key, true ) == '' ) {
+					if ( get_user_meta( $user_id, $key, true ) === '' ) {
 						update_user_meta( $user_id, $key, $value );
 					}
 				}
@@ -377,7 +377,7 @@ EOF;
 			$pattern = get_shortcode_regex();
 			if ( preg_match_all( '/' . $pattern . '/s', $post->post_content, $matches )
 				&& array_key_exists( 2, $matches )
-				&& ( in_array( $this->shortcode, $matches[2] ) || in_array( $this->shortcode2, $matches[2] ) ) ) {
+				&& ( in_array( $this->shortcode, $matches[2], true ) || in_array( $this->shortcode2, $matches[2], true ) ) ) {
 					return true;
 			}
 			return false;
@@ -591,7 +591,7 @@ EOF;
 				$requested_path = $pathinfo;
 			} else {
 				// If the request uri is the index, blank it out so that we don't try to match it against a rule.
-				if ( $request_uri == $wp_rewrite->index ) {
+				if ( $request_uri === $wp_rewrite->index ) {
 					$request_uri = '';
 				}
 				$requested_path = $request_uri;
@@ -677,12 +677,12 @@ EOF;
 			$dont_follow = array();
 
 			foreach ( $following as $f ) {
-				$ff = ( $f[0] == '!' ? substr( $f, 1 ) : $f );
+				$ff = ( $f[0] === '!' ? substr( $f, 1 ) : $f );
 				$u  = get_user_by( 'login', $ff );
 				if ( ! $u ) {   // username not found
 					continue;
 				}
-				if ( $f[0] == '!' ) {
+				if ( $f[0] === '!' ) {
 					$dont_follow[] = $u->ID;
 				} else {
 					$do_follow[] = $u->ID;
@@ -740,7 +740,7 @@ EOF;
 		 */
 		function validate_wp_user_pass( $username = '', $password = '', $what = 'id' ) {
 
-			if ( $username == '' || $password == '' ) {
+			if ( $username === '' || $password === '' ) {
 				return false;
 			}
 
@@ -752,7 +752,7 @@ EOF;
 
 				if ( wp_check_password( $password, $hash, $user_id ) ) {
 					if ( user_can( $user_id, 'use_trackserver' ) ) {
-						return ( $what == 'object' ? $user : $user_id );
+						return ( $what === 'object' ? $user : $user_id );
 					} else {
 						return false;
 					}
@@ -838,10 +838,10 @@ EOF;
 					$occurred = date( 'Y-m-d H:i:s', $ts );
 					$fenced   = $this->is_geofenced( $user_id, $p );
 
-					if ( $fenced == 'discard' ) {
+					if ( $fenced === 'discard' ) {
 						continue;
 					}
-					$hidden    = ( $fenced == 'hide' ? 1 : 0 );
+					$hidden    = ( $fenced === 'hide' ? 1 : 0 );
 					$sqldata[] = $wpdb->prepare( '(%d, %s, %s, %s, %s, %s, %d)', $trip_id, $p['latitude'], $p['longitude'], $p['altitude'], $now, $occurred, $hidden );
 				}
 
@@ -993,8 +993,8 @@ EOF;
 				$filename = $tmp . '/' . uniqid();
 
 				// Check the filename extension case-insensitively
-				if ( strcasecmp( substr( $f['name'], -4 ), '.gpx' ) == 0 ) {
-					if ( $f['error'] == 0 && move_uploaded_file( $f['tmp_name'], $filename ) ) {
+				if ( strcasecmp( substr( $f['name'], -4 ), '.gpx' ) === 0 ) {
+					if ( $f['error'] === 0 && move_uploaded_file( $f['tmp_name'], $filename ) ) {
 						$xml = $this->validate_gpx_file( $filename );
 						if ( $xml ) {
 							$result = $this->process_gpx( $xml, $user_id );
@@ -1021,7 +1021,7 @@ EOF;
 				}
 				unlink( $filename );
 			}
-			if ( $message == '' ) {
+			if ( $message === '' ) {
 				$max = $this->size_to_bytes( ini_get( 'post_max_size' ) );
 				if ( isset( $_SERVER['CONTENT_LENGTH'] ) && $max > 0 && (int) $_SERVER['CONTENT_LENGTH'] > $max ) {
 					$message = 'ERROR: File too large, maximum size is ' . $this->bytes_to_human( $max ) . "\n";
@@ -1227,7 +1227,7 @@ EOF;
 
 			// Get / set the value for the number of tracks per page from the selectbox
 			$per_page = (int) get_user_meta( $user_id, 'ts_tracks_admin_per_page', true );
-			$per_page = ( $per_page == 0 ? 20 : $per_page );
+			$per_page = ( $per_page === 0 ? 20 : $per_page );
 			if ( isset( $_REQUEST['per_page'] ) ) {
 				$per_page = (int) $_REQUEST['per_page'];
 				update_user_meta( $user_id, 'ts_tracks_admin_per_page', $per_page );
@@ -1294,9 +1294,9 @@ EOF;
 					$sql        = array();
 					$delete_ids = array();
 					foreach ( $modifications[ $track_id ] as $loc_index => $mod ) {
-						if ( $mod['action'] == 'delete' ) {
+						if ( $mod['action'] === 'delete' ) {
 							$delete_ids[] = $loc_ids[ $loc_index ]->id;
-						} elseif ( $mod['action'] == 'move' ) {
+						} elseif ( $mod['action'] === 'move' ) {
 							$qfmt  = 'UPDATE ' . $this->tbl_locations . ' SET latitude=%s, longitude=%s WHERE id=%d';
 							$sql[] = $wpdb->prepare( $qfmt, $mod['lat'], $mod['lng'], $loc_ids[ $loc_index ]->id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 						}
@@ -1358,7 +1358,7 @@ EOF;
 			// If the data is not an array, do nothing
 			if ( is_array( $data ) ) {
 				foreach ( $data as $meta_key => $meta_value ) {
-					if ( in_array( $meta_key, $valid_fields ) ) {
+					if ( in_array( $meta_key, $valid_fields, true ) ) {
 						update_user_meta( $user_id, $meta_key, $meta_value );
 					}
 				}
@@ -1371,9 +1371,9 @@ EOF;
 							'lat'    => (float) $geofence_lat[ $k ],
 							'lon'    => (float) $geofence_lon[ $k ],
 							'radius' => abs( (int) $geofence_radius[ $k ] ),
-							'action' => ( in_array( $geofence_action[ $k ], $valid_actions ) ? $geofence_action[ $k ] : 'hide' ),
+							'action' => ( in_array( $geofence_action[ $k ], $valid_actions, true ) ? $geofence_action[ $k ] : 'hide' ),
 						);
-						if ( ! in_array( $newfence, $geofences ) ) {
+						if ( ! in_array( $newfence, $geofences, true ) ) {
 							$geofences[] = $newfence;
 						}
 					}
@@ -1421,7 +1421,7 @@ EOF;
 
 		function current_user_can_manage( $track_id ) {
 			$valid = $this->filter_current_user_tracks( array( $track_id ) );
-			return count( $valid ) == 1;
+			return count( $valid ) === 1;
 		}
 
 		/**
@@ -1486,7 +1486,7 @@ EOF;
 			$type = get_post_mime_type( $id );
 
 			// Only act on GPX files
-			if ( $type == 'application/gpx+xml' ) {
+			if ( $type === 'application/gpx+xml' ) {
 
 				$user_id  = $this->get_author( $id );
 				$filename = get_attached_file( $id );
@@ -1559,7 +1559,7 @@ EOF;
 					$delta_distance = $this->distance( $oldlat, $oldlon, $row['latitude'], $row['longitude'] );
 					$distance      += $delta_distance;
 
-					if ( $row['speed'] == '0' ) {
+					if ( $row['speed'] === '0' ) {
 						$oldtime    = new DateTime( $oldocc );
 						$newtime    = new DateTime( $row['occurred'] );
 						$delta_time = $newtime->getTimestamp() - $oldtime->getTimestamp();
@@ -1620,7 +1620,7 @@ EOF;
 
 		function get_tsmap_single_template( $template ) {
 			global $post;
-			if ( $post->post_type == 'tsmap' ) {
+			if ( $post->post_type === 'tsmap' ) {
 				$template = dirname( __FILE__ ) . '/embedded-template.php';
 			}
 			return $template;
@@ -1630,8 +1630,8 @@ EOF;
 			global $wp;
 			$slug = $this->options['embedded_slug'];
 			if (
-				( substr( $wp->request, 0, strlen( $slug ) + 1 ) == "${slug}/" ) || // match trailing slash to not match it as a prefix
-				( isset( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] == $slug )
+				( substr( $wp->request, 0, strlen( $slug ) + 1 ) === "${slug}/" ) || // match trailing slash to not match it as a prefix
+				( isset( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] === $slug )
 			) {
 				$template = dirname( __FILE__ ) . '/embedded-404.php';
 			}
