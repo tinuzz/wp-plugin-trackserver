@@ -358,7 +358,9 @@ EOF;
 
 		function detect_shortcode() {
 			global $wp_query;
-			if ($posts = $wp_query->posts) {
+
+			$posts = $wp_query->posts;
+			if ( is_array( $posts ) ) {
 
 				foreach ( $posts as $post ) {
 					if ( $this->has_shortcode( $post ) ) {
