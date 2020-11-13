@@ -234,7 +234,7 @@ In Trackserver, Cloud Sharing behaves a little differently than in the official 
 
 The plugin uses a few custom Wordpress capabilities ('use_trackserver', 'trackserver_publish' and 'trackserver_admin') to manage the various levels of access within Trackserver:
 
-* To use the tracking features and manage and publish ones own tracks, the 'use_trackserver' capability is required. It is granted to authors, editors and administrators, but not to subscribers.
+* To use the tracking features and manage and publish one's own tracks, the 'use_trackserver' capability is required. It is granted to authors, editors and administrators, but not to subscribers.
 * To publish other people's tracks, the 'trackserver_publish' capability is required. It is granted to editors and administrators.
 * To manage Trackserver's options, the 'trackserver_admin' capability is required. Only admins get this capability by default.
 
