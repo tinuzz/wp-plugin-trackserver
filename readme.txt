@@ -268,6 +268,33 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
+= v5.0 =
+Release date: <unreleased>
+
+This release contains many changes. Please read these notes carefully.
+
+Added:
+* A search box on the tracks management page.
+* Experimental uLogger support.
+* Universal slug for all protocols that Trackserver supports.
+* Generic 'GET request' support for storing locations, used for OsmAnd and Sendlocation support.
+* Some useful links to Github and Trackserver home page from the Plugins page in WP admin.
+
+Changed:
+* Big code restructuring changes. The main Trackserver class has been split up in different utility classes. Each protocol that Trackserver supports now lives in its own PHP class, as do the different WP admin pages and the shortcode handling code. Abstractions for database fuctionss, and data like tracks and locations have been created.
+* Rewrite parts of the MapMyTracks protocol handling, to make it more robust.
+* Internalized the polyline encoder for performance improvement.
+
+Fixed:
+* Include tracks without locations in the list of tracks.
+* CSS improvements.
+* Better TrackMe error handling.
+* A bug in metadata generation for polyline output.
+* A PHP error when there are no posts in the $wp_query. Thanks, @caveman99.
+
+Removed:
+* TrackMe support via the WP AJAX interface. It was never used.
+
 = v4.3.2 =
 Release date: 10 September 2019
 
@@ -596,4 +623,9 @@ Release date: 2 January 2015
 
 == Upgrade Notice ==
 
-* 4.3 - The TrackMe 'URL header' setting has changed, to support Cloud Sharing. Please read the FAQ.
+= 5.0 =
+Trackserver URLs to be used in clients are changing, introducing the Universal Slug. Read the changelog!
+
+= 4.3 =
+The TrackMe 'URL header' setting has changed, to support Cloud Sharing. Please read the FAQ.
+
