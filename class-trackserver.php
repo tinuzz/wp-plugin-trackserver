@@ -20,7 +20,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @access private
 		 * @var str $leaflet_version
 		 */
-		var $leaflet_version = '1.5.1';
+		var $leaflet_version = '1.7.1';
 
 		/**
 		 * Default values for options. See class constructor for more.
