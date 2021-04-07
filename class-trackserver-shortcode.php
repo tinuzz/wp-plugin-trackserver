@@ -314,16 +314,17 @@ class Trackserver_Shortcode {
 	function handle_shortcode3( $atts, $content = '' ) {
 
 		$defaults = array(
-			'text'   => '',
-			'class'  => '',
-			'id'     => false,
-			'track'  => false,
-			'user'   => false,
-			'format' => 'gpx',
-			'maxage' => false,
+			'text'      => '',
+			'class'     => '',
+			'id'        => false,
+			'track'     => false,
+			'user'      => false,
+			'format'    => 'gpx',
+			'maxage'    => false,
+			'href_only' => false,
 		);
 
-		$atts = shortcode_atts( $defaults, $atts, $this->shortcode1 );
+		$atts = shortcode_atts( $defaults, $atts, $this->shortcode3 );
 
 		$class_str = '';
 		if ( $atts['class'] ) {
@@ -364,7 +365,11 @@ class Trackserver_Shortcode {
 				$text = 'download ' . $track_format;
 			}
 
-			$out = '<a href="' . $alltracks_url . '" ' . $class_str . '>' . htmlspecialchars( $text ) . '</a>';
+			if ( $atts['href_only'] === false ) {
+				$out = '<a href="' . $alltracks_url . '" ' . $class_str . '>' . htmlspecialchars( $text ) . '</a>';
+			} else {
+				$out = $alltracks_url;
+			}
 		}
 
 		return $out;
