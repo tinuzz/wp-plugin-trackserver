@@ -43,6 +43,7 @@ See the FAQ section for more information on the shortcode's supported attributes
 [owntracks]: http://owntracks.org/
 [autoshare]: https://play.google.com/store/apps/details?id=com.dngames.autoshare
 [leafletjs]: http://leafletjs.com/
+[github]: https://github.com/tinuzz/wp-plugin-trackserver
 
 = Requirements =
 
@@ -50,7 +51,7 @@ Trackserver requires PHP 5.3 or newer and it needs both DOMDocument and SimpleXM
 
 = Credits =
 
-This plugin was written by Martijn Grendelman. Development is tracked on Github: https://github.com/tinuzz/wp-plugin-trackserver
+This plugin was written by Martijn Grendelman. Development is tracked on [Github][github].
 
 It includes some code and libraries written by other people:
 
