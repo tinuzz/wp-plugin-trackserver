@@ -16,7 +16,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		/**
 		 * LeafletJS version that Trackserver will use.
 		 *
-		 * @since 4.4
+		 * @since 5.0
 		 * @access private
 		 * @var str $leaflet_version
 		 */
@@ -470,7 +470,7 @@ EOF;
 		 * matched, the request is passed on to WP.
 		 *
 		 * @since 1.0
-		 * @since 4.4 Use intelligent protocol matchers against a universal Trackserver slug
+		 * @since 5.0 Use intelligent protocol matchers against a universal Trackserver slug
 		 */
 		function parse_request( $wp ) {
 
@@ -631,7 +631,7 @@ EOF;
 		 *
 		 * The code is borrowed from WP's own parse_request() function.
 		 *
-		 * @since 4.4
+		 * @since 5.0
 		 */
 		function get_request_uri() {
 			global $wp_rewrite;
@@ -800,7 +800,7 @@ EOF;
 		 * ID by default, or a WP_User object on request (3rd argument). Otherwise,
 		 * it returns false.
 		 *
-		 * @since 4.4
+		 * @since 5.0
 		 */
 		function validate_wp_user_pass( $username = '', $password = '', $what = 'id' ) {
 

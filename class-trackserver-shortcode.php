@@ -17,7 +17,7 @@ class Trackserver_Shortcode {
 	/**
 	 * Constructor.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function __construct( $trackserver ) {
 		$this->trackserver = $trackserver;
@@ -27,7 +27,7 @@ class Trackserver_Shortcode {
 	/**
 	 * Create a singleton if it doesn't exist and return it.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public static function get_instance( $trackserver ) {
 		if ( ! self::$instance ) {
@@ -40,7 +40,7 @@ class Trackserver_Shortcode {
 	 * Add shortcode handlers.
 	 *
 	 * @since 1.0
-	 * @since 4.4 Moved to and adapted for the Trackserver_Shortcode class.
+	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
 	 */
 	private function add_actions() {
 		add_shortcode( $this->shortcode1, array( $this, 'handle_shortcode1' ) );
@@ -52,7 +52,7 @@ class Trackserver_Shortcode {
 	 * Handle the main [tsmap] shortcode
 	 *
 	 * @since 1.0
-	 * @since 4.4 Moved to and adapted for the Trackserver_Shortcode class.
+	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
 	 */
 	public function handle_shortcode1( $atts ) {
 		global $wpdb, $post;
@@ -309,7 +309,7 @@ class Trackserver_Shortcode {
 	 * creates the same type of query, to be processed by the 'gettrack' handler.
 	 *
 	 * @since 3.0
-	 * @since 4.4 Moved to and adapted for the Trackserver_Shortcode class.
+	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
 	 */
 	function handle_shortcode3( $atts, $content = '' ) {
 
@@ -402,7 +402,7 @@ class Trackserver_Shortcode {
 	 * the last value is restored to be used for subsequent tracks.
 	 *
 	 * @since 3.0
-	 * @since 4.4 Moved to and adapted for the Trackserver_Shortcode class.
+	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
 	 */
 	private function get_style( $atts = false, $shift = true ) {
 
@@ -905,7 +905,7 @@ class Trackserver_Shortcode {
 	 * consuming steps: first the assembly of an array of points thats could be
 	 * passed to the encoder, and second the mandatory flattening of that array.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	function polyline_encode( $res ) {
 		$encoded_string = '';
@@ -928,7 +928,7 @@ class Trackserver_Shortcode {
 	/**
 	 * Return a polyline encoded chunk for a single number (either a latitude or a longitude).
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	function polyline_get_chunk( $number, $index ) {
 		$precision                    = 5;               // Precision level

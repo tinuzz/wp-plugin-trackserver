@@ -15,7 +15,7 @@ class Trackserver_Ulogger {
 	/**
 	 * Constructor.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function __construct( $trackserver ) {
 		$this->trackserver = $trackserver;
@@ -27,7 +27,7 @@ class Trackserver_Ulogger {
 	 * Based on the value of $_POST['action'], delegate the actual work to an
 	 * appropriate function.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function handle_request() {
 		switch ( $_POST['action'] ) {
@@ -48,7 +48,7 @@ class Trackserver_Ulogger {
 	/**
 	 * Terminate the request with a 401 status.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	private function require_auth() {
 		// The reference server does this, I'm not sure to what end.
@@ -64,7 +64,7 @@ class Trackserver_Ulogger {
 	 * named 'message', it will be regarded as an error condition and the 'error' key
 	 * in the response will be set to 'true'.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	private function send_response( $data = array() ) {
 		$response          = array();
@@ -80,7 +80,7 @@ class Trackserver_Ulogger {
 	 * WordPress credentials.  When valid, start a session, store the user ID in
 	 * it and send a succesful response.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	private function handle_auth() {
 		if ( array_key_exists( 'user', $_POST ) && array_key_exists( 'pass', $_POST ) ) {
@@ -102,7 +102,7 @@ class Trackserver_Ulogger {
 	 * If a user_id from Trackserver is present in the session. return it.
 	 * Otherwise, terminate the request.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	private function session_user() {
 		session_start();
@@ -115,7 +115,7 @@ class Trackserver_Ulogger {
 	/**
 	 * Handle 'addtrack' action.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	private function handle_addtrack() {
 
@@ -146,7 +146,7 @@ class Trackserver_Ulogger {
 	/**
 	 * Handle 'addpos' action.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	private function handle_addpos() {
 		$user_id = $this->session_user();

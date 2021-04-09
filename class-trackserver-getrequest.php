@@ -15,7 +15,7 @@ class Trackserver_Getrequest {
 	/**
 	 * Constructor.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function __construct( $trackserver, $username, $password ) {
 		$this->trackserver = $trackserver;
@@ -36,7 +36,7 @@ class Trackserver_Getrequest {
 	/**
 	 * Handle a generic GET/POST request, as sent by OsmAnd, SendLocation and others.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function handle_request() {
 
@@ -123,7 +123,7 @@ class Trackserver_Getrequest {
 	 * It validates the username and password stored on this object against the
 	 * WordPress username and several access keys from the user profile.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	private function validate_user_meta_key() {
 

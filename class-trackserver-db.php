@@ -29,7 +29,7 @@ class Trackserver_Db {
 	/**
 	 * Create a singleton if it doesn't exist and return it.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public static function get_instance( $trackserver ) {
 		if ( ! self::$instance ) {

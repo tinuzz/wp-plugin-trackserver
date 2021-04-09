@@ -14,7 +14,7 @@ class Trackserver_Trackme {
 	/**
 	 * Constructor.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function __construct( $trackserver ) {
 		$this->trackserver   = $trackserver;
@@ -25,7 +25,7 @@ class Trackserver_Trackme {
 	/**
 	 * Create a singleton if it doesn't exist and return it.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public static function get_instance( $trackserver ) {
 		if ( ! self::$instance ) {
@@ -40,7 +40,7 @@ class Trackserver_Trackme {
 	 * Based on the request, delegate the actual work to an appropriate
 	 * function.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function handle_protocol( $method, $username, $password ) {
 		if ( $method === 'requests' ) {
@@ -380,7 +380,7 @@ class Trackserver_Trackme {
 	 * supplied name, all locations and the trip record for the ID are deleted from the database.
 	 *
 	 * @since 1.0
-	 * @since 4.4 Use Trackserver_Track class
+	 * @since 5.0 Use Trackserver_Track class
 	 */
 	private function handle_deletetrip( $user_id ) {
 		$trip_name = urldecode( $_GET['tn'] );

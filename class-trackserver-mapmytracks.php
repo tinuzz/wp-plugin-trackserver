@@ -17,7 +17,7 @@ class Trackserver_Mapmytracks {
 	/**
 	 * Constructor.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function __construct( $trackserver ) {
 		$this->trackserver   = $trackserver;
@@ -29,7 +29,7 @@ class Trackserver_Mapmytracks {
 	 * Handle a MapMyTracks request.
 	 *
 	 * @since 1.0
-	 * @since 4.4 Moved to Trackserver_Mapmytracks class
+	 * @since 5.0 Moved to Trackserver_Mapmytracks class
 	 */
 	public function handle_request() {
 
@@ -61,7 +61,7 @@ class Trackserver_Mapmytracks {
 	/**
 	 * Send a MapMyTracks error message. Reason is optional.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	private function error_response( $reason = null ) {
 		$data = array();
@@ -76,7 +76,7 @@ class Trackserver_Mapmytracks {
 	 *
 	 * A message must have a type, and it can have additional data.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	function send_response( $type, $data = array() ) {
 		$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
@@ -113,7 +113,7 @@ class Trackserver_Mapmytracks {
 	 * and the new trip ID is sent in an XML reponse.
 	 *
 	 * @since 1.0
-	 * @since 4.4 Delegate DB access to Trackserver_Track instance
+	 * @since 5.0 Delegate DB access to Trackserver_Track instance
 	 */
 	function handle_start_activity( $user_id ) {
 		if ( ! empty( $_POST['title'] ) ) {
@@ -202,7 +202,7 @@ class Trackserver_Mapmytracks {
 	 * Parse the input from $_POST and save the points to the database. On
 	 * errors, abort the operation and inform the caller.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	function process_points( $track_id, $user_id ) {
 		if ( empty( $_POST['points'] ) ) {

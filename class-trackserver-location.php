@@ -27,7 +27,7 @@ class Trackserver_Location {
 	/**
 	 * Initialize the instance.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function __construct( $trackserver, $track_id = null, $user_id = null ) {
 		$this->trackserver   = $trackserver;
@@ -41,7 +41,7 @@ class Trackserver_Location {
 	 * Function to check whether this location is geofenced.
 	 *
 	 * @since 3.1
-	 * @since 4.4 Get all the data from instance properties rather than function args
+	 * @since 5.0 Get all the data from instance properties rather than function args
 	 */
 	private function is_geofenced() {
 		if ( is_null( $this->latitude ) || is_null( $this->longitude ) || is_null( $this->user_id ) ) {
@@ -72,7 +72,7 @@ class Trackserver_Location {
 	 * If the instance doesn't have an ID, insert a new location, otherwise update
 	 * the existing one. Returns true on success, or false on failure.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function save() {
 		global $wpdb;
@@ -119,7 +119,7 @@ class Trackserver_Location {
 	/**
 	 * Set a property on this object to a given value.
 	 *
-	 * @since 4.4.
+	 * @since 5.0.
 	 */
 	public function set( $what, $value ) {
 		$this->$what = $value;

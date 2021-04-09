@@ -23,7 +23,7 @@ class Trackserver_Track {
 	/**
 	 * Initialize the instance.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function __construct( $trackserver, $value = null, $user_id = null, $field = 'id', $restrict = true ) {
 		global $wpdb;
@@ -46,7 +46,7 @@ class Trackserver_Track {
 	 * If $restrict is true or $field == 'name', the track must be owned by the specified user.
 	 * If $restrict is false and $field == 'id', the request is satisfied if the user can 'trackserver_publish'.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function get_by( $field, $value, $user_id, $restrict = true ) {
 		global $wpdb;
@@ -94,7 +94,7 @@ class Trackserver_Track {
 	 * If the instance doesn't have an ID, insert a new track, otherwise update
 	 * the existing track. Returns the track ID on success, or false on failure.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function save() {
 		global $wpdb;
@@ -132,7 +132,7 @@ class Trackserver_Track {
 	/**
 	 * Set a property on this object to a given value.
 	 *
-	 * @since 4.4.
+	 * @since 5.0.
 	 */
 	public function set( $what, $value ) {
 		$this->$what = $value;
@@ -141,7 +141,7 @@ class Trackserver_Track {
 	/**
 	 * Get the track's location data from the database, store it on the instance and return it.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function get_trackdata() {
 		global $wpdb;
@@ -166,7 +166,7 @@ class Trackserver_Track {
 	 * Permanently remove a track and all its locations from the database. There
 	 * is no checking for errors.
 	 *
-	 * @since 4.4
+	 * @since 5.0
 	 */
 	public function delete() {
 		global $wpdb;
