@@ -66,7 +66,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.0
 		 */
-		function __construct() {
+		public function __construct() {
 			global $wpdb;
 
 			$this->tbl_tracks    = $wpdb->prefix . 'ts_tracks';
@@ -108,7 +108,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 3.0
 		 */
-		function init_options() {
+		public function init_options() {
 			$options = get_option( 'trackserver_options' );
 			if ( ! $options ) {
 				$options = array();
@@ -127,7 +127,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 3.0
 		 */
-		function debug( $log ) {
+		public function debug( $log ) {
 			if ( true === WP_DEBUG ) {
 				if ( is_array( $log ) || is_object( $log ) ) {
 					error_log( print_r( $log, true ) );
@@ -143,7 +143,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.9
 		 */
-		function init_user_meta() {
+		private function init_user_meta() {
 			// Set default profile values for the currently logged-in user
 			if ( current_user_can( 'use_trackserver' ) ) {
 				$user_id = get_current_user_id();
@@ -160,7 +160,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.0
 		 */
-		function add_actions() {
+		private function add_actions() {
 
 			// Set up permalink-related values
 			add_action( 'wp_loaded', array( &$this, 'wp_loaded' ) );
@@ -191,7 +191,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 4.3
 		 */
-		function wp_init() {
+		public function wp_init() {
 			$this->load_textdomain();
 			$this->register_tsmap_post_type();
 		}
@@ -206,7 +206,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.3
 		 */
-		function wp_loaded() {
+		public function wp_loaded() {
 			global $wp_rewrite;
 			if ( ! $wp_rewrite->using_permalinks() || $wp_rewrite->using_index_permalinks() ) {
 				$this->url_prefix = '/' . $wp_rewrite->index;
