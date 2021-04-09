@@ -838,7 +838,7 @@ EOF;
 
 				foreach ( $points as $p ) {
 					$ts       = $p['timestamp'] + $offset;
-					$occurred = date( 'Y-m-d H:i:s', $ts );
+					$occurred = date( 'Y-m-d H:i:s', $ts ); // phpcs:ignore
 					$fenced   = $this->is_geofenced( $user_id, $p );
 
 					if ( $fenced === 'discard' ) {
@@ -1096,7 +1096,7 @@ EOF;
 						foreach ( $trkseg->trkpt as $trkpt ) {
 							$trkpt_ts = $this->parse_iso_date( (string) $trkpt->time );
 							if ( ! $trip_start ) {
-								$trip_start = date( 'Y-m-d H:i:s', $trkpt_ts );
+								$trip_start = date( 'Y-m-d H:i:s', $trkpt_ts ); // phpcs:ignore
 								$last_ts    = (int) $trkpt_ts - 1;
 								if ( empty( $trkpt->time ) ) {
 									$fake_time = true;

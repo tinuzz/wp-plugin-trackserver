@@ -1,3 +1,7 @@
+<?php
+	// phpcs:ignore
+	// Suppress 'No PHP code was found in this file' warning.
+?>
 <!DOCTYPE html>
 <html>
 	<head>

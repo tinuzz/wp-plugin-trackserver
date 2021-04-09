@@ -98,7 +98,7 @@ class Trackserver_Mapmytracks {
 		if ( array_key_exists( 'version', $_POST ) ) {
 			$source .= ' v' . $_POST['version'];
 		}
-		if ( $source != '' ) {
+		if ( $source !== '' ) {
 			$source .= ' / ';
 		}
 		$source .= 'MapMyTracks';
@@ -142,7 +142,7 @@ class Trackserver_Mapmytracks {
 	 * @since 1.0
 	 */
 	function handle_update_activity( $user_id ) {
-		$track	 = new Trackserver_Track( $this->trackserver, $_POST['activity_id'], $user_id );	// $restrict = true
+		$track = new Trackserver_Track( $this->trackserver, $_POST['activity_id'], $user_id );   // $restrict = true
 		if ( $track->id ) {
 			list( $result, $reason ) = $this->process_points( $track->id, $user_id );
 			if ( $result ) {
@@ -185,7 +185,7 @@ class Trackserver_Mapmytracks {
 				if ( isset( $_POST['description'] ) ) {
 					$track_ids = $result['track_ids'];
 					if ( count( $track_ids ) > 0 ) {
-						$in	= '(' . implode( ',', $track_ids ) . ')';
+						$in  = '(' . implode( ',', $track_ids ) . ')';
 						$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 						$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					}
@@ -236,25 +236,25 @@ class Trackserver_Mapmytracks {
 		// notation, like '7.72E-4'). The last one is the timestamp, which may
 		// only contain numbers.
 		$pattern = '/^([\dE.-]+ [\dE.-]+ [\dE.-]+ [\d]+ ?)*$/';
-		$n			 = preg_match( $pattern, $points );
+		$n       = preg_match( $pattern, $points );
 
-		if ( $n == 1 ) {
+		if ( $n === 1 ) {
 			$parsed = array();
-			$all		= explode( ' ', $points );
+			$all    = explode( ' ', $points );
 			for ( $i = 0; $i < count( $all ); $i += 4 ) {
 				if ( $all[ $i ] ) {
 
 					$parsed[] = array(
-						'latitude'	=> number_format( $all[ $i ], 6 ),
+						'latitude'  => number_format( $all[ $i ], 6 ),
 						'longitude' => number_format( $all[ $i + 1 ], 6 ),
-						'altitude'	=> number_format( $all[ $i + 2 ], 6 ),
+						'altitude'  => number_format( $all[ $i + 2 ], 6 ),
 						'timestamp' => $all[ $i + 3 ],
 					);
 				}
 			}
 			return $parsed;
 		} else {
-			return false;	// Invalid input
+			return false; // Invalid input
 		}
 	}
 

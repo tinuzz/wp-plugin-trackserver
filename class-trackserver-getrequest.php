@@ -67,7 +67,7 @@ class Trackserver_Getrequest {
 		}
 
 		$ts      += $this->trackserver->utc_to_local_offset( $ts );
-		$occurred = date( 'Y-m-d H:i:s', $ts );
+		$occurred = date( 'Y-m-d H:i:s', $ts ); // phpcs:ignore
 
 		// Get track name from strftime format string. Use the 'osmand' format. This format should be renamed.
 		// The 'sendlocation' format is now deprecated.

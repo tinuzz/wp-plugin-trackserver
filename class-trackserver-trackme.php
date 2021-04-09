@@ -274,7 +274,7 @@ class Trackserver_Trackme {
 		$occurred = urldecode( $_GET['do'] );
 
 		if ( ! empty( $trip_name ) ) {
-			$track   = new Trackserver_Track( $this->trackserver, $trip_name, $user_id, 'name' );
+			$track = new Trackserver_Track( $this->trackserver, $trip_name, $user_id, 'name' );
 
 			if ( is_null( $track->id ) ) {
 
@@ -408,7 +408,7 @@ class Trackserver_Trackme {
 	 */
 	private function validate_timestamp( $ts ) {
 		$d = DateTime::createFromFormat( 'Y-m-d H:i:s', $ts );
-		return $d && ( $d->format( 'Y-m-d H:i:s' ) == $ts );
+		return $d && ( $d->format( 'Y-m-d H:i:s' ) === $ts );
 	}
 
 } // class

@@ -21,9 +21,9 @@ class Trackserver_Db {
 	private $tbl_locations;
 
 	public function __construct( $trackserver ) {
-		$this->trackserver    = $trackserver;
-		$this->tbl_tracks     = $this->trackserver->tbl_tracks;
-		$this->tbl_locations  = $this->trackserver->tbl_locations;
+		$this->trackserver   = $trackserver;
+		$this->tbl_tracks    = $this->trackserver->tbl_tracks;
+		$this->tbl_locations = $this->trackserver->tbl_locations;
 	}
 
 	/**
@@ -97,7 +97,7 @@ class Trackserver_Db {
 		global $wpdb;
 
 		$installed_version = (int) $this->trackserver->options['db_version'];
-		if ( $installed_version > 0 && $installed_version != $this->db_version ) {
+		if ( $installed_version > 0 && $installed_version !== $this->db_version ) {
 
 			// Get a list of column names for the tracks table
 			$sql = 'SELECT * FROM ' . $this->tbl_tracks . ' LIMIT 0,1';
@@ -121,17 +121,17 @@ class Trackserver_Db {
 			$upgrade_sql[11] = 'ALTER TABLE ' . $this->tbl_locations . ' ADD INDEX ( `occurred` )';
 
 			// Fix the 'update'/'updated' mess in the tracks table
-			if ( in_array( 'update', $colnames ) ) {
+			if ( in_array( 'update', $colnames, true ) ) {
 				$upgrade_sql[13] = 'ALTER TABLE ' . $this->tbl_tracks . ' DROP `update`';
 			}
-			if ( ! in_array( 'updated', $colnames ) ) {
+			if ( ! in_array( 'updated', $colnames, true ) ) {
 				$upgrade_sql[14] = 'ALTER TABLE ' . $this->tbl_tracks . ' ADD `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() AFTER `name`';
 			}
 			$upgrade_sql[15] = 'UPDATE ' . $this->tbl_tracks . ' t SET t.updated=(SELECT max(occurred) FROM `' . $this->tbl_locations . '` WHERE trip_id = t.id)';
 			$upgrade_sql[16] = 'ALTER TABLE ' . $this->tbl_locations . " ADD `hidden` TINYINT(1) NOT NULL DEFAULT '0' AFTER `comment`";
 
 			// Fix the missing 'hidden' column in fresh installs of v4.0
-			if ( ! in_array( 'hidden', $colnames_locations ) ) {
+			if ( ! in_array( 'hidden', $colnames_locations, true ) ) {
 				$upgrade_sql[17] = 'ALTER TABLE ' . $this->tbl_locations . " ADD `hidden` TINYINT(1) NOT NULL DEFAULT '0' AFTER `comment`";
 			}
 

@@ -162,7 +162,7 @@ class Trackserver_Ulogger {
 
 				$loc->set( 'latitude', $_POST['lat'] );
 				$loc->set( 'longitude', $_POST['lon'] );
-				$loc->set( 'occurred', date( 'Y-m-d H:i:s', $ts ) );
+				$loc->set( 'occurred', date( 'Y-m-d H:i:s', $ts ) ); // phpcs:ignore
 
 				if ( ! empty( $_POST['altitude'] ) ) {
 					$loc->set( 'altitude', $_POST['altitude'] );

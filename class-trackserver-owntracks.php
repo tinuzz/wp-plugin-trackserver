@@ -86,7 +86,7 @@ class Trackserver_Owntracks {
 			$ts       = $json['tst'];
 			$offset   = $this->trackserver->utc_to_local_offset( $ts );
 			$ts      += $offset;
-			$occurred = date( 'Y-m-d H:i:s', $ts );
+			$occurred = date( 'Y-m-d H:i:s', $ts ); // phpcs:ignore
 
 			// Get track name from strftime format string
 			$trackname = strftime( $this->trackserver->options['owntracks_trackname_format'], $ts );

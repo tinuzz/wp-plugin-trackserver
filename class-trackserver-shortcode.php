@@ -956,7 +956,7 @@ class Trackserver_Shortcode {
 	function validate_track_ids( $track_ids, $author_id ) {
 		global $wpdb;
 
-		if ( count( $track_ids ) == 0 ) {
+		if ( count( $track_ids ) === 0 ) {
 			return array();
 		}
 
@@ -976,7 +976,7 @@ class Trackserver_Shortcode {
 		// Restore track order as given in the shortcode
 		$trk0 = array();
 		foreach ( $track_ids as $tid ) {
-			if ( in_array( $tid, $validated_track_ids ) ) {
+			if ( in_array( $tid, $validated_track_ids, true ) ) {
 				$trk0[] = $tid;
 			}
 		}
@@ -994,7 +994,7 @@ class Trackserver_Shortcode {
 	function validate_user_ids( $user_ids, $author_id ) {
 		global $wpdb;
 
-		if ( count( $user_ids ) == 0 ) {
+		if ( count( $user_ids ) === 0 ) {
 			return array();
 		}
 
@@ -1013,7 +1013,7 @@ class Trackserver_Shortcode {
 			// Restore track order as given in the shortcode
 			$usr0 = array();
 			foreach ( $user_ids as $uid ) {
-				if ( in_array( $uid, $validated_user_ids ) ) {
+				if ( in_array( $uid, $validated_user_ids, true ) ) {
 					$usr0[] = $uid;
 				}
 			}
@@ -1029,7 +1029,7 @@ class Trackserver_Shortcode {
 	 * @since 3.0
 	 */
 	function get_user_id( $user, $property = 'ID' ) {
-		if ( $user == '@' ) {
+		if ( $user === '@' ) {
 			$user = get_the_author_meta( 'ID' );
 		}
 		if ( is_numeric( $user ) ) {
@@ -1040,7 +1040,7 @@ class Trackserver_Shortcode {
 		}
 		$user = get_user_by( $field, $user );
 		if ( $user ) {
-			return ( $property == 'ID' ? (int) $user->$property : $user->$property );
+			return ( $property === 'ID' ? (int) $user->$property : $user->$property );
 		} else {
 			return false;
 		}

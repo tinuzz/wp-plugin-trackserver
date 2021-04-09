@@ -586,11 +586,11 @@ EOF;
 			$source  = stripslashes( $_REQUEST['source'] );
 			$comment = stripslashes( $_REQUEST['comment'] );
 
-			if ( $_REQUEST['trackserver_action'] == 'delete' ) {
+			if ( $_REQUEST['trackserver_action'] === 'delete' ) {
 				$result  = $this->trackserver->wpdb_delete_tracks( (int) $track_id );
 				$message = 'Track "' . $name . '" (ID=' . $track_id . ', ' .
 					$result['locations'] . ' locations) deleted';
-			} elseif ( $_REQUEST['trackserver_action'] == 'split' ) {
+			} elseif ( $_REQUEST['trackserver_action'] === 'split' ) {
 				$vertex  = intval( $_REQUEST['vertex'] );  // not covered by nonce!
 				$r       = $this->wpdb_split_track( $track_id, $vertex );
 				$message = 'Track "' . $name . '" (ID=' . $track_id . ') has been split at point ' . $vertex . ' ' . $r;  // TODO: i18n
