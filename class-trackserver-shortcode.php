@@ -976,7 +976,7 @@ class Trackserver_Shortcode {
 		// Restore track order as given in the shortcode
 		$trk0 = array();
 		foreach ( $track_ids as $tid ) {
-			if ( in_array( $tid, $validated_track_ids, true ) ) {
+			if ( in_array( (string) $tid, $validated_track_ids, true ) ) {
 				$trk0[] = $tid;
 			}
 		}
@@ -1013,7 +1013,7 @@ class Trackserver_Shortcode {
 			// Restore track order as given in the shortcode
 			$usr0 = array();
 			foreach ( $user_ids as $uid ) {
-				if ( in_array( $uid, $validated_user_ids, true ) ) {
+				if ( in_array( (string) $uid, $validated_user_ids, true ) ) {
 					$usr0[] = $uid;
 				}
 			}
