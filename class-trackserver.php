@@ -54,10 +54,12 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			'ts_infobar_template' => '{displayname} - {lat},{lon} - {timestamp}',
 		);
 
-		var $shortcode    = 'tsmap';
-		var $shortcode2   = 'tsscripts';
-		var $shortcode3   = 'tslink';
-		var $track_format = 'polyline';  // 'polyline' or 'geojson'
+		var $shortcode           = 'tsmap';
+		var $shortcode2          = 'tsscripts';
+		var $shortcode3          = 'tslink';
+		var $track_format        = 'polyline';  // 'polyline' or 'geojson'
+		var $trackserver_scripts = array();
+		var $trackserver_styles  = array();
 
 		/**
 		 * Class constructor.
@@ -246,6 +248,26 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		}
 
 		/**
+		 * Wrapper for wp_enqueue_script() that keeps a list of this plugin's scripts
+		 *
+		 * @since 5.0
+		 */
+		private function wp_enqueue_script( ...$args ) {
+			$this->trackserver_scripts[] = $args[0];
+			wp_enqueue_script( ...$args );
+		}
+
+		/**
+		 * Wrapper for wp_enqueue_style() that keeps a list of this plugin's styles
+		 *
+		 * @since 5.0
+		 */
+		private function wp_enqueue_style( ...$args ) {
+			$this->trackserver_styles[] = $args[0];
+			wp_enqueue_style( ...$args );
+		}
+
+		/**
 		 * Function to load scripts for both front-end and admin. It is called from the
 		 * 'wp_enqueue_scripts' and 'admin_enqueue_scripts' handlers.
 		 *
@@ -253,13 +275,13 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		function load_common_scripts() {
 
-			wp_enqueue_style( 'leaflet_stylesheet', TRACKSERVER_JSLIB . 'leaflet-' . $this->leaflet_version . '/leaflet.css' );
-			wp_enqueue_script( 'leaflet_js', TRACKSERVER_JSLIB . 'leaflet-' . $this->leaflet_version . '/leaflet.js', array(), false, true );
-			wp_enqueue_style( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/leaflet.fullscreen.css' );
-			wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/Leaflet.fullscreen.min.js', array(), false, true );
-			wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), TRACKSERVER_VERSION, true );
-			wp_enqueue_style( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.css', array(), TRACKSERVER_VERSION );
-			wp_enqueue_script( 'promise-polyfill', TRACKSERVER_JSLIB . 'promise-polyfill-6.0.2/promise.min.js', array(), false, true );
+			$this->wp_enqueue_style( 'leaflet-js', TRACKSERVER_JSLIB . 'leaflet-' . $this->leaflet_version . '/leaflet.css' );
+			$this->wp_enqueue_script( 'leaflet-js', TRACKSERVER_JSLIB . 'leaflet-' . $this->leaflet_version . '/leaflet.js', array(), false, true );
+			$this->wp_enqueue_style( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/leaflet.fullscreen.css' );
+			$this->wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/Leaflet.fullscreen.min.js', array(), false, true );
+			$this->wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), TRACKSERVER_VERSION, true );
+			$this->wp_enqueue_style( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.css', array(), TRACKSERVER_VERSION );
+			$this->wp_enqueue_script( 'promise-polyfill', TRACKSERVER_JSLIB . 'promise-polyfill-6.0.2/promise.min.js', array(), false, true );
 
 			// To be localized in wp_footer() with data from the shortcode(s). Enqueued last, in wp_enqueue_scripts.
 			// Also localized and enqueued in admin_enqueue_scripts
@@ -286,20 +308,59 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @since 1.0
 		 */
 		function wp_enqueue_scripts( $force = false ) {
+			global $post;
+
 			if ( $force || $this->detect_shortcode() ) {
+
+				/* For embedded maps, we want to print only the necessary scripts, and
+				 * skip scripts added by other plugins. We use an extra action in the
+				 * 'wp_head' hook, that runs after 'wp_enqueue_scripts' (prio 1) and
+				 * before 'wp_print_styles' (prio 8) and 'wp_print_head_scripts' (prio
+				 * 9). Another approach would be to just clear the queue here and start
+				 * empty, but we have no way of knowing what will be added afterwards,
+				 * so that wouldn't be effective.
+				 */
+				if ( $post->post_type === 'tsmap' ) {
+					add_action( 'wp_head', array( &$this, 'tsmap_dequeue_scripts' ), 5 );
+				}
+
 				$this->load_common_scripts();
 
 				// Live-update only on the front-end, not in admin
-				wp_enqueue_style( 'leaflet-messagebox', TRACKSERVER_JSLIB . 'leaflet-messagebox-1.0/leaflet-messagebox.css' );
-				wp_enqueue_script( 'leaflet-messagebox', TRACKSERVER_JSLIB . 'leaflet-messagebox-1.0/leaflet-messagebox.js', array(), false, true );
-				wp_enqueue_style( 'leaflet-liveupdate', TRACKSERVER_JSLIB . 'leaflet-liveupdate-1.1/leaflet-liveupdate.css' );
-				wp_enqueue_script( 'leaflet-liveupdate', TRACKSERVER_JSLIB . 'leaflet-liveupdate-1.1/leaflet-liveupdate.js', array(), false, true );
+				$this->wp_enqueue_style( 'leaflet-messagebox', TRACKSERVER_JSLIB . 'leaflet-messagebox-1.0/leaflet-messagebox.css' );
+				$this->wp_enqueue_script( 'leaflet-messagebox', TRACKSERVER_JSLIB . 'leaflet-messagebox-1.0/leaflet-messagebox.js', array(), false, true );
+				$this->wp_enqueue_style( 'leaflet-liveupdate', TRACKSERVER_JSLIB . 'leaflet-liveupdate-1.1/leaflet-liveupdate.css' );
+				$this->wp_enqueue_script( 'leaflet-liveupdate', TRACKSERVER_JSLIB . 'leaflet-liveupdate-1.1/leaflet-liveupdate.js', array(), false, true );
 
 				// Enqueue the main script last
-				wp_enqueue_script( 'trackserver' );
+				$this->wp_enqueue_script( 'trackserver' );
 
 				// Instruct wp_footer() that we already have the scripts.
 				$this->have_scripts = true;
+			}
+		}
+
+		/**
+		 * Function added to the wp_head() hook to dequeue unneeded styles and scripts for embedded maps.
+		 *
+		 * This function takes the currently queued scripts and styles, and
+		 * everything that is not added by Trackserver is removed from the queue.
+		 * See wp_enqueue_scripts() above for more information.
+		 *
+		 * @since 5.0
+		 */
+		public function tsmap_dequeue_scripts() {
+
+			foreach ( wp_scripts()->queue as $script ) {
+				if ( ! in_array( $script, $this->trackserver_scripts, true ) ) {
+					wp_dequeue_script( $script );
+				}
+			}
+
+			foreach ( wp_styles()->queue as $css ) {
+				if ( ! in_array( $css, $this->trackserver_styles, true ) ) {
+					wp_dequeue_style( $css );
+				}
 			}
 		}
 
