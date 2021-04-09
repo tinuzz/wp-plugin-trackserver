@@ -287,6 +287,7 @@ Changed:
 * Internalized the polyline encoder for performance improvement.
 
 Fixed:
+* Embedded maps. The previously shipped template was broken and embedded maps did not actually work.
 * Include tracks without locations in the list of tracks.
 * CSS improvements.
 * Better TrackMe error handling.
