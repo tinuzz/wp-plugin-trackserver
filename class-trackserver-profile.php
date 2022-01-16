@@ -322,8 +322,7 @@ EOF;
 	}
 
 	private function share_friends_html() {
-		$current_user = wp_get_current_user();
-		$value        = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_owntracks_share', true ) );
+		$value        = htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_share', true ) );
 		$link_url     = 'http://owntracks.org/booklet/features/friends/';
 
 		// @codingStandardsIgnoreStart
@@ -341,8 +340,7 @@ EOF;
 	}
 
 	private function follow_friends_html() {
-		$current_user = wp_get_current_user();
-		$value        = htmlspecialchars( get_user_meta( $current_user->ID, 'ts_owntracks_follow', true ) );
+		$value        = htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_follow', true ) );
 		// @codingStandardsIgnoreStart
 		echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to follow with TrackMe\'s ' .
 			'"Show Cloud People" feature or with OwnTracks. These users must share their location with you, by listing ' .
@@ -355,8 +353,7 @@ EOF;
 	}
 
 	private function infobar_template_html() {
-		$current_user = wp_get_current_user();
-		$template     = $this->trackserver->printf_htmlspecialchars( get_user_meta( $current_user->ID, 'ts_infobar_template', true ) );
+		$template     = $this->trackserver->printf_htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_infobar_template', true ) );
 		$format       = <<<EOF
 			%1\$s<br />
 			<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="$template" autocomplete="off" /><br /><br />
@@ -399,13 +396,12 @@ EOF;
 	 * @since 3.1
 	 */
 	private function geofences_html() {
-		$current_user      = wp_get_current_user();
 		$url               = admin_url() . 'admin.php?page=trackserver-yourprofile';
-		$geofences         = get_user_meta( $current_user->ID, 'ts_geofences', true );
+		$geofences         = get_user_meta( $this->current_user->ID, 'ts_geofences', true );
 		$default_geofence  = array(
-			'lat'    => 0,
-			'lon'    => 0,
-			'radius' => 0,
+			'lat'    => (float) 0,
+			'lon'    => (float) 0,
+			'radius' => (int) 0,
 			'action' => 'hide',
 		);
 		$action_select_fmt = '<select name="ts_geofence_action[%1$d]" data-id="%1$d" class="ts-input-geofence">%2$s</select>';
