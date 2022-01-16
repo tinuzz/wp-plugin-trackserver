@@ -133,7 +133,7 @@ var ts_tb_show = function (div, caption, width, height) {
 };
 
 // Put our own stuff in a separate namespace
-// This relies on the global variable trackserver_admin_settings['msg']
+// This relies on the global variable 'trackserver_admin_settings'
 // for translated messages.
 //
 var TrackserverAdmin = (function () {
@@ -339,6 +339,34 @@ var TrackserverAdmin = (function () {
 
             jQuery('.ts-input-geofence').on('change', function(e) {
                 jQuery('#ts_geofences_changed').css({display: 'block'});
+            });
+
+            jQuery('.ts-view-pass').on('click', function() {
+              var button = jQuery(this);
+              var id = button.data('id');
+              if ( button.data('action') == 'view' ) {
+                var password = jQuery('#pass' + id).data('password');
+                jQuery('#passtext' + id).text(password);
+                button.text(trackserver_admin_settings['profile_msg']['hide']);
+                button.data('action', 'hide');
+              } else {
+                jQuery('#passtext' + id).text('**********');
+                button.text(trackserver_admin_settings['profile_msg']['view']);
+                button.data('action', 'view');
+              }
+              return false;
+            });
+
+            jQuery('.ts-delete-pass').on('click', function() {
+              if (confirm(trackserver_admin_settings['msg']['areyousure'])) {
+                var button = jQuery(this);
+                var id = button.data('id');
+                jQuery('input[name="apppass_action"]').val('delete');
+                jQuery('input[name="apppass_id"]').val(id);
+                jQuery('#trackserver-profile').submit();
+              } else {
+                return false;
+              }
             });
         },
 

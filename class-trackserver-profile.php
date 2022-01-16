@@ -12,7 +12,21 @@ class Trackserver_Profile {
 	private $trackserver; // Reference to the main object
 
 	public function __construct( $trackserver ) {
-		$this->trackserver = $trackserver;
+		$this->trackserver   = $trackserver;
+		$this->current_user  = wp_get_current_user();
+		$this->app_passwords = get_user_meta( $this->current_user->ID, 'ts_app_passwords', true );
+		$this->username      = $this->trackserver->printf_htmlspecialchars( $this->current_user->user_login );
+		$base_url            = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
+		$slug                = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackserver_slug'] );
+		$this->url           = $base_url . "/" . $slug;
+
+		if ( empty( $this->app_passwords ) ) {
+			$this->password = esc_html__( '<password>' );
+		}
+		else {
+			$this->password = $this->trackserver->printf_htmlspecialchars( $this->app_passwords[0]['password'] );
+		}
+		$this->first_app_password = $this->password;
 	}
 
 	/**
@@ -25,6 +39,18 @@ class Trackserver_Profile {
 			self::$instance = new self( $trackserver );
 		}
 		return self::$instance;
+	}
+
+	/**
+	 * This function returns an array of localized messages for the trackserver-admin.js,
+	 * specific to the Trackserver_Profile class. It is called from Trackserver_Admin.
+	 */
+	public function get_messages() {
+
+		return array(
+			'view'     => __( 'View', 'trackserver' ),
+			'hide'     => __( 'Hide', 'trackserver' )
+		);
 	}
 
 	public function yourprofile_html() {
@@ -51,8 +77,28 @@ class Trackserver_Profile {
 					<tbody>
 						<tr>
 							<th scope="row">
-								<label for="trackme_access_key">
-									<?php esc_html_e( 'TrackMe password', 'trackserver' ); ?>
+								<label>
+									<?php esc_html_e( 'Trackserver URL', 'trackserver' ); ?>
+								</label>
+							</th>
+							<td>
+								<?php $this->trackserver_url_html(); ?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label>
+									<?php esc_html_e( 'App passwords', 'trackserver' ); ?>
+								</label>
+							</th>
+							<td>
+								<?php $this->app_passwords_html(); ?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label>
+									<?php esc_html_e( 'TrackMe profile', 'trackserver' ); ?>
 								</label>
 							</th>
 							<td>
@@ -71,8 +117,8 @@ class Trackserver_Profile {
 						</tr>
 						<tr>
 							<th scope="row">
-								<label for="osmand_access_key">
-									<?php esc_html_e( 'OsmAnd access key', 'trackserver' ); ?>
+								<label>
+									<?php esc_html_e( 'OsmAnd profile', 'trackserver' ); ?>
 								</label>
 							</th>
 							<td>
@@ -81,8 +127,8 @@ class Trackserver_Profile {
 						</tr>
 						<tr>
 							<th scope="row">
-								<label for="sendlocation_access_key">
-									<?php esc_html_e( 'SendLocation access key', 'trackserver' ); ?>
+								<label>
+									<?php esc_html_e( 'SendLocation profile', 'trackserver' ); ?>
 								</label>
 							</th>
 							<td>
@@ -146,25 +192,79 @@ class Trackserver_Profile {
 		$this->trackserver->howto_modals_html();
 	}
 
-	private function trackme_passwd_html() {
-		$url          = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-		$current_user = wp_get_current_user();
-		$key          = $this->trackserver->printf_htmlspecialchars( get_user_meta( $current_user->ID, 'ts_trackme_key', true ) );
-		$slug         = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackme_slug'] );
-		$extn         = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackme_extension'] );
-		$username     = $current_user->user_login;
 
+	private function trackserver_url_html() {
 		$format = <<<EOF
-			%1\$s<br />
-			<input type="text" size="25" name="ts_user_meta[ts_trackme_key]" id="trackserver_trackme_key" value="$key" autocomplete="off" /><br /><br />
-			<strong>%2\$s:</strong> $url/$slug/$username/$key<br />
-			<strong>%3\$s:</strong> $extn<br /><br />
+			<strong>%1\$s:<br></strong> {$this->url}<br><br>
+			<strong>%2\$s:<br></strong> {$this->url}/&lt;<strong>%3\$s</strong>&gt;/&lt;<strong>%4\$s</strong>&gt;<br /><br>
+EOF;
+
+		printf(
+			$format,
+			esc_html__( 'Full URL for OruxMaps / MapMyTracks, OwnTracks, uLogger', 'trackserver' ),
+			esc_html__( 'Full URL for TrackMe, OsmAnd, SendLocation', 'trackserver' ),
+			esc_html__( 'username', 'trackserver' ),
+			esc_html__( 'password', 'trackserver' )
+		);
+	}
+
+	private function app_passwords_html() {
+
+		// @codingStandardsIgnoreStart
+		echo esc_html__( 'As of Trackserver v5.0, app-specific access keys have been replaced with app passwords. ' .
+			'An app password is usable in all of the supported apps, including the ones that previously only worked with ' .
+			'your WordPress password, like OruxMaps / MapMyTracks.', 'trackserver' ) . '<br /><br />';
+		echo esc_html__( 'App passwords have configurable permissions. "Write" permission means that the password can ' .
+			'be used for creating tracks. "Read" means that tracks and metadata can be queried and downloaded. "Delete" ' .
+			'means the password can be used to delete tracks. For most apps, only write permission is needed, but for ' .
+			'example TrackMe has functionality that requires read and/or delete permissions.', 'trackserver' ) . '<br /><br />';
+		// @codingStandardsIgnoreEnd
+
+		$passwords    = get_user_meta( $this->current_user->ID, 'ts_app_passwords', true );
+
+		//echo "<pre>"; var_dump( $passwords ); echo "</pre>";
+
+		echo '<input type="hidden" name="apppass_action">';
+		echo '<input type="hidden" name="apppass_id">';
+		echo '<table>';
+		echo '<tr><th>Password</th><th style="width: 90px">&nbsp;</th><th style="width: 40px">Read</th><th style="width: 40px">Write</th><th style="width: 40px">Delete</th><th>Created</th><th>Operations</th><tr>';
+		for ( $i = 0; $i < count( $passwords ); $i++ ) {
+			$pass = $passwords[ $i ]['password'];
+			$perm = $passwords[ $i ]['permissions'];
+			$created = ( array_key_exists( 'created', $passwords[ $i ] ) ? htmlspecialchars( $passwords[ $i ]['created'] ) : '&lt;' . esc_html__( 'unknown' ) . '&gt;' );
+			$action_select_options = '';
+
+			// Mark all rows for easier finding in JavaScript
+			$itemdata = 'data-id="' . $i . '"';
+			$passdata = 'data-password="' . htmlspecialchars( $pass ) . '"';
+
+			echo '<tr ' . $itemdata . ' class="trackserver_apppass">' .
+				//'<td ' . $itemdata . ' ' . $passdata . '><tt>' . htmlspecialchars( $pass ) . '</tt></td>' .
+				'<td id="pass' . $i . '" ' . $itemdata . ' ' . $passdata . '><tt id="passtext' . $i . '">**********</tt></td>' .
+				'<td><button class="ts-view-pass" data-action="view" id="viewbutton' . $i . '" ' . $itemdata . '>' .
+				esc_html__( 'View' ) . '</button></td> ' .
+				'<td>' . ( in_array( 'read', $perm ) ? 'Yes' : '-' ) . '</td>' .
+				'<td>' . ( in_array( 'write', $perm ) ? 'Yes' : '-' ) . '</td>' .
+				'<td>' . ( in_array( 'delete', $perm ) ? 'Yes' : '-' ) . '</td>' .
+				'<td>' . $created . '</td>' .
+				'<td>' .
+				'<button class="ts-delete-pass" id="deletebutton' . $i . '" ' . $itemdata . '>Delete</button>' .
+				'</td>' .
+				'</tr>' ;
+		}
+		echo '</table>';
+	}
+
+	private function trackme_passwd_html() {
+		$extn   = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackme_extension'] );
+		$format = <<<EOF
+			<strong>%1\$s:</strong> {$this->url}/{$this->username}/{$this->password}<br />
+			<strong>%2\$s:</strong> $extn<br /><br />
 EOF;
 
 		// @codingStandardsIgnoreStart
 		printf(
 			$format,
-			esc_html__( 'A password for online tracking. We do not use WordPress password here for security reasons. Change this regularly.', 'trackserver' ),
 			esc_html__( 'URL header', 'trackserver' ),
 			esc_html__( 'Server extension', 'trackserver' )
 		);
@@ -174,38 +274,34 @@ EOF;
 	}
 
 	private function mapmytracks_profile_html() {
-		$val    = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['mapmytracks_tag'] );
-		$url    = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-		$format = "<strong>%1\$s:</strong> $url/$val<br /><br />";
+		$format   = <<<EOF
+			<strong>%1\$s:</strong> {$this->url}<br />
+			<strong>%2\$s:</strong> {$this->username}<br />
+			<strong>%3\$s:</strong> %4\$s<br /><br>
+EOF;
 
-		esc_html_e( 'MapMyTracks uses the WordPress password for authentication.', 'trackserver' );
-		echo '<br><br>';
-		printf( $format, esc_html__( 'Full custom URL', 'trackserver' ) );
+		printf(
+			$format,
+			esc_html__( 'Full custom URL', 'trackserver' ),
+			esc_html__( 'Username', 'trackserver' ),
+			esc_html__( 'Password', 'trackserver' ),
+			esc_html__( 'an app password or your WordPress password', 'trackserver' )
+		);
 
 		Trackserver_Settings::get_instance( $this->trackserver )->mapmytracks_settings_html();
 	}
 
 	private function osmand_key_html() {
-		$url          = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-		$current_user = wp_get_current_user();
-		$key          = $this->trackserver->printf_htmlspecialchars( get_user_meta( $current_user->ID, 'ts_osmand_key', true ) );
-		$slug         = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['osmand_slug'] );
-		$username     = $current_user->user_login;
-		$suffix       = $this->trackserver->printf_htmlspecialchars( "/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=$username&key=$key" );
+		$suffix = $this->trackserver->printf_htmlspecialchars( '/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=' ) . $this->username . '&amp;key=' . $this->password;
 
 		$format = <<<EOF
-			%1\$s<br />
-			<input type="text" size="25" name="ts_user_meta[ts_osmand_key]" id="trackserver_osmand_key" value="$key" autocomplete="off" /><br /><br />
-			<strong>%2\$s:</strong> $url/$slug$suffix<br /><br />
+			<strong>%1\$s:</strong> {$this->url}$suffix<br /><br />
 EOF;
 
 		// @codingStandardsIgnoreStart
 		printf(
 			$format,
-			esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
-			'The key should be added, together with your WordPress username, as a URL parameter to the online tracking ' .
-			'URL set in OsmAnd, as displayed below. Change this regularly.', 'trackserver' ),
-			esc_html__( 'Full URL', 'trackserver' )
+			esc_html__( 'Online tracking web address', 'trackserver' )
 		);
 		// @codingStandardsIgnoreEnd
 
@@ -213,25 +309,13 @@ EOF;
 	}
 
 	private function sendlocation_key_html() {
-		$url          = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-		$current_user = wp_get_current_user();
-		$key          = $this->trackserver->printf_htmlspecialchars( get_user_meta( $current_user->ID, 'ts_sendlocation_key', true ) );
-		$slug         = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['sendlocation_slug'] );
-		$username     = $current_user->user_login;
-		$suffix       = $this->trackserver->printf_htmlspecialchars( "/$username/$key/" );
-
 		$format = <<<EOF
-			%1\$s<br />
-			<input type="text" size="25" name="ts_user_meta[ts_sendlocation_key]" id="trackserver_sendlocation_key" value="$key" autocomplete="off" /><br /><br />
-			<strong>%2\$s:</strong> $url/$slug$suffix<br />
+			<strong>%1\$s:</strong> {$this->url}/{$this->username}/{$this->password}/<br />
 EOF;
 
 		// @codingStandardsIgnoreStart
 		printf(
 			$format,
-			esc_html__( 'An access key for online tracking. We do not use WordPress password here for security reasons. ' .
-			'The key should be added, together with your WordPress username, as a URL component in the tracking ' .
-			'URL set in SendLocation, as displayed below. Change this regularly.', 'trackserver' ),
 			esc_html__( 'Your personal server and script', 'trackserver' )
 		);
 		// @codingStandardsIgnoreEnd

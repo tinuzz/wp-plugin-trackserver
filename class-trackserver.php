@@ -73,9 +73,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$this->tbl_locations = $wpdb->prefix . 'ts_locations';
 			$this->init_options();
 
-			$this->user_meta_defaults['ts_trackme_key']       = substr( md5( uniqid() ), -8 );
-			$this->user_meta_defaults['ts_osmand_key']        = substr( md5( uniqid() ), -8 );
-			$this->user_meta_defaults['ts_sendlocation_key']  = substr( md5( uniqid() ), -8 );
 			$this->user_meta_defaults['ts_tracks_admin_view'] = '0';
 			$this->user_meta_defaults['ts_owntracks_share']   = '';
 			$this->user_meta_defaults['ts_owntracks_follow']  = '';
@@ -150,6 +147,43 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				foreach ( $this->user_meta_defaults as $key => $value ) {
 					if ( get_user_meta( $user_id, $key, true ) === '' ) {
 						update_user_meta( $user_id, $key, $value );
+					}
+				}
+
+				// Handle 'ts_app_passwords' specially, because it needs existing values
+				if ( get_user_meta( $user_id, 'ts_app_passwords', true ) === '' ) {
+
+					$passwords      = array();
+					$password_perms = array(
+						'ts_trackme_key'      => array( 'read', 'write', 'delete' ),
+						'ts_osmand_key'       => array( 'write' ),
+						'ts_sendlocation_key' => array( 'write' ),
+					);
+
+					// Copy each of the three existing keys to an app password with appropriate permissions, if non-empty
+					foreach ($password_perms as $key => $value) {
+						$srcval = get_user_meta( $user_id, $key, true );
+						if ( $srcval !== '' ) {
+							$passwords[] = array(
+								'password'    => $srcval,
+								'permissions' => $value,
+							);
+						}
+					}
+
+					// If none of the keys exist, create one default app password with write permissions only.
+					if ( empty( $passwords ) ) {
+						$passwords[] = array(
+							'password'    => substr( md5( uniqid() ), -8 ),
+							'permissions' => array( 'write' ),
+						);
+					}
+
+					// If the keys have been copied successfully, we can delete the originals.
+					if ( update_user_meta( $user_id, 'ts_app_passwords', $passwords ) !== false ) {
+						delete_user_meta( $user_id, 'ts_trackme_key' );
+						delete_user_meta( $user_id, 'ts_osmand_key' );
+						delete_user_meta( $user_id, 'ts_sendlocation_key' );
 					}
 				}
 			}
@@ -1410,17 +1444,19 @@ EOF;
 			$geofence_radius = $_POST['ts_geofence_radius'];
 			$geofence_action = $_POST['ts_geofence_action'];
 			$valid_fields    = array(
-				'ts_osmand_key',
-				'ts_trackme_key',
-				'ts_sendlocation_key',
 				'ts_owntracks_share',
 				'ts_owntracks_follow',
 				'ts_infobar_template',
 			);
 			$valid_actions   = array( 'hide', 'discard' );
 
+			// Hijack the request if a 'Delete password' button was pressed.
+			if ( $_POST['apppass_action'] === 'delete' ) {
+				$message = 'App password deleted.';
+			}
+
 			// If the data is not an array, do nothing
-			if ( is_array( $data ) ) {
+			elseif ( is_array( $data ) ) {
 				foreach ( $data as $meta_key => $meta_value ) {
 					if ( in_array( $meta_key, $valid_fields, true ) ) {
 						update_user_meta( $user_id, $meta_key, $meta_value );

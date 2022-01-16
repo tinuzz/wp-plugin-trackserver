@@ -181,6 +181,8 @@ class Trackserver_Admin {
 	 */
 	function admin_enqueue_scripts( $hook ) {
 
+		$settings = array();
+
 		switch ( $hook ) {
 			case 'trackserver_page_trackserver-tracks':
 			case 'trackserver_page_trackserver-yourprofile':
@@ -189,6 +191,7 @@ class Trackserver_Admin {
 				// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
 				$track_base_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?', ( is_ssl() ? 'https' : 'http' ) );
 				wp_localize_script( 'trackserver', 'track_base_url', $track_base_url );
+				$settings['profile_msg'] = Trackserver_Profile::get_instance( $this->trackserver )->get_messages();
 
 				// Enqueue the main script last
 				wp_enqueue_script( 'trackserver' );
@@ -197,31 +200,29 @@ class Trackserver_Admin {
 				// The options page only has 'trackserver-admin.js'.
 
 			case 'toplevel_page_trackserver-options':
-				$settings = array(
-					'msg'  => array(
-						'areyousure'     => __( 'Are you sure?', 'trackserver' ),
-						'delete'         => __( 'deletion', 'trackserver' ),
-						'merge'          => __( 'merging', 'trackserver' ),
-						'recalc'         => __( 'recalculation', 'trackserver' ),
-						'dlgpx'          => __( 'downloading', 'trackserver' ),
-						'dlkml'          => __( 'downloading', 'trackserver' ),
-						'track'          => __( 'track', 'trackserver' ),
-						'tracks'         => __( 'tracks', 'trackserver' ),
-						'edittrack'      => __( 'Edit track', 'trackserver' ),
-						'deletepoint'    => __( 'Delete point', 'trackserver' ),
-						'splittrack'     => __( 'Split track here', 'trackserver' ),
-						'savechanges'    => __( 'Save changes', 'trackserver' ),
-						'unsavedchanges' => __( 'There are unsaved changes. Save?', 'trackserver' ),
-						'save'           => __( 'Save', 'trackserver' ),
-						'discard'        => __( 'Discard', 'trackserver' ),
-						'cancel'         => __( 'Cancel', 'trackserver' ),
-						/* translators: %1$s = action, %2$s = number and %3$s is 'track' or 'tracks' */
-						'selectminimum'  => __( 'For %1$s, select %2$s %3$s at minimum', 'trackserver' ),
-					),
-					'urls' => array(
-						'adminpost'    => admin_url() . 'admin-post.php',
-						'managetracks' => admin_url() . 'admin.php?page=trackserver-tracks',
-					),
+				$settings['msg'] = array(
+					'areyousure'     => __( 'Are you sure?', 'trackserver' ),
+					'delete'         => __( 'deletion', 'trackserver' ),
+					'merge'          => __( 'merging', 'trackserver' ),
+					'recalc'         => __( 'recalculation', 'trackserver' ),
+					'dlgpx'          => __( 'downloading', 'trackserver' ),
+					'dlkml'          => __( 'downloading', 'trackserver' ),
+					'track'          => __( 'track', 'trackserver' ),
+					'tracks'         => __( 'tracks', 'trackserver' ),
+					'edittrack'      => __( 'Edit track', 'trackserver' ),
+					'deletepoint'    => __( 'Delete point', 'trackserver' ),
+					'splittrack'     => __( 'Split track here', 'trackserver' ),
+					'savechanges'    => __( 'Save changes', 'trackserver' ),
+					'unsavedchanges' => __( 'There are unsaved changes. Save?', 'trackserver' ),
+					'save'           => __( 'Save', 'trackserver' ),
+					'discard'        => __( 'Discard', 'trackserver' ),
+					'cancel'         => __( 'Cancel', 'trackserver' ),
+					/* translators: %1$s = action, %2$s = number and %3$s is 'track' or 'tracks' */
+					'selectminimum'  => __( 'For %1$s, select %2$s %3$s at minimum', 'trackserver' ),
+				);
+				$settings['urls'] = array(
+					'adminpost'    => admin_url() . 'admin-post.php',
+					'managetracks' => admin_url() . 'admin.php?page=trackserver-tracks',
 				);
 
 				// Enqueue leaflet-editable
