@@ -161,7 +161,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					);
 
 					// Copy each of the three existing keys to an app password with appropriate permissions, if non-empty
-					foreach ($password_perms as $key => $value) {
+					foreach ( $password_perms as $key => $value ) {
 						$srcval = get_user_meta( $user_id, $key, true );
 						if ( $srcval !== '' ) {
 							$passwords[] = array(
@@ -1453,10 +1453,8 @@ EOF;
 			// Hijack the request if a 'Delete password' button was pressed.
 			if ( $_POST['apppass_action'] === 'delete' ) {
 				$message = 'App password deleted.';
-			}
 
-			// If the data is not an array, do nothing
-			elseif ( is_array( $data ) ) {
+			} elseif ( is_array( $data ) ) {
 				foreach ( $data as $meta_key => $meta_value ) {
 					if ( in_array( $meta_key, $valid_fields, true ) ) {
 						update_user_meta( $user_id, $meta_key, $meta_value );

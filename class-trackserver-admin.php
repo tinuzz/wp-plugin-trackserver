@@ -200,7 +200,7 @@ class Trackserver_Admin {
 				// The options page only has 'trackserver-admin.js'.
 
 			case 'toplevel_page_trackserver-options':
-				$settings['msg'] = array(
+				$settings['msg']  = array(
 					'areyousure'     => __( 'Are you sure?', 'trackserver' ),
 					'delete'         => __( 'deletion', 'trackserver' ),
 					'merge'          => __( 'merging', 'trackserver' ),

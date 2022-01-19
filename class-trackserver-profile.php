@@ -18,12 +18,11 @@ class Trackserver_Profile {
 		$this->username      = $this->trackserver->printf_htmlspecialchars( $this->current_user->user_login );
 		$base_url            = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
 		$slug                = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackserver_slug'] );
-		$this->url           = $base_url . "/" . $slug;
+		$this->url           = $base_url . '/' . $slug;
 
 		if ( empty( $this->app_passwords ) ) {
 			$this->password = esc_html__( '<password>' );
-		}
-		else {
+		} else {
 			$this->password = $this->trackserver->printf_htmlspecialchars( $this->app_passwords[0]['password'] );
 		}
 		$this->first_app_password = $this->password;
@@ -48,8 +47,8 @@ class Trackserver_Profile {
 	public function get_messages() {
 
 		return array(
-			'view'     => __( 'View', 'trackserver' ),
-			'hide'     => __( 'Hide', 'trackserver' )
+			'view' => __( 'View', 'trackserver' ),
+			'hide' => __( 'Hide', 'trackserver' ),
 		);
 	}
 
@@ -220,7 +219,7 @@ EOF;
 			'example TrackMe has functionality that requires read and/or delete permissions.', 'trackserver' ) . '<br /><br />';
 		// @codingStandardsIgnoreEnd
 
-		$passwords    = get_user_meta( $this->current_user->ID, 'ts_app_passwords', true );
+		$passwords = get_user_meta( $this->current_user->ID, 'ts_app_passwords', true );
 
 		//echo "<pre>"; var_dump( $passwords ); echo "</pre>";
 
@@ -228,10 +227,11 @@ EOF;
 		echo '<input type="hidden" name="apppass_id">';
 		echo '<table>';
 		echo '<tr><th>Password</th><th style="width: 90px">&nbsp;</th><th style="width: 40px">Read</th><th style="width: 40px">Write</th><th style="width: 40px">Delete</th><th>Created</th><th>Operations</th><tr>';
+
 		for ( $i = 0; $i < count( $passwords ); $i++ ) {
-			$pass = $passwords[ $i ]['password'];
-			$perm = $passwords[ $i ]['permissions'];
-			$created = ( array_key_exists( 'created', $passwords[ $i ] ) ? htmlspecialchars( $passwords[ $i ]['created'] ) : '&lt;' . esc_html__( 'unknown' ) . '&gt;' );
+			$pass                  = $passwords[ $i ]['password'];
+			$perm                  = $passwords[ $i ]['permissions'];
+			$created               = ( array_key_exists( 'created', $passwords[ $i ] ) ? htmlspecialchars( $passwords[ $i ]['created'] ) : '&lt;' . esc_html__( 'unknown' ) . '&gt;' );
 			$action_select_options = '';
 
 			// Mark all rows for easier finding in JavaScript
@@ -243,14 +243,14 @@ EOF;
 				'<td id="pass' . $i . '" ' . $itemdata . ' ' . $passdata . '><tt id="passtext' . $i . '">**********</tt></td>' .
 				'<td><button class="ts-view-pass" data-action="view" id="viewbutton' . $i . '" ' . $itemdata . '>' .
 				esc_html__( 'View' ) . '</button></td> ' .
-				'<td>' . ( in_array( 'read', $perm ) ? 'Yes' : '-' ) . '</td>' .
-				'<td>' . ( in_array( 'write', $perm ) ? 'Yes' : '-' ) . '</td>' .
-				'<td>' . ( in_array( 'delete', $perm ) ? 'Yes' : '-' ) . '</td>' .
+				'<td>' . ( in_array( 'read', $perm, true ) ? 'Yes' : '-' ) . '</td>' .
+				'<td>' . ( in_array( 'write', $perm, true ) ? 'Yes' : '-' ) . '</td>' .
+				'<td>' . ( in_array( 'delete', $perm, true ) ? 'Yes' : '-' ) . '</td>' .
 				'<td>' . $created . '</td>' .
 				'<td>' .
 				'<button class="ts-delete-pass" id="deletebutton' . $i . '" ' . $itemdata . '>Delete</button>' .
 				'</td>' .
-				'</tr>' ;
+				'</tr>';
 		}
 		echo '</table>';
 	}
@@ -274,7 +274,7 @@ EOF;
 	}
 
 	private function mapmytracks_profile_html() {
-		$format   = <<<EOF
+		$format = <<<EOF
 			<strong>%1\$s:</strong> {$this->url}<br />
 			<strong>%2\$s:</strong> {$this->username}<br />
 			<strong>%3\$s:</strong> %4\$s<br /><br>
@@ -322,8 +322,8 @@ EOF;
 	}
 
 	private function share_friends_html() {
-		$value        = htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_share', true ) );
-		$link_url     = 'http://owntracks.org/booklet/features/friends/';
+		$value    = htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_share', true ) );
+		$link_url = 'http://owntracks.org/booklet/features/friends/';
 
 		// @codingStandardsIgnoreStart
 		echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to share your location with. ' .
@@ -340,7 +340,7 @@ EOF;
 	}
 
 	private function follow_friends_html() {
-		$value        = htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_follow', true ) );
+		$value = htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_follow', true ) );
 		// @codingStandardsIgnoreStart
 		echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to follow with TrackMe\'s ' .
 			'"Show Cloud People" feature or with OwnTracks. These users must share their location with you, by listing ' .
@@ -353,8 +353,8 @@ EOF;
 	}
 
 	private function infobar_template_html() {
-		$template     = $this->trackserver->printf_htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_infobar_template', true ) );
-		$format       = <<<EOF
+		$template = $this->trackserver->printf_htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_infobar_template', true ) );
+		$format   = <<<EOF
 			%1\$s<br />
 			<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="$template" autocomplete="off" /><br /><br />
 EOF;
