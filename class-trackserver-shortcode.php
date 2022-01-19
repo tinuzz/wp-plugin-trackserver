@@ -900,10 +900,15 @@ class Trackserver_Shortcode {
 	 * Apply Google Polyline algorithm to list of points. Takes a $wpdb result
 	 * set as input.
 	 *
-	 * This function was largely copied from E. McConville's Polyline encoder.
 	 * Because it works on a DB result set directly, it saves two time and CPU
 	 * consuming steps: first the assembly of an array of points thats could be
 	 * passed to the encoder, and second the mandatory flattening of that array.
+	 *
+	 * This function was largely copied from E. McConville's Polyline encoder
+	 * and some parts are copyright 2009-2015 E. McConville. These parts are
+	 * released under the terms of the GNU Lesser General Public License v3.
+	 * See https://github.com/emcconville/google-map-polyline-encoding-tool
+	 * for more information.
 	 *
 	 * @since 5.0
 	 */
