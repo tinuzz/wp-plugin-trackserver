@@ -179,7 +179,7 @@ class Trackserver_Admin {
 	 *
 	 * @param string $hook The hook suffix for the current admin page.
 	 */
-	function admin_enqueue_scripts( $hook ) {
+	public function admin_enqueue_scripts( $hook ) {
 
 		$settings = array();
 
@@ -423,7 +423,7 @@ EOF;
 		$this->trackserver->howto_modals_html();
 	}
 
-	function manage_tracks_html() {
+	public function manage_tracks_html() {
 
 		if ( ! current_user_can( 'use_trackserver' ) ) {
 			wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
@@ -568,13 +568,13 @@ EOF;
 	/**
 	 * Filter callback to add a link to the plugin's settings.
 	 */
-	function add_settings_link( $links ) {
+	public function add_settings_link( $links ) {
 		$settings_link = '<a href="admin.php?page=trackserver-options">' . esc_html__( 'Settings', 'trackserver' ) . '</a>';
 		array_push( $links, $settings_link );
 		return $links;
 	}
 
-	function admin_post_save_track() {
+	public function admin_post_save_track() {
 		global $wpdb;
 
 		$track_id = (int) $_REQUEST['track_id'];
@@ -627,7 +627,7 @@ EOF;
 	/**
 	 * Function to process any bulk action from the tracks_list_table
 	 */
-	function process_bulk_action( $action ) {
+	private function process_bulk_action( $action ) {
 		global $wpdb;
 
 		// The action name is 'bulk-' + plural form of items in WP_List_Table
@@ -719,7 +719,7 @@ EOF;
 		}
 	}
 
-	function wpdb_split_track( $track_id, $point ) {
+	private function wpdb_split_track( $track_id, $point ) {
 		global $wpdb;
 
 		$split_id_arr = $this->trackserver->get_location_ids_by_index( $track_id, array( $point ) );

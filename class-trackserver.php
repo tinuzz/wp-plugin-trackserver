@@ -260,7 +260,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @param string $option Option name
 		 * @param string $value Option value
 		 */
-		function update_option( $option, $value ) {
+		public function update_option( $option, $value ) {
 			$this->options[ $option ] = $value;
 			update_option( 'trackserver_options', $this->options );
 		}
@@ -274,7 +274,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @param string $option Option name
 		 */
-		function delete_option( $option ) {
+		public function delete_option( $option ) {
 			if ( array_key_exists( $option, $this->options ) ) {
 				unset( $this->options[ $option ] );
 				update_option( 'trackserver_options', $this->options );
@@ -307,7 +307,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.0
 		 */
-		function load_common_scripts() {
+		public function load_common_scripts() {
 
 			$this->wp_enqueue_style( 'leaflet-js', TRACKSERVER_JSLIB . 'leaflet-' . $this->leaflet_version . '/leaflet.css' );
 			$this->wp_enqueue_script( 'leaflet-js', TRACKSERVER_JSLIB . 'leaflet-' . $this->leaflet_version . '/leaflet.js', array(), false, true );
@@ -341,7 +341,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.0
 		 */
-		function wp_enqueue_scripts( $force = false ) {
+		public function wp_enqueue_scripts( $force = false ) {
 			global $post;
 
 			if ( $force || $this->detect_shortcode() ) {
@@ -403,12 +403,12 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 4.3
 		 */
-		function load_textdomain() {
+		private function load_textdomain() {
 			// Load the MO file for the current language.
 			load_plugin_textdomain( 'trackserver', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 		}
 
-		function howto_modals_html() {
+		public function howto_modals_html() {
 			$trackme_settings_img     = TRACKSERVER_PLUGIN_URL . 'img/trackme-settings.png';
 			$trackme_settings         = esc_attr__( 'TrackMe settings', 'trackserver' );
 			$mapmytracks_settings_img = TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png';
@@ -451,7 +451,7 @@ EOF;
 		 * @since 1.0
 		 */
 
-		function detect_shortcode() {
+		private function detect_shortcode() {
 			global $wp_query;
 
 			$posts = $wp_query->posts;
@@ -471,7 +471,7 @@ EOF;
 		 *
 		 * @since 2.0
 		 */
-		function has_shortcode( $post ) {
+		private function has_shortcode( $post ) {
 			$pattern = get_shortcode_regex();
 			if ( preg_match_all( '/' . $pattern . '/s', $post->post_content, $matches )
 				&& array_key_exists( 2, $matches )
@@ -486,7 +486,7 @@ EOF;
 		 *
 		 * @since 2.0
 		 */
-		function wp_footer() {
+		public function wp_footer() {
 			if ( $this->need_scripts && ! $this->have_scripts ) {
 				$this->wp_enqueue_scripts( true );
 			}
@@ -506,7 +506,7 @@ EOF;
 		 * @since 1.0
 		 * @since 5.0 Use intelligent protocol matchers against a universal Trackserver slug
 		 */
-		function parse_request( $wp ) {
+		public function parse_request( $wp ) {
 
 			// Handle requests to all the Trackserver URL paths. Requests will in principle match both GET
 			// and POST requests, unless a 'method' key is present in the protocol's properties.
@@ -667,7 +667,7 @@ EOF;
 		 *
 		 * @since 5.0
 		 */
-		function get_request_uri() {
+		private function get_request_uri() {
 			global $wp_rewrite;
 			$home_path       = trim( parse_url( home_url(), PHP_URL_PATH ), '/' ) . $this->url_prefix;
 			$home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
@@ -704,7 +704,7 @@ EOF;
 		 *
 		 * @since 2.0
 		 */
-		function http_terminate( $http = '403', $message = 'Access denied' ) {
+		public function http_terminate( $http = '403', $message = 'Access denied' ) {
 			http_response_code( $http );
 			header( 'Content-Type: text/plain' );
 			echo $message . "\n";
@@ -730,7 +730,7 @@ EOF;
 		 *
 		 * @since 4.1
 		 */
-		function get_users_sharing( $user ) {
+		private function get_users_sharing( $user ) {
 			global  $wpdb;
 
 			$username = $user->user_login;
@@ -764,7 +764,7 @@ EOF;
 		 *
 		 * @since 4.1
 		 */
-		function get_followed_users( $user ) {
+		public function get_followed_users( $user ) {
 			$friends   = $this->get_users_sharing( $user );
 			$following = get_user_meta( $user->ID, 'ts_owntracks_follow', true );
 			if ( empty( $following ) ) {
@@ -811,7 +811,7 @@ EOF;
 		 *
 		 * @since 1.0
 		 */
-		function validate_http_basicauth( $return = false, $what = 'id' ) {
+		public function validate_http_basicauth( $return = false, $what = 'id' ) {
 
 			if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) ) {
 				header( 'WWW-Authenticate: Basic realm="Authentication Required"' );
@@ -836,7 +836,7 @@ EOF;
 		 *
 		 * @since 5.0
 		 */
-		function validate_wp_user_pass( $username = '', $password = '', $what = 'id' ) {
+		public function validate_wp_user_pass( $username = '', $password = '', $what = 'id' ) {
 
 			if ( $username === '' || $password === '' ) {
 				return false;
@@ -872,7 +872,7 @@ EOF;
 		 *
 		 * @since 4.3
 		 */
-		function try_http_basicauth( $return = false, $what = 'id' ) {
+		public function try_http_basicauth( $return = false, $what = 'id' ) {
 			if ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
 				return $this->validate_http_basicauth( $return, $what );
 			}
@@ -904,7 +904,7 @@ EOF;
 		 *
 		 * @param int $ts The unix timestamp to calculate an offset for.
 		 */
-		function utc_to_local_offset( $ts ) {
+		public function utc_to_local_offset( $ts ) {
 
 			$localtz = get_option( 'timezone_string' );
 			if ( ! $localtz ) {
@@ -923,7 +923,7 @@ EOF;
 			return timezone_offset_get( $timezone_object, $datetime_object );
 		}
 
-		function mapmytracks_insert_points( $points, $trip_id, $user_id ) {
+		public function mapmytracks_insert_points( $points, $trip_id, $user_id ) {
 			global $wpdb;
 
 			if ( $points ) {

@@ -297,7 +297,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 2.0
 	 */
-	function handle_shortcode2( $atts ) {
+	public function handle_shortcode2( $atts ) {
 		// do nothing
 	}
 
@@ -311,7 +311,7 @@ class Trackserver_Shortcode {
 	 * @since 3.0
 	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
 	 */
-	function handle_shortcode3( $atts, $content = '' ) {
+	public function handle_shortcode3( $atts, $content = '' ) {
 
 		$defaults = array(
 			'text'      => '',
@@ -631,7 +631,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 3.0
 	 */
-	function handle_gettrack_query() {
+	private function handle_gettrack_query() {
 		global $wpdb;
 
 		$query_string = stripslashes( $_REQUEST['query'] );
@@ -694,7 +694,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 3.1
 	 */
-	function handle_gettrack_proxy() {
+	private function handle_gettrack_proxy() {
 		$proxy_string = stripslashes( $_REQUEST['proxy'] );
 		$post_id      = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : 0 );
 
@@ -731,7 +731,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 2.2
 	 */
-	function send_as_geojson( $res ) {
+	private function send_as_geojson( $res ) {
 		$points = array();
 		foreach ( $res as $row ) {
 			$points[] = array( $row['longitude'], $row['latitude'] );
@@ -750,7 +750,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 2.2
 	 */
-	function send_as_polyline( $res ) {
+	private function send_as_polyline( $res ) {
 		list( $encoded, $metadata ) = $this->polyline_encode( $res );
 		$this->send_as_json( $encoded, $metadata );
 	}
@@ -761,7 +761,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 2.2
 	 */
-	function send_as_json( $encoded, $metadata ) {
+	private function send_as_json( $encoded, $metadata ) {
 		$data = array(
 			'track'    => $encoded,
 			'metadata' => $metadata,
@@ -773,7 +773,7 @@ class Trackserver_Shortcode {
 	/**
 	 * Send output as GPX 1.1. Takes a $wpdb result set as input.
 	 */
-	function send_as_gpx( $res ) {
+	private function send_as_gpx( $res ) {
 		$dom = new DOMDocument( '1.0', 'utf-8' );
 		// @codingStandardsIgnoreStart
 		$dom->preserveWhiteSpace = false;
@@ -851,7 +851,7 @@ class Trackserver_Shortcode {
 	 * Encode the results of a gettrack query as polyline and send it, with
 	 * metadata, as JSON.  Takes a $wpdb result set as input.
 	 */
-	function send_alltracks( $res ) {
+	private function send_alltracks( $res ) {
 
 		$tracks = array();
 		foreach ( $res as $row ) {
@@ -880,7 +880,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 2.2
 	 */
-	function get_metadata( $row ) {
+	private function get_metadata( $row ) {
 		$metadata = array(
 			'last_trkpt_time'     => $row['occurred'],
 			'last_trkpt_altitude' => $row['altitude'],
@@ -912,7 +912,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 5.0
 	 */
-	function polyline_encode( $res ) {
+	private function polyline_encode( $res ) {
 		$encoded_string = '';
 		$index          = 0;
 		$this->previous = array( 0, 0 );
@@ -935,7 +935,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 5.0
 	 */
-	function polyline_get_chunk( $number, $index ) {
+	private function polyline_get_chunk( $number, $index ) {
 		$precision                    = 5;               // Precision level
 		$number                       = (float) $number;
 		$number                       = (int) round( $number * pow( 10, $precision ) );
@@ -958,7 +958,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 3.0
 	 */
-	function validate_track_ids( $track_ids, $author_id ) {
+	private function validate_track_ids( $track_ids, $author_id ) {
 		global $wpdb;
 
 		if ( count( $track_ids ) === 0 ) {
@@ -996,7 +996,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 3.0
 	 */
-	function validate_user_ids( $user_ids, $author_id ) {
+	private function validate_user_ids( $user_ids, $author_id ) {
 		global $wpdb;
 
 		if ( count( $user_ids ) === 0 ) {
@@ -1033,7 +1033,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 3.0
 	 */
-	function get_user_id( $user, $property = 'ID' ) {
+	private function get_user_id( $user, $property = 'ID' ) {
 		if ( $user === '@' ) {
 			$user = get_the_author_meta( 'ID' );
 		}

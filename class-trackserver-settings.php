@@ -331,7 +331,7 @@ EOF;
 EOF;
 	}
 
-	function trackme_slug_html() {
+	public function trackme_slug_html() {
 		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackme_slug'] );
 		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
 
@@ -350,7 +350,7 @@ EOF;
 		);
 	}
 
-	function trackme_extension_html() {
+	public function trackme_extension_html() {
 		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackme_extension'] );
 
 		$format = <<<EOF
@@ -375,7 +375,7 @@ EOF;
 		);
 	}
 
-	function trackme_password_html() {
+	public function trackme_password_html() {
 		$format      = <<<EOF
 			%1\$s<br /><br />
 			<b>%2\$s</b>: %3\$s
@@ -416,7 +416,7 @@ EOF;
 	 *
 	 * @since 1.0
 	 */
-	function mapmytracks_settings_html() {
+	public function mapmytracks_settings_html() {
 		$howto    = esc_html__( 'How to use OruxMaps MapMyTracks', 'trackserver' );
 		$download = esc_html__( 'Download OruxMaps', 'trackserver' );
 		$settings = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
@@ -429,7 +429,7 @@ EOF;
 EOF;
 	}
 
-	function mapmytracks_tag_html() {
+	public function mapmytracks_tag_html() {
 		$val     = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['mapmytracks_tag'] );
 		$url     = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
 		$linkurl = esc_attr__( 'http://en.wikipedia.org/wiki/Server_Name_Indication', 'trackserver' );
@@ -463,7 +463,7 @@ EOF;
 		);
 	}
 
-	function osmand_settings_html() {
+	public function osmand_settings_html() {
 		$howto    = esc_html__( 'How to use OsmAnd', 'trackserver' );
 		$download = esc_html__( 'Download OsmAnd', 'trackserver' );
 		$settings = esc_attr__( 'OsmAnd settings', 'trackserver' );
@@ -476,7 +476,7 @@ EOF;
 EOF;
 	}
 
-	function osmand_slug_html() {
+	public function osmand_slug_html() {
 		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['osmand_slug'] );
 		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
 
@@ -491,7 +491,7 @@ EOF;
 		);
 	}
 
-	function osmand_key_deprecation_html() {
+	public function osmand_key_deprecation_html() {
 		$user_id    = get_current_user_id();
 		$osmand_key = '<code>' . htmlspecialchars( get_user_meta( $user_id, 'ts_osmand_key', true ) ) . '</code>';
 
@@ -530,7 +530,7 @@ EOF;
 		);
 	}
 
-	function osmand_trackname_format_html() {
+	public function osmand_trackname_format_html() {
 		$val  = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['osmand_trackname_format'] );
 		$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
 
@@ -563,10 +563,10 @@ EOF;
 		);
 	}
 
-	function sendlocation_settings_html() {
+	public function sendlocation_settings_html() {
 	}
 
-	function owntracks_settings_html() {
+	public function owntracks_settings_html() {
 		$download = esc_html__( 'Download OwnTracks', 'trackserver' );
 
 		echo <<<EOF
@@ -580,7 +580,7 @@ EOF;
 	 *
 	 * @since 1.0
 	 */
-	function httppost_settings_html() {
+	public function httppost_settings_html() {
 		$howto    = esc_html__( 'How to use AutoShare', 'trackserver' );
 		$download = esc_html__( 'Download AutoShare', 'trackserver' );
 		$settings = esc_attr__( 'AutoShare settings', 'trackserver' );
@@ -593,16 +593,16 @@ EOF;
 EOF;
 	}
 
-	function shortcode_settings_html() {
+	public function shortcode_settings_html() {
 	}
 
-	function embedded_settings_html() {
+	public function embedded_settings_html() {
 	}
 
-	function advanced_settings_html() {
+	public function advanced_settings_html() {
 	}
 
-	function sendlocation_slug_html() {
+	public function sendlocation_slug_html() {
 		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['sendlocation_slug'] );
 		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
 
@@ -617,7 +617,7 @@ EOF;
 		);
 	}
 
-	function sendlocation_trackname_format_html() {
+	public function sendlocation_trackname_format_html() {
 		$val  = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['sendlocation_trackname_format'] );
 		$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
 
@@ -650,7 +650,7 @@ EOF;
 		);
 	}
 
-	function owntracks_slug_html() {
+	public function owntracks_slug_html() {
 		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['owntracks_slug'] );
 		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
 
@@ -667,7 +667,7 @@ EOF;
 		);
 	}
 
-	function owntracks_trackname_format_html() {
+	public function owntracks_trackname_format_html() {
 		$val  = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['owntracks_trackname_format'] );
 		$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
 
@@ -700,7 +700,7 @@ EOF;
 		);
 	}
 
-	function upload_tag_html() {
+	public function upload_tag_html() {
 		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['upload_tag'] );
 		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
 
@@ -717,14 +717,14 @@ EOF;
 		);
 	}
 
-	function tile_url_html() {
+	public function tile_url_html() {
 		$val = htmlspecialchars( $this->trackserver->options['tile_url'] );
 		echo <<<EOF
 			<input type="text" size="50" name="trackserver_options[tile_url]" id="trackserver_tile_url" value="$val" autocomplete="off" /><br /><br />
 EOF;
 	}
 
-	function attribution_html() {
+	public function attribution_html() {
 		$val    = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['attribution'] );
 		$format = <<<EOF
 			<input type="text" size="50" name="trackserver_options[attribution]" id="trackserver_attribution" value="$val" autocomplete="off" /><br />
@@ -734,7 +734,7 @@ EOF;
 		printf( $format, esc_html__( 'Please check with your map tile provider what attribution is required.', 'trackserver' ) );
 	}
 
-	function embedded_slug_html() {
+	public function embedded_slug_html() {
 		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['embedded_slug'] );
 		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
 
@@ -752,7 +752,7 @@ EOF;
 		echo esc_html__( 'Warning: if you change this, links to existing embedded maps will be invalidated.', 'trackserver' );
 	}
 
-	function gettrack_slug_html() {
+	public function gettrack_slug_html() {
 		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['gettrack_slug'] );
 		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
 
@@ -770,7 +770,7 @@ EOF;
 		);
 	}
 
-	function enable_proxy_html() {
+	public function enable_proxy_html() {
 		$checked  = ( $this->trackserver->options['enable_proxy'] ? 'checked' : '' );
 		$linkurl  = esc_attr__( 'https://wordpress.org/plugins/trackserver/faq/', 'trackserver' );
 		$linktext = esc_html__( 'FAQ about security', 'trackserver' );
@@ -798,7 +798,7 @@ EOF;
 		);
 	}
 
-	function fetchmode_all_html() {
+	public function fetchmode_all_html() {
 		$checked = ( $this->trackserver->options['fetchmode_all'] ? 'checked' : '' );
 		$format  = '<input type="checkbox" name="trackserver_options[fetchmode_all]" id="trackserver_fetchmode_all" ' . $checked . '> %1$s<br /><br />';
 		printf(

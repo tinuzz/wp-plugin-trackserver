@@ -78,7 +78,7 @@ class Trackserver_Mapmytracks {
 	 *
 	 * @since 5.0
 	 */
-	function send_response( $type, $data = array() ) {
+	private function send_response( $type, $data = array() ) {
 		$xml = new SimpleXMLElement( '<?xml version="1.0" encoding="UTF-8"?><message />' );
 		$xml->addChild( 'type', $type );
 		foreach ( $data as $key => $value ) {
@@ -90,7 +90,7 @@ class Trackserver_Mapmytracks {
 	/**
 	 * Get the source app and version from a MapMyTracks request.
 	 */
-	function get_source() {
+	private function get_source() {
 		$source = '';
 		if ( array_key_exists( 'source', $_POST ) ) {
 			$source .= $_POST['source'];
@@ -115,7 +115,7 @@ class Trackserver_Mapmytracks {
 	 * @since 1.0
 	 * @since 5.0 Delegate DB access to Trackserver_Track instance
 	 */
-	function handle_start_activity( $user_id ) {
+	private function handle_start_activity( $user_id ) {
 		if ( ! empty( $_POST['title'] ) ) {
 
 			$track = new Trackserver_Track( $this->trackserver, null, $user_id );
@@ -141,7 +141,7 @@ class Trackserver_Mapmytracks {
 	 *
 	 * @since 1.0
 	 */
-	function handle_update_activity( $user_id ) {
+	private function handle_update_activity( $user_id ) {
 		$track = new Trackserver_Track( $this->trackserver, $_POST['activity_id'], $user_id );   // $restrict = true
 		if ( $track->id ) {
 			list( $result, $reason ) = $this->process_points( $track->id, $user_id );
@@ -160,7 +160,7 @@ class Trackserver_Mapmytracks {
 	 *
 	 * @since 1.0
 	 */
-	function handle_stop_activity( $user_id ) {
+	private function handle_stop_activity( $user_id ) {
 		return $this->mapmytracks_response( 'activity_stopped' );
 	}
 
@@ -172,7 +172,7 @@ class Trackserver_Mapmytracks {
 	 *
 	 * @since 1.0
 	 */
-	function handle_upload_activity( $user_id ) {
+	private function handle_upload_activity( $user_id ) {
 		global $wpdb;
 
 		$_POST = stripslashes_deep( $_POST );
@@ -204,7 +204,7 @@ class Trackserver_Mapmytracks {
 	 *
 	 * @since 5.0
 	 */
-	function process_points( $track_id, $user_id ) {
+	private function process_points( $track_id, $user_id ) {
 		if ( empty( $_POST['points'] ) ) {
 			return array( true, '' );
 		}
@@ -228,7 +228,7 @@ class Trackserver_Mapmytracks {
 	 * Usinga regular expression, the string of points is parsed into
 	 * an associative array for easier storage in the database.
 	 */
-	function parse_points( $points ) {
+	private function parse_points( $points ) {
 
 		// Check the points syntax. It should match groups of four items. The
 		// first three may contain numbers, dots, dashes and the letter 'E' (it
