@@ -21,7 +21,7 @@ class Trackserver_Profile {
 		$this->url           = $base_url . '/' . $slug;
 
 		if ( empty( $this->app_passwords ) ) {
-			$this->password = esc_html__( '<password>' );
+			$this->password = esc_html__( '<password>', 'trackserver' );
 		} else {
 			$this->password = $this->trackserver->printf_htmlspecialchars( $this->app_passwords[0]['password'] );
 		}
@@ -225,13 +225,22 @@ EOF;
 
 		echo '<input type="hidden" name="apppass_action">';
 		echo '<input type="hidden" name="apppass_id">';
-		echo '<table>';
-		echo '<tr><th>Password</th><th style="width: 90px">&nbsp;</th><th style="width: 40px">Read</th><th style="width: 40px">Write</th><th style="width: 40px">Delete</th><th>Created</th><th>Operations</th><tr>';
+		echo '<table><tr><th>' .
+			esc_html__( 'Password', 'trackserver' ) .
+			'</th><th style="width: 90px">&nbsp;</th><th style="width: 40px">' .
+			esc_html__( 'Read', 'trackserver' ) .
+			'</th><th style="width: 40px">Write</th><th style="width: 40px">' .
+			esc_html__( 'Delete', 'trackserver' ) .
+			'</th><th>' .
+			esc_html__( 'Created', 'trackserver' ) .
+			'</th><th>' .
+			esc_html__( 'Operations', 'trackserver' ) .
+			'</th><tr>';
 
 		for ( $i = 0; $i < count( $passwords ); $i++ ) {
 			$pass                  = $passwords[ $i ]['password'];
 			$perm                  = $passwords[ $i ]['permissions'];
-			$created               = ( array_key_exists( 'created', $passwords[ $i ] ) ? htmlspecialchars( $passwords[ $i ]['created'] ) : '&lt;' . esc_html__( 'unknown' ) . '&gt;' );
+			$created               = ( array_key_exists( 'created', $passwords[ $i ] ) ? htmlspecialchars( $passwords[ $i ]['created'] ) : '&lt;' . esc_html__( 'unknown', 'trackserver' ) . '&gt;' );
 			$action_select_options = '';
 
 			// Mark all rows for easier finding in JavaScript
@@ -242,7 +251,7 @@ EOF;
 				//'<td ' . $itemdata . ' ' . $passdata . '><tt>' . htmlspecialchars( $pass ) . '</tt></td>' .
 				'<td id="pass' . $i . '" ' . $itemdata . ' ' . $passdata . '><tt id="passtext' . $i . '">**********</tt></td>' .
 				'<td><button class="ts-view-pass" data-action="view" id="viewbutton' . $i . '" ' . $itemdata . '>' .
-				esc_html__( 'View' ) . '</button></td> ' .
+				esc_html__( 'View', 'trackserver' ) . '</button></td> ' .
 				'<td>' . ( in_array( 'read', $perm, true ) ? 'Yes' : '-' ) . '</td>' .
 				'<td>' . ( in_array( 'write', $perm, true ) ? 'Yes' : '-' ) . '</td>' .
 				'<td>' . ( in_array( 'delete', $perm, true ) ? 'Yes' : '-' ) . '</td>' .
