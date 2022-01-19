@@ -1,3 +1,8 @@
 ogckml22.xsd
 lang/Makefile
 .rc
+functions.txt
+img/pin.svg
+*-test.php
+test-*.php
+trackme-cloud.txt
