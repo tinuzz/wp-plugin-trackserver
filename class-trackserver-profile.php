@@ -221,8 +221,6 @@ EOF;
 
 		$passwords = get_user_meta( $this->current_user->ID, 'ts_app_passwords', true );
 
-		//echo "<pre>"; var_dump( $passwords ); echo "</pre>";
-
 		echo '<input type="hidden" name="apppass_action">';
 		echo '<input type="hidden" name="apppass_id">';
 		echo '<table><tr><th>' .
@@ -301,10 +299,10 @@ EOF;
 	}
 
 	private function osmand_key_html() {
-		$suffix = $this->trackserver->printf_htmlspecialchars( '/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=' ) . $this->username . '&amp;key=' . $this->password;
+		$suffix = $this->trackserver->printf_htmlspecialchars( '/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}' );
 
 		$format = <<<EOF
-			<strong>%1\$s:</strong> {$this->url}$suffix<br /><br />
+			<strong>%1\$s:</strong> {$this->url}/{$this->username}/{$this->password}$suffix<br /><br />
 EOF;
 
 		// @codingStandardsIgnoreStart
