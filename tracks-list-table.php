@@ -4,7 +4,7 @@ class Tracks_List_Table extends WP_List_Table {
 	private $options;
 	private $usercache = array();
 
-	function __construct( $options ) {
+	public function __construct( $options ) {
 			global $status, $page;
 
 			$this->options = $options;
@@ -19,7 +19,7 @@ class Tracks_List_Table extends WP_List_Table {
 			);
 	}
 
-	function column_default( $item, $column_name ) {
+	public function column_default( $item, $column_name ) {
 		if ( $column_name === 'edit' ) {
 			return ' <a href="#TB_inline?width=&inlineId=ts-edit-modal" title="' . esc_attr__( 'Edit track properties', 'trackserver' ) .
 				'" class="thickbox" data-id="' . $item['id'] . '" data-action="edit">' . esc_html__( 'Edit', 'trackserver' ) . '</a>';
@@ -45,7 +45,7 @@ class Tracks_List_Table extends WP_List_Table {
 		return print_r( $item, true );    // Show the whole array for troubleshooting purposes.
 	}
 
-	function column_cb( $item ) {
+	public function column_cb( $item ) {
 		return sprintf(
 			'<input type="checkbox" name="%1$s[]" value="%2$s" />',
 			/*$1%s*/ $this->_args['singular'],  // Let's simply repurpose the table's singular label ("movie").
@@ -53,7 +53,7 @@ class Tracks_List_Table extends WP_List_Table {
 		);
 	}
 
-	function get_columns() {
+	public function get_columns() {
 		$columns = array(
 			'cb'        => '<input type="checkbox" />', // Render a checkbox instead of text.
 			'id'        => esc_html__( 'ID', 'trackserver' ),
@@ -72,7 +72,7 @@ class Tracks_List_Table extends WP_List_Table {
 		return $columns;
 	}
 
-	function get_sortable_columns() {
+	public function get_sortable_columns() {
 		return array(
 			'id'      => array( 'id', false ),
 			'user_id' => array( 'user_id', false ),
@@ -83,18 +83,19 @@ class Tracks_List_Table extends WP_List_Table {
 		);
 	}
 
-	function get_bulk_actions() {
+	public function get_bulk_actions() {
 		$actions = array(
-			'delete' => esc_html__( 'Delete', 'trackserver' ),
-			'merge'  => esc_html__( 'Merge', 'trackserver' ),
-			'dlgpx'  => esc_html__( 'Download as GPX', 'trackserver' ),
-			'recalc' => esc_html__( 'Recalculate', 'trackserver' ),
-			'view'   => esc_html__( 'View', 'trackserver' ),
+			'delete'     => esc_html__( 'Delete', 'trackserver' ),
+			'merge'      => esc_html__( 'Merge', 'trackserver' ),
+			'duplicate'  => esc_html__( 'Duplicate', 'trackserver' ),
+			'dlgpx'      => esc_html__( 'Download as GPX', 'trackserver' ),
+			'recalc'     => esc_html__( 'Recalculate', 'trackserver' ),
+			'view'       => esc_html__( 'View', 'trackserver' ),
 		);
 		return $actions;
 	}
 
-	function get_current_action() {
+	public function get_current_action() {
 		$action = $this->current_action();
 		if ( $action && array_key_exists( $action, $this->get_bulk_actions() ) ) {
 			return $action;
@@ -102,7 +103,7 @@ class Tracks_List_Table extends WP_List_Table {
 		return false;
 	}
 
-	function extra_tablenav( $which ) {
+	public function extra_tablenav( $which ) {
 		global $wpdb;
 
 		$sql = "SELECT DISTINCT t.user_id, COALESCE(u.user_login, CONCAT('unknown UID ', t.user_id)) AS user_login FROM " .
@@ -149,7 +150,7 @@ class Tracks_List_Table extends WP_List_Table {
 		echo '</span></div>';
 	}
 
-	function prepare_items( $search = '' ) {
+	public function prepare_items( $search = '' ) {
 		global $wpdb;
 
 		$per_page = $this->options['per_page'];
@@ -225,7 +226,7 @@ class Tracks_List_Table extends WP_List_Table {
 
 	}
 
-	function get_views() {
+	public function get_views() {
 		return array( 'all' => '<a href="' . admin_url() . 'admin.php?page=trackserver-tracks' . '">' . esc_html__( 'All tracks' ) . '</a>' );
 	}
 }
