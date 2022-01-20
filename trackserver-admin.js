@@ -181,7 +181,7 @@ var TrackserverAdmin = (function () {
         // This function is called from the click event of a submit-button. If it
         // returns true, the form will be submitted
         handle_bulk_action: function (action) {
-            if (action == 'delete') {
+            if (action == 'delete' || action == 'duplicate') {
                 if (confirm(trackserver_admin_settings['msg']['areyousure'])) {
                     return true;
                 }

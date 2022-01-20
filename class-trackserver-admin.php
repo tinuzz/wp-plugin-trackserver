@@ -689,6 +689,41 @@ EOF;
 			exit;
 		}
 
+		if ( $action === 'duplicate' ) {
+			$n = count( $track_ids );
+			if ( $n > 0 ) {
+
+				$nl = 0;
+				foreach ( $track_ids as $tid ) {
+
+					// Duplicate track record
+					$sql = $wpdb->prepare( 'INSERT INTO ' . $this->tbl_tracks .
+						" (user_id, name, created, source, comment) SELECT user_id, name, created," .
+						" source, comment FROM " . $this->tbl_tracks . " WHERE id=%s", $tid );
+					$wpdb->query( $sql );
+					$new_id = $wpdb->insert_id;
+
+					// Duplicate locations
+					$sql  = $wpdb->prepare( 'INSERT INTO ' . $this->tbl_locations .
+						' (trip_id, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment, hidden) ' .
+						'SELECT %d, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment, hidden ' .
+						'FROM ' . $this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $new_id, $tid );
+					$nl += $wpdb->query( $sql );
+
+					$this->trackserver->calculate_distance( $new_id );
+				}
+
+				$format  = __( 'Duplicated %1$d location(s) in %2$d track(s).', 'trackserver' );
+				$message = sprintf( $format, intval( $nl ), intval( $n ) );
+
+			} else {
+				$message = __( 'No tracks duplicated', 'trackserver' );
+			}
+			setcookie( 'ts_bulk_result', $message, time() + 300 );
+			wp_redirect( $referer );
+			exit;
+		}
+
 		if ( $action === 'dlgpx' ) {
 
 			$track_format = 'gpx';

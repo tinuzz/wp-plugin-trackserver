@@ -281,6 +281,7 @@ Added:
 * Experimental uLogger support.
 * Universal slug for all protocols that Trackserver supports.
 * Generic 'GET request' support for storing locations, used for OsmAnd and Sendlocation support.
+* 'Duplicate' bulk action for copying tracks.
 * Some useful links to Github and Trackserver home page from the Plugins page in WP admin.
 
 Changed:
