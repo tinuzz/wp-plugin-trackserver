@@ -140,51 +140,56 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.9
 		 */
-		private function init_user_meta() {
-			// Set default profile values for the currently logged-in user
-			if ( current_user_can( 'use_trackserver' ) ) {
+		private function init_user_meta( $user_id = null ) {
+
+			if ( is_null( $user_id ) ) {
 				$user_id = get_current_user_id();
-				foreach ( $this->user_meta_defaults as $key => $value ) {
-					if ( get_user_meta( $user_id, $key, true ) === '' ) {
-						update_user_meta( $user_id, $key, $value );
+			}
+			if ( ! user_can( $user_id, 'use_trackserver' ) ) {
+				return;
+			}
+
+			// Set default profile values for the given user
+			foreach ( $this->user_meta_defaults as $key => $value ) {
+				if ( get_user_meta( $user_id, $key, true ) === '' ) {
+					update_user_meta( $user_id, $key, $value );
+				}
+			}
+
+			// Handle 'ts_app_passwords' specially, because it needs existing values
+			if ( get_user_meta( $user_id, 'ts_app_passwords', true ) === '' ) {
+
+				$passwords      = array();
+				$password_perms = array(
+					'ts_trackme_key'      => array( 'read', 'write', 'delete' ),
+					'ts_osmand_key'       => array( 'write' ),
+					'ts_sendlocation_key' => array( 'write' ),
+				);
+
+				// Copy each of the three existing keys to an app password with appropriate permissions, if non-empty
+				foreach ( $password_perms as $key => $value ) {
+					$srcval = get_user_meta( $user_id, $key, true );
+					if ( $srcval !== '' ) {
+						$passwords[] = array(
+							'password'    => $srcval,
+							'permissions' => $value,
+						);
 					}
 				}
 
-				// Handle 'ts_app_passwords' specially, because it needs existing values
-				if ( get_user_meta( $user_id, 'ts_app_passwords', true ) === '' ) {
-
-					$passwords      = array();
-					$password_perms = array(
-						'ts_trackme_key'      => array( 'read', 'write', 'delete' ),
-						'ts_osmand_key'       => array( 'write' ),
-						'ts_sendlocation_key' => array( 'write' ),
+				// If none of the keys exist, create one default app password with write permissions only.
+				if ( empty( $passwords ) ) {
+					$passwords[] = array(
+						'password'    => substr( md5( uniqid() ), -8 ),
+						'permissions' => array( 'write' ),
 					);
+				}
 
-					// Copy each of the three existing keys to an app password with appropriate permissions, if non-empty
-					foreach ( $password_perms as $key => $value ) {
-						$srcval = get_user_meta( $user_id, $key, true );
-						if ( $srcval !== '' ) {
-							$passwords[] = array(
-								'password'    => $srcval,
-								'permissions' => $value,
-							);
-						}
-					}
-
-					// If none of the keys exist, create one default app password with write permissions only.
-					if ( empty( $passwords ) ) {
-						$passwords[] = array(
-							'password'    => substr( md5( uniqid() ), -8 ),
-							'permissions' => array( 'write' ),
-						);
-					}
-
-					// If the keys have been copied successfully, we can delete the originals.
-					if ( update_user_meta( $user_id, 'ts_app_passwords', $passwords ) !== false ) {
-						delete_user_meta( $user_id, 'ts_trackme_key' );
-						delete_user_meta( $user_id, 'ts_osmand_key' );
-						delete_user_meta( $user_id, 'ts_sendlocation_key' );
-					}
+				// If the keys have been copied successfully, we can delete the originals.
+				if ( update_user_meta( $user_id, 'ts_app_passwords', $passwords ) !== false ) {
+					delete_user_meta( $user_id, 'ts_trackme_key' );
+					delete_user_meta( $user_id, 'ts_osmand_key' );
+					delete_user_meta( $user_id, 'ts_sendlocation_key' );
 				}
 			}
 		}
