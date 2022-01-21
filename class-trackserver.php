@@ -1264,23 +1264,37 @@ EOF;
 
 			$sql_in = "('" . implode( "','", $user_ids ) . "')";
 
+			// This is a nice query that gives the exact result we need, but at times it seems to be really slow.
+			/*
 			$sql = 'SELECT DISTINCT t.user_id, l.trip_id AS id FROM ' . $this->tbl_tracks . ' t INNER JOIN ' . $this->tbl_locations . ' l ' .
 				'ON t.id = l.trip_id INNER JOIN (SELECT t2.user_id, MAX(l2.occurred) AS endts FROM ' . $this->tbl_locations . ' l2 ' .
 				'INNER JOIN ' . $this->tbl_tracks . ' t2 ON l2.trip_id = t2.id GROUP BY t2.user_id) uu ON l.occurred = uu.endts ' .
 				'AND t.user_id = uu.user_id WHERE t.user_id IN ' . $sql_in;
+			*/
 
-			if ( $maxage > 0 ) {
-				$ts   = gmdate( 'Y-m-d H:i:s', ( time() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - $maxage ) );
-				$sql .= " AND uu.endts > '$ts'";
-			}
-
-			$res       = $wpdb->get_results( $sql, OBJECT_K ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$track_ids = array();
 			foreach ( $user_ids as $uid ) {
-				if ( array_key_exists( $uid, $res ) ) {
-					$track_ids[] = $res[ $uid ]->id;
+				// @codingStandardsIgnoreStart
+				$sql = $wpdb->prepare(
+					'SELECT l.trip_id AS id FROM ' . $this->tbl_tracks . ' t INNER JOIN ' . $this->tbl_locations . ' l ' .
+					'ON t.id = l.trip_id WHERE t.user_id=%d ',
+					$uid
+				);
+				// @codingStandardsIgnoreEnd
+
+				if ( $maxage > 0 ) {
+					$ts   = gmdate( 'Y-m-d H:i:s', ( time() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - $maxage ) );
+					$sql .= " AND l.occurred > '$ts' ";
+				}
+
+				$sql .= 'ORDER BY l.occurred DESC LIMIT 0,1';
+				$res  = $wpdb->get_row( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+				if ( ! is_null( $res ) ) {
+					$track_ids[] = (int) $res['id'];
 				}
 			}
+
 			return $track_ids;
 		}
 
