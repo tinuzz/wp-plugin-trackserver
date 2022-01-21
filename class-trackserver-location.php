@@ -47,7 +47,10 @@ class Trackserver_Location {
 		if ( is_null( $this->latitude ) || is_null( $this->longitude ) || is_null( $this->user_id ) ) {
 			return false;
 		}
-		$data = [ 'latitude' => $this->latitude, 'longitude' => $this->longitude ];
+		$data = array(
+			'latitude'  => $this->latitude,
+			'longitude' => $this->longitude,
+		);
 		return $this->trackserver->is_geofenced( $this->user_id, $data );
 	}
 

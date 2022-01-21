@@ -85,12 +85,12 @@ class Tracks_List_Table extends WP_List_Table {
 
 	public function get_bulk_actions() {
 		$actions = array(
-			'delete'     => esc_html__( 'Delete', 'trackserver' ),
-			'merge'      => esc_html__( 'Merge', 'trackserver' ),
-			'duplicate'  => esc_html__( 'Duplicate', 'trackserver' ),
-			'dlgpx'      => esc_html__( 'Download as GPX', 'trackserver' ),
-			'recalc'     => esc_html__( 'Recalculate', 'trackserver' ),
-			'view'       => esc_html__( 'View', 'trackserver' ),
+			'delete'    => esc_html__( 'Delete', 'trackserver' ),
+			'merge'     => esc_html__( 'Merge', 'trackserver' ),
+			'duplicate' => esc_html__( 'Duplicate', 'trackserver' ),
+			'dlgpx'     => esc_html__( 'Download as GPX', 'trackserver' ),
+			'recalc'    => esc_html__( 'Recalculate', 'trackserver' ),
+			'view'      => esc_html__( 'View', 'trackserver' ),
 		);
 		return $actions;
 	}
