@@ -10,7 +10,8 @@ require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
 class Trackserver_Getrequest {
 
 	private $trackserver;  // Reference to the calling object
-	private $user;         // WP_User doing the request
+	private $user_id;      // WP user ID doing the request
+	private $permissions;  // The used password's associated permissions
 
 	/**
 	 * Constructor.
@@ -127,28 +128,18 @@ class Trackserver_Getrequest {
 	 */
 	private function validate_user_meta_key() {
 
-		if ( empty( $this->username ) ) {
+		if ( empty( $this->username ) || empty( $this->password ) ) {
 			$this->trackserver->http_terminate();
 		}
 
-		$this->user = get_user_by( 'login', $this->username );
+		$this->user_id = $this->trackserver->validate_credentials( $username, $password );
 
-		if ( $this->user ) {
-			$user_keys = array(
-				get_user_meta( $this->user->ID, 'ts_osmand_key', true ),
-				get_user_meta( $this->user->ID, 'ts_sendlocation_key', true ),
-				get_user_meta( $this->user->ID, 'ts_trackme_key', true ),
-			);
-
-			foreach ( $user_keys as $key ) {
-				if ( $this->password === $key ) {
-					if ( user_can( $this->user->ID, 'use_trackserver' ) ) {
-						return $this->user->ID;
-					}
-				}
-			}
+		if ( $this->user_id === false ) {
+			$this->trackserver->http_terminate();
 		}
-		$this->trackserver->http_terminate();
+
+		$this->permissions = $this->trackserver->permissions;
+		return $this->user_id;
 	}
 
 	private function get_source() {
