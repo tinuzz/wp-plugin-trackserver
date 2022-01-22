@@ -76,15 +76,15 @@ class Trackserver_Ulogger {
 	/**
 	 * Handle 'auth' action.
 	 *
-	 * Verify the username and password sent in the POST request against
-	 * WordPress credentials.  When valid, start a session, store the user ID in
-	 * it and send a succesful response.
+	 * Verify the username and password sent in the POST request.  When valid,
+	 * start a session, store the user ID in it and send a succesful response.
+	 * The WordPress password is also considered in this case.
 	 *
 	 * @since 5.0
 	 */
 	private function handle_auth() {
 		if ( array_key_exists( 'user', $_POST ) && array_key_exists( 'pass', $_POST ) ) {
-			$user_id = $this->trackserver->validate_wp_user_pass( $_POST['user'], $_POST['pass'] );
+			$user_id = $this->trackserver->validate_credentials( $_POST['user'], $_POST['pass'], 'id', true );
 			if ( $user_id !== false ) {
 				session_start();
 				$_SESSION                        = array();

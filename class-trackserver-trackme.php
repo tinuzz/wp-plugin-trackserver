@@ -10,6 +10,7 @@ class Trackserver_Trackme {
 	private $trackserver;         // Reference to the calling object
 	private $tbl_tracks;
 	private $tbl_locations;
+	private $permissions;         // The permissions of the used app password
 
 	/**
 	 * Constructor.
@@ -110,20 +111,18 @@ class Trackserver_Trackme {
 
 		if ( empty( $username ) || empty( $password ) ) {  // '0' is hereby disqualified as username and password
 			$this->trackme_result( 3 );
-		} else {
-			$user = get_user_by( 'login', $username );
+		}
 
-			if ( $user ) {
-				$user_id = intval( $user->data->ID );
-				$key     = get_user_meta( $user_id, 'ts_trackme_key', true );
+		$this->user_id = $this->trackserver->validate_credentials( $username, $password );
 
-				if ( $password === $key && user_can( $user_id, 'use_trackserver' ) ) {
-					return $user_id;
-				} else {
-					$this->trackme_result( 1 );  // Password incorrect or insufficient permissions
-				}
-			} else {
-				$this->trackme_result( 2 );  // User not found
+		if ( $this->user_id === false ) {
+			$this->trackme_result( 1 );  // Password incorrect or insufficient permissions
+		}
+
+		$this->permissions = $this->trackserver->permissions;
+		return true;
+	}
+
 			}
 		}
 	}

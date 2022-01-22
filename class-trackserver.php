@@ -61,6 +61,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		var $trackserver_scripts = array();
 		var $trackserver_styles  = array();
 
+		public $permissions;
+
 		/**
 		 * Class constructor.
 		 *
@@ -803,10 +805,10 @@ EOF;
 		}
 
 		/**
-		 * Validate WordPress credentials for basic HTTP authentication.
+		 * Validate credentials for basic HTTP authentication.
 		 *
 		 * If no credentials are received, a 401 status code is sent. Validation is
-		 * delegated to validate_wp_user_pass(). If that function returns a trueish
+		 * delegated to validate_credentials(). If that function returns a trueish
 		 * value, we return it as is. Otherwise, we terminate the request (default)
 		 * or return false, if so requested.
 		 *
@@ -824,7 +826,7 @@ EOF;
 				die( "Authentication required\n" );
 			}
 
-			$valid = $this->validate_wp_user_pass( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'], $what );
+			$valid = $this->validate_credentials( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'], $what, true );
 			if ( $return || $valid !== false ) {
 				return $valid;
 			}
@@ -833,7 +835,8 @@ EOF;
 		}
 
 		/**
-		 * Validate WordPress credentials.
+		 * Validate given credentials against user metadata and optionally the WP
+		 * password.
 		 *
 		 * With valid credentials, this function returns the authenticated user's
 		 * ID by default, or a WP_User object on request (3rd argument). Otherwise,
@@ -841,23 +844,28 @@ EOF;
 		 *
 		 * @since 5.0
 		 */
-		public function validate_wp_user_pass( $username = '', $password = '', $what = 'id' ) {
-
-			if ( $username === '' || $password === '' ) {
+		public function validate_credentials( $username, $password, $what = 'id', $wppass = false ) {
+			if ( empty( $username ) || empty( $password ) ) {
 				return false;
 			}
-
 			$user = get_user_by( 'login', $username );
+			if ( $user && user_can( $user, 'use_trackserver' ) ) {
 
-			if ( $user ) {
-				$hash    = $user->data->user_pass;
-				$user_id = intval( $user->ID );
+				$this->init_user_meta( $user->ID );
 
-				if ( wp_check_password( $password, $hash, $user_id ) ) {
-					if ( user_can( $user_id, 'use_trackserver' ) ) {
-						return ( $what === 'object' ? $user : $user_id );
-					} else {
-						return false;
+				if ( $wppass ) {
+					$hash = $user->data->user_pass;
+					if ( wp_check_password( $password, $hash, $user->ID ) ) {
+						$this->permissions = array( 'read', 'write', 'delete' );
+						return ( $what === 'object' ? $user : $user->ID );
+					}
+				}
+
+				$passwords = get_user_meta( $user->ID, 'ts_app_passwords', true );
+				foreach ( $passwords as $entry ) {
+					if ( $password === $entry['password'] ) {
+						$this->permissions = $entry['permissions'];
+						return ( $what === 'object' ? $user : $user->ID );
 					}
 				}
 			}
@@ -867,7 +875,7 @@ EOF;
 		/**
 		 * Validate HTTP basic authentication, only if a username and password were sent in the request.
 		 *
-		 * If no username is found, return NULL.
+		 * If no credentials are found, return NULL.
 		 *
 		 * This function is meant to be used, where HTTP basic auth is optional,
 		 * and authentication will be handled by another mechanism if it is not
