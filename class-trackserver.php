@@ -140,7 +140,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.9
 		 */
-		private function init_user_meta( $user_id = null ) {
+		public function init_user_meta( $user_id = null ) {
 
 			if ( is_null( $user_id ) ) {
 				$user_id = get_current_user_id();
