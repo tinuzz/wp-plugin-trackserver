@@ -42,16 +42,16 @@ class Trackserver_Mapmytracks {
 
 		switch ( $_POST['request'] ) {
 			case 'start_activity':
-				$this->handle_start_activity( $this->user_id );
+				$this->handle_start_activity();
 				break;
 			case 'update_activity':
-				$this->handle_update_activity( $this->user_id );
+				$this->handle_update_activity();
 				break;
 			case 'stop_activity':
-				$this->handle_stop_activity( $this->user_id );
+				$this->handle_stop_activity();
 				break;
 			case 'upload_activity':
-				$this->handle_upload_activity( $this->user_id );
+				$this->handle_upload_activity();
 				break;
 			default:
 				$this->trackserver->http_terminate( 501, 'Unsupported MapMyTracks request.' );
@@ -115,15 +115,15 @@ class Trackserver_Mapmytracks {
 	 * @since 1.0
 	 * @since 5.0 Delegate DB access to Trackserver_Track instance
 	 */
-	private function handle_start_activity( $user_id ) {
+	private function handle_start_activity() {
 		if ( ! empty( $_POST['title'] ) ) {
 
-			$track = new Trackserver_Track( $this->trackserver, null, $user_id );
+			$track = new Trackserver_Track( $this->trackserver, null, $this->user_id );
 			$track->set( 'name', $_POST['title'] );
 			$track->set( 'source', $this->get_source() );
 
 			if ( $track->save() ) {
-				list( $result, $reason ) = $this->process_points( $track->id, $user_id );
+				list( $result, $reason ) = $this->process_points( $track->id );
 				if ( $result ) {
 					return $this->send_response( 'activity_started', array( 'activity_id' => (string) $track->id ) );
 				}
@@ -141,10 +141,10 @@ class Trackserver_Mapmytracks {
 	 *
 	 * @since 1.0
 	 */
-	private function handle_update_activity( $user_id ) {
-		$track = new Trackserver_Track( $this->trackserver, $_POST['activity_id'], $user_id );   // $restrict = true
+	private function handle_update_activity() {
+		$track = new Trackserver_Track( $this->trackserver, $_POST['activity_id'], $this->user_id );   // $restrict = true
 		if ( $track->id ) {
-			list( $result, $reason ) = $this->process_points( $track->id, $user_id );
+			list( $result, $reason ) = $this->process_points( $track->id );
 			if ( $result ) {
 				return $this->send_response( 'activity_updated' );
 			}
@@ -160,7 +160,7 @@ class Trackserver_Mapmytracks {
 	 *
 	 * @since 1.0
 	 */
-	private function handle_stop_activity( $user_id ) {
+	private function handle_stop_activity() {
 		return $this->mapmytracks_response( 'activity_stopped' );
 	}
 
@@ -172,21 +172,21 @@ class Trackserver_Mapmytracks {
 	 *
 	 * @since 1.0
 	 */
-	private function handle_upload_activity( $user_id ) {
+	private function handle_upload_activity() {
 		global $wpdb;
 
 		$_POST = stripslashes_deep( $_POST );
 		if ( isset( $_POST['gpx_file'] ) ) {
 			$xml = $this->trackserver->validate_gpx_string( $_POST['gpx_file'] );
 			if ( $xml ) {
-				$result = $this->trackserver->process_gpx( $xml, $user_id );
+				$result = $this->trackserver->process_gpx( $xml, $this->user_id );
 
 				// If a description was given, put it in the comment field.
 				if ( isset( $_POST['description'] ) ) {
 					$track_ids = $result['track_ids'];
 					if ( count( $track_ids ) > 0 ) {
 						$in  = '(' . implode( ',', $track_ids ) . ')';
-						$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+						$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $this->user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 						$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					}
 				}
@@ -204,7 +204,7 @@ class Trackserver_Mapmytracks {
 	 *
 	 * @since 5.0
 	 */
-	private function process_points( $track_id, $user_id ) {
+	private function process_points( $track_id ) {
 		if ( empty( $_POST['points'] ) ) {
 			return array( true, '' );
 		}
@@ -215,7 +215,7 @@ class Trackserver_Mapmytracks {
 			return array( false, 'input error' );
 		}
 
-		if ( $this->trackserver->mapmytracks_insert_points( $points, $track_id, $user_id ) ) {
+		if ( $this->trackserver->mapmytracks_insert_points( $points, $track_id, $this->user_id ) ) {
 			return array( true, '' );
 		}
 
