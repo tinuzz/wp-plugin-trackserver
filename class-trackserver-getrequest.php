@@ -46,7 +46,7 @@ class Trackserver_Getrequest {
 
 		if ( is_null( $user_id ) ) {
 			// If this function returns, we're OK
-			$user_id = $this->validate_user_meta_key();
+			$user_id = $this->validate_credentials();
 		}
 
 		$source = $this->get_source();
@@ -126,7 +126,7 @@ class Trackserver_Getrequest {
 	 *
 	 * @since 5.0
 	 */
-	private function validate_user_meta_key() {
+	private function validate_credentials() {
 
 		if ( empty( $this->username ) || empty( $this->password ) ) {
 			$this->trackserver->http_terminate();
