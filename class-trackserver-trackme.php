@@ -4,6 +4,9 @@ if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
 	die( 'No, sorry.' );
 }
 
+require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-track.php';
+require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
+
 class Trackserver_Trackme {
 
 	protected static $instance;   // Singleton
@@ -18,6 +21,7 @@ class Trackserver_Trackme {
 	 * @since 5.0
 	 */
 	public function __construct( $trackserver ) {
+		global $wpdb;
 		$this->trackserver   = $trackserver;
 		$this->tbl_tracks    = $wpdb->prefix . 'ts_tracks';
 		$this->tbl_locations = $wpdb->prefix . 'ts_locations';
@@ -44,26 +48,33 @@ class Trackserver_Trackme {
 	 * @since 5.0
 	 */
 	public function handle_protocol( $method, $username, $password ) {
-		if ( $method === 'requests' ) {
-			$this->handle_request( $username, $password );
-		}
-
-		if ( $method === 'export' ) {
-			$this->handle_export( $username, $password );
-		}
 
 		if ( $method === 'cloud' ) {
 
-			// handle_cloud_request() will validate credentials, but if the old-style URL is in use,
-			// no credentials will be available. We short-circuit this case to be able to give the
-			// user a useful error message.
+			// TrackMe doesn't send credentials as URL params for 'cloud' requests.
+			// If we don't have creds from the URL, short-circuit this case to be
+			// able to give the user a useful error message.
 
 			if ( empty( $username ) || empty( $password ) ) {       // No credentials from the URL; values are null
 				if ( empty( $_GET['u'] ) || empty( $_GET['p'] ) ) {   // No credentials from GET parameters either
 					$this->handle_cloud_error();   // This will not return
 				}
 			}
-			$this->handle_cloud_request( $username, $password );
+		}
+
+		// Validate credentials. If this function returns, we're OK
+		$this->validate_login( $username, $password );
+
+		if ( $method === 'requests' ) {
+			$this->handle_request();
+		}
+
+		if ( $method === 'export' ) {
+			$this->handle_export();
+		}
+
+		if ( $method === 'cloud' ) {
+			$this->handle_cloud_request();
 		}
 		die();
 	}
@@ -72,27 +83,21 @@ class Trackserver_Trackme {
 	 * Handle TrackMe GET requests. It validates the user and password and
 	 * delegates the requested action to a dedicated function
 	 */
-	private function handle_request( $username = '', $password = '' ) {
-		require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-track.php';
-		require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
-
-		// If this function returns, we're OK
-		$user_id = $this->validate_login( $username, $password );
-
+	private function handle_request() {
 		// Delegate the action to another function
 		switch ( $_GET['a'] ) {
 			case 'upload':
-				$this->handle_upload( $user_id );
+				$this->handle_upload();
 				break;
 			case 'gettriplist':
-				$this->handle_gettriplist( $user_id );
+				$this->handle_gettriplist();
 				break;
 			case 'gettripfull':
 			case 'gettriphighlights':
-				$this->handle_gettripfull( $user_id );
+				$this->handle_gettripfull();
 				break;
 			case 'deletetrip':
-				$this->handle_deletetrip( $user_id );
+				$this->handle_deletetrip();
 				break;
 		}
 	}
@@ -123,8 +128,26 @@ class Trackserver_Trackme {
 		return true;
 	}
 
+	/**
+	 * Check whether a given set of permissions is present for the current request.
+	 *
+	 * Terminate with an error if any of the specified permissions is not present.
+	 *
+	 * @since 5.0
+	 */
+	private function ensure_permissions( $perms ) {
+		if ( is_array( $this->permissions ) ) {
+			if ( is_string( $perms ) ) {
+				$perms = array( $perms );
+			}
+
+			// Assert that the intersection of $perms and $this->permissions is equal in size to $perms.
+			if ( count( array_intersect( $this->permissions, $perms ) ) === count( $perms ) ) {
+				return true;
 			}
 		}
+		// If not, finish with error.
+		$this->trackme_result( 1 );  // Password incorrect or insufficient permissions
 	}
 
 	/**
@@ -145,7 +168,7 @@ class Trackserver_Trackme {
 	 *
 	 * @since 1.0
 	 */
-	private function handle_export( $username = '', $password = '' ) {
+	private function handle_export() {
 		$this->http_terminate( 501, 'Export is not supported by the server.' );
 	}
 
@@ -186,10 +209,7 @@ class Trackserver_Trackme {
 	 *
 	 * @since 4.3
 	 */
-	private function handle_cloud_request( $username, $password ) {
-
-		// If this function returns, we're OK
-		$user_id = $this->validate_login( $username, $password );
+	private function handle_cloud_request() {
 
 		// Delegate the action to another function
 		switch ( $_GET['a'] ) {
@@ -208,10 +228,10 @@ class Trackserver_Trackme {
 				$trip_name_format = 'TrackMe Cloud %F';
 				$trip_name        = strftime( $trip_name_format, $ts );
 
-				$this->handle_upload( $user_id, $trip_name );
+				$this->handle_upload( $trip_name );
 				break;
 			case 'show':
-				$this->handle_cloud_show( $user_id );
+				$this->handle_cloud_show();
 				break;
 		}
 	}
@@ -229,10 +249,12 @@ class Trackserver_Trackme {
 	 *
 	 * @since 4.3
 	 */
-	private function handle_cloud_show( $user_id ) {
+	private function handle_cloud_show() {
 		global $wpdb;
 
-		$user      = get_user_by( 'id', $user_id );
+		$this->ensure_permissions( 'read' );  // If this returns, we're fine.
+
+		$user      = get_user_by( 'id', $this->user_id );
 		$user_ids  = $this->trackserver->get_followed_users( $user );
 		$track_ids = $this->trackserver->get_live_tracks( $user_ids, 3660 );
 		$message   = '';
@@ -266,14 +288,17 @@ class Trackserver_Trackme {
 	 *
 	 * @since 1.0
 	 */
-	private function handle_upload( $user_id, $trip_name = '' ) {
+	private function handle_upload( $trip_name = '' ) {
+
+		$this->ensure_permissions( 'write' );  // If this returns, we're fine.
+
 		if ( $trip_name === '' ) {
 			$trip_name = urldecode( $_GET['tn'] );
 		}
 		$occurred = urldecode( $_GET['do'] );
 
 		if ( ! empty( $trip_name ) ) {
-			$track = new Trackserver_Track( $this->trackserver, $trip_name, $user_id, 'name' );
+			$track = new Trackserver_Track( $this->trackserver, $trip_name, $this->user_id, 'name' );
 
 			if ( is_null( $track->id ) ) {
 
@@ -289,7 +314,7 @@ class Trackserver_Trackme {
 			if ( intval( $track->id ) > 0 ) {
 
 				if ( ! ( empty( $_GET['lat'] ) || empty( $_GET['long'] ) ) && $this->validate_timestamp( $occurred ) ) {
-					$loc = new Trackserver_Location( $this->trackserver, $track->id, $user_id );
+					$loc = new Trackserver_Location( $this->trackserver, $track->id, $this->user_id );
 					$loc->set( 'latitude', $_GET['lat'] );
 					$loc->set( 'longitude', $_GET['long'] );
 					$loc->set( 'occurred', $occurred );
@@ -321,11 +346,13 @@ class Trackserver_Trackme {
 	 *
 	 * @since 1.0
 	 */
-	private function handle_gettriplist( $user_id ) {
+	private function handle_gettriplist() {
 		global $wpdb;
 
+		$this->ensure_permissions( 'read' );  // If this returns, we're fine.
+
 		// @codingStandardsIgnoreStart
-		$sql   = $wpdb->prepare( 'SELECT name,created FROM ' . $this->tbl_tracks . ' WHERE user_id=%d ORDER BY created DESC LIMIT 0,25', $user_id );
+		$sql   = $wpdb->prepare( 'SELECT name,created FROM ' . $this->tbl_tracks . ' WHERE user_id=%d ORDER BY created DESC LIMIT 0,25', $this->user_id );
 		$trips = $wpdb->get_results( $sql, ARRAY_A );
 		// @codingStandardsIgnoreEnd
 		$triplist = '';
@@ -341,11 +368,14 @@ class Trackserver_Trackme {
 	 *
 	 * @since 1.7
 	 */
-	private function handle_gettripfull( $user_id ) {
+	private function handle_gettripfull() {
+
+		$this->ensure_permissions( 'read' );  // If this returns, we're fine.
+
 		$trip_name = urldecode( $_GET['tn'] );
 		if ( ! empty( $trip_name ) ) {
 
-			$track   = new Trackserver_Track( $this->trackserver, $trip_name, $user_id, 'name' );
+			$track   = new Trackserver_Track( $this->trackserver, $trip_name, $this->user_id, 'name' );
 			$trip_id = $track->id;
 
 			if ( is_null( $trip_id ) ) {
@@ -381,10 +411,13 @@ class Trackserver_Trackme {
 	 * @since 1.0
 	 * @since 5.0 Use Trackserver_Track class
 	 */
-	private function handle_deletetrip( $user_id ) {
+	private function handle_deletetrip() {
+
+		$this->ensure_permissions( 'delete' );  // If this returns, we're fine.
+
 		$trip_name = urldecode( $_GET['tn'] );
 		if ( ! empty( $trip_name ) ) {
-			$track   = new Trackserver_Track( $this->trackserver, $trip_name, $user_id, 'name' );
+			$track   = new Trackserver_Track( $this->trackserver, $trip_name, $this->user_id, 'name' );
 			$trip_id = $track->id;
 			if ( is_null( $trip_id ) ) {
 				$this->trackme_result( 7 );   // Trip not found
