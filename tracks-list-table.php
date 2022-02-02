@@ -3,6 +3,7 @@ class Tracks_List_Table extends WP_List_Table {
 
 	private $options;
 	private $usercache = array();
+	private $total_items;
 
 	public function __construct( $options ) {
 			global $status, $page;
@@ -200,12 +201,10 @@ class Tracks_List_Table extends WP_List_Table {
 
 		/*
 		 * REQUIRED for pagination. Let's check how many items are in our data array.
-		 * In real-world use, this would be the total number of items in your database,
-		 * without filtering. We'll need this later, so you should always include it
-		 * in your own package classes.
 		 */
-		$sql         = 'SELECT count(id) FROM ' . $this->options['tbl_tracks'] . " t WHERE $where";
-		$total_items = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$sql               = 'SELECT count(id) FROM ' . $this->options['tbl_tracks'] . " t WHERE $where";
+		$total_items       = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$this->total_items = $total_items;
 
 		/*
 		 * REQUIRED. Now we can add our *sorted* data to the items property, where
@@ -227,6 +226,6 @@ class Tracks_List_Table extends WP_List_Table {
 	}
 
 	public function get_views() {
-		return array( 'all' => '<a href="' . admin_url() . 'admin.php?page=trackserver-tracks' . '">' . esc_html__( 'All tracks' ) . '</a>' );
+		return array( 'all' => '<a href="' . admin_url() . 'admin.php?page=trackserver-tracks' . '">' . esc_html__( 'All tracks' ) . '</a> (' . $this->total_items . ')' );
 	}
 }
