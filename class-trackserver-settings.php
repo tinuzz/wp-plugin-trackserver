@@ -324,7 +324,7 @@ EOF;
 		$settings = esc_attr__( 'TrackMe settings', 'trackserver' );
 
 		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=ts-trackmehowto-modal"
+			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-trackmehowto-modal"
 				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
 			<a href="https://play.google.com/store/apps/details?id=LEM.TrackMe" target="tsexternal">$download</a>
 			<br />
@@ -422,7 +422,7 @@ EOF;
 		$settings = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
 
 		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=ts-oruxmapshowto-modal"
+			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-oruxmapshowto-modal"
 				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
 			<a href="https://www.oruxmaps.com/cs/en/" target="tsexternal">$download</a>
 			<br />
@@ -469,7 +469,7 @@ EOF;
 		$settings = esc_attr__( 'OsmAnd settings', 'trackserver' );
 
 		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=ts-osmandhowto-modal"
+			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-osmandhowto-modal"
 				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
 			<a href="https://play.google.com/store/apps/details?id=net.osmand" target="tsexternal">$download</a>
 			<br />
@@ -586,7 +586,7 @@ EOF;
 		$settings = esc_attr__( 'AutoShare settings', 'trackserver' );
 
 		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=ts-autosharehowto-modal"
+			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-autosharehowto-modal"
 				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
 			<a href="https://play.google.com/store/apps/details?id=com.dngames.autoshare" target="tsexternal">$download</a>
 			<br />

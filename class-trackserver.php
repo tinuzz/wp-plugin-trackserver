@@ -426,22 +426,22 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$autoshare_settings       = esc_attr__( 'AutoShare settings', 'trackserver' );
 
 			echo <<<EOF
-				<div id="ts-trackmehowto-modal" style="display:none;">
+				<div id="trackserver-trackmehowto-modal" style="display:none;">
 					<p>
 							<img src="$trackme_settings_img" alt="$trackme_settings" />
 					</p>
 				</div>
-				<div id="ts-osmandhowto-modal" style="display:none;">
+				<div id="trackserver-osmandhowto-modal" style="display:none;">
 					<p>
 							<img src="$osmand_settings_img" alt="$osmand_settings" />
 					</p>
 				</div>
-				<div id="ts-oruxmapshowto-modal" style="display:none;">
+				<div id="trackserver-oruxmapshowto-modal" style="display:none;">
 					<p>
 							<img src="$mapmytracks_settings_img" alt="$mapmytracks_settings" />
 					</p>
 				</div>
-				<div id="ts-autosharehowto-modal" style="display:none;">
+				<div id="trackserver-autosharehowto-modal" style="display:none;">
 					<p>
 							<img src="$autoshare_settings_img" alt="$autoshare_settings" />
 					</p>

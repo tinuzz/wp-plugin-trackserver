@@ -438,7 +438,7 @@ EOF;
 		$url = admin_url() . 'admin-post.php';
 
 		?>
-			<div id="ts-edit-modal" style="display:none;">
+			<div id="trackserver-edit-modal" style="display:none;">
 				<p>
 					<form id="trackserver-edit-track" method="post" action="<?php echo $url; ?>">
 						<table style="width: 100%">
@@ -467,12 +467,12 @@ EOF;
 					</form>
 				</p>
 			</div>
-			<div id="ts-view-modal" style="display:none;">
+			<div id="trackserver-view-modal" style="display:none;">
 					<div id="tsadminmapcontainer">
 						<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
 					</div>
 			</div>
-			<div id="ts-merge-modal" style="display:none;">
+			<div id="trackserver-merge-modal" style="display:none;">
 				<p>
 					<?php esc_html__( 'Merge all points of multiple tracks into one track. Please specify the name for the merged track.', 'trackserver' ); ?>
 					<form method="post" action="<?php echo $url; ?>">
@@ -492,7 +492,7 @@ EOF;
 					</form>
 				</p>
 			</div>
-			<div id="ts-upload-modal" style="display:none;">
+			<div id="trackserver-upload-modal" style="display:none;">
 				<div style="padding: 15px 0">
 					<form id="ts-upload-form" method="post" action="<?php echo $url; ?>" enctype="multipart/form-data">
 						<?php wp_nonce_field( 'upload_track' ); ?>

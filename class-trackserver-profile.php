@@ -181,10 +181,11 @@ class Trackserver_Profile {
 						class="button button-primary" id="submit" name="submit">
 				</p>
 			</form>
-			<div id="ts-view-modal" style="display:none;">
-					<div id="tsadminmapcontainer">
-						<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
-					</div>
+			<div id="trackserver-geofences-modal" style="display:none;">
+				<div id="tsadminmapcontainer">
+					<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
+				</div>
+			</div>
 			</div>
 		</div>
 		<?php
@@ -466,7 +467,7 @@ EOF;
 			echo '</td></tr>';
 		}
 		echo '<tr><td colspan="4" style="text-align: right">' .
-			'<a href="#TB_inline?width=&inlineId=ts-view-modal" title="' . esc_attr__( 'Geofences', 'trackserver' ) .
+			'<a href="#TB_inline?width=&inlineId=trackserver-geofences-modal" title="' . esc_attr__( 'Geofences', 'trackserver' ) .
 			'" class="thickbox" data-id="0" data-action="fences">' . esc_html__( 'View geofences', 'trackserver' ) . '</a>' .
 			'</td></tr>';
 		echo '</table>';

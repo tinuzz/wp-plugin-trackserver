@@ -201,7 +201,7 @@ var TrackserverAdmin = (function () {
                     }
                 });
                 jQuery('#input-merged-name').val(merged_name + ' (merged)');
-                ts_tb_show('ts-merge-modal', 'Merge tracks', 600, 250);
+                ts_tb_show('trackserver-merge-modal', 'Merge tracks', 600, 250);
                 return false;
             }
             if (action == 'recalc' || action == 'dlgpx') {
@@ -231,7 +231,7 @@ var TrackserverAdmin = (function () {
                     tracks.push( { track_id: this.value, track_type: 'polylinexhr', markers: true, nonce: nonce, track_url: url });
                 });
                 trackserver_mapdata = [{"div_id":"tsadminmap","tracks":tracks,"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false}];
-                ts_tb_show('ts-view-modal', 'Track', 1024, 768);
+                ts_tb_show('trackserver-view-modal', 'Track', 1024, 768);
                 return false;
             }
             return false;
@@ -289,7 +289,7 @@ var TrackserverAdmin = (function () {
             });
 
             jQuery('#addtrack-button-top,#addtrack-button-bottom').click( function () {
-                ts_tb_show('ts-upload-modal', 'Upload GPX files', 600, 400);
+                ts_tb_show('trackserver-upload-modal', 'Upload GPX files', 600, 400);
                 return false;
             });
 
