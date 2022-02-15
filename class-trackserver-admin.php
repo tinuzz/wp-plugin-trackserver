@@ -408,7 +408,7 @@ EOF;
 
 		?>
 			<hr />
-			<form id="trackserver-options" name="trackserver-options" action="options.php" method="post">
+			<form name="trackserver-options" action="options.php" method="post">
 		<?php
 
 		settings_fields( 'trackserver-options' );
@@ -438,6 +438,7 @@ EOF;
 		$url = admin_url() . 'admin-post.php';
 
 		?>
+			<!-- Edit track properties -->
 			<div id="trackserver-edit-modal" style="display:none;">
 				<p>
 					<form id="trackserver-edit-track" method="post" action="<?php echo $url; ?>">
@@ -463,15 +464,19 @@ EOF;
 						<input class="button action" type="submit" value="<?php esc_attr_e( 'Save', 'trackserver' ); ?>" name="save_track">
 						<input class="button action" type="button" value="<?php esc_attr_e( 'Cancel', 'trackserver' ); ?>" onClick="tb_remove(); return false;">
 						<input type="hidden" id="trackserver-edit-action" name="trackserver_action" value="save">
-						<a id="ts-delete-track" href="#" style="float: right; color: red" ><?php esc_html_e( 'Delete', 'trackserver' ); ?></a>
+						<a id="trackserver-delete-track" href="#" style="float: right; color: red" ><?php esc_html_e( 'Delete', 'trackserver' ); ?></a>
 					</form>
 				</p>
 			</div>
+
+			<!-- View track -->
 			<div id="trackserver-view-modal" style="display:none;">
-					<div id="tsadminmapcontainer">
+					<div id="trackserver-adminmap-container">
 						<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
 					</div>
 			</div>
+
+			<!-- Merge tracks -->
 			<div id="trackserver-merge-modal" style="display:none;">
 				<p>
 					<?php esc_html__( 'Merge all points of multiple tracks into one track. Please specify the name for the merged track.', 'trackserver' ); ?>
@@ -492,24 +497,27 @@ EOF;
 					</form>
 				</p>
 			</div>
+
+			<!-- Upload files -->
 			<div id="trackserver-upload-modal" style="display:none;">
 				<div style="padding: 15px 0">
-					<form id="ts-upload-form" method="post" action="<?php echo $url; ?>" enctype="multipart/form-data">
+					<form id="trackserver-upload-form" method="post" action="<?php echo $url; ?>" enctype="multipart/form-data">
 						<?php wp_nonce_field( 'upload_track' ); ?>
 						<input type="hidden" name="action" value="trackserver_upload_track" />
-						<input type="file" name="gpxfile[]" multiple="multiple" style="display: none" id="ts-file-input" />
+						<input type="file" name="gpxfile[]" multiple="multiple" style="display: none" id="trackserver-file-input" />
 						<input type="button" class="button button-hero" value="<?php esc_attr_e( 'Select files', 'trackserver' ); ?>" id="ts-select-files-button" />
-						<!-- <input type="button" class="button button-hero" value="Upload" id="ts-upload-files-button" disabled="disabled" /> -->
-						<button type="button" class="button button-hero" value="<?php esc_attr_e( 'Upload', 'trackserver' ); ?>" id="ts-upload-files-button" disabled="disabled"><?php esc_html_e( 'Upload', 'trackserver' ); ?></button>
+						<button type="button" class="button button-hero" value="<?php esc_attr_e( 'Upload', 'trackserver' ); ?>" id="trackserver-upload-files" disabled="disabled"><?php esc_html_e( 'Upload', 'trackserver' ); ?></button>
 					</form>
 					<br />
 					<br />
 					<?php esc_html_e( 'Selected files', 'trackserver' ); ?>:<br />
-					<div id="ts-upload-filelist" style="height: 200px; max-height: 200px; overflow-y: auto; border: 1px solid #dddddd; padding-left: 5px;"></div>
+					<div id="trackserver-upload-filelist" style="height: 200px; max-height: 200px; overflow-y: auto; border: 1px solid #dddddd; padding-left: 5px;"></div>
 					<br />
-					<div id="ts-upload-warning"></div>
+					<div id="trackserver-upload-warning"></div>
 				</div>
 			</div>
+
+			<!-- Main list table -->
 			<form id="trackserver-tracks" method="post">
 				<input type="hidden" name="page" value="trackserver-tracks" />
 				<div class="wrap">

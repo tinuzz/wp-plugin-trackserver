@@ -70,7 +70,7 @@ class Trackserver_Profile {
 		<div class="wrap">
 			<h2><?php echo esc_html( $title ); ?></h2>
 			<?php $this->trackserver->notice_bulk_action_result(); ?>
-			<form id="trackserver-profile" method="post">
+			<form method="post">
 				<?php wp_nonce_field( 'your-profile' ); ?>
 				<table class="form-table">
 					<tbody>
@@ -182,7 +182,7 @@ class Trackserver_Profile {
 				</p>
 			</form>
 			<div id="trackserver-geofences-modal" style="display:none;">
-				<div id="tsadminmapcontainer">
+				<div id="trackserver-adminmap-container">
 					<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
 				</div>
 			</div>

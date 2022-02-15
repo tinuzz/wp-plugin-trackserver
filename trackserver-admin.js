@@ -94,7 +94,7 @@ var tb_show = function(c, u, i)
         jQuery("#TB_window").css({"top": "0", "margin-top": "0"});
     }
     jQuery("#TB_ajaxContent").css({"width": (w - 30) + 'px', "height": (h - 45) + 'px'});
-    jQuery("#tsadminmapcontainer").css({"width": (w - 32) + 'px', "height": (h - 60)});
+    jQuery("#trackserver-adminmap-container").css({"width": (w - 32) + 'px', "height": (h - 60)});
     if (trackserver_mapdata) {
         Trackserver.init( trackserver_mapdata );
         TrackserverAdmin.setup();
@@ -295,13 +295,13 @@ var TrackserverAdmin = (function () {
 
             // Button that activates the file input
             jQuery('#ts-select-files-button').click( function () {
-                jQuery('#ts-file-input').click();
+                jQuery('#trackserver-file-input').click();
             });
 
             // Process selected files. The upload button stays disabled if any
             // non-GPX files are selected.
-            jQuery('#ts-file-input').change( function (e) {
-                jQuery('#ts-file-input').each(function() {
+            jQuery('#trackserver-file-input').change( function (e) {
+                jQuery('#trackserver-file-input').each(function() {
                     var out='<ul style="list-style:square inside">';
                     var f = e.target.files,
                         len = f.length,
@@ -315,22 +315,22 @@ var TrackserverAdmin = (function () {
                     }
                     out += '</ul>';
                     if (!error) {
-                        jQuery('#ts-upload-files-button').removeAttr('disabled');
+                        jQuery('#trackserver-upload-files').removeAttr('disabled');
                     }
                     else {
-                        jQuery('#ts-upload-files-button').attr('disabled', 'disabled');
+                        jQuery('#trackserver-upload-files').attr('disabled', 'disabled');
                     }
-                    jQuery('#ts-upload-filelist').html(out);
-                    jQuery('#ts-upload-warning').html(error || '');
+                    jQuery('#trackserver-upload-filelist').html(out);
+                    jQuery('#trackserver-upload-warning').html(error || '');
                 });
             });
 
-            jQuery('#ts-upload-files-button').click( function() {
-                jQuery('#ts-upload-files-button').attr('disabled', 'disabled').html('Wait...');
-                jQuery('#ts-upload-form').submit();
+            jQuery('#trackserver-upload-files').click( function() {
+                jQuery(this).attr('disabled', 'disabled').html('Wait...');
+                jQuery('#trackserver-upload-form').submit();
             });
 
-            jQuery('#ts-delete-track').click( function() {
+            jQuery('#trackserver-delete-track').click( function() {
                 if (confirm(trackserver_admin_settings['msg']['areyousure'])) {
                     jQuery('#trackserver-edit-action').val('delete');
                     jQuery('#trackserver-edit-track').submit();
