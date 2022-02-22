@@ -1466,10 +1466,6 @@ EOF;
 		function process_profile_update() {
 			$user_id         = get_current_user_id();
 			$data            = $_POST['ts_user_meta'];
-			$geofence_lat    = $_POST['ts_geofence_lat'];
-			$geofence_lon    = $_POST['ts_geofence_lon'];
-			$geofence_radius = $_POST['ts_geofence_radius'];
-			$geofence_action = $_POST['ts_geofence_action'];
 			$valid_fields    = array(
 				'ts_owntracks_share',
 				'ts_owntracks_follow',
@@ -1487,6 +1483,11 @@ EOF;
 						update_user_meta( $user_id, $meta_key, $meta_value );
 					}
 				}
+
+				$geofence_lat    = $_POST['ts_geofence_lat'];
+				$geofence_lon    = $_POST['ts_geofence_lon'];
+				$geofence_radius = $_POST['ts_geofence_radius'];
+				$geofence_action = $_POST['ts_geofence_action'];
 
 				if ( is_array( $geofence_lat ) && is_array( $geofence_lon ) && is_array( $geofence_radius ) && is_array( $geofence_action ) ) {
 					$geofences = array();
