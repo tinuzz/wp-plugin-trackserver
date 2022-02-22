@@ -132,7 +132,7 @@ class Trackserver_Getrequest {
 			$this->trackserver->http_terminate();
 		}
 
-		$this->user_id = $this->trackserver->validate_credentials( $username, $password );
+		$this->user_id = $this->trackserver->validate_credentials( $this->username, $this->password );
 
 		if ( $this->user_id === false ) {
 			$this->trackserver->http_terminate();
