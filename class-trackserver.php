@@ -415,40 +415,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			load_plugin_textdomain( 'trackserver', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 		}
 
-		public function howto_modals_html() {
-			$trackme_settings_img     = TRACKSERVER_PLUGIN_URL . 'img/trackme-settings.png';
-			$trackme_settings         = esc_attr__( 'TrackMe settings', 'trackserver' );
-			$mapmytracks_settings_img = TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png';
-			$mapmytracks_settings     = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
-			$osmand_settings_img      = TRACKSERVER_PLUGIN_URL . 'img/osmand-settings.png';
-			$osmand_settings          = esc_attr__( 'OsmAnd settings', 'trackserver' );
-			$autoshare_settings_img   = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
-			$autoshare_settings       = esc_attr__( 'AutoShare settings', 'trackserver' );
-
-			echo <<<EOF
-				<div id="trackserver-trackmehowto-modal" style="display:none;">
-					<p>
-							<img src="$trackme_settings_img" alt="$trackme_settings" />
-					</p>
-				</div>
-				<div id="trackserver-osmandhowto-modal" style="display:none;">
-					<p>
-							<img src="$osmand_settings_img" alt="$osmand_settings" />
-					</p>
-				</div>
-				<div id="trackserver-oruxmapshowto-modal" style="display:none;">
-					<p>
-							<img src="$mapmytracks_settings_img" alt="$mapmytracks_settings" />
-					</p>
-				</div>
-				<div id="trackserver-autosharehowto-modal" style="display:none;">
-					<p>
-							<img src="$autoshare_settings_img" alt="$autoshare_settings" />
-					</p>
-				</div>
-EOF;
-		}
-
 		/**
 		 * Detect shortcode
 		 *

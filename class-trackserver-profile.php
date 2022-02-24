@@ -189,9 +189,51 @@ class Trackserver_Profile {
 			</div>
 		</div>
 		<?php
-		$this->trackserver->howto_modals_html();
+		$this->howto_modals_html();
 	}
 
+	private function howto_modals_html() {
+		$trackme_settings_img     = TRACKSERVER_PLUGIN_URL . 'img/trackme-howto.png';
+		$trackme_settings         = esc_attr__( 'TrackMe settings', 'trackserver' );
+		$mapmytracks_settings_img = TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png';
+		$mapmytracks_settings     = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
+		$osmand_settings_img      = TRACKSERVER_PLUGIN_URL . 'img/osmand-howto.png';
+		$osmand_settings          = esc_attr__( 'OsmAnd settings', 'trackserver' );
+		$autoshare_settings_img   = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
+		$autoshare_settings       = esc_attr__( 'AutoShare settings', 'trackserver' );
+		$ulogger_settings_img     = TRACKSERVER_PLUGIN_URL . 'img/ulogger-howto.png';
+		$ulogger_settings         = esc_attr__( '&micro;logger settings', 'trackserver' );
+		$gpslogger_settings_img   = TRACKSERVER_PLUGIN_URL . 'img/gpslogger-howto.png';
+		$gpslogger_settings       = esc_attr__( 'GPSLogger settings', 'trackserver' );
+
+		echo <<<EOF
+			<div id="trackserver-trackmehowto-modal" style="display:none;">
+				<p>
+						<img src="$trackme_settings_img" alt="$trackme_settings" />
+				</p>
+			</div>
+			<div id="trackserver-osmandhowto-modal" style="display:none;">
+				<p>
+						<img src="$osmand_settings_img" alt="$osmand_settings" />
+				</p>
+			</div>
+			<div id="trackserver-oruxmapshowto-modal" style="display:none;">
+				<p>
+						<img src="$mapmytracks_settings_img" alt="$mapmytracks_settings" />
+				</p>
+			</div>
+			<div id="trackserver-uloggerhowto-modal" style="display:none;">
+				<p>
+						<img src="$ulogger_settings_img" alt="$ulogger_settings" />
+				</p>
+			</div>
+			<div id="trackserver-gpsloggerhowto-modal" style="display:none;">
+				<p>
+						<img src="$gpslogger_settings_img" alt="$gpslogger_settings" />
+				</p>
+			</div>
+EOF;
+	}
 
 	private function trackserver_url_html() {
 		$format = <<<EOF
