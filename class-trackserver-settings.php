@@ -77,13 +77,6 @@ class Trackserver_Settings {
 			'trackserver',
 			'trackserver-trackme'
 		);
-		add_settings_field(
-			'trackserver_trackme_password',
-			esc_html__( 'TrackMe password', 'trackserver' ),
-			array( &$this, 'trackme_password_html' ),
-			'trackserver',
-			'trackserver-trackme'
-		);
 
 		// Settings for section 'trackserver-mapmytracks'
 		add_settings_section(
@@ -113,13 +106,6 @@ class Trackserver_Settings {
 			'trackserver_osmand_slug',
 			esc_html__( 'OsmAnd URL slug', 'trackserver' ) . '<br>' . esc_html__( '(deprecated)', 'trackserver' ),
 			array( &$this, 'osmand_slug_html' ),
-			'trackserver',
-			'trackserver-osmand'
-		);
-		add_settings_field(
-			'trackserver_osmand_key',
-			esc_html__( 'OsmAnd access key', 'trackserver' ),
-			array( &$this, 'osmand_key_deprecation_html' ),
 			'trackserver',
 			'trackserver-osmand'
 		);
@@ -319,16 +305,6 @@ EOF;
 	 * @since 1.0
 	 */
 	public function trackme_settings_html() {
-		$howto    = esc_html__( 'How to use TrackMe', 'trackserver' );
-		$download = esc_html__( 'Download TrackMe', 'trackserver' );
-		$settings = esc_attr__( 'TrackMe settings', 'trackserver' );
-
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-trackmehowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://play.google.com/store/apps/details?id=LEM.TrackMe" target="tsexternal">$download</a>
-			<br />
-EOF;
 	}
 
 	public function trackme_slug_html() {
@@ -338,15 +314,11 @@ EOF;
 		$format = <<<EOF
 			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
 			<input type="text" size="25" name="trackserver_options[trackme_slug]" id="trackserver_trackme_slug" value="$val" autocomplete="off" /><br /><br />
-			<strong>%2\$s:</strong> $url/$val/&lt;<strong>%3\$s</strong>&gt;/&lt;<strong>%4\$s</strong>&gt;<br /><br />
 EOF;
 
 		printf(
 			$format,
 			esc_html__( "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe", 'trackserver' ),
-			esc_html__( 'Full URL header', 'trackserver' ),
-			esc_html__( 'username' ),
-			esc_html__( 'password' )
 		);
 	}
 
@@ -375,58 +347,12 @@ EOF;
 		);
 	}
 
-	public function trackme_password_html() {
-		$format      = <<<EOF
-			%1\$s<br /><br />
-			<b>%2\$s</b>: %3\$s
-EOF;
-		$link        = '<a href="admin.php?page=trackserver-yourprofile">' .
-			esc_html__( 'your Trackserver profile', 'trackserver' ) . '</a>';
-		$user_id     = get_current_user_id();
-		$trackme_key = '<code>' . htmlspecialchars( get_user_meta( $user_id, 'ts_trackme_key', true ) ) . '</code>';
-
-		printf(
-			$format,
-			sprintf(
-				// translators: placeholders are for link to user profile and trackme access key
-				esc_html__(
-					// @codingStandardsIgnoreStart
-					'Since version 1.9, Trackserver needs a separate password for online tracking with TrackMe. We do not use the WordPress ' .
-					'password here anymore for security reasons. The access key is unique to your ' .
-					'user account and it can be configured in %1$s. Your current TrackMe password is: %2$s. This is what you enter in the Password field ' .
-					'in TrackMe\'s settings!!', 'trackserver'
-				// @codingStandardsIgnoreEnd
-				),
-				$link,
-				$trackme_key
-			),
-			esc_html__( 'WARNING', 'trackserver' ),
-			esc_html__(
-					// @codingStandardsIgnoreStart
-				'if you just upgraded to version 1.9 or higher and you have been using Trackserver with TrackMe, ' .
-				'you should update the password in TrackMe to match the password in your profile. Trackserver does not check your ' .
-				'WordPress password anymore, because the way TrackMe uses your password is not sufficiently secure.', 'trackserver'
-				// @codingStandardsIgnoreEnd
-			)
-		);
-	}
-
 	/**
 	 * Output HTML for the Mapmytracks settings section.
 	 *
 	 * @since 1.0
 	 */
 	public function mapmytracks_settings_html() {
-		$howto    = esc_html__( 'How to use OruxMaps MapMyTracks', 'trackserver' );
-		$download = esc_html__( 'Download OruxMaps', 'trackserver' );
-		$settings = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
-
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-oruxmapshowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://www.oruxmaps.com/cs/en/" target="tsexternal">$download</a>
-			<br />
-EOF;
 	}
 
 	public function mapmytracks_tag_html() {
@@ -438,14 +364,12 @@ EOF;
 		$format = <<<EOF
 			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
 			<input type="text" size="25" name="trackserver_options[mapmytracks_tag]" id="trackserver_mapmytracks_tag" value="$val" autocomplete="off" /><br /><br />
-			<strong>%2\$s:</strong> $url/$val<br /><br />
-			%3\$s<br /><br />
+			%2\$s<br /><br />
 EOF;
 
 		printf(
 			$format,
 			esc_html__( "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps", 'trackserver' ),
-			esc_html__( 'Full custom URL', 'trackserver' ),
 			sprintf(
 				// translators: placeholders are for product name and version, and link to SNI Wikipedia page
 				esc_html__(
@@ -464,16 +388,6 @@ EOF;
 	}
 
 	public function osmand_settings_html() {
-		$howto    = esc_html__( 'How to use OsmAnd', 'trackserver' );
-		$download = esc_html__( 'Download OsmAnd', 'trackserver' );
-		$settings = esc_attr__( 'OsmAnd settings', 'trackserver' );
-
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-osmandhowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://play.google.com/store/apps/details?id=net.osmand" target="tsexternal">$download</a>
-			<br />
-EOF;
 	}
 
 	public function osmand_slug_html() {
@@ -488,45 +402,6 @@ EOF;
 		printf(
 			$format,
 			esc_html__( "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd", 'trackserver' )
-		);
-	}
-
-	public function osmand_key_deprecation_html() {
-		$user_id    = get_current_user_id();
-		$osmand_key = '<code>' . htmlspecialchars( get_user_meta( $user_id, 'ts_osmand_key', true ) ) . '</code>';
-
-		$format = <<<EOF
-			%1\$s<br /><br />
-			<b>%2\$s</b>: %3\$s
-EOF;
-		$link   = '<a href="admin.php?page=trackserver-yourprofile">' .
-			esc_html__( 'your Trackserver profile', 'trackserver' ) . '</a>';
-		printf(
-			$format,
-			sprintf(
-				// translators: placeholder is for link to user profile
-				esc_html__(
-					// @codingStandardsIgnoreStart
-					'Trackserver needs an access key for online tracking with OsmAnd. We do not use WordPress ' .
-					'password here for security reasons. Since version 1.9 of Trackserver, the access key is unique to your ' .
-					'user account and it can be configured in %1$s.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				),
-				$link
-			),
-			esc_html__( 'WARNING', 'trackserver' ),
-			sprintf(
-				// translators: placeholder is for access key
-				esc_html__(
-					// @codingStandardsIgnoreStart
-					'if you just upgraded to version 1.9 or higher, the OsmAnd access key has been ' .
-					'reset to a new random value. Your old key is no longer valid. If you use Trackserver with OsmAnd, please ' .
-					'make sure the key matches your settings in OsmAnd. Your current access key is: %1$s. Change it regularly. ' .
-					'You can find the full tracking URL in your Trackserver profile.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				),
-				$osmand_key
-			)
 		);
 	}
 
@@ -567,12 +442,6 @@ EOF;
 	}
 
 	public function owntracks_settings_html() {
-		$download = esc_html__( 'Download OwnTracks', 'trackserver' );
-
-		echo <<<EOF
-			<a href="https://play.google.com/store/apps/details?id=org.owntracks.android" target="tsexternal">$download</a>
-			<br />
-EOF;
 	}
 
 	/**
@@ -581,16 +450,6 @@ EOF;
 	 * @since 1.0
 	 */
 	public function httppost_settings_html() {
-		$howto    = esc_html__( 'How to use AutoShare', 'trackserver' );
-		$download = esc_html__( 'Download AutoShare', 'trackserver' );
-		$settings = esc_attr__( 'AutoShare settings', 'trackserver' );
-
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-autosharehowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://play.google.com/store/apps/details?id=com.dngames.autoshare" target="tsexternal">$download</a>
-			<br />
-EOF;
 	}
 
 	public function shortcode_settings_html() {

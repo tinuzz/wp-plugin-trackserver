@@ -420,7 +420,6 @@ EOF;
 			<hr />
 		</div>
 		<?php
-		$this->trackserver->howto_modals_html();
 	}
 
 	public function manage_tracks_html() {
