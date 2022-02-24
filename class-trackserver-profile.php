@@ -213,11 +213,11 @@ EOF;
 		// @codingStandardsIgnoreStart
 		echo esc_html__( 'As of Trackserver v5.0, app-specific access keys have been replaced with app passwords. ' .
 			'An app password is usable in all of the supported apps, including the ones that previously only worked with ' .
-			'your WordPress password, like OruxMaps / MapMyTracks.', 'trackserver' ) . '<br /><br />';
+			'your WordPress password, like OruxMaps / MapMyTracks.', 'trackserver' ) . '<br><br>';
 		echo esc_html__( 'App passwords have configurable permissions. "Write" permission means that the password can ' .
 			'be used for creating tracks. "Read" means that tracks and metadata can be queried and downloaded. "Delete" ' .
 			'means the password can be used to delete tracks. For most apps, only write permission is needed, but for ' .
-			'example TrackMe has functionality that requires read and/or delete permissions.', 'trackserver' ) . '<br /><br />';
+			'example TrackMe has functionality that requires read and/or delete permissions.', 'trackserver' ) . '<br><br>';
 		// @codingStandardsIgnoreEnd
 
 		$passwords = get_user_meta( $this->current_user->ID, 'ts_app_passwords', true );
@@ -338,13 +338,13 @@ EOF;
 			'Users who use OwnTracks or TrackMe\'s "Show Cloud People" feature will see your latest location on the map, ' .
 			'if they follow you. This setting is only about sharing your latest (live) location with TrackMe and ' .
 			'OwnTracks users. It does not grant access to your track data in any other way.', 'trackserver'
-		) . '<br /><br />';
+		) . '<br><br>';
 		// translators: placeholder is for a http link URL
 		echo sprintf(
 			__( 'See <a href="%1$s" target="_blank">the description of the Friends feature in the OwnTracks booklet</a> for more information.', 'trackserver' ), $link_url
-		) . '<br /><br />';
+		) . '<br><br>';
 		// @codingStandardsIgnoreEnd
-		echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_share]" value="' . $value . '" autocomplete="off" /><br /><br />';
+		echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_share]" value="' . $value . '" autocomplete="off" /><br><br>';
 	}
 
 	private function follow_friends_html() {
@@ -355,16 +355,16 @@ EOF;
 			'your username in the "Share via ..." setting above and publishing their location to Trackserver with one ' .
 			'of the supported apps. Leave this setting empty to follow all users that share their location with you. ' .
 			'You can exclude users by prefixing their username with a "!" (exclamation mark).', 'trackserver'
-		) . '<br />';
+		) . '<br>';
 		// @codingStandardsIgnoreEnd
-		echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_follow]" value="' . $value . '" autocomplete="off" /><br /><br />';
+		echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_follow]" value="' . $value . '" autocomplete="off" /><br><br>';
 	}
 
 	private function infobar_template_html() {
 		$template = $this->trackserver->printf_htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_infobar_template', true ) );
 		$format   = <<<EOF
-			%1\$s<br />
-			<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="$template" autocomplete="off" /><br /><br />
+			%1\$s<br>
+			<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="$template" autocomplete="off" /><br><br>
 EOF;
 		// @codingStandardsIgnoreStart
 		printf(
