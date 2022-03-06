@@ -23,8 +23,8 @@ var tb_click = function(e)
         tb_window_height = 768;
     }
     if (ts_action == 'howto') {
-        tb_window_width = 850;
-        tb_window_height = 560;
+        tb_window_width = 928;
+        tb_window_height = 685;
     }
 
     if (ts_action == 'view' || ts_action == 'edit') {
