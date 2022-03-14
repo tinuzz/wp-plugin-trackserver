@@ -829,6 +829,10 @@ class Trackserver_Shortcode {
 			$trkpt->setAttribute( 'lat', $row['latitude'] );
 			$trkpt->setAttribute( 'lon', $row['longitude'] );
 
+			if ( $row['altitude'] !== 0 ) {
+				$trkpt->appendChild( $dom->createElement( 'ele', $row['altitude'] ) );
+			}
+
 			$offset_seconds  = (int) get_option( 'gmt_offset' ) * 3600;
 			$timezone_offset = new DateInterval( 'PT' . abs( $offset_seconds ) . 'S' );
 			$occurred        = new DateTime( $row['occurred'] );  // A DateTime object in local time
