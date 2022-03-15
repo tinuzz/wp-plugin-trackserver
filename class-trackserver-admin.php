@@ -793,6 +793,7 @@ EOF;
 			$wpdb->query( $sql );
 			// @codingStandardsIgnoreEnd
 
+			$this->trackserver->calculate_distance( $track_id );
 			$this->trackserver->calculate_distance( $new_id );
 			return print_r( $new_id, true );
 		}
