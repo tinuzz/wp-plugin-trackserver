@@ -1160,7 +1160,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 			foreach ( $gpx->trk as $trk ) {
 				$points    = array();
-				$trip_name = (string) $trk->name;
+				$trip_name = substr( (string) $trk->name, 0, 255 );
+				$comment   = substr( (string) $trk->desc, 0, 255 );
 
 				// @codingStandardsIgnoreLine
 				if ( $skip_existing && ( $trk_id = $this->get_track_id_by_name( $trip_name, $user_id ) ) ) {
@@ -1191,8 +1192,9 @@ if ( ! class_exists( 'Trackserver' ) ) {
 						'name'    => $trip_name,
 						'created' => $trip_start,
 						'source'  => $source,
+						'comment' => $comment,
 					);
-					$format = array( '%d', '%s', '%s', '%s' );
+					$format = array( '%d', '%s', '%s', '%s', '%s' );
 					if ( $wpdb->insert( $this->tbl_tracks, $data, $format ) ) {
 						$trip_id = $wpdb->insert_id;
 						$this->mapmytracks_insert_points( $points, $trip_id, $user_id );
