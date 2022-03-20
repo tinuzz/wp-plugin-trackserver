@@ -23,4 +23,4 @@ curl -G \
 	--data-urlencode "alt=$altitude" \
 	--data-urlencode "sp=$sp" \
 	--data-urlencode "ang=$ang" \
-	$TS_URL/$TS_USERNAME/$TS_SECRET/requests.z
+	$TS_URL/$TS_USERNAME/$TS_PASSWORD/requests.z

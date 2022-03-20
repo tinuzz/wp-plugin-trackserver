@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" creator="Trackserver 4.3-20190906" version="1.1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <author>
+      <name><![CDATA[Trackserver]]></name>
+    </author>
+    <link href="https://www.grendelman.net/"/>
+  </metadata>
+  <trk>
+    <name><![CDATA[Trackserver upload test 2017-03-03 00:40:18]]></name>
+    <trkseg>
+      <trkpt lat="50.443592" lon="5.97745">
+        <time>2017-03-02T23:47:32+00:00</time>
+      </trkpt>
+      <trkpt lat="50.443496" lon="5.977456">
+        <time>2017-03-02T23:47:34+00:00</time>
+      </trkpt>
+      <trkpt lat="50.443446" lon="5.977461">
+        <time>2017-03-02T23:47:36+00:00</time>
+      </trkpt>
+      <trkpt lat="50.44339" lon="5.977456">
+        <time>2017-03-02T23:47:38+00:00</time>
+      </trkpt>
+      <trkpt lat="50.443316" lon="5.977442">
+        <time>2017-03-02T23:47:41+00:00</time>
+      </trkpt>
+      <trkpt lat="50.443255" lon="5.977426">
+        <time>2017-03-02T23:47:43+00:00</time>
+      </trkpt>
+      <trkpt lat="50.443188" lon="5.977399">
+        <time>2017-03-02T23:47:45+00:00</time>
+      </trkpt>
+      <trkpt lat="50.443107" lon="5.977349">
+        <time>2017-03-02T23:47:47+00:00</time>
+      </trkpt>
+      <trkpt lat="50.443023" lon="5.977284">
+        <time>2017-03-02T23:47:49+00:00</time>
+      </trkpt>
+      <trkpt lat="50.442952" lon="5.977217">
+        <time>2017-03-02T23:47:51+00:00</time>
+      </trkpt>
+      <trkpt lat="50.442887" lon="5.977138">
+        <time>2017-03-02T23:47:53+00:00</time>
+      </trkpt>
+      <trkpt lat="50.442812" lon="5.977025">
+        <time>2017-03-02T23:47:55+00:00</time>
+      </trkpt>
+      <trkpt lat="50.44275" lon="5.976915">
+        <time>2017-03-02T23:47:57+00:00</time>
+      </trkpt>
+      <trkpt lat="50.44269" lon="5.976781">
+        <time>2017-03-02T23:47:59+00:00</time>
+      </trkpt>
+      <trkpt lat="50.442656" lon="5.976684">
+        <time>2017-03-02T23:48:01+00:00</time>
+      </trkpt>
+      <trkpt lat="50.442405" lon="5.975786">
+        <time>2017-03-02T23:48:03+00:00</time>
+      </trkpt>
+      <trkpt lat="50.442338" lon="5.975551">
+        <time>2017-03-02T23:48:05+00:00</time>
+      </trkpt>
+      <trkpt lat="50.442261" lon="5.975331">
+        <time>2017-03-02T23:48:08+00:00</time>
+      </trkpt>
+      <trkpt lat="50.442178" lon="5.975155">
+        <time>2017-03-02T23:48:10+00:00</time>
+      </trkpt>
+      <trkpt lat="50.442101" lon="5.975028">
+        <time>2017-03-02T23:48:12+00:00</time>
+      </trkpt>
+      <trkpt lat="50.442023" lon="5.974923">
+        <time>2017-03-02T23:48:14+00:00</time>
+      </trkpt>
+      <trkpt lat="50.441911" lon="5.974799">
+        <time>2017-03-02T23:48:16+00:00</time>
+      </trkpt>
+      <trkpt lat="50.441805" lon="5.974706">
+        <time>2017-03-02T23:48:18+00:00</time>
+      </trkpt>
+      <trkpt lat="50.44175" lon="5.974667">
+        <time>2017-03-02T23:48:20+00:00</time>
+      </trkpt>
+      <trkpt lat="50.441667" lon="5.974622">
+        <time>2017-03-02T23:48:22+00:00</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
