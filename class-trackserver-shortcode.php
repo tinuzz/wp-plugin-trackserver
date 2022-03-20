@@ -829,7 +829,7 @@ class Trackserver_Shortcode {
 			$trkpt->setAttribute( 'lat', $row['latitude'] );
 			$trkpt->setAttribute( 'lon', $row['longitude'] );
 
-			if ( $row['altitude'] !== 0 ) {
+			if ( $row['altitude'] !== '0' ) {
 				$trkpt->appendChild( $dom->createElement( 'ele', $row['altitude'] ) );
 			}
 
