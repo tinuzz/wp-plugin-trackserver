@@ -473,9 +473,9 @@ EOF;
 
 			<!-- View track -->
 			<div id="trackserver-view-modal" style="display:none;">
-					<div id="trackserver-adminmap-container">
-						<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
-					</div>
+				<div id="trackserver-adminmap-container">
+					<div id="tsadminmap" style="width: 100%; height: 100%; margin: 10px 0;"></div>
+				</div>
 			</div>
 
 			<!-- Merge tracks -->
