@@ -100,6 +100,7 @@ var tb_show = function(c, u, i)
         TrackserverAdmin.setup();
         if (typeof trackserver_mapdata[0].tracks != "undefined") {
             TrackserverAdmin.setup_editables();
+            TrackserverAdmin.setup_deletebutton();
         }
     }
     if (typeof trackserver_admin_geofences == 'object') {
@@ -483,6 +484,52 @@ var TrackserverAdmin = (function () {
             var track_id = vertex.editor.feature.options.track_id;
             var vertex_index = this.get_vertex_index(vertex);
             this.location_move(track_id, vertex_index, vertex.latlng);
+        },
+
+        setup_deletebutton: function() {
+            var map = Trackserver.adminmap;
+
+            L.DeleteControl = L.Control.extend({
+                options: {
+                    position: 'topleft',
+                    html: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z"/></svg>',
+                    title: trackserver_admin_settings['msg']['delete1'],
+                },
+
+                onAdd: function (map) {
+                    var container = L.DomUtil.create('div', 'leaflet-control-delete leaflet-bar leaflet-control');
+
+                    this.link = L.DomUtil.create('a', 'leaflet-control-delete-button leaflet-bar-part', container);
+                    this.link.href = '#';
+                    this.link.title = trackserver_admin_settings['msg']['delete1'],
+                    this.link.innerHTML = this.options.html;
+                    this._map = map;
+
+                    L.DomEvent.on(this.link, 'click', this._click, this);
+                    L.DomEvent.on(this.link, 'dblclick', L.DomEvent.stop);
+                    L.DomEvent.on(this.link, 'mousedown', L.DomEvent.stop);
+                    L.DomEvent.on(this.link, 'mouseup', L.DomEvent.stop);
+
+                    return container;
+                },
+
+                _click: function (e) {
+                    L.DomEvent.stopPropagation(e);
+                    L.DomEvent.preventDefault(e);
+                    if (confirm(trackserver_admin_settings['msg']['areyousure'])) {
+                        if (trackserver_mapdata[0].tracks.length == 1) {
+                            jQuery('#track_id').val(trackserver_mapdata[0].tracks[0].track_id);
+                            jQuery('#trackserver-edit-action').val('delete');
+                            jQuery('#trackserver-edit-track').submit();
+                        } else {
+                            jQuery('#bulk-action-selector-top').val('delete');
+                            jQuery('#trackserver-tracks').submit();
+                        }
+                     }
+                },
+            });
+
+            map.addControl(new L.DeleteControl());
         },
 
         setup_editables: function() {

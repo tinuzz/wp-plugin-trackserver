@@ -188,6 +188,8 @@ class Trackserver_Admin {
 			case 'trackserver_page_trackserver-yourprofile':
 				$this->trackserver->load_common_scripts();
 
+				wp_enqueue_style( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.css', array(), TRACKSERVER_VERSION );
+
 				// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
 				$track_base_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?', ( is_ssl() ? 'https' : 'http' ) );
 				wp_localize_script( 'trackserver', 'track_base_url', $track_base_url );
@@ -217,6 +219,7 @@ class Trackserver_Admin {
 					'save'           => __( 'Save', 'trackserver' ),
 					'discard'        => __( 'Discard', 'trackserver' ),
 					'cancel'         => __( 'Cancel', 'trackserver' ),
+					'delete1'        => __( 'Delete', 'trackserver' ),
 					/* translators: %1$s = action, %2$s = number and %3$s is 'track' or 'tracks' */
 					'selectminimum'  => __( 'For %1$s, select %2$s %3$s at minimum', 'trackserver' ),
 				);
