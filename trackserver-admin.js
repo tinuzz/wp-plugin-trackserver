@@ -14,18 +14,15 @@ var tb_click = function(e)
 
     trackserver_mapdata = false;
 
-    if (ts_action == 'edit') {
-        tb_window_width = 600;
-        tb_window_height = 325;
+    const geometry = {
+      'edit':    [ 600, 325 ],
+      'addpass': [ 600, 225 ],
+      'view':    [ window.innerWidth - 40, window.innerHeight - 40 ],
+      'howto':   [ 928, 685 ]
     }
-    if (ts_action == 'view' || ts_action == 'fences') {
-        tb_window_width = window.innerWidth - 40;
-        tb_window_height = window.innerHeight - 40;
-    }
-    if (ts_action == 'howto') {
-        tb_window_width = 928;
-        tb_window_height = 685;
-    }
+
+    tb_window_width  = geometry[ts_action][0];
+    tb_window_height = geometry[ts_action][1];
 
     if (ts_action == 'view' || ts_action == 'edit') {
 
@@ -93,8 +90,11 @@ var tb_show = function(c, u, i)
     if (h < tb_window_height) {
         jQuery("#TB_window").css({"top": "0", "margin-top": "0"});
     }
+
     jQuery("#TB_ajaxContent").css({"width": (w - 30) + 'px', "height": (h - 45) + 'px'});
     jQuery("#trackserver-adminmap-container").css({"width": (w - 32) + 'px', "height": (h - 60)});
+
+    // Initialize the map if needed
     if (trackserver_mapdata) {
         Trackserver.init( trackserver_mapdata );
         TrackserverAdmin.setup();
