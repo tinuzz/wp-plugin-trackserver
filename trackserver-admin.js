@@ -16,11 +16,11 @@ var tb_click = function(e)
 
     if (ts_action == 'edit') {
         tb_window_width = 600;
-        tb_window_height = 320;
+        tb_window_height = 325;
     }
     if (ts_action == 'view' || ts_action == 'fences') {
-        tb_window_width = 1024;
-        tb_window_height = 768;
+        tb_window_width = window.innerWidth - 40;
+        tb_window_height = window.innerHeight - 40;
     }
     if (ts_action == 'howto') {
         tb_window_width = 928;
@@ -232,7 +232,7 @@ var TrackserverAdmin = (function () {
                     tracks.push( { track_id: this.value, track_type: 'polylinexhr', markers: true, nonce: nonce, track_url: url });
                 });
                 trackserver_mapdata = [{"div_id":"tsadminmap","tracks":tracks,"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false}];
-                ts_tb_show('trackserver-view-modal', 'Track', 1024, 768);
+                ts_tb_show('trackserver-view-modal', 'Track', window.innerWidth - 40, window.innerHeight - 40);
                 return false;
             }
             return false;
