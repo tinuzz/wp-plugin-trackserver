@@ -469,7 +469,7 @@ EOF;
 							</tr>
 						</table>
 						<br />
-						<input class="button action" type="submit" value="<?php esc_attr_e( 'Save', 'trackserver' ); ?>" name="save_track">
+						<input class="button action button-primary" type="submit" value="<?php esc_attr_e( 'Save', 'trackserver' ); ?>" name="save_track">
 						<input class="button action" type="button" value="<?php esc_attr_e( 'Cancel', 'trackserver' ); ?>" onClick="tb_remove(); return false;">
 						<input type="hidden" id="trackserver-edit-action" name="trackserver_action" value="save">
 						<button id="trackserver-delete-track" class="button action" type="button" title="<?php esc_html_e( 'Delete', 'trackserver' ); ?>" style="float: right;" onClick="tb_remove(); return false;">
