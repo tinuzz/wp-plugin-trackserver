@@ -205,7 +205,9 @@ class Trackserver_Admin {
 				$settings['msg']  = array(
 					'areyousure'     => __( 'Are you sure?', 'trackserver' ),
 					'delete'         => __( 'deletion', 'trackserver' ),
+					'deletecap'      => __( 'Deleting', 'trackserver' ),
 					'merge'          => __( 'merging', 'trackserver' ),
+					'duplicatecap'   => __( 'Duplicating', 'trackserver' ),
 					'recalc'         => __( 'recalculation', 'trackserver' ),
 					'dlgpx'          => __( 'downloading', 'trackserver' ),
 					'dlkml'          => __( 'downloading', 'trackserver' ),

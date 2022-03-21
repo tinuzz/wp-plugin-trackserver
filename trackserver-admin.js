@@ -182,7 +182,12 @@ var TrackserverAdmin = (function () {
         // returns true, the form will be submitted
         handle_bulk_action: function (action) {
             if (action == 'delete' || action == 'duplicate') {
-                if (confirm(trackserver_admin_settings['msg']['areyousure'])) {
+                var selector = action + 'cap';
+                var actionstr = trackserver_admin_settings['msg'][selector];
+                var msg = actionstr + ' ' + this.checked.length + ' ' +
+                  trackserver_admin_settings['msg']['tracks'] + '. ' +
+                  trackserver_admin_settings['msg']['areyousure'];
+                if (confirm(msg)) {
                     return true;
                 }
             }
