@@ -336,7 +336,10 @@ var TrackserverAdmin = (function () {
             });
 
             jQuery('#trackserver-delete-track').click( function() {
-                if (confirm(trackserver_admin_settings['msg']['areyousure'])) {
+                let msg = trackserver_admin_settings['msg']['delete1'] + ' ' +
+                  trackserver_admin_settings['msg']['track'] + '. ' +
+                  trackserver_admin_settings['msg']['areyousure'];
+                if (confirm(msg)) {
                     jQuery('#trackserver-edit-action').val('delete');
                     jQuery('#trackserver-edit-track').submit();
                 }
