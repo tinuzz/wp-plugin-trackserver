@@ -202,7 +202,7 @@ class Trackserver_Admin {
 				// The options page only has 'trackserver-admin.js'.
 
 			case 'toplevel_page_trackserver-options':
-				$settings['msg']  = array(
+				$settings['msg']   = array(
 					'areyousure'     => __( 'Are you sure?', 'trackserver' ),
 					'delete'         => __( 'deletion', 'trackserver' ),
 					'deletecap'      => __( 'Deleting', 'trackserver' ),
@@ -225,7 +225,7 @@ class Trackserver_Admin {
 					/* translators: %1$s = action, %2$s = number and %3$s is 'track' or 'tracks' */
 					'selectminimum'  => __( 'For %1$s, select %2$s %3$s at minimum', 'trackserver' ),
 				);
-				$settings['urls'] = array(
+				$settings['urls']  = array(
 					'adminpost'    => admin_url() . 'admin-post.php',
 					'managetracks' => admin_url() . 'admin.php?page=trackserver-tracks',
 				);
@@ -709,22 +709,30 @@ EOF;
 				foreach ( $track_ids as $tid ) {
 
 					// Duplicate track record
-					$sql = $wpdb->prepare( 'INSERT INTO ' . $this->tbl_tracks .
-						" (user_id, name, created, source, comment) SELECT user_id, name, created," .
-						" source, comment FROM " . $this->tbl_tracks . " WHERE id=%s", $tid );
-					$wpdb->query( $sql );
+					$sql = $wpdb->prepare(
+						'INSERT INTO ' . $this->tbl_tracks . // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+						' (user_id, name, created, source, comment) SELECT user_id, name, created,' .
+						' source, comment FROM ' . $this->tbl_tracks . ' WHERE id=%s', // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+						$tid
+					);
+					$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					$new_id = $wpdb->insert_id;
 
 					// Duplicate locations
-					$sql  = $wpdb->prepare( 'INSERT INTO ' . $this->tbl_locations .
+					$sql = $wpdb->prepare(
+						'INSERT INTO ' . $this->tbl_locations . // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 						' (trip_id, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment, hidden) ' .
 						'SELECT %d, latitude, longitude, altitude, speed, heading, updated, created, occurred, comment, hidden ' .
-						'FROM ' . $this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $new_id, $tid );
-					$nl += $wpdb->query( $sql );
+						'FROM ' . $this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+						$new_id,
+						$tid
+					);
+					$nl += $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 					$this->trackserver->calculate_distance( $new_id );
 				}
 
+				// translators: placeholders are for total number of locations and number of tracks
 				$format  = __( 'Duplicated %1$d location(s) in %2$d track(s).', 'trackserver' );
 				$message = sprintf( $format, intval( $nl ), intval( $n ) );
 
@@ -754,7 +762,7 @@ EOF;
 					$this->trackserver->calculate_distance( $id );
 				}
 				$exec_time = round( microtime( true ) - $exec_t0, 1 );
-				// translators: placeholders are for number of tracks and numer of seconds elapsed
+				// translators: placeholders are for number of tracks and number of seconds elapsed
 				$format  = __( 'Recalculated track stats for %1$d track(s) in %2$d seconds', 'trackserver' );
 				$message = sprintf( $format, count( $track_ids ), $exec_time );
 			} else {

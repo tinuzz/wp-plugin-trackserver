@@ -1429,17 +1429,19 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		/**
 		 * Function to handle a profile update for the current user
 		 *
+		 * If this is called, check_admin_referer() has already succeeded.
+		 *
 		 * @since 1.9
 		 */
 		function process_profile_update() {
-			$user_id         = get_current_user_id();
-			$data            = $_POST['ts_user_meta'];
-			$valid_fields    = array(
+			$user_id       = get_current_user_id();
+			$data          = $_POST['ts_user_meta'];
+			$valid_fields  = array(
 				'ts_owntracks_share',
 				'ts_owntracks_follow',
 				'ts_infobar_template',
 			);
-			$valid_actions   = array( 'hide', 'discard' );
+			$valid_actions = array( 'hide', 'discard' );
 
 			// Hijack the request if a 'Delete password' button was pressed.
 			if ( $_POST['apppass_action'] === 'delete' ) {
