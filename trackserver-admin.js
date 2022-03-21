@@ -143,6 +143,7 @@ var TrackserverAdmin = (function () {
         modified_locations: {},
         latlngs: {},    // object containing list of latlngs per track, that doesn't change when deleting a vertex
         geofences: {},  // hash of objects that hold leaflet shapes for geofences
+        trashcan_icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z"/></svg>',
 
         init: function() {
             this.checked = false;
@@ -604,7 +605,7 @@ var TrackserverAdmin = (function () {
             L.DeleteControl = L.Control.extend({
                 options: {
                     position: 'topleft',
-                    html: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z"/></svg>',
+                    html: _this.trashcan_icon,
                     title: trackserver_admin_settings['msg']['delete1'],
                 },
 
