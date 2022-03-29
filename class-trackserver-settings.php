@@ -263,7 +263,7 @@ class Trackserver_Settings {
 			'As of version 5.0, Trackserver uses a single URL slug for all ' .
 			'the protocols it supports. The old, seperate slugs for TrackMe, ' .
 			'MapMyTracks, OsmAnd, SendLocation and OwnTracks are now deprecated and ' .
-			'will likely be removed in a future version.',
+			'will be removed in a future version.',
 			'trackserver'
 		);
 		echo '<br><br>';
@@ -364,26 +364,11 @@ EOF;
 		$format = <<<EOF
 			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
 			<input type="text" size="25" name="trackserver_options[mapmytracks_tag]" id="trackserver_mapmytracks_tag" value="$val" autocomplete="off" /><br /><br />
-			%2\$s<br /><br />
 EOF;
 
 		printf(
 			$format,
-			esc_html__( "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps", 'trackserver' ),
-			sprintf(
-				// translators: placeholders are for product name and version, and link to SNI Wikipedia page
-				esc_html__(
-					// @codingStandardsIgnoreStart
-					'Note about HTTPS: older versions of %1$s and/or Android may or may not support %3$s for HTTPS connections. ' .
-					'As of v%2$s, SNI is verified to work. If your WordPress depends on SNI for HTTPS connections and you cannot ' .
-					'use the latest version of %1$s, please use HTTP. This is a ' .
-					'problem with %1$s that Trackserver cannot fix.', 'trackserver'
-					// @codingStandardsIgnoreEnd
-				),
-				'OruxMaps',
-				'7.1.2',
-				$link
-			)
+			esc_html__( "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps", 'trackserver' )
 		);
 	}
 
