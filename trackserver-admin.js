@@ -18,6 +18,7 @@ var tb_click = function(e)
       'edit':    [ 600, 325 ],
       'addpass': [ 600, 225 ],
       'view':    [ window.innerWidth - 40, window.innerHeight - 40 ],
+      'fences':  [ window.innerWidth - 40, window.innerHeight - 40 ],
       'howto':   [ 928, 685 ]
     }
 
