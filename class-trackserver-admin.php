@@ -566,10 +566,11 @@ EOF;
 	 */
 	public function load_your_profile() {
 		// Handle POST from 'Trackserver profile' page
-		// $_POST['ts_user_meta'] holds all the values
-		if ( isset( $_POST['ts_user_meta'] ) ) {
+		// $_POST['ts_user_meta'] holds all the values, or we handle 'apppass_action'
+		if ( isset( $_POST['ts_user_meta'] ) || isset( $_POST['apppass_action'] ) ) {
 			check_admin_referer( 'your-profile' );
-			$this->trackserver->process_profile_update();
+			Trackserver_Profile::get_instance( $this->trackserver )->process_profile_update();
+			$this->trackserver->process_profile_update();  // this will not return
 		}
 
 		// Set up bulk action result notice

@@ -274,12 +274,15 @@ Release date: <unreleased>
 
 This release contains many changes. Please read these notes carefully.
 
+BIG CHANGE: Trackserver URL change for all supported apps. Starting with v5.0, Trackserver uses a single URL slug for all supported apps. This means all users have to update the server URL in the mobile apps they use for tracking. App-specific URLs still work, but will be removed in a future version. After upgrading, visit the Trackserver Options page and look at the 'Full URL' lines at the top. There are two versions of the universal URL. Trackserver will tell you which URL to use in which app.
+
 BIG CHANGE: App-specific passwords and access keys (used for TrackMe, OsmAnd and SendLocation) have been transformed into 'App Passwords', and are now app-independent. Existing access keys are automatically converted to App Passwords during the upgrade, and will all be valid for all supported apps, including the apps that worked with your WordPress password before (OruxMaps / MapMyTracks and OwnTracks). Your WordPress password will still work for those apps, but that may change in a future release. Switching to App Passwords is recommended, regardless of the app you use for Tracking. The main benefit is an increase in security, because your WordPress password will no longer be necessary for using Trackserver. Trackserver App Passwords can be changed often without impacting WordPress logins. As an added bonus, App Passwords also work in WordPress installs that use SSO mechanisms like OAuth2 for user logins.
 
 Added:
 * A search box on the tracks management page.
 * Experimental uLogger support.
 * Universal slug for all protocols that Trackserver supports.
+* App passwords.
 * Generic 'GET request' support for storing locations, used for OsmAnd and Sendlocation support.
 * 'Duplicate' bulk action for copying tracks.
 * Some useful links to Github and Trackserver home page from the Plugins page in WP admin.

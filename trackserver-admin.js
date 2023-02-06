@@ -144,6 +144,7 @@ var TrackserverAdmin = (function () {
         modified_locations: {},
         latlngs: {},    // object containing list of latlngs per track, that doesn't change when deleting a vertex
         geofences: {},  // hash of objects that hold leaflet shapes for geofences
+        app_password: 'NO_PASSWORD_SET',   // last shown app password
 
         init: function() {
             this.checked = false;
@@ -356,11 +357,14 @@ var TrackserverAdmin = (function () {
               if ( button.data('action') == 'view' ) {
                 var password = jQuery('#pass' + id).data('password');
                 jQuery('#passtext' + id).text(password);
-                button.text(trackserver_admin_settings['profile_msg']['hide']);
+                jQuery('.apppassword').text(password);
+                _this.app_password = password;
+                button.val(trackserver_admin_settings['profile_msg']['hide']);
                 button.data('action', 'hide');
               } else {
                 jQuery('#passtext' + id).text('**********');
-                button.text(trackserver_admin_settings['profile_msg']['view']);
+                jQuery('.apppassword').text('**********');
+                button.val(trackserver_admin_settings['profile_msg']['view']);
                 button.data('action', 'view');
               }
               return false;
@@ -372,11 +376,45 @@ var TrackserverAdmin = (function () {
                 var id = button.data('id');
                 jQuery('input[name="apppass_action"]').val('delete');
                 jQuery('input[name="apppass_id"]').val(id);
-                jQuery('#trackserver-profile').submit();
+                return true;
               } else {
                 return false;
               }
             });
+
+            jQuery('#ts-view-pass-button').on('click', function() {
+              if (jQuery('#ts-apppass-input').attr('type') == 'password') {
+                jQuery('#ts-apppass-input').attr('type', 'text');
+                jQuery('#ts-view-pass-button').val('Hide');
+              } else {
+                jQuery('#ts-apppass-input').attr('type', 'password');
+                jQuery('#ts-view-pass-button').val('View');
+              }
+            });
+
+            jQuery('#ts-gen-pass-button').on('click', function() {
+              var pass = btoa(Math.random()*999).substr(0,10);
+              jQuery('#ts-apppass-input').val(pass.toLowerCase());
+            });
+
+            var password = jQuery('#pass0').data('password');
+            if (typeof password != 'undefined') {
+              _this.app_password = password;
+            }
+
+            if (navigator.clipboard) {
+
+              jQuery('.trackserver-copy-url').on('click', function() {
+                var src_el = 'trackserver-url' + this.id.slice(-1);
+                var content = jQuery('#' + src_el).text().replace(/\*\*\*+/, _this.app_password) ;
+                navigator.clipboard.writeText(content)
+              });
+
+            } else {
+              // Hide the copy buttons in browsers that lack navigator.clipboard support
+              jQuery('#trackserver-copy-url1-button').css('display', 'none');
+              jQuery('#trackserver-copy-url2-button').css('display', 'none');
+            }
         },
 
         show_savedialog_if_modified: function( callback=false ) {

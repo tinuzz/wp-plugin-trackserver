@@ -1445,9 +1445,28 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 			// Hijack the request if a 'Delete password' button was pressed.
 			if ( $_POST['apppass_action'] === 'delete' ) {
+
+				$passwords = get_user_meta( $user_id, 'ts_app_passwords', true );
+				unset( $passwords[ (int) $_POST['apppass_id'] ] );
+				$passwords = array_values( $passwords );  // renumber from 0
+				update_user_meta( $user_id, 'ts_app_passwords', $passwords );
 				$message = 'App password deleted.';
 
+			} elseif ( $_POST['apppass_action'] === 'add' ) {
+				if ( ! ( empty( $_POST['password'] ) || empty( $_POST['permission'] ) ) ) {
+
+					$passwords   = get_user_meta( $user_id, 'ts_app_passwords', true );
+					$passwords[] = array(
+						'password'    => $_POST['password'],
+						'permissions' => $_POST['permission'],
+						'created'     => wp_date( 'Y-m-d H:i:s' ),
+					);
+					update_user_meta( $user_id, 'ts_app_passwords', $passwords );
+					$message = 'App password added.';
+
+				}
 			} elseif ( is_array( $data ) ) {
+
 				foreach ( $data as $meta_key => $meta_value ) {
 					if ( in_array( $meta_key, $valid_fields, true ) ) {
 						update_user_meta( $user_id, $meta_key, $meta_value );

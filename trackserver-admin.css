@@ -1,3 +1,24 @@
+.trackserver-info {
+	min-height: 28px;
+	margin-top: 5px;
+	padding: 0px 12px;
+	background: #fff;
+	border: 1px solid #2271b1;
+	border-left-width: 4px;
+	/*min-width: 70%;*/
+	display: inline-block;
+	font-size: 14px;
+	line-height: 1.8571428;
+	max-width: 80%;
+	width: 80%;
+}
+
+.profile-content-grid {
+	display: grid;
+	grid-template-columns: 1fr 150px;
+	grid-gap: 20px;
+}
+
 .leaflet-control-delete svg {
 	padding-top: 6px;
 }
