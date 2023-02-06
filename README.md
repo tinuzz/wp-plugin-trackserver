@@ -17,8 +17,11 @@ and protocols are supported for getting tracks into trackserver:
 * [TrackMe](http://www.luisespinosa.com/trackme_eng.html)
 * [MapMyTracks protocol](https://github.com/MapMyTracks/api) for example using [OruxMaps](http://www.oruxmaps.com/index_en.html)
 * [OsmAnd](http://osmand.net/) live tracking
+* [µLogger](https://f-droid.org/en/packages/net.fabiszewski.ulogger/)
+* [GPSLogger](https://gpslogger.app/)
 * [PhoneTrack-Android](https://gitlab.com/eneiluj/phonetrack-android) also works with OsmAnd's protocol (Trackserver >= 4.3)
 * [SendLocation](https://itunes.apple.com/bm/app/sendlocation/id377724446?mt=8)
+* [Traccar client](https://www.traccar.org/client/)
 * [OwnTracks](http://owntracks.org/) (experimental support)
 * HTTP POST, for example using [AutoShare](https://play.google.com/store/apps/details?id=com.dngames.autoshare)
 
@@ -46,12 +49,11 @@ SimpleXML extensions installed.
 
 This plugin was written by Martijn Grendelman. It includes some code and libraries written by other people:
 
-* [Polyline encoder](https://github.com/emcconville/polyline-encoder) by Eric McConville
 * [Leaflet.js](http://leafletjs.com/) by Vladimir Agafonkin and others
-* [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) by John Firebaugh and others
+* [Polyline encoder](https://github.com/emcconville/polyline-encoder) by Eric McConville
 * [Leaflet-omnivore](https://github.com/mapbox/leaflet-omnivore) by Mapbox
+* [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) by John Firebaugh and others
 * [Promise-polyfill](https://github.com/taylorhakes/promise-polyfill) by Taylor Hakes
-* [GPXpress](https://wordpress.org/support/plugin/gpxpress) by David Keen was an inspiration sometimes
 
 # Frequently Asked Questions
 

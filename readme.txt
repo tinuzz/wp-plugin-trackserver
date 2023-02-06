@@ -21,8 +21,11 @@ Unlike other plugins that are about maps and tracks, Trackserver's main focus is
 * [TrackMe][trackme]
 * [MapMyTracks protocol][mapmytracks], for example using [OruxMaps][oruxmaps], including upload functionality
 * [OsmAnd's][osmand] live tracking protocol
+* [µLogger][ulogger]
+* [GPSLogger][gpslogger]
 * [PhoneTrack-Android][phonetrack] also works with OsmAnd's protocol (Trackserver >= 4.3)
 * [SendLocation][sendlocation]
+* [Traccar client][traccar]
 * [OwnTracks][owntracks] (experimental support)
 * HTTP POST, for example using [AutoShare][autoshare]
 
@@ -37,9 +40,12 @@ See the FAQ section for more information on the shortcode's supported attributes
 [trackme]: http://www.luisespinosa.com/trackme_eng.html
 [mapmytracks]: https://github.com/MapMyTracks/api
 [osmand]: http://osmand.net/
+[ulogger]: https://f-droid.org/en/packages/net.fabiszewski.ulogger/
+[gpslogger]: https://gpslogger.app/
 [phonetrack]: https://gitlab.com/eneiluj/phonetrack-android
 [oruxmaps]: http://www.oruxmaps.com/index_en.html
 [sendlocation]: https://itunes.apple.com/bm/app/sendlocation/id377724446?mt=8
+[traccar]: https://www.traccar.org/client/
 [owntracks]: http://owntracks.org/
 [autoshare]: https://play.google.com/store/apps/details?id=com.dngames.autoshare
 [leafletjs]: http://leafletjs.com/
@@ -55,23 +61,11 @@ This plugin was written by Martijn Grendelman. Development is tracked on [Github
 
 It includes some code and libraries written by other people:
 
-* [Polyline encoder](https://github.com/emcconville/polyline-encoder) by Eric McConville
 * [Leaflet.js][leafletjs] by Vladimir Agafonkin and others
-* [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) by John Firebaugh and others
+* [Polyline encoder](https://github.com/emcconville/polyline-encoder) by Eric McConville
 * [Leaflet-omnivore](https://github.com/mapbox/leaflet-omnivore) by Mapbox
+* [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) by John Firebaugh and others
 * [Promise-polyfill](https://github.com/taylorhakes/promise-polyfill) by Taylor Hakes
-* [GPXpress](https://wordpress.org/support/plugin/gpxpress) by David Keen was an inspiration sometimes
-
-= TODO =
-
-* More track management features, like folders/collections
-* Better permissions/authorization system
-* Track statistics, like distance, average speed, etc.
-* Add map profiles, maybe include [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers) plugin
-* Add track decorations, for example with the [PolylineDecorator](https://github.com/bbecquet/Leaflet.PolylineDecorator) plugin
-* ...
-
-More TODO-items and feature ideas in the TODO file contained in the plugin archive.
 
 == Installation ==
 
