@@ -266,6 +266,12 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
+= v5.0.1 =
+Release date: 06 February 2023
+
+Fixed:
+* JS localization warning in WP backend.
+
 = v5.0 =
 Release date: 06 February 2023
 
