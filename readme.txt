@@ -288,6 +288,7 @@ Changed:
 * Big code restructuring changes. The main Trackserver class has been split up in different utility classes. Each protocol that Trackserver supports now lives in its own PHP class, as do the different WP admin pages and the shortcode handling code. Abstractions for database fuctionss, and data like tracks and locations have been created.
 * Rewrite parts of the MapMyTracks protocol handling, to make it more robust.
 * Internalized the polyline encoder for performance improvement.
+* Update Leaflet, first to v1.7.1. then via v1.8.0 to v1.9.3.
 
 Fixed:
 * Embedded maps. The previously shipped template was broken and embedded maps did not actually work.
