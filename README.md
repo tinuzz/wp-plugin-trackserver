@@ -39,6 +39,7 @@ For more information, please see:
 * [Trackserver v2.0 released](https://www.grendelman.net/wp/trackserver-v2-0-released/) (23 December 2015)
 * [Trackserver v3.0 released](https://www.grendelman.net/wp/trackserver-v3-0-released/) (27 February 2017)
 * [Trackserver v4.0 released](https://www.grendelman.net/wp/trackserver-v4-0-released/) (22 February 2018)
+* [Trackserver v5.0 released](https://www.grendelman.net/wp/trackserver-v5-0-released/) (06 February 2023)
 
 # Requirements
 

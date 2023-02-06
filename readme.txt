@@ -267,7 +267,7 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 == Changelog ==
 
 = v5.0 =
-Release date: <unreleased>
+Release date: 06 February 2023
 
 This release contains many changes. Please read these notes carefully.
 
