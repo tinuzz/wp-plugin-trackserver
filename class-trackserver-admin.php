@@ -338,6 +338,7 @@ EOF;
 		if ( $plugin_file_name === 'trackserver/trackserver.php' ) {
 			$links_array[] = '<a href="https://www.grendelman.net/wp/trackserver-wordpress-plugin/" target="_blank">Homepage</a>';
 			$links_array[] = '<a href="https://github.com/tinuzz/wp-plugin-trackserver" target="_blank">Github</a>';
+			$links_array[] = '<a href="https://www.grendelman.net/wp/trackserver-v5-0-released/" target="_blank">v5.0 Release notes</a>';
 		}
 		return $links_array;
 	}

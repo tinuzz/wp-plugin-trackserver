@@ -12,6 +12,8 @@ GPS Track Server for TrackMe, OruxMaps and others
 
 == Description ==
 
+NOTE: Trackserver v5.0 contains backwards-incompatible changes and changes to client configurations are needed. Please read the [release notes][releasenotes] for more information.
+
 Getting your GPS tracks into Wordpress and publishing them has never been easier!
 
 Trackserver is a plugin for storing and publishing GPS routes. It is a server companion to several mobile apps for location tracking, and it can display maps with your tracks on them by using a shortcode. It can also be used for live tracking, where your visitors can follow you or your users on a map.
@@ -50,6 +52,7 @@ See the FAQ section for more information on the shortcode's supported attributes
 [autoshare]: https://play.google.com/store/apps/details?id=com.dngames.autoshare
 [leafletjs]: http://leafletjs.com/
 [github]: https://github.com/tinuzz/wp-plugin-trackserver
+[releasenotes]: https://www.grendelman.net/wp/trackserver-v5-0-released/
 
 = Requirements =
 
