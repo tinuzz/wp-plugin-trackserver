@@ -266,6 +266,12 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 == Changelog ==
 
+= v5.0.2 =
+Release date: 05 March 2023
+
+Fixed:
+* Regression with viewing tracks in WP backend via bulk action.
+
 = v5.0.1 =
 Release date: 06 February 2023
 
