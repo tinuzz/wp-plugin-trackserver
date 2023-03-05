@@ -216,7 +216,7 @@ var TrackserverAdmin = (function () {
             }
             if (action == 'view') {
                 var tracks = [];
-                var track_url = track_base_url + "admin=1";
+                var track_url = track_base_url.track_base_url + "admin=1";
                 var nonce =  false;
                 jQuery.each(this.checked, function() {
                     var url = track_url + '&id=' + this.value;
