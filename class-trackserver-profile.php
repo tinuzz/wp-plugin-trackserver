@@ -69,6 +69,7 @@ class Trackserver_Profile {
 		// translators: placeholder is for a user's display name
 		$title = __( 'Trackserver profile for %s', 'trackserver' );
 		$title = sprintf( $title, $user->display_name );
+		$url   = menu_page_url( 'trackserver-yourprofile', false );
 
 		?>
 		<div class="wrap">
