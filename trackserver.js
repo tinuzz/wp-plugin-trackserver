@@ -139,15 +139,18 @@ var Trackserver = (function () {
             var customLayer = L.geoJson(null, layer_options);
             var track_function, track_ref;
             var track_type = mymapdata.tracks[i].track_type;
+            var bringTo = 'back';
 
             if ( track_type == 'polyline' ) {
                 track_function = omnivore.polyline.parse;
                 track_ref = alltracks[track_id].track;
+                bringTo = 'front';
             }
 
             if ( track_type == 'polylinexhr' ) {
                 track_function = omnivore.polyline;
                 track_ref = mymapdata.tracks[i].track_url;
+                bringTo = 'front';
             }
 
             if ( track_type == 'geojson' ) {
@@ -282,7 +285,11 @@ var Trackserver = (function () {
                         }
                     }
                     try {
-                        this.bringToBack();
+                        if (bringTo == 'back') {
+                            this.bringToBack();
+                        } else {
+                            this.bringToFront();
+                        }
                     }
                     catch(e) {
                         console.log(e);
