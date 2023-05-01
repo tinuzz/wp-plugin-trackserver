@@ -158,6 +158,11 @@ class Trackserver_Shortcode {
 					$follow = false;
 				}
 
+				$is_live = false;
+				if ( in_array( $validated_id, $live_tracks, true ) ) {
+					$is_live = true;
+				}
+
 				$trk = array(
 					'track_id'   => $validated_id,
 					'track_type' => 'polyline',     // the handle_gettrack_query method only supports polyline
@@ -165,6 +170,7 @@ class Trackserver_Shortcode {
 					'points'     => $this->get_points(),
 					'markers'    => $this->get_markers(),
 					'markersize' => $this->get_markersize(),
+					'is_live'    => $is_live,
 					'follow'     => $follow,
 				);
 
