@@ -139,18 +139,15 @@ var Trackserver = (function () {
             var customLayer = L.geoJson(null, layer_options);
             var track_function, track_ref;
             var track_type = mymapdata.tracks[i].track_type;
-            var bringTo = 'back';
 
             if ( track_type == 'polyline' ) {
                 track_function = omnivore.polyline.parse;
                 track_ref = alltracks[track_id].track;
-                bringTo = 'front';
             }
 
             if ( track_type == 'polylinexhr' ) {
                 track_function = omnivore.polyline;
                 track_ref = mymapdata.tracks[i].track_url;
-                bringTo = 'front';
             }
 
             if ( track_type == 'geojson' ) {
@@ -180,6 +177,7 @@ var Trackserver = (function () {
                     var old_markers = this.options.old_markers;
                     var do_markers  = mymapdata.tracks[track_index].markers;
                     var do_points   = mymapdata.tracks[track_index].points;
+                    var is_live     = mymapdata.tracks[track_index].is_live;
                     var do_follow   = mymapdata.tracks[track_index].follow;
                     var markersize  = mymapdata.tracks[track_index].markersize || 5;
 
@@ -284,11 +282,13 @@ var Trackserver = (function () {
                             }
                         }
                     }
+
+                    // Render live tracks on top
                     try {
-                        if (bringTo == 'back') {
-                            this.bringToBack();
-                        } else {
+                        if (is_live) {
                             this.bringToFront();
+                        } else {
+                            this.bringToBack();
                         }
                     }
                     catch(e) {
