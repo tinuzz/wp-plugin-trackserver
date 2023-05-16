@@ -89,6 +89,7 @@ For the [tsmap] shortcode:
 * user: one or more user IDs, separated by commas, who's latest track to follow 'live'. A literal '@' means the author of the post (you). When viewing the map, the liveupdate feature will follow the track of the first user specified. When the end-marker is enabled for a live track (and why shouldn't it?), clicking it will change the focus of the liveupdate to that track. The map view will follow the latest location and the infobar (if present) will display its information.
 * live: true (or 't', 'yes' or 'y'), or false (default), to force live tracking for this map. This can be used for example with an externally updated GPX or KML file.
 * maxage: the maximum age of a live track for it to be included on the map. If this parameter is given, all user tracks that have not been updated in the last X amount of time, will not be displayed. The value is a time expression in the form of a number and a unit, for example: '120s', '30m', '2h', '3d'.
+* delay: the delay of a live track for its locations to appear on the map. If this parameter is given, all user tracks only show their data up to a point in time X amount ago. The value is a time expression in the form of a number and a unit, for example: '120s', '30m', '2h', '3d'.
 * width: map width, default: 100%.
 * height: map height, default: 480px.
 * align: 'left', 'center' or 'right', default: not set.

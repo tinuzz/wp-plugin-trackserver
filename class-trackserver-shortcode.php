@@ -86,6 +86,7 @@ class Trackserver_Shortcode {
 			'points'     => false,
 			'zoom'       => false,
 			'maxage'     => false,
+			'delay'      => false,
 		);
 
 		$atts      = shortcode_atts( $defaults, $atts, $this->shortcode1 );
@@ -117,7 +118,8 @@ class Trackserver_Shortcode {
 		$points     = $this->get_points( $atts, false );     // result is not used
 		$markers    = $this->get_markers( $atts, false );    // result is not used
 		$markersize = $this->get_markersize( $atts, false ); // result is not used
-		$maxage     = $this->get_maxage( $atts['maxage'] );
+		$maxage     = $this->get_seconds( $atts['maxage'] );
+		$delay      = $this->get_seconds( $atts['delay'] );
 
 		list( $validated_track_ids, $validated_user_ids ) = $this->validate_ids( $atts );
 
@@ -144,7 +146,7 @@ class Trackserver_Shortcode {
 			$query         = base64_encode( $query );
 			$query_nonce   = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
 			$alltracks_url = $gettrack_url_prefix . '?query=' . rawurlencode( $query ) . "&p=$post_id&format=" .
-				$this->trackserver->track_format . "&maxage=$maxage&_wpnonce=$query_nonce";
+				$this->trackserver->track_format . "&maxage=$maxage&delay=$delay&_wpnonce=$query_nonce";
 			$following     = false;
 
 			//foreach ( $validated_track_ids as $validated_id ) {
@@ -189,7 +191,7 @@ class Trackserver_Shortcode {
 							$trk['track_type'] = 'polylinexhr';
 					}
 					$trk['track_url'] = $gettrack_url_prefix . '?id=' . $validated_id . "&p=$post_id&format=" .
-						$this->trackserver->track_format . "&maxage=$maxage&_wpnonce=$nonce";
+						$this->trackserver->track_format . "&maxage=$maxage&delay=$delay&_wpnonce=$nonce";
 				}
 
 				$tracks[] = $trk;
@@ -327,6 +329,7 @@ class Trackserver_Shortcode {
 			'user'      => false,
 			'format'    => 'gpx',
 			'maxage'    => false,
+			'delay'     => false,
 			'href_only' => false,
 		);
 
@@ -343,7 +346,8 @@ class Trackserver_Shortcode {
 			$atts['track'] = $atts['id'];
 		}
 
-		$maxage = $this->get_maxage( $atts['maxage'] );
+		$maxage = $this->get_seconds( $atts['maxage'] );
+		$delay = $this->get_seconds( $atts['delay'] );
 
 		list( $validated_track_ids, $validated_user_ids ) = $this->validate_ids( $atts );
 
@@ -364,7 +368,7 @@ class Trackserver_Shortcode {
 			);
 			$query         = base64_encode( $query );
 			$query_nonce   = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
-			$alltracks_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&maxage=$maxage&_wpnonce=$query_nonce" );
+			$alltracks_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&maxage=$maxage&delay=$delay&_wpnonce=$query_nonce" );
 
 			$text = $atts['text'] . $content;
 			if ( $text === '' ) {
@@ -521,13 +525,13 @@ class Trackserver_Shortcode {
 	}
 
 	/**
-	 * Return maxage in seconds for a time expression
+	 * Return seconds for a time expression
 	 *
 	 * Takes an expression like 120s, 5m, 3h, 7d and turns it into seconds. No unit equals seconds.
 	 *
 	 * @since 3.1
 	 */
-	private function get_maxage( $str ) {
+	private function get_seconds( $str ) {
 		if ( $str === false ) {
 			return 0;
 		}
@@ -642,6 +646,7 @@ class Trackserver_Shortcode {
 
 		$query_string = stripslashes( $_REQUEST['query'] );
 		$maxage       = ( isset( $_REQUEST['maxage'] ) ? (int) $_REQUEST['maxage'] : 0 );
+		$delay       = ( isset( $_REQUEST['delay'] ) ? (int) $_REQUEST['delay'] : 0 );
 		$post_id      = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : 0 );
 		$format       = $_REQUEST['format'];
 		$is_admin     = array_key_exists( 'admin', $_REQUEST ) ? true : false;
@@ -676,7 +681,15 @@ class Trackserver_Shortcode {
 		// @codingStandardsIgnoreStart
 		$sql_in = "('" . implode( "','", $track_ids ) . "')";
 		$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->trackserver->tbl_locations .
-			' l INNER JOIN ' . $this->trackserver->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' AND l.hidden = 0 ORDER BY trip_id, occurred';
+			' l INNER JOIN ' . $this->trackserver->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' AND l.hidden = 0';
+
+		if ( $delay > 0 ) {
+			$ts   = gmdate( 'Y-m-d H:i:s', ( time() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - $delay ) );
+			$sql .= " AND l.occurred < '$ts' ";
+		}
+
+		$sql .= " ORDER BY trip_id, occurred";
+
 		$res = $wpdb->get_results( $sql, ARRAY_A );
 		// @codingStandardsIgnoreEnd
 
