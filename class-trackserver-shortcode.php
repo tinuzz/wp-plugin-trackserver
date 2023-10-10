@@ -13,6 +13,7 @@ class Trackserver_Shortcode {
 	private $shortcode1 = 'tsmap';
 	private $shortcode2 = 'tsscripts';
 	private $shortcode3 = 'tslink';
+	private $shortcode4 = 'tsprofile';
 
 	/**
 	 * Constructor.
@@ -46,6 +47,7 @@ class Trackserver_Shortcode {
 		add_shortcode( $this->shortcode1, array( $this, 'handle_shortcode1' ) );
 		add_shortcode( $this->shortcode2, array( $this, 'handle_shortcode2' ) );
 		add_shortcode( $this->shortcode3, array( $this, 'handle_shortcode3' ) );
+		add_shortcode( $this->shortcode4, array( $this, 'handle_shortcode4' ) );
 	}
 
 	/**
@@ -377,6 +379,32 @@ class Trackserver_Shortcode {
 				$out = $alltracks_url;
 			}
 		}
+
+		return $out;
+	}
+
+	/**
+	 * Handle the [tsprofile] shortcode
+	 *
+	 * Handler for the 'tsprofile' shortcode. It returns profile information to allow a user to
+	 * see the trackserver url they should use in their tracking app from the front end
+	 *
+	 */
+
+	public function handle_shortcode4( $atts, $content = '' ) {
+
+		$current_user  = wp_get_current_user();
+		$app_passwords = get_user_meta( $current_user->ID, 'ts_app_passwords', true );
+		$user_name      = $current_user->user_login;
+
+        if( $app_passwords !== '' ) {
+			$user_app_password = $app_passwords[0]['password'];
+        }
+
+        $personal_url = get_home_url( null, $this->trackserver->url_prefix . '/' .
+            $user_name . '/' . $user_app_password .
+            '/?lat={0}&lon={1},&timestamp={2},&altitude={4},&speed={5},&bearing={6}' );
+		$out = htmlspecialchars ( $personal_url );
 
 		return $out;
 	}
@@ -1044,9 +1072,17 @@ class Trackserver_Shortcode {
 	 * @since 3.0
 	 */
 	private function get_user_id( $user, $property = 'ID' ) {
+
+	    // @ For the page author
 		if ( $user === '@' ) {
 			$user = get_the_author_meta( 'ID' );
 		}
+
+        // @@ For the current logged in user
+		if( $user === '@@' ) {
+            $user = get_current_user_id();
+        }
+
 		if ( is_numeric( $user ) ) {
 			$field = 'id';
 			$user  = (int) $user;
