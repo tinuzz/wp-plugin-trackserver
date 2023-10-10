@@ -392,22 +392,31 @@ class Trackserver_Shortcode {
 	 */
 
 	public function handle_shortcode4( $atts, $content = '' ) {
+        $current_user  = wp_get_current_user();
+        $user_name      = $current_user->user_login;
+        $user_app_password = '{password}';
 
-		$current_user  = wp_get_current_user();
-		$app_passwords = get_user_meta( $current_user->ID, 'ts_app_passwords', true );
-		$user_name      = $current_user->user_login;
-
-        if( $app_passwords !== '' ) {
-			$user_app_password = $app_passwords[0]['password'];
+        $app_passwords = get_user_meta( $current_user->ID, 'ts_app_passwords', true );
+        if ( empty( $app_passwords ) ) {
+            /* No user app password - so add one */
+            $passwords[] = array(
+                'password'    => substr( md5( uniqid() ), -8 ),
+                'permissions' => array( 'write' ),
+            );
+            if ( update_user_meta( $current_user->ID, 'ts_app_passwords', $passwords ) !== false ) {
+                $user_app_password = $passwords[0]['password'];
+            }
+        } else {
+            $user_app_password = $app_passwords[0]['password'];
         }
 
         $personal_url = get_home_url( null, $this->trackserver->url_prefix . '/' .
             $user_name . '/' . $user_app_password .
             '/?lat={0}&lon={1},&timestamp={2},&altitude={4},&speed={5},&bearing={6}' );
-		$out = htmlspecialchars ( $personal_url );
+        $out = htmlspecialchars ( $personal_url );
 
-		return $out;
-	}
+        return $out;
+  	}
 
 	/**
 	 * Return a proxy URL for a given URL.
