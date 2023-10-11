@@ -162,6 +162,7 @@ class Trackserver_Admin {
 			'administrator' => array( 'use_trackserver', 'trackserver_publish', 'trackserver_admin' ),
 			'editor'        => array( 'use_trackserver', 'trackserver_publish' ),
 			'author'        => array( 'use_trackserver' ),
+			'subscriber'    => array( 'use_trackserver' ),
 		);
 
 		foreach ( $roles as $rolename => $capnames ) {
