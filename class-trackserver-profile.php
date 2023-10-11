@@ -11,6 +11,13 @@ class Trackserver_Profile {
 
 	private $trackserver; // Reference to the main object
 	private $p_index = 3; // A counter used for numbering HTML elements
+	private $current_user;
+	private $app_passwords;
+	private $username;
+	private $slug;
+	private $url;
+	private $url2;
+	private $password;
 
 	public function __construct( $trackserver ) {
 		$this->trackserver   = $trackserver;
@@ -69,7 +76,6 @@ class Trackserver_Profile {
 		// translators: placeholder is for a user's display name
 		$title = __( 'Trackserver profile for %s', 'trackserver' );
 		$title = sprintf( $title, $user->display_name );
-		$url   = menu_page_url( 'trackserver-yourprofile', false );
 
 		?>
 		<div class="wrap">
@@ -524,7 +530,7 @@ EOF;
 		}
 		$format = <<<EOF
 			<strong>%1\$s:</strong><br>
-			<div class="trackserver-info" id="trackserver-url{$this->p_index}">${url}</div>
+			<div class="trackserver-info" id="trackserver-url{$this->p_index}">{$url}</div>
 			<input id="trackserver-copy-url-button{$this->p_index}" type="button" class="button trackserver-copy-url" value="%2\$s" style="margin-top: 5px">
 			<br><br>
 EOF;
