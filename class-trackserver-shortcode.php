@@ -418,6 +418,7 @@ class Trackserver_Shortcode {
         }
 
         $personal_url = get_home_url( null, $this->trackserver->url_prefix . '/' .
+         $this->trackserver->options['trackserver_slug'] . '/' .
             $user_name . '/' . $user_app_password .
             '/?lat={0}&lon={1},&timestamp={2},&altitude={4},&speed={5},&bearing={6}' );
         $out = htmlspecialchars ( $personal_url );
