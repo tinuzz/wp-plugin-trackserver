@@ -14,6 +14,13 @@ class Trackserver_Shortcode {
 	private $shortcode2 = 'tsscripts';
 	private $shortcode3 = 'tslink';
 	private $shortcode4 = 'tsprofile';
+    private $colors;
+	private $weights;
+	private $opacities;
+	private $dashes;
+	private $points;
+	private $markers;
+	private $markersize;
 
 	/**
 	 * Constructor.
