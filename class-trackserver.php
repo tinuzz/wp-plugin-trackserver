@@ -60,6 +60,15 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		var $track_format        = 'polyline';  // 'polyline' or 'geojson'
 		var $trackserver_scripts = array();
 		var $trackserver_styles  = array();
+		var $tbl_tracks;
+		var $tbl_locations;
+		var $options;
+		var $mapdata;
+		var $tracks_list_table;
+		var $bulk_action_result_msg;
+		var $url_prefix;
+		var $have_scripts;
+		var $need_scripts;
 
 		public $permissions;
 
@@ -642,7 +651,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		private function get_request_uri() {
 			global $wp_rewrite;
-			$home_path       = trim( parse_url( home_url(), PHP_URL_PATH ), '/' ) . $this->url_prefix;
+			$home_path       = trim( (string) parse_url( home_url(), PHP_URL_PATH ), '/' ) . $this->url_prefix;
 			$home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
 
 			$pathinfo         = isset( $_SERVER['PATH_INFO'] ) ? $_SERVER['PATH_INFO'] : '';
@@ -1745,7 +1754,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			global $wp;
 			$slug = $this->options['embedded_slug'];
 			if (
-				( substr( $wp->request, 0, strlen( $slug ) + 1 ) === "${slug}/" ) || // match trailing slash to not match it as a prefix
+				( substr( $wp->request, 0, strlen( $slug ) + 1 ) === "{$slug}/" ) || // match trailing slash to not match it as a prefix
 				( isset( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] === $slug )
 			) {
 				$template = dirname( __FILE__ ) . '/embedded-404.php';
