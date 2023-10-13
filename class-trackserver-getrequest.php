@@ -12,6 +12,8 @@ class Trackserver_Getrequest {
 	private $trackserver;  // Reference to the calling object
 	private $user_id;      // WP user ID doing the request
 	private $permissions;  // The used password's associated permissions
+	private $username;
+	private $password;
 
 	/**
 	 * Constructor.
@@ -72,7 +74,7 @@ class Trackserver_Getrequest {
 
 		// Get track name from strftime format string. Use the 'osmand' format. This format should be renamed.
 		// The 'sendlocation' format is now deprecated.
-		$trackname = strftime( str_replace( '{source}', $source, $this->trackserver->options['osmand_trackname_format'] ), $ts );
+		$trackname = date( str_replace( '{source}', $source, $this->trackserver->options['osmand_trackname_format'] ), $ts );
 
 		if ( ! empty( $trackname ) ) {
 			$track = new Trackserver_Track( $this->trackserver, $trackname, $user_id, 'name' );
