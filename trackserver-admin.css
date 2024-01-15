@@ -22,3 +22,7 @@
 .leaflet-control-delete svg {
 	padding-top: 6px;
 }
+
+.deletepoint {
+	margin-bottom: 3px;
+}

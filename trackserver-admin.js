@@ -624,7 +624,8 @@ var TrackserverAdmin = (function () {
                     });
                 });
 
-                var popup = e.vertex.bindPopup('<a href="#" data-id="' + vertex_index + '" class="deletepoint" >' + trackserver_admin_settings['msg']['deletepoint'] + ' ' + vertex_index + '</a><br><a href="#" class="splittrack">' + trackserver_admin_settings['msg']['splittrack'] + '</a>').openPopup();
+                var popup = e.vertex.bindPopup('<button data-id="' + vertex_index + '" class="deletepoint">' + trackserver_admin_settings['msg']['deletepoint'] + ' ' + vertex_index + '</button><br>' +
+                  '<button class="splittrack">' + trackserver_admin_settings['msg']['splittrack'] + '</button>').openPopup();
 
             });
 
