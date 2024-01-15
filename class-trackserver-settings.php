@@ -252,8 +252,8 @@ class Trackserver_Settings {
 
 	// Force some options to be booleans
 	public function sanitize_option_values( $options ) {
-		$options['enable_proxy']  = (bool) $options['enable_proxy'];
-		$options['fetchmode_all'] = (bool) $options['fetchmode_all'];
+		$options['enable_proxy']   = ( isset( $options['enable_proxy'] ) ?  (bool) $options['enable_proxy'] : false );
+		$options['fetchmode_all']  = ( isset( $options['fetchmode_all'] ) ?  (bool) $options['fetchmode_all'] : false );
 		return $options;
 	}
 
