@@ -79,6 +79,10 @@ For the [tsmap] shortcode:
   If this parameter is given, all user tracks that have not been updated in the
   last X amount of time, will not be displayed. The value is a time expression in
   the form of a number and a unit, for example: '120s', '30m', '2h', '3d'.
+* **delay**: the delay of a live track for its locations to appear on the map.
+  If this parameter is given, all user tracks only show their data up to a point 
+  in time X amount ago. The value is a time expression in
+  the form of a number and a unit, for example: '120s', '30m', '2h', '3d'.
 * **width**: map width, default: 100%.
 * **height**: map height, default: 480px.
 * **align**: 'left', 'center' or 'right', default: not set.

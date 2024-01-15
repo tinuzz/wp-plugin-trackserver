@@ -53,7 +53,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'TRACKSERVER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'TRACKSERVER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'TRACKSERVER_JSLIB', TRACKSERVER_PLUGIN_URL . 'lib/' );
-define( 'TRACKSERVER_VERSION', '4.3-20190906' );
+define( 'TRACKSERVER_VERSION', '5.0.2-20230305' );
 
 require_once( TRACKSERVER_PLUGIN_DIR . 'class-trackserver.php' );
 
