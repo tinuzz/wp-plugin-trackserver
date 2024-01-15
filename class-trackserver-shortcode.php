@@ -53,9 +53,14 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 1.0
 	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
+	 * @since 5.1 Prevent expanding the shortcode outside The Loop.
 	 */
 	public function handle_shortcode1( $atts ) {
 		global $wpdb, $post;
+
+		if ( ! in_the_loop() ) {
+			return '';
+		}
 
 		$save_atts = $atts;
 
