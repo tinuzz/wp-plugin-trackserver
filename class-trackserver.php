@@ -220,7 +220,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			add_filter( 'upload_mimes', array( &$this, 'upload_mimes' ) );
 			add_filter( 'media_send_to_editor', array( &$this, 'media_send_to_editor' ), 10, 3 );
 
-			// Custom post type for embedded maps
+			// Custom post type for embedded maps and track taxonomy
 			add_action( 'init', array( &$this, 'wp_init' ) );
 			add_filter( 'single_template', array( &$this, 'get_tsmap_single_template' ) );
 			add_filter( '404_template', array( &$this, 'get_tsmap_404_template' ) );
@@ -235,6 +235,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		public function wp_init() {
 			$this->load_textdomain();
 			$this->register_tsmap_post_type();
+			$this->register_track_taxonomy();
 		}
 
 		/**
@@ -1731,6 +1732,42 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					'rewrite'             => array( 'slug' => $slug ),
 				)
 			);
+		}
+
+		/**
+		 * Function to register the custom track taxonomy
+		 *
+		 * @since 5.1
+		 */
+		function register_track_taxonomy() {
+
+			$labels = array(
+				'name'              => __( 'Track Tags', 'trackserver' ),
+				'singular_name'     => __( 'Track Tag', 'trackserver' ),
+				'search_items'      => __( 'Search Tags', 'trackserver' ),
+				'all_items'         => __( 'All Tags', 'trackserver' ),
+				'parent_item'       => __( 'Parent Tag', 'trackserver' ),
+				'parent_item_colon' => __( 'Parent Tag:', 'trackserver' ),
+				'edit_item'         => __( 'Edit Tag', 'trackserver' ),
+				'update_item'       => __( 'Update Tag', 'trackserver' ),
+				'add_new_item'      => __( 'Add New Tag', 'trackserver' ),
+				'new_item_name'     => __( 'New Track Tag', 'trackserver' ),
+				'menu_name'         => __( 'Tag', 'trackserver' ),
+				'not_found'         => __( 'No tags found', 'trackserver' ),
+				'back_to_items'     => __( '←︎︎ Back to tags', 'trackserver' ),
+			);
+
+			$args   = array(
+					'hierarchical'      => true,
+					'labels'            => $labels,
+					'public'            => false,
+					'show_ui'           => true,
+					'query_var'         => false,
+					'rewrite'           => false,
+				);
+
+			register_taxonomy( 'ts_tag', null, $args );
+
 		}
 
 		function get_tsmap_single_template( $template ) {
