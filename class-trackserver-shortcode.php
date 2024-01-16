@@ -688,7 +688,7 @@ class Trackserver_Shortcode {
 		if ( $format === 'gpx' ) {
 			$this->send_as_gpx( $res );
 		} else {
-			$this->send_alltracks( $res ); // default to 'alltracks' internal format
+			$this->send_alltracks( $track_ids, $res ); // default to 'alltracks' internal format
 		}
 	}
 
@@ -866,15 +866,20 @@ class Trackserver_Shortcode {
 	 * Encode the results of a gettrack query as polyline and send it, with
 	 * metadata, as JSON.  Takes a $wpdb result set as input.
 	 */
-	private function send_alltracks( $res ) {
+	private function send_alltracks( $track_ids, $res ) {
 
+		// Initialize the results with the known set of IDs. What to do with 'metadata'?
 		$tracks = array();
+		foreach ( $track_ids as $id ) {
+			$tracks[ $id ] = array(
+				'track' => '',
+			);
+		}
+
+		$last_id = -1;
 		foreach ( $res as $row ) {
 			$id = $row['trip_id'];
-			if ( ! array_key_exists( $id, $tracks ) ) {
-				$tracks[ $id ] = array(
-					'track' => '',
-				);
+			if ( $id !== $last_id ) {
 				// Reset the temporary state. This depends on the points of one track being grouped together!
 				$this->previous = array( 0, 0 );
 				$index          = 0;
@@ -884,6 +889,7 @@ class Trackserver_Shortcode {
 			$tracks[ $id ]['track'] .= $this->polyline_get_chunk( $row['longitude'], $index );
 			$index++;
 			$tracks[ $id ]['metadata'] = $this->get_metadata( $row );   // Overwrite the value on every row, so the last row remains
+			$last_id = $id;
 		}
 
 		header( 'Content-Type: application/json' );

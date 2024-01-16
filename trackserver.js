@@ -396,11 +396,7 @@ var Trackserver = (function () {
                       extra = track_ref;
                     }
                     var str = err.error.status + ' ' + err.error.statusText + ' - ' + extra;
-                    var popup = L.popup()
-                        .setLatLng(mymapdata.center)
-                        .setContent("Track could not be loaded:<br />" + str).openOn(this._map);
-                    _this.set_mydata(div_id, 'all', 'errorpopup', popup);
-                    //this._map.fitBounds(featuregroup.getBounds());
+                    _this.show_popup(mymapdata, "Track could not be loaded:<br />" + str);
                     this._map.setView(mymapdata.center, this._map.getZoom());
                 })
                 /*
@@ -418,6 +414,18 @@ var Trackserver = (function () {
                 runLayer.fire('ready');
             }
 
+        },
+
+        show_popup: function(mymapdata, text) {
+
+            var popup = this.get_mydata(mymapdata.div_id, 'all', 'errorpopup');
+            if ( popup === false ) {
+                popup = L.popup();
+                this.set_mydata(mymapdata.div_id, 'all', 'errorpopup', popup);
+            }
+            popup.setLatLng(mymapdata.map.getCenter())
+                    .setContent(text)
+                    .openOn(mymapdata.map);
         },
 
         draw_tracks: function (mymapdata) {
@@ -449,30 +457,25 @@ var Trackserver = (function () {
                         for (var i = 0; i < mymapdata.tracks.length; i++) {
                             if ( mymapdata.tracks[i].track_type == 'polyline' ) {
 
-                                // Workaround for https://github.com/tinuzz/wp-plugin-trackserver/issues/7
                                 if ( mymapdata.tracks[i].track_id in alltracks ) {
-                                    _this.do_draw(i, mymapdata);
+                                    if ( alltracks[ mymapdata.tracks[i].track_id ].track.length > 0 ) {
+                                        _this.do_draw(i, mymapdata);
+                                    }
+                                    else {
+                                        _this.show_popup(mymapdata, "Track has no locations. Please try again later.");
+                                    }
                                 }
                                 else {
-                                    // Draw an error-popup once and store it for later checking
-                                    if ( _this.get_mydata(mymapdata.div_id, 'all', 'errorpopup') === false ) {
-                                        var popup = L.popup()
-                                            .setLatLng(mymapdata.map.getCenter())
-                                            .setContent("Track missing from server response.<br />Please reload the page.")
-                                            .openOn(mymapdata.map);
-                                        _this.set_mydata(mymapdata.div_id, 'all', 'errorpopup', popup);
-                                    }
+                                    _this.show_popup(mymapdata, "Track missing from server response.<br />Please reload the page.");
                                 }
                             }
                         }
                     }
                     return alltracks;
+
                 }, function(err) {
                     var str = err.status + ' ' + err.statusText + ' - ' + err.responseText;
-                    var popup = L.popup()
-                        .setLatLng(mymapdata.map.getCenter())
-                        .setContent("Tracks could not be loaded:<br />" + str)
-                        .openOn(mymapdata.map);
+                    _this.show_popup(mymapdata, "Tracks could not be loaded:<br />" + str);
                 });
             }
 
