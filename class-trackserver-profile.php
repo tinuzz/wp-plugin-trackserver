@@ -11,6 +11,11 @@ class Trackserver_Profile {
 
 	private $trackserver; // Reference to the main object
 	private $p_index = 3; // A counter used for numbering HTML elements
+	private $current_user;
+	private $app_passwords;
+	private	$username;
+	private $url;
+	private $url2;
 
 	public function __construct( $trackserver ) {
 		$this->trackserver   = $trackserver;
@@ -21,12 +26,6 @@ class Trackserver_Profile {
 		$slug                = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackserver_slug'] );
 		$this->url           = $base_url . '/' . $slug;
 		$this->url2          = $this->url . '/' . $this->username . '/' . '**********';
-
-		if ( empty( $this->app_passwords ) ) {
-			$this->password = esc_html__( '<password>', 'trackserver' );
-		} else {
-			$this->password = $this->trackserver->printf_htmlspecialchars( $this->app_passwords[0]['password'] );
-		}
 	}
 
 	/**
@@ -524,7 +523,7 @@ EOF;
 		}
 		$format = <<<EOF
 			<strong>%1\$s:</strong><br>
-			<div class="trackserver-info" id="trackserver-url{$this->p_index}">${url}</div>
+			<div class="trackserver-info" id="trackserver-url{$this->p_index}">{$url}</div>
 			<input id="trackserver-copy-url-button{$this->p_index}" type="button" class="button trackserver-copy-url" value="%2\$s" style="margin-top: 5px">
 			<br><br>
 EOF;

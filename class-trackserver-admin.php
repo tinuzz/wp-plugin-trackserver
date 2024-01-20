@@ -344,10 +344,8 @@ EOF;
 	}
 
 	public function admin_menu() {
-		$page                   = add_options_page( 'Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-admin-menu', array( &$this, 'options_page_html' ) );
-		$page                   = str_replace( 'admin_page_', '', $page );
-		$this->options_page     = str_replace( 'settings_page_', '', $page );
-		$this->options_page_url = menu_page_url( $this->options_page, false );
+		// A link in the Settings menu
+		$page = add_options_page( 'Trackserver Options', 'Trackserver', 'manage_options', 'trackserver-admin-menu', array( &$this, 'options_page_html' ) );
 
 		// A dedicated menu in the main tree
 		add_menu_page(
