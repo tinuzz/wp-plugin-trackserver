@@ -50,18 +50,25 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			'fetchmode_all'                 => true,
 		);
 
-		var $user_meta_defaults = array(
+		private $user_meta_defaults = array(
 			'ts_infobar_template' => '{displayname} - {lat},{lon} - {timestamp}',
 		);
 
-		var $shortcode           = 'tsmap';
-		var $shortcode2          = 'tsscripts';
-		var $shortcode3          = 'tslink';
-		var $track_format        = 'polyline';  // 'polyline' or 'geojson'
-		var $trackserver_scripts = array();
-		var $trackserver_styles  = array();
-
-		public $permissions;
+		private $shortcode              = 'tsmap';
+		private $shortcode2             = 'tsscripts';
+		public  $track_format           = 'polyline';  // 'polyline' or 'geojson'
+		private $trackserver_scripts    = array();
+		private $trackserver_styles     = array();
+		public  $permissions;
+		public  $tbl_tracks;
+		public  $tbl_locations;
+		public  $options;
+		public  $mapdata                = array();
+		public  $tracks_list_table      = false;
+		public  $bulk_action_result_msg = false;
+		public  $url_prefix             = '';
+		private $have_scripts           = false;
+		public  $need_scripts           = false;
 
 		/**
 		 * Class constructor.
@@ -86,13 +93,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					'action' => 'hide',
 				),
 			);
-
-			$this->mapdata                = array();
-			$this->tracks_list_table      = false;
-			$this->bulk_action_result_msg = false;
-			$this->url_prefix             = '';
-			$this->have_scripts           = false;
-			$this->need_scripts           = false;
 
 			// Bootstrap
 			$this->add_actions();
