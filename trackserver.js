@@ -139,6 +139,7 @@ var Trackserver = (function () {
             var customLayer = L.geoJson(null, layer_options);
             var track_function, track_ref;
             var track_type = mymapdata.tracks[i].track_type;
+            var follow_id = 0;
 
             if ( track_type == 'polyline' ) {
                 track_function = omnivore.polyline.parse;
@@ -159,12 +160,14 @@ var Trackserver = (function () {
                 track_function = omnivore.gpx;
                 track_ref = mymapdata.tracks[i].track_url;
                 track_options = { 'div_id': div_id };
+                follow_id = 'gpx0';
             }
 
             if ( track_type == 'kml' ) {
                 track_function = omnivore.kml;
                 track_ref = mymapdata.tracks[i].track_url;
                 track_options = { 'div_id': div_id };
+                follow_id = 'kml0';
             }
 
             // First draw the new track...
@@ -192,8 +195,6 @@ var Trackserver = (function () {
                     }
 
                     var layer_ids = _this.get_sorted_keys( this._layers );
-
-                    var follow_id = 0;
                     var stored_follow_id = _this.get_mydata(div_id, 'all', 'follow_id');
 
                     if (do_follow) {
@@ -223,28 +224,42 @@ var Trackserver = (function () {
 
                         id = layer_ids[i];
                         layer = this._layers[id];
+
                         if ('_latlngs' in layer) {
                             start_latlng = layer._latlngs[0];
                             end_latlng   = layer._latlngs[ layer._latlngs.length - 1 ];
                             layer_index++;
                             editables.push(layer);
                         }
-                        else if (do_points && '_layers' in layer) {
-                            // Iterate over the _layers object, in which every layer, each containing a
-                            // point, has a numeric key. We need the first one and the last one.
+                        else if ('_layers' in layer) {
+                            // The _layers object may contain sublayers containing points with a single _latlng. It may
+                            // also contain sublayers that are tracks, with a _latlngs property that is an array.  Iterate
+                            // over the object, inspect the sublayers and get the coordinates. We need the first one and the
+                            // last one.
                             var j=0;
                             for (var layerid in layer._layers) {
                                 if (layer._layers.hasOwnProperty(layerid)) {
                                     point_layer = layer._layers[layerid];
                                     if (j == 0) {
-                                        start_latlng = point_layer._latlng;
+                                        if ('_latlng' in point_layer) {
+                                          start_latlng = point_layer._latlng;
+                                        }
+                                        else if ( '_latlngs' in point_layer) {
+                                          start_latlng = point_layer._latlngs[0];
+                                        }
                                         j++;
                                     }
                                 }
                             }
-                            end_latlng = point_layer._latlng;
-                            //editables.push(point_layer);
+                            if ('_latlng' in point_layer) {
+                              end_latlng = point_layer._latlng;
+                            }
+                            else if ( '_latlngs' in point_layer) {
+                              end_latlng = point_layer._latlngs[ point_layer._latlngs.length - 1 ];
+                            }
+
                             layer_index++;
+                            //editables.push(point_layer);
                         }
                         else {
                             //  No tracks, no points? No markers.
