@@ -94,6 +94,7 @@ class Trackserver_Shortcode {
 			'weight'     => false,
 			'opacity'    => false,
 			'dash'       => false,
+			'arrows'     => false,
 			'infobar'    => false,
 			'points'     => false,
 			'zoom'       => false,
@@ -127,9 +128,11 @@ class Trackserver_Shortcode {
 
 		$style      = $this->get_style( $atts, false );      // result is not used
 		$points     = $this->get_points( $atts, false );     // result is not used
+		$arrows     = $this->get_boolean_att( 'arrows', $atts, false, false );     // result is not used
 		$markers    = $this->get_markers( $atts, false );    // result is not used
 		$markersize = $this->get_markersize( $atts, false ); // result is not used
-		$maxage     = $this->get_maxage( $atts['maxage'] );
+		$maxage     = $this->get_age_seconds( $atts['maxage'] );
+		//$delay      = $this->get_age_seconds( $atts['delay'] );
 
 		list( $validated_track_ids, $validated_user_ids ) = $this->validate_ids( $atts );
 
@@ -180,6 +183,7 @@ class Trackserver_Shortcode {
 					'track_type' => 'polyline',     // the handle_gettrack_query method only supports polyline
 					'style'      => $this->get_style(),
 					'points'     => $this->get_points(),
+					'arrows'     => $this->get_boolean_att( 'arrows' ),
 					'markers'    => $this->get_markers(),
 					'markersize' => $this->get_markersize(),
 					'is_live'    => $is_live,
@@ -234,6 +238,7 @@ class Trackserver_Shortcode {
 						'track_type' => 'gpx',
 						'style'      => $this->get_style(),
 						'points'     => $this->get_points(),
+						'arrows'     => $this->get_boolean_att( 'arrows' ),
 						'markers'    => $this->get_markers(),
 						'markersize' => $this->get_markersize(),
 					);
@@ -254,6 +259,7 @@ class Trackserver_Shortcode {
 						'track_type' => 'kml',
 						'style'      => $this->get_style(),
 						'points'     => $this->get_points(),
+						'arrows'     => $this->get_boolean_att( 'arrows' ),
 						'markers'    => $this->get_markers(),
 						'markersize' => $this->get_markersize(),
 					);
@@ -355,7 +361,7 @@ class Trackserver_Shortcode {
 			$atts['track'] = $atts['id'];
 		}
 
-		$maxage = $this->get_maxage( $atts['maxage'] );
+		$maxage = $this->get_age_seconds( $atts['maxage'] );
 
 		list( $validated_track_ids, $validated_user_ids ) = $this->validate_ids( $atts );
 
@@ -483,6 +489,34 @@ class Trackserver_Shortcode {
 	}
 
 	/**
+	 * Return the value of a boolean shortcode attribute. An attribute named 'x'
+	 * will be stored in a property named $this->x, so be very careful not to use
+	 * names that are already in use.
+	 *
+	 * @since 5.1
+	 */
+	private function get_boolean_att( $att_name, $atts = false, $shift = true, $default = false ) {
+
+		// Initialize if argument is given
+		if ( is_array( $atts ) ) {
+			$this->{$att_name} = ( $atts[$att_name] ? explode( ',', $atts[$att_name] ) : false );
+		}
+
+		$p = false;
+		if ( is_array( $this->{$att_name} ) ) {
+			$p = ( $shift ? array_shift( $this->{$att_name} ) : $this->{$att_name}[0] );
+			if ( empty( $this->{$att_name} ) ) {
+				$this->{$att_name}[] = $p;
+			}
+		}
+		if ( $default === false ) {
+			return ( in_array( $p, array( 'true', 't', 'yes', 'y' ), true ) ? true : false ); // default false
+		} else {
+			return ( in_array( $p, array( 'false', 'f', 'no', 'n' ), true ) ? false : true ); // default true
+		}
+	}
+
+	/**
 	 * Return the value of 'markers' for a track based on shortcode attribute.
 	 *
 	 * @since 3.0
@@ -533,13 +567,13 @@ class Trackserver_Shortcode {
 	}
 
 	/**
-	 * Return maxage in seconds for a time expression
+	 * Return age in seconds for a time expression
 	 *
 	 * Takes an expression like 120s, 5m, 3h, 7d and turns it into seconds. No unit equals seconds.
 	 *
 	 * @since 3.1
 	 */
-	private function get_maxage( $str ) {
+	private function get_age_seconds( $str ) {
 		if ( $str === false ) {
 			return 0;
 		}

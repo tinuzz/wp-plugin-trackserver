@@ -108,6 +108,7 @@ The following attributes apply to tracks that are drawn on the map. Each of them
 * opacity: one or more opacities, separated by commas, to use for the tracks on the map. Default comes from Leaflet.
 * dash: one or more [dashArrays][dasharray], seperated by colons (:), to use for the tracks on the map. Default is no dashes.
 * points: true (or 't', 'yes' or 'y'), or false (default), to specify whether the track should be displayed as a line or a collection of points.
+* arrows: true (or 't', 'yes' or 'y'), or false (default), to specify whether arrows should be displayed to indicate the direction of the track.
 
 [dasharray]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
 
@@ -265,6 +266,15 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 2. Configuration of OruxMaps for use with Trackserver / WordPress
 
 == Changelog ==
+
+= Unreleased =
+
+Added:
+* A shortcode attribute named 'arrows', to enable drawing arrows over a track to indicate its direction. The implementation is very simple, with a hardcoded arrow sign, but the JS library being used allows for any text to be rendered, so in the future, this functionality may become more flexible and configurable.
+
+Changed:
+* Updated Leaflet to v1.9.4.
+* Changed max zoom for the map from 18 to 22.
 
 = v5.0.2 =
 Release date: 05 March 2023

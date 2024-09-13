@@ -174,15 +174,16 @@ var Trackserver = (function () {
             var runLayer = track_function(track_ref, track_options, customLayer )
                 .on ('ready', function (e) {
 
-                    var track_id    = this.options.track_id;
-                    var track_index = this.options.track_index;
-                    var old_track   = this.options.old_track;
-                    var old_markers = this.options.old_markers;
-                    var do_markers  = mymapdata.tracks[track_index].markers;
-                    var do_points   = mymapdata.tracks[track_index].points;
-                    var is_live     = mymapdata.tracks[track_index].is_live;
-                    var do_follow   = mymapdata.tracks[track_index].follow;
-                    var markersize  = mymapdata.tracks[track_index].markersize || 5;
+                    var track_id     = this.options.track_id;
+                    var track_index  = this.options.track_index;
+                    var old_track    = this.options.old_track;
+                    var old_markers  = this.options.old_markers;
+                    var do_markers   = mymapdata.tracks[track_index].markers;
+                    var do_points    = mymapdata.tracks[track_index].points;
+                    var do_arrows    = mymapdata.tracks[track_index].arrows;
+                    var is_live      = mymapdata.tracks[track_index].is_live;
+                    var do_follow    = mymapdata.tracks[track_index].follow;
+                    var markersize   = mymapdata.tracks[track_index].markersize || 5;
 
                     // ...and then delete the old one, to prevent flickering
                     if (old_track) {
@@ -295,6 +296,20 @@ var Trackserver = (function () {
                             if (track_index == 0 && layer_index < 2) {
                                 _this.set_mydata(div_id, 'all', 'first_marker', start_marker);
                             }
+                        }
+
+                        if (do_arrows) {
+                            // Draw textPath
+                            let text = '           ➜          ';
+                            //text = '         ➤       ';
+                            layer.setText(text, { repeat: true, offset: 0, attributes: {
+                              'font-size': '14px',
+                              'fill': layer.options.color,
+                              'fill-opacity': layer.options.opacity,
+                              'opacity': layer.options.opacity,  // both text and shadow
+                              dy: '5px',
+                              style: 'text-shadow: 1px 1px 0 white, -1px 1px 0 white, 1px -1px 0 white, -1px -1px 0 white, 0px 1px 0 white, 0px -1px 0 white, -1px 0px 0 white, 1px 0px 0 white; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;',
+                            } } );
                         }
                     }
 
@@ -542,7 +557,7 @@ var Trackserver = (function () {
 
                 var map_layer0 = L.tileLayer(
                     trackserver_settings['tile_url'],
-                    { attribution: trackserver_settings['attribution'], maxZoom: 18 });
+                    { attribution: trackserver_settings['attribution'], maxZoom: 22 });
 
                 var options = {center : center, zoom : zoom, layers: [map_layer0], messagebox: true };
 

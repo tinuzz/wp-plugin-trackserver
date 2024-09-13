@@ -54,6 +54,7 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 * [Polyline encoder](https://github.com/emcconville/polyline-encoder) by Eric McConville
 * [Leaflet-omnivore](https://github.com/mapbox/leaflet-omnivore) by Mapbox
 * [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) by John Firebaugh and others
+* [Leaflet.TextPath](https://github.com/makinacorpus/Leaflet.TextPath/) by Makina Corpus
 * [Promise-polyfill](https://github.com/taylorhakes/promise-polyfill) by Taylor Hakes
 
 # Frequently Asked Questions
@@ -130,6 +131,8 @@ values than tracks, the last value will be applied to the remaining tracks.
   seperated by colons (:), to use for the tracks on the map. Default is no dashes.
 * **points**: true (or 't', 'yes' or 'y'), or false (default), to specify whether
   the track should be displayed as a line or a collection of points.
+* **arrows**: true (or 't', 'yes' or 'y'), or false (default), to specify whether
+  arrows should be displayed to indicate the direction of the track.
 
 Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
 
