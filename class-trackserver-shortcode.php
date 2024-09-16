@@ -46,6 +46,18 @@ class Trackserver_Shortcode {
 		add_shortcode( $this->shortcode1, array( $this, 'handle_shortcode1' ) );
 		add_shortcode( $this->shortcode2, array( $this, 'handle_shortcode2' ) );
 		add_shortcode( $this->shortcode3, array( $this, 'handle_shortcode3' ) );
+
+		add_filter( 'no_texturize_shortcodes', array( $this, 'no_texturize_shortcodes' ) );
+	}
+
+	/**
+	 * Add filter to declare our main shortcode not to be texturized.
+	 *
+	 * @since 5.1
+	 */
+	public function no_texturize_shortcodes( $shortcodes ) {
+		$shortcodes[] = $this->shortcode1;
+		return $shortcodes;
 	}
 
 	/**
