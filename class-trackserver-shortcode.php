@@ -478,9 +478,7 @@ class Trackserver_Shortcode {
 	}
 
 	/**
-	 * Return the value of a boolean shortcode attribute. An attribute named 'x'
-	 * will be stored in a property named $this->x, so be very careful not to use
-	 * names that are already in use.
+	 * Return the value of a boolean shortcode attribute from $this->attr_data.
 	 *
 	 * @since 5.1
 	 */
