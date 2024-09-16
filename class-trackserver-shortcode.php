@@ -13,13 +13,6 @@ class Trackserver_Shortcode {
 	private $shortcode1 = 'tsmap';
 	private $shortcode2 = 'tsscripts';
 	private $shortcode3 = 'tslink';
-	private $colors;
-	private $weights;
-	private $opacities;
-	private $dashes;
-	private $points;
-	private $markers;
-	private $markersize;
 
 	/**
 	 * Constructor.
@@ -126,11 +119,10 @@ class Trackserver_Shortcode {
 			$atts['track'] = $atts['id'];
 		}
 
-		$style      = $this->get_style( $atts, false );      // result is not used
-		$points     = $this->get_points( $atts, false );     // result is not used
-		$arrows     = $this->get_boolean_att( 'arrows', $atts, false, false );     // result is not used
-		$markers    = $this->get_markers( $atts, false );    // result is not used
-		$markersize = $this->get_markersize( $atts, false ); // result is not used
+		$this->init_atts( $atts );
+
+		//$new_track_data = $this->parse_shortcode( $atts, $content );
+
 		$maxage     = $this->get_age_seconds( $atts['maxage'] );
 		//$delay      = $this->get_age_seconds( $atts['delay'] );
 
@@ -182,7 +174,7 @@ class Trackserver_Shortcode {
 					'track_id'   => $validated_id,
 					'track_type' => 'polyline',     // the handle_gettrack_query method only supports polyline
 					'style'      => $this->get_style(),
-					'points'     => $this->get_points(),
+					'points'     => $this->get_boolean_att( 'points' ),
 					'arrows'     => $this->get_boolean_att( 'arrows' ),
 					'markers'    => $this->get_markers(),
 					'markersize' => $this->get_markersize(),
@@ -237,7 +229,7 @@ class Trackserver_Shortcode {
 						'track_url'  => $u,
 						'track_type' => 'gpx',
 						'style'      => $this->get_style(),
-						'points'     => $this->get_points(),
+						'points'     => $this->get_boolean_att( 'points' ),
 						'arrows'     => $this->get_boolean_att( 'arrows' ),
 						'markers'    => $this->get_markers(),
 						'markersize' => $this->get_markersize(),
@@ -258,7 +250,7 @@ class Trackserver_Shortcode {
 						'track_url'  => $u,
 						'track_type' => 'kml',
 						'style'      => $this->get_style(),
-						'points'     => $this->get_points(),
+						'points'     => $this->get_boolean_att( 'points' ),
 						'arrows'     => $this->get_boolean_att( 'arrows' ),
 						'markers'    => $this->get_markers(),
 						'markersize' => $this->get_markersize(),
@@ -417,75 +409,60 @@ class Trackserver_Shortcode {
 	}
 
 	/**
-	 * Return style object for a track based on shortcode attributes.
+	 * Initialize a data stucture for shortcode attributes.
 	 *
-	 * A function to return a style object from 'color', 'weight' and 'opacity' parameters.
-	 * If the $atts array is passed as an argument, the data is initialized. Then the style
-	 * array is created. The default is to shift an element off the beginning of the array.
-	 * When an array is empty (meaning there are more tracks than values in the parameter),
-	 * the last value is restored to be used for subsequent tracks.
-	 *
-	 * @since 3.0
-	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
+	 * @since 5.1
 	 */
-	private function get_style( $atts = false, $shift = true ) {
+	private function init_atts( $atts ) {
+		$allowed_attrs   = array( 'color', 'weight', 'opacity', 'dash', 'points', 'arrows', 'markers', 'markersize' );
+		$this->attr_data = array();   // Start with an empty array for each tsmap.
 
-		// Initialize if argument is given
-		if ( is_array( $atts ) ) {
-			$this->colors    = ( $atts['color'] ? explode( ',', $atts['color'] ) : false );
-			$this->weights   = ( $atts['weight'] ? explode( ',', $atts['weight'] ) : false );
-			$this->opacities = ( $atts['opacity'] ? explode( ',', $atts['opacity'] ) : false );
-			$this->dashes    = ( $atts['dash'] ? explode( ':', $atts['dash'] ) : false );
+		foreach ( $allowed_attrs as $a ) {
+			$this->attr_data[ $a ] = ( $atts[ $a ] ? explode( ',', $atts[ $a ] ) : false );
 		}
-
-		$style = array();
-		if ( is_array( $this->colors ) ) {
-			$style['color'] = ( $shift ? array_shift( $this->colors ) : $this->colors[0] );
-			if ( empty( $this->colors ) ) {
-				$this->colors[] = $style['color'];
-			}
-		}
-		if ( is_array( $this->weights ) ) {
-			$style['weight'] = ( $shift ? array_shift( $this->weights ) : $this->weights[0] );
-			if ( empty( $this->weights ) ) {
-				$this->weights[] = $style['weight'];
-			}
-		}
-		if ( is_array( $this->opacities ) ) {
-			$style['opacity'] = ( $shift ? array_shift( $this->opacities ) : $this->opacities[0] );
-			if ( empty( $this->opacities ) ) {
-				$this->opacities[] = $style['opacity'];
-			}
-		}
-		if ( is_array( $this->dashes ) ) {
-			$style['dashArray'] = ( $shift ? array_shift( $this->dashes ) : $this->dashes[0] );
-			if ( empty( $this->dashes ) ) {
-				$this->dashes[] = $style['dashArray'];
-			}
-		}
-		return $style;
 	}
 
 	/**
-	 * Return the value of 'points' for a track based on shortcode attribute.
+	 * Return style object for a track based on shortcode attributes.
+	 *
+	 * A function to return a style object from 'color', 'weight', 'opacity' and
+	 * 'dash' attributes. First, it shifts an element off the beginning
+	 * of the array.  When an array is empty (meaning there are more tracks than
+	 * values in the parameter), the last value is restored to be used for
+	 * subsequent tracks.
 	 *
 	 * @since 3.0
+	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
+	 * @since 5.1 Changed to use $this->attr_data and leave initialization to init_atts().
 	 */
-	private function get_points( $atts = false, $shift = true ) {
+	private function get_style() {
 
-		// Initialize if argument is given
-		if ( is_array( $atts ) ) {
-			$this->points = ( $atts['points'] ? explode( ',', $atts['points'] ) : false );
-		}
-
-		$p = false;
-		if ( is_array( $this->points ) ) {
-			$p = ( $shift ? array_shift( $this->points ) : $this->points[0] );
-			if ( empty( $this->points ) ) {
-				$this->points[] = $p;
+		$style = array();
+		if ( is_array( $this->attr_data['color'] ) ) {
+			$style['color'] = array_shift( $this->attr_data['color'] );
+			if ( empty( $this->attr_data['color'] ) ) {
+				$this->attr_data['color'][] = $style['color'];
 			}
 		}
-		return ( in_array( $p, array( 'true', 't', 'yes', 'y' ), true ) ? true : false ); // default false
+		if ( is_array( $this->attr_data['weight'] ) ) {
+			$style['weight'] = array_shift( $this->attr_data['weight'] );
+			if ( empty( $this->attr_data['weight'] ) ) {
+				$this->attr_data['weight'][] = $style['weight'];
+			}
+		}
+		if ( is_array( $this->attr_data['opacity'] ) ) {
+			$style['opacity'] = array_shift( $this->attr_data['opacity'] );
+			if ( empty( $this->attr_data['opacity'] ) ) {
+				$this->attr_data['opacity'][] = $style['opacity'];
+			}
+		}
+		if ( is_array( $this->attr_data['dash'] ) ) {
+			$style['dashArray'] = array_shift( $this->attr_data['dash'] );
+			if ( empty( $this->attr_data['dash'] ) ) {
+				$this->attr_data['dash'][] = $style['dashArray'];
+			}
+		}
+		return $style;
 	}
 
 	/**
@@ -495,18 +472,12 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 5.1
 	 */
-	private function get_boolean_att( $att_name, $atts = false, $shift = true, $default = false ) {
-
-		// Initialize if argument is given
-		if ( is_array( $atts ) ) {
-			$this->{$att_name} = ( $atts[$att_name] ? explode( ',', $atts[$att_name] ) : false );
-		}
-
+	private function get_boolean_att( $att_name, $default = false ) {
 		$p = false;
-		if ( is_array( $this->{$att_name} ) ) {
-			$p = ( $shift ? array_shift( $this->{$att_name} ) : $this->{$att_name}[0] );
-			if ( empty( $this->{$att_name} ) ) {
-				$this->{$att_name}[] = $p;
+		if ( is_array( $this->attr_data[$att_name] ) ) {
+			$p = array_shift( $this->attr_data[$att_name] );
+			if ( empty( $this->attr_data[$att_name] ) ) {
+				$this->attr_data[$att_name][] = $p;
 			}
 		}
 		if ( $default === false ) {
@@ -520,19 +491,15 @@ class Trackserver_Shortcode {
 	 * Return the value of 'markers' for a track based on shortcode attribute.
 	 *
 	 * @since 3.0
+	 * @since 5.1 Changed to use $this->attr_data and leave initialization to init_atts().
 	 */
-	private function get_markers( $atts = false, $shift = true ) {
-
-		// Initialize if argument is given
-		if ( is_array( $atts ) ) {
-			$this->markers = ( $atts['markers'] ? explode( ',', $atts['markers'] ) : false );
-		}
+	private function get_markers() {
 
 		$p = false;
-		if ( is_array( $this->markers ) ) {
-			$p = ( $shift ? array_shift( $this->markers ) : $this->markers[0] );
-			if ( empty( $this->markers ) ) {
-				$this->markers[] = $p;
+		if ( is_array( $this->attr_data['markers'] ) ) {
+			$p = array_shift( $this->attr_data['markers'] );
+			if ( empty( $this->attr_data['markers'] ) ) {
+				$this->attr_data['markers'][] = $p;
 			}
 		}
 
@@ -546,19 +513,15 @@ class Trackserver_Shortcode {
 	 * Return the value of 'markersize' for a track based on shortcode attribute.
 	 *
 	 * @since 4.3
+	 * @since 5.1 Changed to use $this->attr_data and leave initialization to init_atts().
 	 */
-	private function get_markersize( $atts = false, $shift = true ) {
-
-		// Initialize if argument is given
-		if ( is_array( $atts ) ) {
-			$this->markersize = ( $atts['markersize'] ? explode( ',', $atts['markersize'] ) : false );
-		}
+	private function get_markersize() {
 
 		$p = false;
-		if ( is_array( $this->markersize ) ) {
-			$p = ( $shift ? array_shift( $this->markersize ) : $this->markersize[0] );
-			if ( empty( $this->markersize ) ) {
-				$this->markersize[] = $p;
+		if ( is_array( $this->attr_data['markersize'] ) ) {
+			$p = ( $shift ? array_shift( $this->attr_data['markersize'] ) : $this->attr_data['markersize'][0] );
+			if ( empty( $this->attr_data['markersize'] ) ) {
+				$this->attr_data['markersize'][] = $p;
 			}
 		}
 
