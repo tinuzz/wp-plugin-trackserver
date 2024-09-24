@@ -13,7 +13,7 @@ class Trackserver_Profile {
 	private $p_index = 3; // A counter used for numbering HTML elements
 	private $current_user;
 	private $app_passwords;
-	private	$username;
+	private $username;
 	private $url;
 	private $url2;
 
@@ -512,7 +512,6 @@ EOF;
 			<a href="#TB_inline?width=&inlineId=trackserver-addpass-modal&height=200" title="{$strings['addapppass']}"
 				class="button thickbox" data-id="0" data-action="addpass">{$strings['addapppass']}</a>
 EOF;
-
 	}
 
 	private function profile_html( $description, $with_creds, $suffix = null ) {
@@ -545,13 +544,12 @@ EOF;
 			$args[] = esc_html__( 'Password', 'trackserver' );
 			$args[] = esc_html__( 'an app password', 'trackserver' );
 		}
-		// @codingStandardsIgnoreStart
+		// phpcs:disable
 		printf(
 			$format,
 			...$args
 		);
-		// @codingStandardsIgnoreEnd
-
+		// phpcs:enable
 	}
 
 	private function trackme_profile_html() {
@@ -567,7 +565,6 @@ EOF;
 			<a href="https://play.google.com/store/apps/details?id=LEM.TrackMe" target="tsexternal">$download</a>
 			<br />
 EOF;
-
 	}
 
 	private function mapmytracks_profile_html() {
@@ -583,7 +580,6 @@ EOF;
 			<a href="https://www.oruxmaps.com/cs/en/" target="tsexternal">$download</a>
 			<br />
 EOF;
-
 	}
 
 	private function osmand_profile_html() {
@@ -600,7 +596,6 @@ EOF;
 			<a href="https://play.google.com/store/apps/details?id=net.osmand" target="tsexternal">$download</a>
 			<br />
 EOF;
-
 	}
 
 	private function ulogger_profile_html() {
@@ -616,7 +611,6 @@ EOF;
 			<a href="https://f-droid.org/en/packages/net.fabiszewski.ulogger/" target="tsexternal">$download</a>
 			<br />
 EOF;
-
 	}
 
 	private function gpslogger_profile_html() {
@@ -832,5 +826,4 @@ EOF;
 		// Prepare the map data
 		wp_localize_script( 'trackserver-admin', 'trackserver_admin_geofences', $geofences );
 	}
-
 } // class

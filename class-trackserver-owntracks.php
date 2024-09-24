@@ -240,5 +240,4 @@ class Trackserver_Owntracks {
 	private function get_friends() {
 		return $this->trackserver->get_followed_users( $this->user );
 	}
-
 }

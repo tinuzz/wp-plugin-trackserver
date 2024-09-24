@@ -257,5 +257,4 @@ class Trackserver_Mapmytracks {
 			return false; // Invalid input
 		}
 	}
-
 } // class
