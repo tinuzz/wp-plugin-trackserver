@@ -1331,59 +1331,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		}
 
 		/**
-		 * Function to handle AJAX request from track editor
-		 */
-		function admin_ajax_save_modified_track() {
-			global $wpdb;
-
-			$_POST = stripslashes_deep( $_POST );
-
-			if ( ! isset( $_POST['t'], $_POST['modifications'] ) ) {
-				$this->http_terminate( '403', 'Missing parameter(s)' );
-			}
-
-			check_ajax_referer( 'manage_track_' . $_POST['t'] );
-
-			$modifications = json_decode( $_POST['modifications'], true );
-			$i             = 0;
-
-			if ( count( $modifications ) ) {
-				$track_ids = $this->filter_current_user_tracks( array_keys( $modifications ) );
-
-				foreach ( $track_ids as $track_id ) {
-					$indexes    = array_keys( $modifications[ $track_id ] );
-					$loc_ids    = $this->get_location_ids_by_index( $track_id, $indexes );
-					$sql        = array();
-					$delete_ids = array();
-					foreach ( $modifications[ $track_id ] as $loc_index => $mod ) {
-						if ( $mod['action'] === 'delete' ) {
-							$delete_ids[] = $loc_ids[ $loc_index ]->id;
-						} elseif ( $mod['action'] === 'move' ) {
-							$qfmt  = 'UPDATE ' . $this->tbl_locations . ' SET latitude=%s, longitude=%s WHERE id=%d';
-							$sql[] = $wpdb->prepare( $qfmt, $mod['lat'], $mod['lng'], $loc_ids[ $loc_index ]->id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-						}
-					}
-
-					if ( count( $delete_ids ) ) {
-						$sql_in = "('" . implode( "','", $delete_ids ) . "')";
-						$sql[]  = 'DELETE FROM ' . $this->tbl_locations . ' WHERE id IN ' . $sql_in;
-					}
-
-					// If a query fails, give up immediately
-					foreach ( $sql as $query ) {
-						if ( $wpdb->query( $query ) === false ) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-							break;
-						}
-						$i++;
-					}
-					$this->calculate_distance( $track_id );
-				}
-			}
-			echo "OK: $i queries executed";
-			die();
-		}
-
-		/**
 		 * Handler for the admin_post_trackserver_upload_track action
 		 */
 		function admin_post_upload_track() {
