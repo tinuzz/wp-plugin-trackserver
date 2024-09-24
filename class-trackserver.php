@@ -1331,18 +1331,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		}
 
 		/**
-		 * Handler for the admin_post_trackserver_upload_track action
-		 */
-		function admin_post_upload_track() {
-			check_admin_referer( 'upload_track' );
-			$message = $this->handle_admin_upload();
-			setcookie( 'ts_bulk_result', $message, time() + 300 );
-			// Redirect back to the admin page. This should be safe.
-			wp_redirect( $_REQUEST['_wp_http_referer'] );
-			exit;
-		}
-
-		/**
 		 * Function to handle a profile update for the current user
 		 *
 		 * If this is called, check_admin_referer() has already succeeded.

@@ -57,7 +57,7 @@ class Trackserver_Admin {
 		add_action( 'admin_post_trackserver_save_track', array( &$this, 'admin_post_save_track' ) );
 
 		// Still on the main plugin object
-		add_action( 'admin_post_trackserver_upload_track', array( $this->trackserver, 'admin_post_upload_track' ) );
+		add_action( 'admin_post_trackserver_upload_track', array( &$this, 'admin_post_upload_track' ) );
 		add_action( 'wp_ajax_trackserver_save_track', array( &$this, 'admin_ajax_save_modified_track' ) );
 
 		// WordPress MU
@@ -751,8 +751,17 @@ EOF;
 		die();
 	}
 
-
-
+	/**
+	 * Handler for the admin_post_trackserver_upload_track action
+	 */
+	public function admin_post_upload_track() {
+		check_admin_referer( 'upload_track' );
+		$message = $this->trackserver->handle_admin_upload();
+		setcookie( 'ts_bulk_result', $message, time() + 300 );
+		// Redirect back to the admin page. This should be safe.
+		wp_redirect( $_REQUEST['_wp_http_referer'] );
+		exit;
+	}
 
 	/**
 	 * Function to process any bulk action from the tracks_list_table
