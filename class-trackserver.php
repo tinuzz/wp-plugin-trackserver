@@ -1244,7 +1244,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			return ( is_object( $post ) ? $post->post_author : false );
 		}
 
-		function get_live_tracks( $user_ids, $maxage = 0 ) {
+		function get_live_tracks( $user_ids, $maxage = 0, $output = 'list' ) {
 			global $wpdb;
 
 			if ( empty( $user_ids ) ) {
@@ -1263,6 +1263,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			*/
 
 			$track_ids = array();
+			$idmap     = array();
 			foreach ( $user_ids as $uid ) {
 				// @codingStandardsIgnoreStart
 				$sql = $wpdb->prepare(
@@ -1281,11 +1282,15 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				$res  = $wpdb->get_row( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 				if ( ! is_null( $res ) ) {
-					$track_ids[] = (int) $res['id'];
+					$track_ids[]   = (int) $res['id'];
+					$idmap[ $uid ] = (int) $res['id'];
 				}
 			}
 
-			return $track_ids;
+			if ( $output == 'map' ) {
+				return $idmap;
+			}
+			return $track_ids;   // array_values( $idmap )
 		}
 
 		/**
