@@ -18,7 +18,8 @@ class Trackserver_Admin {
 	public  $settings;    // Reference to the settings object
 	private $tbl_tracks;
 	private $tbl_locations;
-	private $trashcan_icon = '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" x="0px" y="0px" viewBox="0 0 172.541 172.541" style="enable-background:new 0 0 172.541 172.541;" xml:space="preserve"><g><path d="M166.797,25.078h-13.672h-29.971V0H49.388v25.078H19.417H5.744v15h14.806l10,132.463h111.443l10-132.463h14.805V25.078z M64.388,15h43.766v10.078H64.388V15z M128.083,157.541H44.46L35.592,40.078h13.796h73.766h13.796L128.083,157.541z"/><rect x="80.271" y="65.693" width="12" height="66.232"/><rect x="57.271" y="65.693" width="12" height="66.232"/><rect x="103.271" y="65.693" width="12" height="66.232"/></g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg>';
+	private $tracks_list_table = false;
+	private $trashcan_icon     = '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" x="0px" y="0px" viewBox="0 0 172.541 172.541" style="enable-background:new 0 0 172.541 172.541;" xml:space="preserve"><g><path d="M166.797,25.078h-13.672h-29.971V0H49.388v25.078H19.417H5.744v15h14.806l10,132.463h111.443l10-132.463h14.805V25.078z M64.388,15h43.766v10.078H64.388V15z M128.083,157.541H44.46L35.592,40.078h13.796h73.766h13.796L128.083,157.541z"/><rect x="80.271" y="65.693" width="12" height="66.232"/><rect x="57.271" y="65.693" width="12" height="66.232"/><rect x="103.271" y="65.693" width="12" height="66.232"/></g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg>';
 	// phpcs:enable
 
 	public function __construct( $trackserver ) {
@@ -248,6 +249,56 @@ class Trackserver_Admin {
 	}
 
 	/**
+	 * Set up the list-table object
+	 *
+	 * @since 5.1 Moved here from main Trackserver class
+	 */
+	private function setup_tracks_list_table() {
+
+		// Do this only once.
+		if ( $this->tracks_list_table ) {
+			return;
+		}
+
+		// Load prerequisites
+		if ( ! class_exists( 'WP_List_Table' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+		}
+		require_once TRACKSERVER_PLUGIN_DIR . 'tracks-list-table.php';
+
+		$user_id = get_current_user_id();
+		$view    = $user_id;
+		if ( current_user_can( 'trackserver_admin' ) ) {
+			$view = (int) get_user_meta( $user_id, 'ts_tracks_admin_view', true );
+			if ( isset( $_REQUEST['author'] ) ) {
+				$view = (int) $_REQUEST['author'];
+			}
+			if ( ! $this->trackserver->user_has_tracks( $view ) ) {
+				$view = 0;
+			}
+			// if ( $old_view != $view ) ?
+			update_user_meta( $user_id, 'ts_tracks_admin_view', $view );
+		}
+
+		// Get / set the value for the number of tracks per page from the selectbox
+		$per_page = (int) get_user_meta( $user_id, 'ts_tracks_admin_per_page', true );
+		$per_page = ( $per_page === 0 ? 20 : $per_page );
+		if ( isset( $_REQUEST['per_page'] ) ) {
+			$per_page = (int) $_REQUEST['per_page'];
+			update_user_meta( $user_id, 'ts_tracks_admin_per_page', $per_page );
+		}
+
+		$list_table_options = array(
+			'tbl_tracks'    => $this->tbl_tracks,
+			'tbl_locations' => $this->tbl_locations,
+			'view'          => $view,
+			'per_page'      => $per_page,
+		);
+
+		$this->tracks_list_table = new Tracks_List_Table( $list_table_options );
+	}
+
+	/**
 	 * Print some CSS in the header of the admin panel.
 	 *
 	 * @since 1.0
@@ -439,10 +490,10 @@ EOF;
 		}
 
 		add_thickbox();
-		$this->trackserver->setup_tracks_list_table();
+		$this->setup_tracks_list_table();
 
 		$search = ( isset( $_REQUEST['s'] ) ? wp_unslash( $_REQUEST['s'] ) : '' );
-		$this->trackserver->tracks_list_table->prepare_items( $search );
+		$this->tracks_list_table->prepare_items( $search );
 
 		$url = admin_url() . 'admin-post.php';
 
@@ -537,9 +588,9 @@ EOF;
 				<div class="wrap">
 					<h2><?php esc_html_e( 'Manage tracks', 'trackserver' ); ?></h2>
 					<?php $this->trackserver->notice_bulk_action_result(); ?>
-					<?php $this->trackserver->tracks_list_table->views(); ?>
-					<?php $this->trackserver->tracks_list_table->search_box( esc_attr__( 'Search tracks', 'trackserver' ), 'search_tracks' ); ?>
-					<?php $this->trackserver->tracks_list_table->display(); ?>
+					<?php $this->tracks_list_table->views(); ?>
+					<?php $this->tracks_list_table->search_box( esc_attr__( 'Search tracks', 'trackserver' ), 'search_tracks' ); ?>
+					<?php $this->tracks_list_table->display(); ?>
 				</div>
 			</form>
 		<?php
@@ -550,8 +601,8 @@ EOF;
 	 * It sets up the list table and processes any bulk actions
 	 */
 	public function load_manage_tracks() {
-		$this->trackserver->setup_tracks_list_table();
-		$action = $this->trackserver->tracks_list_table->get_current_action();
+		$this->setup_tracks_list_table();
+		$action = $this->tracks_list_table->get_current_action();
 		if ( $action ) {
 			$this->process_bulk_action( $action );
 		}

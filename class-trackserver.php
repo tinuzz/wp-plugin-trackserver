@@ -65,7 +65,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		public  $tbl_locations;
 		public  $options;
 		public  $mapdata                = array();
-		public  $tracks_list_table      = false;
 		public  $bulk_action_result_msg = false;
 		public  $url_prefix             = '';
 		private $have_scripts           = false;
@@ -1304,51 +1303,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$n = (int) $wpdb->get_var( $sql );
 			// phpcs:enable
 			return $n > 0;
-		}
-
-		function setup_tracks_list_table() {
-
-			// Do this only once.
-			if ( $this->tracks_list_table ) {
-				return;
-			}
-
-			// Load prerequisites
-			if ( ! class_exists( 'WP_List_Table' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-			}
-			require_once TRACKSERVER_PLUGIN_DIR . 'tracks-list-table.php';
-
-			$user_id = get_current_user_id();
-			$view    = $user_id;
-			if ( current_user_can( 'trackserver_admin' ) ) {
-				$view = (int) get_user_meta( $user_id, 'ts_tracks_admin_view', true );
-				if ( isset( $_REQUEST['author'] ) ) {
-					$view = (int) $_REQUEST['author'];
-				}
-				if ( ! $this->user_has_tracks( $view ) ) {
-					$view = 0;
-				}
-				// if ( $old_view != $view ) ?
-				update_user_meta( $user_id, 'ts_tracks_admin_view', $view );
-			}
-
-			// Get / set the value for the number of tracks per page from the selectbox
-			$per_page = (int) get_user_meta( $user_id, 'ts_tracks_admin_per_page', true );
-			$per_page = ( $per_page === 0 ? 20 : $per_page );
-			if ( isset( $_REQUEST['per_page'] ) ) {
-				$per_page = (int) $_REQUEST['per_page'];
-				update_user_meta( $user_id, 'ts_tracks_admin_per_page', $per_page );
-			}
-
-			$list_table_options = array(
-				'tbl_tracks'    => $this->tbl_tracks,
-				'tbl_locations' => $this->tbl_locations,
-				'view'          => $view,
-				'per_page'      => $per_page,
-			);
-
-			$this->tracks_list_table = new Tracks_List_Table( $list_table_options );
 		}
 
 		function profiles_html() {
