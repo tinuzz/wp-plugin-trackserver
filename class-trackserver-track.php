@@ -184,6 +184,4 @@ class Trackserver_Track {
 		$wpdb->delete( $this->tbl_tracks, $trip_where );
 		return true;
 	}
-
 }  // class
-

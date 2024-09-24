@@ -188,5 +188,4 @@ class Trackserver_Ulogger {
 			return $this->send_response( array( 'message' => 'Unknown track ID' ) );
 		}
 	}
-
 }  // class

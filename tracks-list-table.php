@@ -222,7 +222,6 @@ class Tracks_List_Table extends WP_List_Table {
 				'total_pages' => ceil( $total_items / $per_page ),   // WE have to calculate the total number of pages.
 			)
 		);
-
 	}
 
 	public function get_views() {

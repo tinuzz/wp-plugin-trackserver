@@ -55,7 +55,7 @@ define( 'TRACKSERVER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'TRACKSERVER_JSLIB', TRACKSERVER_PLUGIN_URL . 'lib/' );
 define( 'TRACKSERVER_VERSION', '4.3-20190906' );
 
-require_once( TRACKSERVER_PLUGIN_DIR . 'class-trackserver.php' );
+require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver.php';
 
 // For 4.3.0 <= PHP <= 5.4.0
 if ( ! function_exists( 'http_response_code' ) ) {

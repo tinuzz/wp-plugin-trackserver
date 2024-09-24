@@ -54,11 +54,12 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			'ts_infobar_template' => '{displayname} - {lat},{lon} - {timestamp}',
 		);
 
-		private $shortcode              = 'tsmap';
-		private $shortcode2             = 'tsscripts';
-		public  $track_format           = 'polyline';  // 'polyline' or 'geojson'
-		private $trackserver_scripts    = array();
-		private $trackserver_styles     = array();
+		// phpcs:disable
+		private $shortcode           = 'tsmap';
+		private $shortcode2          = 'tsscripts';
+		public  $track_format        = 'polyline';  // 'polyline' or 'geojson'
+		private $trackserver_scripts = array();
+		private $trackserver_styles  = array();
 		public  $permissions;
 		public  $tbl_tracks;
 		public  $tbl_locations;
@@ -69,6 +70,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		public  $url_prefix             = '';
 		private $have_scripts           = false;
 		public  $need_scripts           = false;
+		// phpcs:enable
 
 		/**
 		 * Class constructor.
@@ -224,7 +226,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			add_action( 'init', array( &$this, 'wp_init' ) );
 			add_filter( 'single_template', array( &$this, 'get_tsmap_single_template' ) );
 			add_filter( '404_template', array( &$this, 'get_tsmap_404_template' ) );
-
 		}
 
 		/**
@@ -645,7 +646,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			global $wp_rewrite;
 
 			$home_path0      = parse_url( home_url(), PHP_URL_PATH );
-			$home_path       = ( empty( $home_path0) ? '' : trim( $home_path0, '/' )) . $this->url_prefix;
+			$home_path       = ( empty( $home_path0 ) ? '' : trim( $home_path0, '/' ) ) . $this->url_prefix;
 			$home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
 
 			$pathinfo         = isset( $_SERVER['PATH_INFO'] ) ? $_SERVER['PATH_INFO'] : '';
@@ -1314,9 +1315,9 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 			// Load prerequisites
 			if ( ! class_exists( 'WP_List_Table' ) ) {
-				require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+				require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 			}
-			require_once( TRACKSERVER_PLUGIN_DIR . 'tracks-list-table.php' );
+			require_once TRACKSERVER_PLUGIN_DIR . 'tracks-list-table.php';
 
 			$user_id = get_current_user_id();
 			$view    = $user_id;

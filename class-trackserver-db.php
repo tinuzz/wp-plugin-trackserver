@@ -160,5 +160,4 @@ class Trackserver_Db {
 			$this->trackserver->update_option( 'db_version', $this->db_version );
 		}
 	}
-
 } // class

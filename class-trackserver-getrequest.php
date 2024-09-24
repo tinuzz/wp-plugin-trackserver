@@ -162,7 +162,5 @@ class Trackserver_Getrequest {
 			$source = __( 'Unknown', 'trackserver' );
 		}
 		return $source;
-
 	}
-
 }  // class

@@ -442,5 +442,4 @@ class Trackserver_Trackme {
 		$d = DateTime::createFromFormat( 'Y-m-d H:i:s', $ts );
 		return $d && ( $d->format( 'Y-m-d H:i:s' ) === $ts );
 	}
-
 } // class

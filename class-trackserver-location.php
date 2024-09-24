@@ -112,5 +112,4 @@ class Trackserver_Location {
 	public function set( $what, $value ) {
 		$this->$what = $value;
 	}
-
 } // class
