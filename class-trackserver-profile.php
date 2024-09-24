@@ -402,13 +402,13 @@ EOF;
 
 	private function trackserver_url_html() {
 
-		// @codingStandardsIgnoreStart
+		// phpcs:disable
 		echo esc_html__( 'As of version 5.0, Trackserver uses a single URL slug for all the protocols it supports. ' .
 				'The old, seperate slugs for TrackMe, MapMyTracks, OsmAnd, SendLocation and OwnTracks are now deprecated. ' .
 				'With this single slug, two different URLs can be made for Trackserver: one with credentials in it, and ' .
 				'one without. Some apps need credentials in the URL, because they do not support other mechanisms for ' .
 				'authentication.', 'trackserver' ) . '<br><br>';
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 
 		$suffix = $this->trackserver->printf_htmlspecialchars( '/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}' );
 		$format = <<<EOF
@@ -436,7 +436,7 @@ EOF;
 
 	private function app_passwords_html() {
 
-		// @codingStandardsIgnoreStart
+		// phpcs:disable
 		echo esc_html__( 'As of Trackserver v5.0, app-specific access keys have been replaced with app passwords. ' .
 			'An app password is usable in all of the supported apps, including the ones that previously only worked with ' .
 			'your WordPress password, like OruxMaps.', 'trackserver' ) . '<br><br>';
@@ -444,7 +444,7 @@ EOF;
 			'be used for creating tracks. "Read" means that tracks and metadata can be queried and downloaded. "Delete" ' .
 			'means the password can be used to delete tracks. For most apps, only write permission is needed, but for ' .
 			'example TrackMe has functionality that requires read and/or delete permissions.', 'trackserver' ) . '<br><br>';
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 
 		$passwords = get_user_meta( $this->current_user->ID, 'ts_app_passwords', true );
 		$viewstr   = esc_html__( 'View', 'trackserver' );
@@ -681,7 +681,7 @@ EOF;
 		$value    = htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_share', true ) );
 		$link_url = 'http://owntracks.org/booklet/features/friends/';
 
-		// @codingStandardsIgnoreStart
+		// phpcs:disable
 		echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to share your location with. ' .
 			'Users who use OwnTracks or TrackMe\'s "Show Cloud People" feature will see your latest location on the map, ' .
 			'if they follow you. This setting is only about sharing your latest (live) location with TrackMe and ' .
@@ -691,20 +691,20 @@ EOF;
 		echo sprintf(
 			__( 'See <a href="%1$s" target="_blank">the description of the Friends feature in the OwnTracks booklet</a> for more information.', 'trackserver' ), $link_url
 		) . '<br><br>';
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 		echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_share]" value="' . $value . '" autocomplete="off" /><br><br>';
 	}
 
 	private function follow_friends_html() {
 		$value = htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_follow', true ) );
-		// @codingStandardsIgnoreStart
+		// phpcs:disable
 		echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to follow with TrackMe\'s ' .
 			'"Show Cloud People" feature or with OwnTracks. These users must share their location with you, by listing ' .
 			'your username in the "Share via ..." setting above and publishing their location to Trackserver with one ' .
 			'of the supported apps. Leave this setting empty to follow all users that share their location with you. ' .
 			'You can exclude users by prefixing their username with a "!" (exclamation mark).', 'trackserver'
 		) . '<br>';
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 		echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_follow]" value="' . $value . '" autocomplete="off" /><br><br>';
 	}
 
@@ -714,7 +714,7 @@ EOF;
 			%1\$s<br>
 			<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="$template" autocomplete="off" /><br><br>
 EOF;
-		// @codingStandardsIgnoreStart
+		// phpcs:disable
 		printf(
 			$format,
 			esc_html__(
@@ -722,7 +722,7 @@ EOF;
 				'Here you can format the content of the infobar.', 'trackserver'
 			)
 		);
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 		echo esc_html__( 'Possible replacement tags are:', 'trackserver' ) . '<br>';
 		echo '{lat}, {lon} - ' . esc_html__( 'the last known coordinates', 'trackserver' ) . '<br>';
 		echo '{timestamp} - ' . esc_html__( 'the timestamp of the last update', 'trackserver' ) . '<br>';
@@ -770,14 +770,14 @@ EOF;
 			$geofences[] = $default_geofence;
 		}
 
-		// @codingStandardsIgnoreStart
+		// phpcs:disable
 		echo esc_html__( 'Track updates that fall within the specified radius (in meters) from the center point, ' .
 			'will be marked as hidden or discarded, depending on the specified action. Modify the "0, 0, 0" entry to add a new fence. ' .
 			'Set the values to "0, 0, 0, Hide" to delete an entry. ' .
 			'The center point coordinates should be specified in decimal degrees. A radius of 0 will disable the fence. ' .
 			'Use the link below to view existing geofences. You can also click the map to pick the center coordinates for a new fence. ' .
 			'Remember to set a radius and update your profile afterwards.', 'trackserver' ) . '<br>';
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 
 		echo '<table>';
 		for ( $i = 0; $i < count( $geofences ); $i++ ) {

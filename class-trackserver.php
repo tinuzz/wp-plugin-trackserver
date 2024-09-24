@@ -719,7 +719,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$username = $user->user_login;
 			$table    = _get_meta_table( 'user' );
 			$sql      = $wpdb->prepare(
-				// @codingStandardsIgnoreLine
+				// phpcs:ignore
 				"SELECT user_id, meta_key, meta_value FROM $table WHERE meta_key='ts_owntracks_share' AND (" .
 					'meta_value=%s OR meta_value LIKE %s OR meta_value LIKE %s OR meta_value LIKE %s)',
 				$username,
@@ -727,7 +727,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				'%,' . $wpdb->esc_like( $username ) . ',%',
 				$wpdb->esc_like( $username ) . ',%'
 			);
-			// @codingStandardsIgnoreLine
+			// phpcs:ignore
 			$res = $wpdb->get_results( $sql, ARRAY_A );
 			$user_ids = array( $user->ID );
 			foreach ( $res as $row ) {
@@ -1173,7 +1173,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				$trip_name = substr( (string) $trk->name, 0, 255 );
 				$comment   = substr( (string) $trk->desc, 0, 255 );
 
-				// @codingStandardsIgnoreLine
+				// phpcs:ignore
 				if ( $skip_existing && ( $trk_id = $this->get_track_id_by_name( $trip_name, $user_id ) ) ) {
 					$track_ids[] = $trk_id;
 				} else {
@@ -1266,13 +1266,13 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$track_ids = array();
 			$idmap     = array();
 			foreach ( $user_ids as $uid ) {
-				// @codingStandardsIgnoreStart
+				// phpcs:disable
 				$sql = $wpdb->prepare(
 					'SELECT l.trip_id AS id FROM ' . $this->tbl_tracks . ' t INNER JOIN ' . $this->tbl_locations . ' l ' .
 					'ON t.id = l.trip_id WHERE t.user_id=%d ',
 					$uid
 				);
-				// @codingStandardsIgnoreEnd
+				// phpcs:enable
 
 				if ( $maxage > 0 ) {
 					$ts   = gmdate( 'Y-m-d H:i:s', ( time() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - $maxage ) );
@@ -1288,7 +1288,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				}
 			}
 
-			if ( $output == 'map' ) {
+			if ( $output === 'map' ) {
 				return $idmap;
 			}
 			return $track_ids;   // array_values( $idmap )
@@ -1299,10 +1299,10 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		function user_has_tracks( $user_id ) {
 			global $wpdb;
-			// @codingStandardsIgnoreStart
+			// phpcs:disable
 			$sql = $wpdb->prepare( 'SELECT count(id) FROM ' . $this->tbl_tracks . ' WHERE user_id=%d', $user_id );
 			$n = (int) $wpdb->get_var( $sql );
-			// @codingStandardsIgnoreEnd
+			// phpcs:enable
 			return $n > 0;
 		}
 
@@ -1367,12 +1367,12 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			global $wpdb;
 
 			$sql_in = "('" . implode( "','", $indexes ) . "')";
-			// @codingStandardsIgnoreStart
+			// phpcs:disable
 			$sql = $wpdb->prepare( 'SELECT c.* FROM (' .
 				'SELECT @row := @row + 1 AS row, l.id FROM ' . $this->tbl_locations . ' l CROSS JOIN (select @row := -1) r WHERE l.trip_id=%d ORDER BY occurred' .
 				') c WHERE c.row IN ' . $sql_in, $track_id );
 			$res = $wpdb->get_results( $sql, OBJECT_K );
-			// @codingStandardsIgnoreEnd
+			// phpcs:enable
 			return $res;
 		}
 
@@ -1701,7 +1701,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 						$speed = $delta_distance / $delta_time; // in m/s
 
 						// Update the speed column in the database for this location
-						// @codingStandardsIgnoreLine
+						// phpcs:ignore
 						$wpdb->update( $this->tbl_locations, array( 'speed' => $speed ), array( 'id' => $row['id'] ), '%f', '%d' );
 					}
 				}
@@ -1711,7 +1711,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			}
 
 			if ( $distance > 0 ) {
-				// @codingStandardsIgnoreLine
+				// phpcs:ignore
 				$wpdb->update( $this->tbl_tracks, array( 'distance' => $distance ), array( 'id' => $track_id ), '%d', '%d' );
 			}
 		}

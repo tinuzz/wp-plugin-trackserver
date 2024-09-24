@@ -55,7 +55,7 @@ class Trackserver_Owntracks {
 		// If this returns, we're OK
 		$this->user = $this->trackserver->validate_http_basicauth( false, 'object' );
 		$payload    = file_get_contents( 'php://input' );
-		// @codingStandardsIgnoreLine
+		// phpcs:ignore
 		$json       = @json_decode( $payload, true );
 
 		//Array
@@ -150,13 +150,13 @@ class Trackserver_Owntracks {
 		$objects           = array();
 
 		foreach ( $friends_track_ids as $track_id ) {
-			// @codingStandardsIgnoreStart
+			// phpcs:disable
 			$sql = $wpdb->prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, UNIX_TIMESTAMP(occurred) AS tst, t.user_id, t.name, t.distance, t.comment FROM ' .
 				$this->tbl_locations . ' l INNER JOIN ' . $this->tbl_tracks .
 				' t ON l.trip_id = t.id WHERE trip_id=%d AND l.hidden = 0 ORDER BY occurred DESC LIMIT 0,1', $track_id
 			);
 			$res = $wpdb->get_row( $sql, ARRAY_A );
-			// @codingStandardsIgnoreEnd
+			// phpcs:enable
 
 			$friend = get_user_by( 'id', $res['user_id'] );
 			$tid    = $this->get_tid( $friend );

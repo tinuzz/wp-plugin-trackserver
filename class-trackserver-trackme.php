@@ -260,13 +260,13 @@ class Trackserver_Trackme {
 		$message   = '';
 
 		foreach ( $track_ids as $track_id ) {
-			// @codingStandardsIgnoreStart
+			// phpcs:disable
 			$sql = $wpdb->prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
 				$this->tbl_locations . ' l INNER JOIN ' . $this->tbl_tracks .
 				' t ON l.trip_id = t.id WHERE trip_id=%d AND l.hidden = 0 ORDER BY occurred DESC LIMIT 0,1', $track_id
 			);
 			$res = $wpdb->get_row( $sql, ARRAY_A );
-			// @codingStandardsIgnoreEnd
+			// phpcs:enable
 
 			$ruser    = get_user_by( 'id', $res['user_id'] );
 			$deviceid = substr( md5( $res['user_id'] ), -15 );
@@ -351,10 +351,10 @@ class Trackserver_Trackme {
 
 		$this->ensure_permissions( 'read' );  // If this returns, we're fine.
 
-		// @codingStandardsIgnoreStart
+		// phpcs:disable
 		$sql   = $wpdb->prepare( 'SELECT name,created FROM ' . $this->tbl_tracks . ' WHERE user_id=%d ORDER BY created DESC LIMIT 0,25', $this->user_id );
 		$trips = $wpdb->get_results( $sql, ARRAY_A );
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 		$triplist = '';
 		foreach ( $trips as $row ) {
 			$triplist .= htmlspecialchars( $row['name'] ) . '|' . htmlspecialchars( $row['created'] ) . "\n";

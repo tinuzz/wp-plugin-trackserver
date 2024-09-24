@@ -758,7 +758,7 @@ EOF;
 		if ( $action === 'dlgpx' ) {
 
 			$track_format = 'gpx';
-			// @codingStandardsIgnoreLine
+			// phpcs:ignore
 			$query         = json_encode( array( 'id' => $track_ids, 'live' => array() ) );
 			$query         = base64_encode( $query );
 			$query_nonce   = wp_create_nonce( 'manage_track_' . $query );
@@ -792,7 +792,7 @@ EOF;
 		if ( count( $split_id_arr ) > 0 ) {  // should be exactly 1
 			$split_id = $split_id_arr[ $point ]->id;
 
-			// @codingStandardsIgnoreStart
+			// phpcs:disable
 			$sql = $wpdb->prepare( 'SELECT occurred FROM ' . $this->tbl_locations . ' WHERE id=%s', $split_id );
 			$occurred = $wpdb->get_var( $sql );
 
@@ -815,7 +815,7 @@ EOF;
 				$this->tbl_locations . ' WHERE id=%s', $new_id, $split_id
 			);
 			$wpdb->query( $sql );
-			// @codingStandardsIgnoreEnd
+			// phpcs:enable
 
 			$this->trackserver->calculate_distance( $track_id );
 			$this->trackserver->calculate_distance( $new_id );

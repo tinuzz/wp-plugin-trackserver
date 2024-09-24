@@ -633,11 +633,11 @@ class Trackserver_Shortcode {
 
 		if ( $track_id ) {
 
-			// @codingStandardsIgnoreStart
+			// phpcs:disable
 			$sql = $wpdb->prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
 				 $this->trackserver->tbl_locations . ' l INNER JOIN ' . $this->trackserver->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id=%d  ORDER BY occurred', $track_id );
 			$res = $wpdb->get_results( $sql, ARRAY_A );
-			// @codingStandardsIgnoreEnd
+			// phpcs:enable
 
 			if ( $format === 'gpx' ) {
 				$this->send_as_gpx( $res );
@@ -692,12 +692,12 @@ class Trackserver_Shortcode {
 		$user_track_ids      = $this->trackserver->get_live_tracks( $validated_user_ids, $maxage );
 		$track_ids           = array_merge( $validated_track_ids, $user_track_ids );
 
-		// @codingStandardsIgnoreStart
+		// phpcs:disable
 		$sql_in = "('" . implode( "','", $track_ids ) . "')";
 		$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->trackserver->tbl_locations .
 			' l INNER JOIN ' . $this->trackserver->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' AND l.hidden = 0 ORDER BY trip_id, occurred';
 		$res = $wpdb->get_results( $sql, ARRAY_A );
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 
 		if ( $format === 'gpx' ) {
 			$this->send_as_gpx( $res );
@@ -800,10 +800,10 @@ class Trackserver_Shortcode {
 	 */
 	private function send_as_gpx( $res ) {
 		$dom = new DOMDocument( '1.0', 'utf-8' );
-		// @codingStandardsIgnoreStart
+		// phpcs:disable
 		$dom->preserveWhiteSpace = false;
 		$dom->formatOutput = true;
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 		$gpx = $dom->createElementNS( 'http://www.topografix.com/GPX/1/1', 'gpx' );
 		$dom->appendChild( $gpx );
 		$gpx->setAttributeNS( 'http://www.w3.org/2000/xmlns/', 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance' );
@@ -903,6 +903,7 @@ class Trackserver_Shortcode {
 			$tracks[ $id ]['track'] .= $this->polyline_get_chunk( $row['longitude'], $index );
 			$index++;
 			$tracks[ $id ]['metadata'] = $this->get_metadata( $row );   // Overwrite the value on every row, so the last row remains
+
 			$last_id = $id;
 		}
 
@@ -1085,5 +1086,4 @@ class Trackserver_Shortcode {
 			return false;
 		}
 	}
-
 } // Class

@@ -335,13 +335,13 @@ EOF;
 			esc_html__( "The Server extension in TrackMe's settings", 'trackserver' ),
 			esc_html__( 'WARNING', 'trackserver' ),
 			esc_html__(
-				// @codingStandardsIgnoreStart
+				// phpcs:disable
 				"the default value in TrackMe is 'php', but this will most likely NOT work, so better change " .
 				"it to something else. Anything will do, as long as the request is handled by WordPress' index.php, " .
 				"so it's better to not use any known file type extension, like 'html' or 'jpg'. A single " .
 				"character like 'z' (the default) should work just fine. Change the 'Server extension' setting " .
 				'in TrackMe to match the value you put here.', 'trackserver'
-				// @codingStandardsIgnoreEnd
+				// phpcs:enable
 			)
 		);
 	}
@@ -405,13 +405,13 @@ EOF;
 			sprintf(
 				// translators: placeholder is for link to strftime() manual
 				esc_html__(
-					// @codingStandardsIgnoreStart
+					// phpcs:disable
 					'Generated track name in %1$s format. OsmAnd online tracking does not support the concept of ' .
 					"'tracks', there are only locations. Trackserver needs to group these in tracks and automatically generates " .
 					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
 					'can be specified here. If you specify a constant string, without any strftime() format placeholders, one ' .
 					'and the same track will be used forever and all locations.', 'trackserver'
-					// @codingStandardsIgnoreEnd
+					// phpcs:enable
 				),
 				$link
 			),
@@ -476,13 +476,13 @@ EOF;
 			sprintf(
 				// translators: placeholder is for link to strftime() manual
 				esc_html__(
-					// @codingStandardsIgnoreStart
+					// phpcs:disable
 					'Generated track name in %1$s format. SendLocation online tracking does not support the concept of ' .
 					"'tracks', there are only locations. Trackserver needs to group these in tracks and automatically generates " .
 					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
 					'can be specified here. If you specify a constant string, without any strftime() format placeholders, one ' .
 					'and the same track will be used forever and all locations.', 'trackserver'
-					// @codingStandardsIgnoreEnd
+					// phpcs:enable
 				),
 				$link
 			),
@@ -526,13 +526,13 @@ EOF;
 			sprintf(
 				// translators: placeholder is for link to strftime() manual
 				esc_html__(
-					// @codingStandardsIgnoreStart
+					// phpcs:disable
 					'Generated track name in %1$s format. OwnTracks online tracking does not support the concept of ' .
 					"'tracks', there are only locations. Trackserver needs to group these in tracks and automatically generates " .
 					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
 					'can be specified here. If you specify a constant string, without any strftime() format placeholders, one ' .
 					'and the same track will be used forever and all locations.', 'trackserver'
-					// @codingStandardsIgnoreEnd
+					// phpcs:enable
 				),
 				$link
 			),
@@ -630,11 +630,11 @@ EOF;
 			sprintf(
 				// translators: placeholder is for link to Trackserver FAQ
 				esc_html__(
-					// @codingStandardsIgnoreStart
+					// phpcs:disable
 					'This will enable your authors to invoke HTTP requests originating from your server. ' .
 					'Only enable this when you need it and if you trust your authors not to use harmful URLs. ' .
 					'Please see the %1$s for more information.', 'trackserver'
-					// @codingStandardsIgnoreEnd
+					// phpcs:enable
 				),
 				$link
 			)
@@ -649,7 +649,7 @@ EOF;
 			esc_html__( 'Check this to enable the mode where Trackserver gets all track data in a single HTTP request when displaying a map.' )
 		);
 		echo esc_html__(
-			// @codingStandardsIgnoreStart
+			// phpcs:disable
 			'Disabling this mode will make Trackserver use a separate HTTP request ' .
 			'for each single track. This may have a positive or a negative ' .
 			'effect on the loading speed of Trackserver maps and tracks. If ' .
@@ -659,7 +659,7 @@ EOF;
 			'high-latency networks, enabling single request mode may give ' .
 			'better results. You can safely switch between modes to see what works ' .
 			'best for you.'
-			// @codingStandardsIgnoreEnd
+			// phpcs:enable
 		);
 	}
 } // class
