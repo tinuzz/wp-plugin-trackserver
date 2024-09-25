@@ -672,7 +672,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			}
 
 			// Strip 'index.php' from the beginning, if present
-			if ( substr( $requested_path, 0, strlen( $wp_rewrite->index ) ) == $wp_rewrite->index ) {
+			if ( substr( $requested_path, 0, strlen( $wp_rewrite->index ) ) === $wp_rewrite->index ) {
 				$requested_path = substr( $requested_path, strlen( $wp_rewrite->index ) );
 			}
 
@@ -793,7 +793,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.0
 		 */
-		public function validate_http_basicauth( $return = false, $what = 'id' ) {
+		public function validate_http_basicauth( $do_return = false, $what = 'id' ) {
 
 			if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) ) {
 				header( 'WWW-Authenticate: Basic realm="Authentication Required"' );
@@ -802,7 +802,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			}
 
 			$valid = $this->validate_credentials( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'], $what, true );
-			if ( $return || $valid !== false ) {
+			if ( $do_return || $valid !== false ) {
 				return $valid;
 			}
 
@@ -860,9 +860,9 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 4.3
 		 */
-		public function try_http_basicauth( $return = false, $what = 'id' ) {
+		public function try_http_basicauth( $do_return = false, $what = 'id' ) {
 			if ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
-				return $this->validate_http_basicauth( $return, $what );
+				return $this->validate_http_basicauth( $do_return, $what );
 			}
 			return null;
 		}
@@ -1192,8 +1192,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 								'altitude'  => (string) $trkpt->ele,
 								'timestamp' => ( $fake_time ? ( $last_ts + 1 ) : $this->parse_iso_date( (string) $trkpt->time ) ),
 							);
-							$ntrkpt++;
-							$last_ts++;
+							++$ntrkpt;
+							++$last_ts;
 						}
 					}
 					$data   = array(
@@ -1208,7 +1208,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 						$trip_id = $wpdb->insert_id;
 						$this->mapmytracks_insert_points( $points, $trip_id, $user_id );
 						$track_ids[] = $trip_id;
-						$ntrk++;
+						++$ntrk;
 					}
 				}
 			}
@@ -1640,7 +1640,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		function get_tsmap_single_template( $template ) {
 			global $post;
 			if ( $post->post_type === 'tsmap' ) {
-				$template = dirname( __FILE__ ) . '/embedded-template.php';
+				$template = __DIR__ . '/embedded-template.php';
 			}
 			return $template;
 		}
@@ -1652,11 +1652,10 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				( substr( $wp->request, 0, strlen( $slug ) + 1 ) === "{$slug}/" ) || // match trailing slash to not match it as a prefix
 				( isset( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] === $slug )
 			) {
-				$template = dirname( __FILE__ ) . '/embedded-404.php';
+				$template = __DIR__ . '/embedded-404.php';
 			}
 			return $template;
 		}
-
 	} // class
 } // if !class_exists
 

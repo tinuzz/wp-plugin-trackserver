@@ -46,7 +46,6 @@ class Trackserver_Shortcode {
 		add_shortcode( $this->shortcode1, array( $this, 'handle_shortcode1' ) );
 		add_shortcode( $this->shortcode2, array( $this, 'handle_shortcode2' ) );
 		add_shortcode( $this->shortcode3, array( $this, 'handle_shortcode3' ) );
-
 		add_filter( 'no_texturize_shortcodes', array( $this, 'no_texturize_shortcodes' ) );
 	}
 
@@ -899,9 +898,9 @@ class Trackserver_Shortcode {
 				$index          = 0;
 			}
 			$tracks[ $id ]['track'] .= $this->polyline_get_chunk( $row['latitude'], $index );
-			$index++;
+			++$index;
 			$tracks[ $id ]['track'] .= $this->polyline_get_chunk( $row['longitude'], $index );
-			$index++;
+			++$index;
 			$tracks[ $id ]['metadata'] = $this->get_metadata( $row );   // Overwrite the value on every row, so the last row remains
 
 			$last_id = $id;
@@ -955,9 +954,9 @@ class Trackserver_Shortcode {
 
 		foreach ( $res as $row ) {
 			$encoded_string .= $this->polyline_get_chunk( $row['latitude'], $index );
-			$index++;
+			++$index;
 			$encoded_string .= $this->polyline_get_chunk( $row['longitude'], $index );
-			$index++;
+			++$index;
 		}
 
 		// Metadata stuff doesn't really belong here, but this is the only place
