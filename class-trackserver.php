@@ -20,7 +20,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @access private
 		 * @var str $leaflet_version
 		 */
-		var $leaflet_version = '1.9.4';
+		private $leaflet_version = '1.9.4';
 
 		/**
 		 * Default values for options. See class constructor for more.
@@ -29,7 +29,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @access private
 		 * @var array $option_defaults
 		 */
-		var $option_defaults = array(
+		private $option_defaults = array(
 			'trackserver_slug'              => 'trackserver',
 			'trackme_slug'                  => 'trackme',
 			'trackme_extension'             => 'z',
@@ -964,7 +964,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 3.1
 		 */
-		function is_geofenced( $user_id, $data ) {
+		public function is_geofenced( $user_id, $data ) {
 			$geofences = get_user_meta( $user_id, 'ts_geofences', true );
 			if ( ! is_array( $geofences ) ) {
 				return false;
@@ -989,7 +989,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.9
 		 */
-		function size_to_bytes( $val ) {
+		public function size_to_bytes( $val ) {
 			$last = strtolower( $val[ strlen( $val ) - 1 ] );
 			switch ( $last ) {
 				case 'g':
@@ -1009,7 +1009,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.9
 		 */
-		function bytes_to_human( $size ) {
+		public function bytes_to_human( $size ) {
 			if ( ( $size >= 1 << 30 ) ) {
 				return number_format( $size / ( 1 << 30 ), 1 ) . 'GB';
 			}
@@ -1026,7 +1026,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * Function to rearrange the $_FILES array. It handles multiple postvars
 		 * and it works with both single and multiple files in a single postvar.
 		 */
-		function rearrange( $files ) {
+		private function rearrange( $files ) {
 			$j   = 0;
 			$new = array();
 			foreach ( $files as $postvar => $arr ) {
@@ -1044,19 +1044,19 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			return $new;
 		}
 
-		function validate_gpx_file( $filename ) {
+		private function validate_gpx_file( $filename ) {
 			$xml = new DOMDocument();
 			$xml->load( $filename );
 			return $this->validate_gpx_data( $xml );
 		}
 
-		function validate_gpx_string( $data ) {
+		public function validate_gpx_string( $data ) {
 			$xml = new DOMDocument();
 			$xml->loadXML( $data );
 			return $this->validate_gpx_data( $xml );
 		}
 
-		function validate_gpx_data( $xml ) {
+		private function validate_gpx_data( $xml ) {
 			$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.1.xsd';
 			if ( $xml->schemaValidate( $schema ) ) {
 				return $xml;
@@ -1068,7 +1068,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			return false;
 		}
 
-		function handle_uploaded_files( $user_id ) {
+		private function handle_uploaded_files( $user_id ) {
 
 			$tmp = $this->get_temp_dir();
 
@@ -1121,7 +1121,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		/**
 		 * Function to handle file uploads from a (mobile) client to the 'upload' slug
 		 */
-		function handle_upload() {
+		private function handle_upload() {
 			header( 'Content-Type: text/plain' );
 			$user_id = $this->validate_http_basicauth();
 			$msg     = $this->handle_uploaded_files( $user_id );
@@ -1131,7 +1131,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		/**
 		 * Function to handle file uploads from the WordPress admin
 		 */
-		function handle_admin_upload() {
+		public function handle_admin_upload() {
 			$user_id = get_current_user_id();
 			if ( user_can( $user_id, 'use_trackserver' ) ) {
 				return $this->handle_uploaded_files( $user_id );
@@ -1143,7 +1143,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		/**
 		 * Function to get a track ID by name. Used to find duplicates.
 		 */
-		function get_track_id_by_name( $name, $user_id ) {
+		private function get_track_id_by_name( $name, $user_id ) {
 			global $wpdb;
 			$sql     = $wpdb->prepare( 'SELECT id FROM ' . $this->tbl_tracks . ' WHERE name=%s AND user_id=%d LIMIT 0,1', $name, $user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$trip_id = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -1155,7 +1155,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * provided DOMDocument to SimpleXML for easier processing and uses the same intermediate format
 		 * as the MapMyTracks import, so it can use the same function for inserting the locations
 		 */
-		function process_gpx( $dom, $user_id, $skip_existing = false ) {
+		public function process_gpx( $dom, $user_id, $skip_existing = false ) {
 			global $wpdb;
 
 			$gpx        = simplexml_import_dom( $dom );
@@ -1221,7 +1221,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			);
 		}
 
-		function get_temp_dir() {
+		private function get_temp_dir() {
 			$tmp = get_temp_dir() . '/trackserver';
 			if ( ! file_exists( $tmp ) ) {
 				mkdir( $tmp );
@@ -1229,7 +1229,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			return $tmp;
 		}
 
-		function parse_iso_date( $ts ) {
+		private function parse_iso_date( $ts ) {
 			//$i = new DateInterval('PT' .strval (get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) .'S' );
 			$d = new DateTime( $ts );
 			//$d = $d->add( $i );
@@ -1239,12 +1239,12 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		/**
 		 * Function to return the author ID for a given post ID
 		 */
-		function get_author( $post_id ) {
+		public function get_author( $post_id ) {
 			$post = get_post( $post_id );
 			return ( is_object( $post ) ? $post->post_author : false );
 		}
 
-		function get_live_tracks( $user_ids, $maxage = 0, $output = 'list' ) {
+		public function get_live_tracks( $user_ids, $maxage = 0, $output = 'list' ) {
 			global $wpdb;
 
 			if ( empty( $user_ids ) ) {
@@ -1296,7 +1296,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		/**
 		 * Function to check if a given user ID has any tracks in the database.
 		 */
-		function user_has_tracks( $user_id ) {
+		public function user_has_tracks( $user_id ) {
 			global $wpdb;
 			// phpcs:disable
 			$sql = $wpdb->prepare( 'SELECT count(id) FROM ' . $this->tbl_tracks . ' WHERE user_id=%d', $user_id );
@@ -1305,7 +1305,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			return $n > 0;
 		}
 
-		function profiles_html() {
+		public function profiles_html() {
 
 			if ( ! current_user_can( 'manage_options' ) ) {
 				wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
@@ -1317,7 +1317,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * Function to return an array of location ids given an array of location
 		 * indexes relative to the track, as passed from Leaflet Editable
 		 */
-		function get_location_ids_by_index( $track_id, $indexes ) {
+		public function get_location_ids_by_index( $track_id, $indexes ) {
 			global $wpdb;
 
 			$sql_in = "('" . implode( "','", $indexes ) . "')";
@@ -1337,7 +1337,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @since 1.9
 		 */
-		function process_profile_update() {
+		public function process_profile_update() {
 			$user_id       = get_current_user_id();
 			$data          = $_POST['ts_user_meta'];
 			$valid_fields  = array(
@@ -1418,7 +1418,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @param array $track_ids Track IDs to filter.
 		 */
-		function filter_current_user_tracks( $track_ids ) {
+		public function filter_current_user_tracks( $track_ids ) {
 			global $wpdb;
 
 			$user_id = get_current_user_id();
@@ -1438,7 +1438,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			return array();
 		}
 
-		function current_user_can_manage( $track_id ) {
+		public function current_user_can_manage( $track_id ) {
 			$valid = $this->filter_current_user_tracks( array( $track_id ) );
 			return count( $valid ) === 1;
 		}
@@ -1452,7 +1452,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 *
 		 * @param array $track_ids Track IDs to delete.
 		 */
-		function wpdb_delete_tracks( $track_ids ) {
+		public function wpdb_delete_tracks( $track_ids ) {
 			global $wpdb;
 			if ( ! is_array( $track_ids ) ) {
 				$track_ids = array( $track_ids );
@@ -1471,7 +1471,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		/**
 		 * Function to display the bulk_action_result_msg
 		 */
-		function notice_bulk_action_result() {
+		public function notice_bulk_action_result() {
 			if ( $this->bulk_action_result_msg ) {
 				?>
 					<div class="updated">
@@ -1487,7 +1487,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @param array $existing_mimes the existing mime types.
 		 * @return array the allowed mime types.
 		 */
-		function upload_mimes( $existing_mimes = array() ) {
+		public function upload_mimes( $existing_mimes = array() ) {
 
 				// Add file extension 'extension' with mime type 'mime/type'
 				$existing_mimes['gpx'] = 'application/gpx+xml';
@@ -1500,7 +1500,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * Filter function that inserts tracks from the media library into the
 		 * database and returns shortcodes for the added tracks.
 		 */
-		function media_send_to_editor( $html, $id, $attachment ) {
+		public function media_send_to_editor( $html, $id, $attachment ) {
 
 			$type = get_post_mime_type( $id );
 
@@ -1532,7 +1532,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			return $html;
 		}
 
-		function distance( $lat1, $lon1, $lat2, $lon2 ) {
+		private function distance( $lat1, $lon1, $lat2, $lon2 ) {
 			$radius = 6371000; // meter
 
 			list( $lat1, $lon1, $lat2, $lon2 ) = array_map( 'deg2rad', array( $lat1, $lon1, $lat2, $lon2 ) );
@@ -1545,27 +1545,11 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			return (int) $d;
 		}
 
-		// https://stackoverflow.com/questions/10053358/measuring-the-distance-between-two-coordinates-in-php
-		// Results are the same as with the function above
-		function distance2( $lat1, $lon1, $lat2, $lon2 ) {
-			$radius = 6371000; // meter
-
-			list( $lat1, $lon1, $lat2, $lon2 ) = array_map( 'deg2rad', array( $lat1, $lon1, $lat2, $lon2 ) );
-
-			$dlat = $lat2 - $lat1;
-			$dlon = $lon2 - $lon1;
-			$a    = pow( cos( $lat2 ) * sin( $dlon ), 2 ) + pow( cos( $lat1 ) * sin( $lat2 ) - sin( $lat1 ) * cos( $lat2 ) * cos( $dlon ), 2 );
-			$b    = sin( $lat1 ) * sin( $lat2 ) + cos( $lat1 ) * cos( $lat2 ) * cos( $dlon );
-			$c    = atan2( sqrt( $a ), $b );
-			$d    = $radius * $c;
-			return (int) $d;
-		}
-
-		function calculate_distance( $track_id ) {
+		public function calculate_distance( $track_id ) {
 			$this->calculate_distance_speed( $track_id );
 		}
 
-		function calculate_distance_speed( $track_id ) {
+		private function calculate_distance_speed( $track_id ) {
 			global $wpdb;
 
 			$sql = $wpdb->prepare( 'SELECT id, latitude, longitude, speed, occurred FROM ' . $this->tbl_locations . ' WHERE trip_id=%d ORDER BY occurred', $track_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -1605,11 +1589,11 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			}
 		}
 
-		function printf_htmlspecialchars( $input ) {
+		public function printf_htmlspecialchars( $input ) {
 			return str_replace( '%', '%%', htmlspecialchars( $input ) );
 		}
 
-		function register_tsmap_post_type() {
+		private function register_tsmap_post_type() {
 
 			$slug = $this->options['embedded_slug'];
 
@@ -1637,7 +1621,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			);
 		}
 
-		function get_tsmap_single_template( $template ) {
+		public function get_tsmap_single_template( $template ) {
 			global $post;
 			if ( $post->post_type === 'tsmap' ) {
 				$template = __DIR__ . '/embedded-template.php';
@@ -1645,7 +1629,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			return $template;
 		}
 
-		function get_tsmap_404_template( $template ) {
+		public function get_tsmap_404_template( $template ) {
 			global $wp;
 			$slug = $this->options['embedded_slug'];
 			if (
