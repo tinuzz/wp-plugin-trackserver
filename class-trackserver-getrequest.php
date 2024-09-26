@@ -12,6 +12,8 @@ class Trackserver_Getrequest {
 	private $trackserver;  // Reference to the calling object
 	private $user_id;      // WP user ID doing the request
 	private $permissions;  // The used password's associated permissions
+	private $username;     // The username from the request
+	private $password;     // The user's password
 
 	/**
 	 * Constructor.

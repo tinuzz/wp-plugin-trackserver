@@ -14,6 +14,7 @@ class Trackserver_Trackme {
 	private $tbl_tracks;
 	private $tbl_locations;
 	private $permissions;         // The permissions of the used app password
+	private $user_id;
 
 	/**
 	 * Constructor.

@@ -10,7 +10,6 @@ require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
 class Trackserver_Ulogger {
 
 	private $trackserver;  // Reference to the calling object
-	private $user;         // WP_User doing the request
 
 	/**
 	 * Constructor.
