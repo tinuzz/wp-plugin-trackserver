@@ -90,14 +90,19 @@ For the `[tsmap]` shortcode:
   start markers are yellow instead of green.
 * **gpx**: one or more URLs to GPX files to be plotted on the map. Multiple URLs
   should be separated by spaces, and the value as a whole enclosed by double
-  quotes (gpx="http://....gpx http://....gpx"). If enabled in the settings, when
+  quotes (`gpx="http://....gpx http://....gpx"`). If enabled in the settings, when
   a url is prefixed with the string 'proxy:', the request is proxied through
   Trackserver.
 * **kml**: one or more URLs to KML files to be plotted on the map. Multiple URLs
   should be separated by spaces, and the value as a whole enclosed by double
-  quotes (kml="http://....kml http://....kml"). If enabled in the settings, when
+  quotes (`kml="http://....kml http://....kml"`). If enabled in the settings, when
   a url is prefixed with the string 'proxy:', the request is proxied through
   Trackserver.
+* **json**: one or more URLs to GeoJSON files to be plotted on the map.
+  Multiple URLs should be separated by spaces, and the value as a whole
+  enclosed by double quotes (`json="http://....geojson http://....geojson"`). If
+  enabled in the settings, when a url is prefixed with the string 'proxy:', the
+  request is proxied through Trackserver.
 * **infobar**: true (or 't', 'yes' or 'y'), false (default), or a template string,
   to specify whether an information bar should be shown on the map, when live
   tracking is active. This only works with 'track=live' or the 'user' parameter,
@@ -145,6 +150,7 @@ too. The order is:
 2. Live user tracks (`user=x,y,z`)
 3. GPX tracks (`gpx=...`)
 4. KML tracks (`kml=...`)
+5. GeoJSON tracks (`json=...`)
 
 To prevent confusion, I suggest you specify tracks in this order in your shortcode too.
 
@@ -191,12 +197,12 @@ Since Trackserver v6.0, an alternative syntax for adding tracks to a map is prov
 So:
 
 * Within the `[tsmap][/tsmap]` block, you add elements that are enclosed by curly braces.
-* The first word after the opening brace is the type. Supported are: `track`, `user`, `gpx` and `kml`.
+* The first word after the opening brace is the type. Supported are: `track`, `user`, `gpx`, `kml` and `json`.
 * After the type, you add attributes, much like the traditional shortcode uses.
 * In this syntax, attributes can only have a single value, and not a comma-separated list.
 * Outside the item IDs, only the item-level styling level attributes are supported. Map level attributes like `height` and `infobar` are not.
 * `track` and `user` items need a mandatory `id` attribute.
-* `gpx` and `kml` items need a mandatory `url` attribute.
+* `gpx`, `kml` and `json` items need a mandatory `url` attribute.
 * In a single [tsmap] shortcode, you can mix attribute-based and content-based items.
 
 One caveat:

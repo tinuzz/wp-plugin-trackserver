@@ -42,6 +42,7 @@ class Trackserver_Shortcode {
 		'user'       => false,
 		'gpx'        => false,
 		'kml'        => false,
+		'json'       => false,
 		'markers'    => true,
 		'markersize' => 5,
 		'color'      => false,
@@ -228,7 +229,7 @@ class Trackserver_Shortcode {
 		$this->shortcode_data['all_track_ids'] = array_unique( array_merge( $this->shortcode_data['all_track_ids'], array_keys( $this->shortcode_data['tracks'] ) ) );
 
 		// Add GPX and KML tracks
-		foreach ( array( 'gpx', 'kml' ) as $type ) {
+		foreach ( array( 'gpx', 'kml', 'json' ) as $type ) {
 			if ( $atts[ $type ] ) {
 				$urls = explode( ' ', $atts[ $type ] );
 				$j    = 0;
@@ -276,6 +277,7 @@ class Trackserver_Shortcode {
 			'user'  => array(),
 			'gpx'   => array(),
 			'kml'   => array(),
+			'json'  => array(),
 		);
 		$types   = apply_filters( 'trackserver_content_types', array_keys( $atts ) );
 		$types   = implode( '|', $types );
@@ -378,7 +380,7 @@ class Trackserver_Shortcode {
 		$this->shortcode_data['all_track_ids'] = array_unique( array_merge( $this->shortcode_data['all_track_ids'], array_keys( $this->shortcode_data['tracks'] ) ) );
 
 		// Add GPX and KML tracks. If 'url' is not set, no track is added.
-		foreach ( array( 'gpx', 'kml' ) as $type ) {
+		foreach ( array( 'gpx', 'kml', 'json' ) as $type ) {
 			$j = 0;
 			foreach ( $atts[ $type ] as $trk ) {
 				if ( ! empty( $trk['url'] ) ) {

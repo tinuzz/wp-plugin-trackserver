@@ -170,6 +170,13 @@ var Trackserver = (function () {
                 follow_id = 'kml0';
             }
 
+            if ( track_type == 'json' ) {
+                track_function = omnivore.geojson;
+                track_ref = mymapdata.tracks[i].track_url;
+                track_options = { 'div_id': div_id };
+                follow_id = 'json0';
+            }
+
             // First draw the new track...
             var runLayer = track_function(track_ref, track_options, customLayer )
                 .on ('ready', function (e) {
