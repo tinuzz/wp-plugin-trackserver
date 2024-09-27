@@ -28,7 +28,7 @@ A shortcode is provided for displaying your tracks on a map. Maps are displayed
 using the fantastic [Leaflet library](http://leafletjs.com/) and some useful Leaflet plugins
 are included. Maps can be viewed in full-screen on modern browsers.
 
-\[tsmap track=&lt;id&gt;\]
+`\[tsmap track=&lt;id&gt;\]`
 
 See the FAQ section for more information on the shortcode's supported
 attributes and other usage pointers.
@@ -134,7 +134,7 @@ values than tracks, the last value will be applied to the remaining tracks.
 * **arrows**: true (or 't', 'yes' or 'y'), or false (default), to specify whether
   arrows should be displayed to indicate the direction of the track.
 
-Example: [tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]
+Example: `[tsmap track=39,84,live align=center class=mymap markers=n color=#ff0000]`
 
 When you specify multiple values, please be aware of the following. While track
 order will be preserved within each track type, different track types are
@@ -148,7 +148,7 @@ too. The order is:
 
 To prevent confusion, I suggest you specify tracks in this order in your shortcode too.
 
-Example: [tsmap gpx=/url/for/file.gpx user=jim track=10,99 color=red,blue,green,yellow]
+Example: `[tsmap gpx=/url/for/file.gpx user=jim track=10,99 color=red,blue,green,yellow]`
 
 In this case, due to the evaluation order, the GPX track will be yellow, Jim's
 live track will be green and tracks 10 and 99 will be red and blue respectively.
@@ -157,7 +157,7 @@ In a feature request I was asked to make it possible to draw just a marker on th
 last known location, and not draw a track at all. Use 'markers' and 'opacity' to
 accomplish this:
 
-Example: [tsmap track=live markers=e opacity=0.0]
+Example: `[tsmap track=live markers=e opacity=0.0]`
 
 Attributes for the [tslink] shortcode:
 
@@ -168,16 +168,17 @@ Attributes for the [tslink] shortcode:
 * **class**: a CSS class to apply to the 'a' element
 * **format**: the format in which to download the tracks. Only 'gpx' (the default) is supported at this time. Other formats like KML may follow. Send a feature request if you need a specific format.
 
-Example: [tslink track=1,2,3,4 text="Download the tracks of our 4-day hike in GPX format"]
+Example: `[tslink track=1,2,3,4 text="Download the tracks of our 4-day hike in GPX format"]`
 
 Instead of using the 'text' attribute, you can also use shortcode to enclose the text:
 
-Example: [tslink track=1,2,3,4]Download the tracks of our 4-day hike in GPX format[/tslink]
+Example: `[tslink track=1,2,3,4]Download the tracks of our 4-day hike in GPX format[/tslink]`
 
 ## How does the shortcode content syntax work?
 
 Since Trackserver v6.0, an alternative syntax for adding tracks to a map is provided, using the shortcode content, rather than the attributes. An example:
 
+```
 [tsmap continuous=n]
 {track id=1 markers=s color=yellow}
 {track id=2 markers=n color=green}
@@ -185,6 +186,7 @@ Since Trackserver v6.0, an alternative syntax for adding tracks to a map is prov
 {user  id=5}
 {gpx   url="https://..../"}
 [/tsmap]
+```
 
 So:
 
@@ -205,25 +207,27 @@ closing tag [/tsmap], even if they have no content. This is because of how
 WordPress' shortcode parser works, and Trackserver cannot change this. An
 example:
 
+```
 [tsmap track=1,2,3][/tsmap]
 [tsmap]{track id=4}[/tsmap]
+```
 
 ## I used the shortcode but the map doesn't show
 
-Trackserver tries to detect the usage of the [tsmap] shortcode to prevent
+Trackserver tries to detect the usage of the `[tsmap]` shortcode to prevent
 unnecessary loading of the plugin's JavaScript. In some circumstances, for
 example, if your page setup is complex and uses multiple loops, the detection
 could fail. In such a case, use this shortcode in the main post or page to
 force loading the JavaScript:
 
-[tsscripts]
+`[tsscripts]`
 
 There is one caveat. Trackserver only works on 'real' posts and pages, in
 WordPress terms. For example, some WordPress themes (I have seen one) offer the
 possibility to specify a static homepage right in the theme settings,
 completely overriding WordPress' internal post logic. In this case, the page
 lacks an author as well as other properties that a regular WordPress post or
-page has. Trackserver's [tsmap] shortcode does not work on pages like that.
+page has. Trackserver's `[tsmap]` shortcode does not work on pages like that.
 
 All that said, Trackserver's shortcode detection should be reasonably
 fool-proof these days, because if the early detection mechanism fails, the
@@ -236,11 +240,11 @@ whether this will actually be a problem, but just in case it is, the
 Beware though: the [tsscripts] shortcode doesn't actually do anything. At all.
 It is merely an extra shortcode that Trackserver tries to detect. Therefore, it
 is absolutely useless to include [tsscripts] in the same context as your
-[tsmap]. I appreciate that this can be hard to understand, so let me illustrate
+`[tsmap]`. I appreciate that this can be hard to understand, so let me illustrate
 with an example. Take the 'Posts in page' plugin, that allows you to use a
 shortcode in a post (let's call it A) to include other posts an pages inline
-(let's call them B and C). If [tsmap] is used in B or C, but the page requested
-by the user is A, which does not have a [tsmap], Trackserver's shortcode
+(let's call them B and C). If `[tsmap]` is used in B or C, but the page requested
+by the user is A, which does not have a `[tsmap]`, Trackserver's shortcode
 detection used to fail in earlier versions, and the Javascript and CSS would
 not be loaded. By using the [tsscripts] shortcode in page A, the loading of JS
 and CSS can be forced. The CSS will then be loaded in the head of the page,
@@ -330,7 +334,7 @@ Trackserver and a post or a page, Trackserver will win and the page will be
 inaccessible.
 
 To publish your tracks, simply create a page (with a non-conflicting permalink)
-and use the [tsmap] shortcode to add a map.
+and use the `[tsmap]` shortcode to add a map.
 
 ## Can Trackserver support protocol X or device Y?
 
