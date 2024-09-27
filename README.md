@@ -28,7 +28,7 @@ A shortcode is provided for displaying your tracks on a map. Maps are displayed
 using the fantastic [Leaflet library](http://leafletjs.com/) and some useful Leaflet plugins
 are included. Maps can be viewed in full-screen on modern browsers.
 
-`\[tsmap track=&lt;id&gt;\]`
+`[tsmap track=<id>]`
 
 See the FAQ section for more information on the shortcode's supported
 attributes and other usage pointers.
@@ -61,7 +61,7 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 
 ## What are the available shortcode attributes?
 
-For the [tsmap] shortcode:
+For the `[tsmap]` shortcode:
 
 * **track**: one or more track IDs, separated by commas, or 'live' (deprecated,
   'user=@' is preferred).
@@ -141,10 +141,10 @@ order will be preserved within each track type, different track types are
 evaluated in a specific order, and styling values are applied in that order
 too. The order is:
 
-1. Static tracks (track=a,b,c)
-2. Live user tracks (user=x,y,z)
-3. GPX tracks (gpx=...)
-4. KML tracks (kml=...)
+1. Static tracks (`track=a,b,c`)
+2. Live user tracks (`user=x,y,z`)
+3. GPX tracks (`gpx=...`)
+4. KML tracks (`kml=...`)
 
 To prevent confusion, I suggest you specify tracks in this order in your shortcode too.
 
@@ -159,7 +159,7 @@ accomplish this:
 
 Example: `[tsmap track=live markers=e opacity=0.0]`
 
-Attributes for the [tslink] shortcode:
+Attributes for the `[tslink]` shortcode:
 
 * **track**: same as for [tsmap]
 * **id**: same as for [tsmap]
@@ -190,13 +190,13 @@ Since Trackserver v6.0, an alternative syntax for adding tracks to a map is prov
 
 So:
 
-* Within the [tsmap][/tsmap] block, you add elements that are enclosed by curly braces.
-* The first word after the opening brace is the type. Supported are: 'track', 'user', 'gpx' and 'kml'.
+* Within the `[tsmap][/tsmap]` block, you add elements that are enclosed by curly braces.
+* The first word after the opening brace is the type. Supported are: `track`, `user`, `gpx` and `kml`.
 * After the type, you add attributes, much like the traditional shortcode uses.
 * In this syntax, attributes can only have a single value, and not a comma-separated list.
-* Outside the item IDs, only the item-level styling level attributes are supported. Map level attributes like 'height' and 'infobar' are not.
-* 'track' and 'user' items need a mandatory 'id' attribute.
-* 'gpx' and 'kml' items need a mandatory 'url' attribute.
+* Outside the item IDs, only the item-level styling level attributes are supported. Map level attributes like `height` and `infobar` are not.
+* `track` and `user` items need a mandatory `id` attribute.
+* `gpx` and `kml` items need a mandatory `url` attribute.
 * In a single [tsmap] shortcode, you can mix attribute-based and content-based items.
 
 One caveat:
