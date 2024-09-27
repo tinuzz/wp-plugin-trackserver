@@ -5,6 +5,7 @@ Tags: gps, gpx, map, leaflet, track, mobile, tracking
 Requires at least: 4.7
 Tested up to: 6.6
 Stable tag: trunk
+Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,7 +57,7 @@ See the FAQ section for more information on the shortcode's supported attributes
 
 = Requirements =
 
-Trackserver requires PHP 5.3 or newer and it needs both DOMDocument and SimpleXML extensions installed.
+Trackserver requires PHP 7.3 or newer and it needs both DOMDocument and SimpleXML extensions installed.
 
 = Credits =
 
