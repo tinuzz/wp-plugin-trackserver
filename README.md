@@ -1,6 +1,5 @@
 # wp-plugin-trackserver
-A WordPress plugin for GPS tracking and publishing [![Build Status](https://travis-ci.org/tinuzz/wp-plugin-trackserver.svg?branch=master)](https://travis-ci.org/tinuzz/wp-plugin-trackserver)
-
+A WordPress plugin for GPS tracking and publishing
 
 Getting your GPS tracks into Wordpress and publishing them has never been easier!
 
@@ -31,7 +30,8 @@ are included. Maps can be viewed in full-screen on modern browsers.
 
 \[tsmap track=&lt;id&gt;\]
 
-See the FAQ section for more information on the shortcode's supported attributes.
+See the FAQ section for more information on the shortcode's supported
+attributes and other usage pointers.
 
 For more information, please see:
 * [Trackserver WordPress plugin](https://www.grendelman.net/wp/trackserver-wordpress-plugin/) - Information and demos
@@ -43,7 +43,7 @@ For more information, please see:
 
 # Requirements
 
-Trackserver requires PHP 5.3 or newer and it needs both DOMDocument and
+Trackserver requires PHP 7.3 or newer and it needs both DOMDocument and
 SimpleXML extensions installed.
 
 # Credits
@@ -173,6 +173,40 @@ Example: [tslink track=1,2,3,4 text="Download the tracks of our 4-day hike in GP
 Instead of using the 'text' attribute, you can also use shortcode to enclose the text:
 
 Example: [tslink track=1,2,3,4]Download the tracks of our 4-day hike in GPX format[/tslink]
+
+## How does the shortcode content syntax work?
+
+Since Trackserver v6.0, an alternative syntax for adding tracks to a map is provided, using the shortcode content, rather than the attributes. An example:
+
+[tsmap continuous=n]
+{track id=1 markers=s color=yellow}
+{track id=2 markers=n color=green}
+{track id=3 markers=e color=red}
+{user  id=5}
+{gpx   url="https://..../"}
+[/tsmap]
+
+So:
+
+* Within the [tsmap][/tsmap] block, you add elements that are enclosed by curly braces.
+* The first word after the opening brace is the type. Supported are: 'track', 'user', 'gpx' and 'kml'.
+* After the type, you add attributes, much like the traditional shortcode uses.
+* In this syntax, attributes can only have a single value, and not a comma-separated list.
+* Outside the item IDs, only the item-level styling level attributes are supported. Map level attributes like 'height' and 'infobar' are not.
+* 'track' and 'user' items need a mandatory 'id' attribute.
+* 'gpx' and 'kml' items need a mandatory 'url' attribute.
+* In a single [tsmap] shortcode, you can mix attribute-based and content-based items.
+
+One caveat:
+
+If you have multiple [tsmap] shortcodes in a single post, and one or more of
+them uses the content-based systax, then ALL (!) the shortcodes must have a
+closing tag [/tsmap], even if they have no content. This is because of how
+WordPress' shortcode parser works, and Trackserver cannot change this. An
+example:
+
+[tsmap track=1,2,3][/tsmap]
+[tsmap]{track id=4}[/tsmap]
 
 ## I used the shortcode but the map doesn't show
 
