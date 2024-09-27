@@ -13,6 +13,45 @@ class Trackserver_Shortcode {
 	private $shortcode1 = 'tsmap';
 	private $shortcode2 = 'tsscripts';
 	private $shortcode3 = 'tslink';
+	private $attr_data  = array();
+	private $track_type = null;
+	private $shortcode_data;
+
+	private $map_attr_defaults = array(
+		'width'       => '100%',
+		'height'      => '480px',
+		'align'       => '',
+		'class'       => '',
+		'continuous'  => true,
+		'infobar'     => false,
+		'zoom'        => false,
+		'live'        => null,
+		'maxage'      => false,
+	);
+
+	private $link_attr_defaults = array(
+		'format'    => 'gpx',
+		'class'     => '',
+		'text'      => '',
+		'href_only' => false,
+	);
+
+	private $item_attr_defaults = array(
+		'id'         => false,
+		'track'      => false,
+		'user'       => false,
+		'gpx'        => false,
+		'kml'        => false,
+		'markers'    => true,
+		'markersize' => 5,
+		'color'      => false,
+		'weight'     => false,
+		'opacity'    => false,
+		'dash'       => false,
+		'points'     => false,
+		'arrows'     => false,
+		'delay'      => false,
+	);
 
 	/**
 	 * Constructor.
@@ -60,65 +99,386 @@ class Trackserver_Shortcode {
 	}
 
 	/**
+	 * Return a default track format as derived from settings.
+	 *
+	 * @since 5.1
+	 */
+	private function get_default_track_type() {
+
+		if ( $this->trackserver->options['fetchmode_all'] ) {
+			return 'polyline';
+		}
+
+		if ( is_null( $this->track_type ) ) {
+			switch ( $this->trackserver->track_format ) {
+				case 'geojson':
+					$this->track_type = 'geojson';
+					break;
+				default:
+					$this->track_type = 'polylinexhr';
+			}
+		}
+
+		return $this->track_type;
+	}
+
+	/**
+	 * Parse shortcode attributes and store values in a class property.
+	 *
+	 * @since 5.1
+	 */
+	private function parse_shortcode_atts( $atts, $mode = 'map' ) {
+		global $post;
+
+		$instance_defaults = ( $mode === 'link' ? $this->link_attr_defaults : $this->map_attr_defaults );
+		$defaults          = array_merge( $instance_defaults, $this->item_attr_defaults );
+
+		if ( $post->post_type === 'tsmap' ) {
+			$defaults['height'] = '100%';
+		}
+
+		$track_ids = array();
+		$user_ids  = array();
+		$atts      = shortcode_atts( $defaults, $atts, $this->shortcode1 );
+		$this->init_multivalue_atts( $atts );
+
+		if ( $atts['track'] === false ) {
+			$atts['track'] = $atts['id'];
+		}
+		if ( $atts['track'] ) {
+			$track_ids = explode( ',', $atts['track'] );
+		}
+		if ( $atts['user'] ) {
+			$user_ids = explode( ',', $atts['user'] );
+		}
+
+		foreach ( $instance_defaults as $k => $v ) {
+			if ( $atts[ $k ] ) {
+				$this->shortcode_data['config'][ $k ] = $atts[ $k ];
+			} else {
+				$this->shortcode_data['config'][ $k ] = $v;
+			}
+		}
+
+		$this->shortcode_data['config']['continuous'] = $this->get_content_boolean( $atts['continuous'], true );
+		$this->shortcode_data['config']['live']       = $this->get_content_boolean( $atts['live'], false );
+		$this->shortcode_data['config']['zoom']       = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : false );
+		$this->shortcode_data['config']['fit']        = ( $atts['zoom'] !== false ? false : true );  // zoom is always set, so we need a signal for altering fitBounds() options
+
+		if ( $atts['infobar'] !== false ) {
+			$this->shortcode_data['config']['infobar'] = ( in_array( $atts['infobar'], array( 'true', 't', 'yes', 'y' ), true ) ? true : $atts['infobar'] ); // selectively convert to boolean
+		}
+
+		if ( in_array( $atts['infobar'], array( 'true', 't', 'yes', 'y', 'false', 'f', 'no', 'n' ), true ) ) {
+			$this->shortcode_data['config']['infobar']     = $this->get_content_boolean( $atts['infobar'] );
+			$this->shortcode_data['config']['infobar_tpl'] = null;
+		} elseif ( $atts['infobar'] !== false ) {    // set to other value
+			$this->shortcode_data['config']['infobar']     = true;
+			$this->shortcode_data['config']['infobar_tpl'] = $atts['infobar'];    // Already HTML escaped.
+		}
+
+		$this->shortcode_data['config']['maxage']                              = $this->get_age_seconds( $atts['maxage'] );
+		list( $validated_track_ids, $validated_user_ids, $validated_live_ids ) = $this->validate_ids( $track_ids, $user_ids );
+		$this->shortcode_data['user_ids']                                      = array_unique( array_merge( $this->shortcode_data['user_ids'], $validated_user_ids ) );
+		$this->shortcode_data['track_ids']                                     = $validated_track_ids;
+
+		// Add static tracks
+		foreach ( $validated_track_ids as $id ) {
+			// phpcs:ignore
+			$trk = array(
+				'track_id'   => $id,
+				'track_type' => $this->get_default_track_type(),
+				'style'      => $this->get_style(),
+				'points'     => $this->get_boolean_att( 'points' ),
+				'arrows'     => $this->get_boolean_att( 'arrows' ),
+				'markers'    => $this->get_markers(),
+				'markersize' => $this->get_markersize(),
+				'is_live'    => false,
+				'follow'     => false,
+			);
+			$this->shortcode_data['tracks'][ $id ] = $trk;
+		}
+
+		// Add live tracks
+		$following = false;
+		foreach ( $validated_live_ids as $user_id => $track_id ) {
+
+			// For the first live track, set 'follow' to true
+			if ( $following === false ) {
+				$following = true;
+				$follow    = true;
+			} else {
+				$follow = false;
+			}
+
+			$trk = array(
+				'track_id'   => $track_id,
+				'track_type' => $this->get_default_track_type(),
+				'style'      => $this->get_style(),
+				'points'     => $this->get_boolean_att( 'points' ),
+				'arrows'     => $this->get_boolean_att( 'arrows' ),
+				'markers'    => $this->get_markers(),
+				'markersize' => $this->get_markersize(),
+				'is_live'    => true,
+				'follow'     => $follow,
+			);
+			$this->shortcode_data['tracks'][ $track_id ] = $trk;
+		}
+
+		$this->shortcode_data['all_track_ids'] = array_unique( array_merge( $this->shortcode_data['all_track_ids'], array_keys( $this->shortcode_data['tracks'] ) ) );
+
+		// Add GPX and KML tracks
+		foreach ( array( 'gpx', 'kml' ) as $type ) {
+			if ( $atts[ $type ] ) {
+				$urls = explode( ' ', $atts[ $type ] );
+				$j    = 0;
+				foreach ( $urls as $u ) {
+					if ( ! empty( $u ) ) {
+						$u        = $this->proxy_url( $u );
+						$track_id = $type . $j;
+						$this->shortcode_data['tracks'][ $track_id ] = array(
+							'track_id'   => $track_id,
+							'track_type' => $type,
+							'track_url'  => $u,
+							'style'      => $this->get_style(),
+							'points'     => $this->get_boolean_att( 'points' ),
+							'arrows'     => $this->get_boolean_att( 'arrows' ),
+							'markers'    => $this->get_markers(),
+							'markersize' => $this->get_markersize(),
+							'is_live'    => false,
+							'follow'     => false,
+						);
+						++$j;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Process the content of the main shortcode.
+	 *
+	 * This function parses the content of the shortcode and extracts track data
+	 * and other things from it. The code is partially borrowed from WordPress' own
+	 * shortcode parsing.
+	 *
+	 * @since 5.1
+	 */
+	private function parse_shortcode_content( $content ) {
+
+		if ( ! str_contains( $content, '{' ) ) {
+			return array();
+		}
+		$content = preg_replace( "/[\x{00a0}\x{200b}\x09\x0a\x0d]+/u", ' ', $content );
+		$pat     = get_shortcode_atts_regex();
+		$atts    = array(
+			'track' => array(),
+			'user'  => array(),
+			'gpx'   => array(),
+			'kml'   => array(),
+		);
+		$types   = apply_filters( 'trackserver_content_types', array_keys( $atts ) );
+		$types   = implode( '|', $types );
+
+		preg_match_all( '@\{\s*(' . $types . ') ([^\{\}\x00-\x1f]+)\}@', $content, $matches );
+		for ( $i = 0; $i < count( $matches[1] ); $i++ ) {
+			$type = $matches[1][ $i ];
+			if ( ! array_key_exists( $type, $atts ) ) {
+				$atts[ $type ] = array();
+			}
+
+			$record = array();
+			$args   = $matches[2][ $i ];
+			preg_match_all( $pat, $args, $m_arg, PREG_SET_ORDER );
+
+			foreach ( $m_arg as $m ) {
+				if ( ! empty( $m[1] ) ) {
+					$record[ strtolower( $m[1] ) ] = stripcslashes( $m[2] );
+				} elseif ( ! empty( $m[3] ) ) {
+					$record[ strtolower( $m[3] ) ] = stripcslashes( $m[4] );
+				} elseif ( ! empty( $m[5] ) ) {
+					$record[ strtolower( $m[5] ) ] = stripcslashes( $m[6] );
+				} elseif ( isset( $m[7] ) && strlen( $m[7] ) ) {
+					$record[ strtolower( $m[7] ) ] = 'y';
+				} elseif ( isset( $m[8] ) && strlen( $m[8] ) ) {
+					$record[ strtolower( $m[8] ) ] = 'y';
+				} elseif ( isset( $m[9] ) ) {
+					$record[ strtolower( $m[9] ) ] = 'y';
+				}
+			}
+
+			// Fill in default values for missing attributes, much like WP's shortcode_atts() does.
+			foreach ( $this->item_attr_defaults as $name => $val ) {
+				if ( ! array_key_exists( $name, $record ) ) {
+					$record[ $name ] = $val;
+				}
+			}
+
+			# For tracks and users, 'id' is mandatory, and it is used as an array key.
+			if ( $type === 'track' || $type === 'user' ) {
+				if ( isset( $record['id'] ) ) {
+					$atts[ $type ][ $record['id'] ] = $record;
+				}
+			} else {
+					$atts[ $type ][] = $record;
+			}
+		}
+
+		$track_ids = array_keys( $atts['track'] );
+		$user_ids  = array_keys( $atts['user'] );
+
+		list( $validated_track_ids, $validated_user_ids, $validated_live_ids ) = $this->validate_ids( $track_ids, $user_ids );
+		$this->shortcode_data['user_ids']                                      = array_unique( array_merge( $this->shortcode_data['user_ids'], $validated_user_ids ) );
+		$this->shortcode_data['track_ids']                                     = $validated_track_ids;
+
+		// Add static tracks
+		foreach ( $validated_track_ids as $id ) {
+			// phpcs:ignore
+			$trk = array(
+				'track_id'   => $id,
+				'track_type' => $this->get_default_track_type(),
+				'style'      => $this->get_content_style( $atts['track'][ $id ] ),
+				'points'     => $this->get_content_boolean( $atts['track'][ $id ]['points'] ),
+				'arrows'     => $this->get_content_boolean( $atts['track'][ $id ]['arrows'] ),
+				'markers'    => $this->get_content_markers( $atts['track'][ $id ]['markers'] ),
+				'markersize' => $this->get_content_markersize( $atts['track'][ $id ]['markersize'] ),
+				'is_live'    => false,
+				'follow'     => false,
+			);
+			$this->shortcode_data['tracks'][ $id ] = $trk;
+		}
+
+		// Add live tracks
+		$following = false;
+		foreach ( $validated_live_ids as $user_id => $track_id ) {
+
+			// For the first live track, set 'follow' to true
+			if ( $following === false ) {
+				$following = true;
+				$follow    = true;
+			} else {
+				$follow = false;
+			}
+
+			$trk = array(
+				'track_id'   => $track_id,
+				'track_type' => $this->get_default_track_type(),
+				'style'      => $this->get_content_style( $atts['user'][ $user_id ] ),
+				'points'     => $this->get_content_boolean( $atts['user'][ $user_id ]['points'] ),
+				'arrows'     => $this->get_content_boolean( $atts['user'][ $user_id ]['arrows'] ),
+				'markers'    => $this->get_content_markers( $atts['user'][ $user_id ]['markers'] ),
+				'markersize' => $this->get_content_markersize( $atts['user'][ $user_id ]['markersize'] ),
+				'is_live'    => true,
+				'follow'     => $follow,
+			);
+			$this->shortcode_data['tracks'][ $track_id ] = $trk;
+
+		}
+
+		$this->shortcode_data['all_track_ids'] = array_unique( array_merge( $this->shortcode_data['all_track_ids'], array_keys( $this->shortcode_data['tracks'] ) ) );
+
+		// Add GPX and KML tracks. If 'url' is not set, no track is added.
+		foreach ( array( 'gpx', 'kml' ) as $type ) {
+			$j = 0;
+			foreach ( $atts[ $type ] as $trk ) {
+				if ( ! empty( $trk['url'] ) ) {
+					$u        = $this->proxy_url( $trk['url'] );
+					$track_id = $type . $j;
+					$this->shortcode_data['tracks'][ $track_id ] = array(
+						'track_id'   => $track_id,
+						'track_type' => $type,
+						'track_url'  => $u,
+						'style'      => $this->get_content_style( $trk ),
+						'points'     => $this->get_content_boolean( $trk['points'] ),
+						'arrows'     => $this->get_content_boolean( $trk['arrows'] ),
+						'markers'    => $this->get_content_markers( $trk['markers'] ),
+						'markersize' => $this->get_content_markersize( $trk['markersize'] ),
+						'is_live'    => false,
+						'follow'     => false,
+					);
+					++$j;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Return the initial lat/lng for the center of the map, based on the tracks it contains
+	 *
+	 * @since 5.1
+	 */
+	private function get_default_latlng() {
+		global $wpdb;
+
+		$default_lat = '51.443168';
+		$default_lng = '5.447200';
+
+		if ( count( $this->shortcode_data['all_track_ids'] ) ) {
+			$sql_in = "('" . implode( "','", $this->shortcode_data['all_track_ids'] ) . "')";
+			$sql    = 'SELECT AVG(latitude) FROM ' . $this->trackserver->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
+			$result = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			if ( $result ) {
+				$default_lat = $result;
+			}
+			$sql    = 'SELECT AVG(longitude) FROM ' . $this->trackserver->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
+			$result = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			if ( $result ) {
+				$default_lng = $result;
+			}
+		}
+		return array( $default_lat, $default_lng );
+	}
+
+	/**
+	 * Initialize the structure for the shortcode data. This has to be done for each instance of any of our shortcodes.
+	 *
+	 * @since 5.1
+	 */
+	private function init_shortcode_data() {
+		$this->shortcode_data = array(
+			'tracks'        => array(),
+			'points'        => array(),
+			'user_ids'      => array(),
+			'track_ids'     => array(),
+			'all_track_ids' => array(),
+			'config'        => array(),
+		);
+	}
+
+	/**
 	 * Handle the main [tsmap] shortcode
+	 *
+	 * This function processes the shortcode attributes and content to generate maps.
+	 * Its output is two things:
+	 * - It adds an element to $this->trackserver->mapdata, representing all data for this map.
+	 * - It returns a 'div' element, for rendering the map.
 	 *
 	 * @since 1.0
 	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
 	 * @since 5.1 Prevent expanding the shortcode outside The Loop.
+	 * @since 5.2 Refactoring
 	 */
-	public function handle_shortcode1( $atts ) {
+	public function handle_shortcode1( $atts, $content = null ) {
 		global $wpdb, $post;
 
 		if ( ! in_the_loop() ) {
 			return '';
 		}
 
-		$save_atts = $atts;
-
-		$default_height = '480px';
-		if ( $post->post_type === 'tsmap' ) {
-			$default_height = '100%';
-		}
-
-		$defaults = array(
-			'width'      => '100%',
-			'height'     => $default_height,
-			'align'      => '',
-			'class'      => '',
-			'id'         => false,
-			'track'      => false,
-			'user'       => false,
-			'live'       => false,
-			'gpx'        => false,
-			'kml'        => false,
-			'markers'    => true,
-			'markersize' => false,
-			'continuous' => true,
-			'color'      => false,
-			'weight'     => false,
-			'opacity'    => false,
-			'dash'       => false,
-			'arrows'     => false,
-			'infobar'    => false,
-			'points'     => false,
-			'zoom'       => false,
-			'maxage'     => false,
-		);
-
-		$atts      = shortcode_atts( $defaults, $atts, $this->shortcode1 );
-		$author_id = get_the_author_meta( 'ID' );
-		$post_id   = get_the_ID();
-		$is_live   = false;
-
 		static $num_maps = 0;
 		$div_id          = 'tsmap_' . ++$num_maps;
 
+		// Set $this->shortcode_data
+		$this->init_shortcode_data();
+		$this->parse_shortcode_atts( $atts );
+		$this->parse_shortcode_content( $content );
+
 		$classes = array();
-		if ( $atts['class'] ) {
-			$classes[] = $atts['class'];
+		if ( $this->shortcode_data['config']['class'] ) {
+			$classes[] = $this->shortcode_data['config']['class'];
 		}
-		if ( in_array( $atts['align'], array( 'left', 'center', 'right', 'none' ), true ) ) {
-			$classes[] = 'align' . $atts['align'];
+		if ( in_array( $this->shortcode_data['config']['align'], array( 'left', 'center', 'right', 'none' ), true ) ) {
+			$classes[] = 'align' . $this->shortcode_data['config']['align'];
 		}
 
 		$class_str = '';
@@ -126,186 +486,81 @@ class Trackserver_Shortcode {
 			$class_str = 'class="' . implode( ' ', $classes ) . '"';
 		}
 
-		if ( ! $atts['track'] ) {
-			$atts['track'] = $atts['id'];
-		}
-
-		$this->init_atts( $atts );
-
-		//$new_track_data = $this->parse_shortcode( $atts, $content );
-
-		$maxage     = $this->get_age_seconds( $atts['maxage'] );
-		//$delay      = $this->get_age_seconds( $atts['delay'] );
-
-		list( $validated_track_ids, $validated_user_ids ) = $this->validate_ids( $atts );
-
-		if ( count( $validated_user_ids ) > 0 ) {
-			$is_live = true;
-		}
-
-		$tracks              = array();
 		$alltracks_url       = false;
-		$default_lat         = '51.443168';
-		$default_lon         = '5.447200';
 		$gettrack_url_prefix = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/' );
+		$post_id             = get_the_ID();
 
-		if ( count( $validated_track_ids ) > 0 || count( $validated_user_ids ) > 0 ) {
+		if ( $this->trackserver->options['fetchmode_all'] ) {
 
-			$live_tracks   = $this->trackserver->get_live_tracks( $validated_user_ids, $maxage );
-			$all_track_ids = array_merge( $validated_track_ids, $live_tracks );
-			$query         = json_encode(
-				array(
-					'id'   => $validated_track_ids,
-					'live' => $validated_user_ids,
-				)
-			);
-			$query         = base64_encode( $query );
-			$query_nonce   = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
-			$alltracks_url = $gettrack_url_prefix . '?query=' . rawurlencode( $query ) . "&p=$post_id&format=" .
-				$this->trackserver->track_format . "&maxage=$maxage&_wpnonce=$query_nonce";
-			$following     = false;
-
-			//foreach ( $validated_track_ids as $validated_id ) {
-			foreach ( $all_track_ids as $validated_id ) {
-
-				// For the first live track, set 'follow' to true
-				if ( in_array( $validated_id, $live_tracks, true ) && ! $following ) {
-					$following = true;
-					$follow    = true;
-				} else {
-					$follow = false;
-				}
-
-				$is_live = false;
-				if ( in_array( $validated_id, $live_tracks, true ) ) {
-					$is_live = true;
-				}
-
-				$trk = array(
-					'track_id'   => $validated_id,
-					'track_type' => 'polyline',     // the handle_gettrack_query method only supports polyline
-					'style'      => $this->get_style(),
-					'points'     => $this->get_boolean_att( 'points' ),
-					'arrows'     => $this->get_boolean_att( 'arrows' ),
-					'markers'    => $this->get_markers(),
-					'markersize' => $this->get_markersize(),
-					'is_live'    => $is_live,
-					'follow'     => $follow,
+			if ( count( $this->shortcode_data['tracks'] ) ) {
+				$query         = json_encode(
+					array(
+						'id'    => $this->shortcode_data['track_ids'],
+						'live'  => $this->shortcode_data['user_ids'],
+						'delay' => $delay,
+					)
 				);
+				$query         = base64_encode( $query );
+				$query_nonce   = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
+				$alltracks_url = $gettrack_url_prefix . '?query=' . rawurlencode( $query ) . "&p=$post_id&format=" .
+					$this->trackserver->track_format . '&maxage=' . $this->shortcode_data['config']['maxage'] . "&_wpnonce=$query_nonce";
+			}
+		} else {
 
-				// If the 'fetchmode_all' option is false, do not use $query, but fetch each track via its own URL
-				if ( ! $this->trackserver->options['fetchmode_all'] ) {
+			array_walk(
+				$this->shortcode_data['tracks'],
+				function ( &$trk, $id ) use ( $gettrack_url_prefix, $post_id ) {
+					if ( $trk['track_type'] === 'polylinexhr' || $trk['track_type'] === 'geojson' ) {
 
-					// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
-					// https://core.trac.wordpress.org/ticket/4221
-					$nonce = wp_create_nonce( 'gettrack_' . $validated_id . '_p' . $post_id );
+						// Use wp_create_nonce() instead of wp_nonce_url() due to escaping issues
+						// https://core.trac.wordpress.org/ticket/4221
+						$nonce = wp_create_nonce( 'gettrack_' . $id . '_p' . $post_id );
 
-					switch ( $this->trackserver->track_format ) {
-						case 'geojson':
-							$trk['track_type'] = 'geojson';
-							break;
-						default:
-							$trk['track_type'] = 'polylinexhr';
+						$trk['track_url'] = $gettrack_url_prefix . '?id=' . $id . "&p=$post_id&format=" .
+							$this->trackserver->track_format . '&maxage=' . $this->shortcode_data['config']['maxage'] . "&_wpnonce=$nonce";
 					}
-					$trk['track_url'] = $gettrack_url_prefix . '?id=' . $validated_id . "&p=$post_id&format=" .
-						$this->trackserver->track_format . "&maxage=$maxage&_wpnonce=$nonce";
 				}
-
-				$tracks[] = $trk;
-			}
-
-			if ( count( $all_track_ids ) ) {
-				$sql_in = "('" . implode( "','", $all_track_ids ) . "')";
-				$sql    = 'SELECT AVG(latitude) FROM ' . $this->trackserver->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
-				$result = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				if ( $result ) {
-					$default_lat = $result;
-				}
-				$sql    = 'SELECT AVG(longitude) FROM ' . $this->trackserver->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
-				$result = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				if ( $result ) {
-					$default_lon = $result;
-				}
-			}
+			);
 		}
 
-		if ( $atts['gpx'] ) {
-			$urls = explode( ' ', $atts['gpx'] );
-			$j    = 0;
-			foreach ( $urls as $u ) {
-				if ( ! empty( $u ) ) {
-					$u        = $this->proxy_url( $u, $post_id );
-					$tracks[] = array(
-						'track_id'   => 'gpx' . $j,
-						'track_url'  => $u,
-						'track_type' => 'gpx',
-						'style'      => $this->get_style(),
-						'points'     => $this->get_boolean_att( 'points' ),
-						'arrows'     => $this->get_boolean_att( 'arrows' ),
-						'markers'    => $this->get_markers(),
-						'markersize' => $this->get_markersize(),
-					);
-					$j++;
-				}
-			}
+		list( $default_lat, $default_lng ) = $this->get_default_latlng();
+
+		if ( is_null( $this->shortcode_data['config']['live'] ) ) {
+			$is_live = (bool) count( $this->shortcode_data['user_ids'] ) > 0;
+		} else {
+			$is_live = $this->shortcode_data['config']['live'];
 		}
 
-		if ( $atts['kml'] ) {
-			$urls = explode( ' ', $atts['kml'] );
-			$j    = 0;
-			foreach ( $urls as $u ) {
-				if ( ! empty( $u ) ) {
-					$u        = $this->proxy_url( $u, $post_id );
-					$tracks[] = array(
-						'track_id'   => 'kml' . $j,
-						'track_url'  => $u,
-						'track_type' => 'kml',
-						'style'      => $this->get_style(),
-						'points'     => $this->get_boolean_att( 'points' ),
-						'arrows'     => $this->get_boolean_att( 'arrows' ),
-						'markers'    => $this->get_markers(),
-						'markersize' => $this->get_markersize(),
-					);
-					$j++;
-				}
-			}
+		if ( $this->shortcode_data['config']['zoom'] === false ) {   // not set
+			$zoom = ( $is_live ? '16' : '6' );
+		} else {
+			$zoom = intval( $this->shortcode_data['config']['zoom'] );
 		}
 
-		$continuous  = ( in_array( $atts['continuous'], array( 'false', 'f', 'no', 'n' ), true ) ? false : true ); // default true
-		$infobar     = ( in_array( $atts['infobar'], array( 'false', 'f', 'no', 'n', false ), true ) ? false : true );  // default false, any value is true
-		$is_not_live = ( in_array( $atts['live'], array( 'false', 'f', 'no', 'n' ), true ) ? false : $is_live );   // force override
-		$is_live     = ( in_array( $atts['live'], array( 'true', 't', 'yes', 'y' ), true ) ? true : $is_not_live );   // force override
-		$infobar_tpl = get_user_meta( $author_id, 'ts_infobar_template', true );
-		$zoom        = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : ( $is_live ? '16' : '6' ) );
-		$fit         = ( $atts['zoom'] !== false ? false : true ); // zoom is always set, so we need a signal for altering fitBounds() options
+		if ( is_null( $this->shortcode_data['config']['infobar_tpl'] ) ) {
+			$author_id   = get_the_author_meta( 'ID' );
+			$infobar_tpl = htmlspecialchars( get_user_meta( $author_id, 'ts_infobar_template', true ) );
+		} else {
+			$infobar_tpl = $this->shortcode_data['config']['infobar_tpl'];     // This value is already HTML escaped
+		}
 
 		$mapdata = array(
 			'div_id'       => $div_id,
-			'tracks'       => $tracks,
+			'tracks'       => array_values( $this->shortcode_data['tracks'] ),
 			'default_lat'  => $default_lat,
-			'default_lon'  => $default_lon,
+			'default_lon'  => $default_lng,
 			'default_zoom' => $zoom,
+			'fit'          => $this->shortcode_data['config']['fit'],
 			'fullscreen'   => true,
 			'is_live'      => $is_live,
-			'continuous'   => $continuous,
-			'infobar'      => $infobar,
-			'fit'          => $fit,
+			'continuous'   => $this->shortcode_data['config']['continuous'],
+			'infobar'      => $this->shortcode_data['config']['infobar'],
+			'infobar_tpl'  => $infobar_tpl,
+			'alltracks'    => $alltracks_url,
 		);
 
-		if ( $this->trackserver->options['fetchmode_all'] ) {
-			$mapdata['alltracks'] = $alltracks_url;
-		}
-
-		if ( $infobar ) {
-			if ( in_array( $atts['infobar'], array( 't', 'true', 'y', 'yes' ), true ) ) {
-				$mapdata['infobar_tpl'] = htmlspecialchars( $infobar_tpl );
-			} else {
-				$mapdata['infobar_tpl'] = $atts['infobar'];   // This value is already HTML escaped, because the post as a whole is stored in the database that way
-			}
-		}
-
 		$this->trackserver->mapdata[]    = $mapdata;
-		$out                             = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . $atts['width'] . '; height: ' . $atts['height'] . '; max-width: 100%"></div>';
+		$out                             = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . $this->shortcode_data['config']['width'] . '; height: ' . $this->shortcode_data['config']['height'] . '; max-width: 100%"></div>';
 		$this->trackserver->need_scripts = true;
 
 		return $out;
@@ -337,62 +592,52 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 3.0
 	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
+	 * @since 5.1 Refactoring .
 	 */
 	public function handle_shortcode3( $atts, $content = '' ) {
 
-		$defaults = array(
-			'text'      => '',
-			'class'     => '',
-			'id'        => false,
-			'track'     => false,
-			'user'      => false,
-			'format'    => 'gpx',
-			'maxage'    => false,
-			'href_only' => false,
-		);
+		if ( ! in_the_loop() ) {
+			return '';
+		}
 
-		$atts = shortcode_atts( $defaults, $atts, $this->shortcode3 );
+		// Set $this->shortcode_data
+		$this->init_shortcode_data();
+		$this->parse_shortcode_atts( $atts, 'link' );
 
 		$class_str = '';
-		if ( $atts['class'] ) {
-			$class_str = 'class="' . htmlspecialchars( $atts['class'] ) . '"';
+		if ( $this->shortcode_data['config']['class'] ) {
+			$class_str = 'class="' . htmlspecialchars( $this->shortcode_data['config']['class'] ) . '"';
 		}
 
 		$out = 'ERROR';
 
-		if ( ! $atts['track'] ) {
-			$atts['track'] = $atts['id'];
-		}
+		if ( count( $this->shortcode_data['tracks'] ) ) {
 
-		$maxage = $this->get_age_seconds( $atts['maxage'] );
-
-		list( $validated_track_ids, $validated_user_ids ) = $this->validate_ids( $atts );
-
-		if ( count( $validated_track_ids ) > 0 || count( $validated_user_ids ) > 0 ) {
-
-			$post_id = get_the_ID();
+			$gettrack_url_prefix = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/' );
+			$post_id             = get_the_ID();
 
 			$track_format = 'gpx';
-			if ( $atts['format'] && in_array( $atts['format'], array( 'gpx' ), true ) ) {
-				$track_format = $atts['format'];
+			if ( in_array( $this->shortcode_data['config']['format'], array( 'gpx' ), true ) ) {
+				$track_format = $this->shortcode_data['config']['format'];
 			}
 
-			$query         = json_encode(
+			$query = json_encode(
 				array(
-					'id'   => $validated_track_ids,
-					'live' => $validated_user_ids,
+					'id'   => $this->shortcode_data['track_ids'],
+					'live' => $this->shortcode_data['user_ids'],
 				)
 			);
+
 			$query         = base64_encode( $query );
 			$query_nonce   = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
-			$alltracks_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&maxage=$maxage&_wpnonce=$query_nonce" );
+			$alltracks_url = $gettrack_url_prefix . '?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&maxage=" . $this->shortcode_data['config']['maxage'] . "&_wpnonce=$query_nonce";
 
-			$text = $atts['text'] . $content;
+			$text = $this->shortcode_data['config']['text'] . $content;
 			if ( $text === '' ) {
 				$text = 'download ' . $track_format;
 			}
 
-			if ( $atts['href_only'] === false ) {
+			if ( $this->shortcode_data['config']['href_only'] === false ) {
 				$out = '<a href="' . $alltracks_url . '" ' . $class_str . '>' . htmlspecialchars( $text ) . '</a>';
 			} else {
 				$out = $alltracks_url;
@@ -409,10 +654,11 @@ class Trackserver_Shortcode {
 	 * WordPress and it can be proxied by Trackserver to work around CORS
 	 * restrictions. Please read the FAQ for important security information.
 	 */
-	private function proxy_url( $url, $post_id ) {
+	private function proxy_url( $url ) {
 		if ( substr( $url, 0, 6 ) === 'proxy:' ) {
 			$track_base_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?', ( is_ssl() ? 'https' : 'http' ) );
 			$proxy          = base64_encode( substr( $url, 6 ) );
+			$post_id        = get_the_ID();
 			$proxy_nonce    = wp_create_nonce( 'proxy_' . $proxy . '_p' . $post_id );
 			$url            = $track_base_url . 'proxy=' . rawurlencode( $proxy ) . "&p=$post_id&_wpnonce=$proxy_nonce";
 		}
@@ -424,7 +670,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 5.1
 	 */
-	private function init_atts( $atts ) {
+	private function init_multivalue_atts( $atts ) {
 		$allowed_attrs   = array( 'color', 'weight', 'opacity', 'dash', 'points', 'arrows', 'markers', 'markersize' );
 		$this->attr_data = array();   // Start with an empty array for each tsmap.
 
@@ -444,7 +690,7 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 3.0
 	 * @since 5.0 Moved to and adapted for the Trackserver_Shortcode class.
-	 * @since 5.1 Changed to use $this->attr_data and leave initialization to init_atts().
+	 * @since 5.1 Changed to use $this->attr_data and leave initialization to init_multivalue_atts().
 	 */
 	private function get_style() {
 
@@ -476,20 +722,37 @@ class Trackserver_Shortcode {
 		return $style;
 	}
 
+	private function get_content_style( $atts ) {
+		$style = array();
+		if ( $atts['color'] !== false ) {
+			$style['color'] = $atts['color'];
+		}
+		if ( $atts['weight'] !== false ) {
+			$style['weight'] = $atts['weight'];
+		}
+		if ( $atts['opacity'] !== false ) {
+			$style['opacity'] = $atts['opacity'];
+		}
+		if ( $atts['dash'] !== false ) {
+			$style['dashArray'] = $atts['dash'];
+		}
+		return $style;
+	}
+
 	/**
 	 * Return the value of a boolean shortcode attribute from $this->attr_data.
 	 *
 	 * @since 5.1
 	 */
-	private function get_boolean_att( $att_name, $default = false ) {
+	private function get_boolean_att( $att_name, $default_value = false ) {
 		$p = false;
-		if ( is_array( $this->attr_data[$att_name] ) ) {
-			$p = array_shift( $this->attr_data[$att_name] );
-			if ( empty( $this->attr_data[$att_name] ) ) {
-				$this->attr_data[$att_name][] = $p;
+		if ( is_array( $this->attr_data[ $att_name ] ) ) {
+			$p = array_shift( $this->attr_data[ $att_name ] );
+			if ( empty( $this->attr_data[ $att_name ] ) ) {
+				$this->attr_data[ $att_name ][] = $p;
 			}
 		}
-		if ( $default === false ) {
+		if ( $default_value === false ) {
 			return ( in_array( $p, array( 'true', 't', 'yes', 'y' ), true ) ? true : false ); // default false
 		} else {
 			return ( in_array( $p, array( 'false', 'f', 'no', 'n' ), true ) ? false : true ); // default true
@@ -497,10 +760,26 @@ class Trackserver_Shortcode {
 	}
 
 	/**
+	 * Convert a string value to a boolean, using a default result for unknown strings.
+	 *
+	 * @since 5.1
+	 */
+	private function get_content_boolean( $raw, $default_value = false ) {
+		if ( is_null( $raw ) ) {
+			return null;
+		}
+		if ( $default_value === false ) {
+			return ( in_array( $raw, array( 'true', 't', 'yes', 'y' ), true ) ? true : false ); // default false
+		} else {
+			return ( in_array( $raw, array( 'false', 'f', 'no', 'n' ), true ) ? false : true ); // default true
+		}
+	}
+
+	/**
 	 * Return the value of 'markers' for a track based on shortcode attribute.
 	 *
 	 * @since 3.0
-	 * @since 5.1 Changed to use $this->attr_data and leave initialization to init_atts().
+	 * @since 5.1 Changed to use $this->attr_data and leave initialization to init_multivalue_atts().
 	 */
 	private function get_markers() {
 
@@ -518,24 +797,37 @@ class Trackserver_Shortcode {
 		return $markers;
 	}
 
+	private function get_content_markers( $raw ) {
+		$markers = ( in_array( $raw, array( 'false', 'f', 'no', 'n' ), true ) ? false : true ); // default true
+		$markers = ( in_array( $raw, array( 'start', 's' ), true ) ? 'start' : $markers );
+		$markers = ( in_array( $raw, array( 'end', 'e' ), true ) ? 'end' : $markers );
+		return $markers;
+	}
+
+
 	/**
 	 * Return the value of 'markersize' for a track based on shortcode attribute.
 	 *
 	 * @since 4.3
-	 * @since 5.1 Changed to use $this->attr_data and leave initialization to init_atts().
+	 * @since 5.1 Changed to use $this->attr_data and leave initialization to init_multivalue_atts().
 	 */
 	private function get_markersize() {
 
 		$p = false;
 		if ( is_array( $this->attr_data['markersize'] ) ) {
-			$p = ( $shift ? array_shift( $this->attr_data['markersize'] ) : $this->attr_data['markersize'][0] );
+			$p = array_shift( $this->attr_data['markersize'] );
 			if ( empty( $this->attr_data['markersize'] ) ) {
 				$this->attr_data['markersize'][] = $p;
 			}
 		}
 
-		$markersize = ( (int) $p > 0 ? $p : 5 );    //default: 5
-		return $markersize;
+		$default = $item_attr_defaults['markersize'];
+		return ( (int) $p > 0 ? $p : $default );
+	}
+
+	private function get_content_markersize( $raw ) {
+		$default = $item_attr_defaults['markersize'];
+		return ( (int) $raw > 0 ? $raw : $default );
 	}
 
 	/**
@@ -568,29 +860,25 @@ class Trackserver_Shortcode {
 	}
 
 	/**
-	 * Turn shortcode attributes into lists of validated track IDs and user IDs
+	 * Validate lists of track_ids and user_ids against the permissions of the author. Keep 'maxage' into account.
 	 *
-	 * @since 3.0
-	 **/
-	private function validate_ids( $atts ) {
-		$validated_track_ids = array();     // validated array of tracks to display
-		$validated_user_ids  = array();      // validated array of user id's whois live track to display
-		$author_id           = get_the_author_meta( 'ID' );
+	 * @since 5.1
+	 */
+	private function validate_ids( $track_ids, $user_ids ) {
+		$validated_user_ids = array();
+		$author_id          = get_the_author_meta( 'ID' );
+		$maxage             = $this->shortcode_data['config']['maxage'];
 
-		if ( $atts['track'] ) {
-			$track_ids = explode( ',', $atts['track'] );
-			// Backward compatibility
-			if ( in_array( 'live', $track_ids, true ) ) {
-				$validated_user_ids[] = $author_id;
-			}
-			$validated_track_ids = $this->validate_track_ids( $track_ids, $author_id );
+		// Backward compatibility
+		if ( in_array( 'live', $track_ids, true ) ) {
+			$validated_user_ids[] = $author_id;
 		}
 
-		if ( $atts['user'] ) {
-			$user_ids           = explode( ',', $atts['user'] );
-			$validated_user_ids = array_merge( $validated_user_ids, $this->validate_user_ids( $user_ids, $author_id ) );
-		}
-		return array( $validated_track_ids, $validated_user_ids );
+		$validated_track_ids = $this->validate_track_ids( $track_ids, $author_id );
+		$validated_user_ids  = array_merge( $validated_user_ids, $this->validate_user_ids( $user_ids, $author_id ) );
+		$live_tracks         = $this->trackserver->get_live_tracks( $validated_user_ids, $maxage, 'map' );   // { UID => TID }
+
+		return array( $validated_track_ids, $validated_user_ids, $live_tracks );
 	}
 
 	/**

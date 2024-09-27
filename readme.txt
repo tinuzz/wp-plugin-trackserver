@@ -271,10 +271,12 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 
 Added:
 * A shortcode attribute named 'arrows', to enable drawing arrows over a track to indicate its direction. The implementation is very simple, with a hardcoded arrow sign, but the JS library being used allows for any text to be rendered, so in the future, this functionality may become more flexible and configurable.
+* New syntax for adding tracks to the map, using shortcode content, rather than attributes.
 
 Changed:
 * Updated Leaflet to v1.9.4.
 * Changed max zoom for the map from 18 to 22.
+* Refactored the shortcode handling to make it more robust and maintainable.
 
 = v5.0.2 =
 Release date: 05 March 2023
