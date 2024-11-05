@@ -1323,8 +1323,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$sql_in = "('" . implode( "','", $indexes ) . "')";
 			// phpcs:disable
 			$sql = $wpdb->prepare( 'SELECT c.* FROM (' .
-				'SELECT @row := @row + 1 AS row, l.id FROM ' . $this->tbl_locations . ' l CROSS JOIN (select @row := -1) r WHERE l.trip_id=%d ORDER BY occurred' .
-				') c WHERE c.row IN ' . $sql_in, $track_id );
+				'SELECT @row := @row + 1 AS rownum, l.id FROM ' . $this->tbl_locations . ' l CROSS JOIN (select @row := -1) r WHERE l.trip_id=%d ORDER BY occurred' .
+				') c WHERE c.rownum IN ' . $sql_in, $track_id );
 			$res = $wpdb->get_results( $sql, OBJECT_K );
 			// phpcs:enable
 			return $res;
