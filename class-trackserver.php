@@ -1159,18 +1159,23 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			global $wpdb;
 
 			$gpx        = simplexml_import_dom( $dom );
-			$source     = $gpx['creator'];
+			$source     = (string) $gpx['creator'];
 			$trip_start = false;
 			$fake_time  = false;
 			$ntrk       = 0;
 			$ntrkpt     = 0;
 			$track_ids  = array();
 			$exec_t0    = microtime( true );
+			$gpx_name   = ( isset( $gpx->metadata->name ) ? substr( (string) $gpx->metadata->name, 0, 255 ) : '' );
 
 			foreach ( $gpx->trk as $trk ) {
 				$points    = array();
 				$trip_name = substr( (string) $trk->name, 0, 255 );
 				$comment   = substr( (string) $trk->desc, 0, 255 );
+
+				if ( empty( $trip_name ) ) {
+					$trip_name = $gpx_name;
+				}
 
 				// phpcs:ignore
 				if ( $skip_existing && ( $trk_id = $this->get_track_id_by_name( $trip_name, $user_id ) ) ) {
