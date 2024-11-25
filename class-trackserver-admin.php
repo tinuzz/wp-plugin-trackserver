@@ -186,6 +186,7 @@ class Trackserver_Admin {
 		$settings = array();
 
 		switch ( $hook ) {
+			case 'toplevel_page_trackserver-tracks':
 			case 'trackserver_page_trackserver-tracks':
 			case 'trackserver_page_trackserver-yourprofile':
 				$this->trackserver->load_common_scripts();
@@ -204,6 +205,7 @@ class Trackserver_Admin {
 				// The options page only has 'trackserver-admin.js'.
 
 			case 'toplevel_page_trackserver-options':
+			case 'trackserver_page_trackserver-options':
 				$settings['msg']   = array(
 					'areyousure'     => __( 'Are you sure?', 'trackserver' ),
 					'delete'         => __( 'deletion', 'trackserver' ),
