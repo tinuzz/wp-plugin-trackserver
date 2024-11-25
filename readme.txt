@@ -315,6 +315,7 @@ Changed:
 * Updated Leaflet to v1.9.4.
 * Changed max zoom for the map from 18 to 22.
 * Refactored the shortcode handling to make it more robust and maintainable.
+* Changed admin menu order and made 'Manage tracks' the primary page, rather than 'Options'.
 
 = v5.0.2 =
 Release date: 05 March 2023
