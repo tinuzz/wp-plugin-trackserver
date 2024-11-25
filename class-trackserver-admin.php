@@ -55,8 +55,6 @@ class Trackserver_Admin {
 		add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
 		add_filter( 'plugin_action_links_trackserver/trackserver.php', array( &$this, 'add_settings_link' ) );
 		add_action( 'admin_post_trackserver_save_track', array( &$this, 'admin_post_save_track' ) );
-
-		// Still on the main plugin object
 		add_action( 'admin_post_trackserver_upload_track', array( &$this, 'admin_post_upload_track' ) );
 		add_action( 'wp_ajax_trackserver_save_track', array( &$this, 'admin_ajax_save_modified_track' ) );
 
@@ -402,25 +400,16 @@ EOF;
 
 		// A dedicated menu in the main tree
 		add_menu_page(
-			esc_html__( 'Trackserver Options', 'trackserver' ),
+			esc_html__( 'Manage tracks', 'trackserver' ),
 			esc_html__( 'Trackserver', 'trackserver' ),
-			'manage_options',
-			'trackserver-options',
-			array( &$this, 'options_page_html' ),
+			'use_trackserver',
+			'trackserver-tracks',
+			array( &$this, 'manage_tracks_html' ),
 			TRACKSERVER_PLUGIN_URL . 'img/trackserver.png'
 		);
 
-		add_submenu_page(
-			'trackserver-options',
-			esc_html__( 'Trackserver Options', 'trackserver' ),
-			esc_html__( 'Options', 'trackserver' ),
-			'manage_options',
-			'trackserver-options',
-			array( &$this, 'options_page_html' )
-		);
-
 		$page2 = add_submenu_page(
-			'trackserver-options',
+			'trackserver-tracks',
 			esc_html__( 'Manage tracks', 'trackserver' ),
 			esc_html__( 'Manage tracks', 'trackserver' ),
 			'use_trackserver',
@@ -428,8 +417,17 @@ EOF;
 			array( &$this, 'manage_tracks_html' )
 		);
 
-		$page3 = add_submenu_page(
+		add_submenu_page(
+			'trackserver-tracks',
+			esc_html__( 'Trackserver Options', 'trackserver' ),
+			esc_html__( 'Options', 'trackserver' ),
+			'manage_options',
 			'trackserver-options',
+			array( &$this, 'options_page_html' )
+		);
+
+		$page3 = add_submenu_page(
+			'trackserver-tracks',
 			esc_html__( 'Your profile', 'trackserver' ),
 			esc_html__( 'Your profile', 'trackserver' ),
 			'use_trackserver',
