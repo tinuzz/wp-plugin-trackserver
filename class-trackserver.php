@@ -1620,7 +1620,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					'hierarchical'        => false,
 					'query_var'           => false,
 					'supports'            => array( 'title', 'editor', 'author' ),
-					'show_in_menu'        => 'trackserver-options',
+					'show_in_menu'        => 'trackserver-tracks',
 					'rewrite'             => array( 'slug' => $slug ),
 				)
 			);
