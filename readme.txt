@@ -3,7 +3,7 @@ Contributors: tinuzz
 Donate link: http://www.grendelman.net/wp/trackserver-wordpress-plugin/
 Tags: gps, gpx, map, leaflet, track, mobile, tracking
 Requires at least: 4.7
-Tested up to: 6.6
+Tested up to: 6.7
 Stable tag: trunk
 Requires PHP: 7.3
 License: GPLv2 or later
@@ -316,6 +316,13 @@ Changed:
 * Changed max zoom for the map from 18 to 22.
 * Refactored the shortcode handling to make it more robust and maintainable.
 * Changed admin menu order and made 'Manage tracks' the primary page, rather than 'Options'.
+
+= v5.0.3 =
+Release date: 09 January 2025
+
+Fixed:
+* XSS in the 'tsmap' shortcode handler (CVE-2024-12505).
+* WordPress comptibility set to v6.7.
 
 = v5.0.2 =
 Release date: 05 March 2023
