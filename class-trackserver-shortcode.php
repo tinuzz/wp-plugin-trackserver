@@ -485,7 +485,7 @@ class Trackserver_Shortcode {
 
 		$class_str = '';
 		if ( count( $classes ) ) {
-			$class_str = 'class="' . implode( ' ', $classes ) . '"';
+			$class_str = 'class="' . esc_attr( implode( ' ', $classes ) ) . '"';
 		}
 
 		$alltracks_url       = false;
@@ -608,7 +608,7 @@ class Trackserver_Shortcode {
 
 		$class_str = '';
 		if ( $this->shortcode_data['config']['class'] ) {
-			$class_str = 'class="' . htmlspecialchars( $this->shortcode_data['config']['class'] ) . '"';
+			$class_str = 'class="' . esc_attr( $this->shortcode_data['config']['class'] ) . '"';
 		}
 
 		$out = 'ERROR';
