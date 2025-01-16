@@ -610,7 +610,7 @@ var Trackserver = (function () {
                         this.draw_tracks(mymapdata);
                     }
                 }
-                else if (!this.adminmap) {
+                else if (!this.adminmap && !mymapdata.quiet) {
                     var popup = L.popup()
                         .setLatLng(mymapdata.center)
                         .setContent(trackserver_i18n['no_tracks_to_display']).openOn(map);

@@ -18,15 +18,16 @@ class Trackserver_Shortcode {
 	private $shortcode_data;
 
 	private $map_attr_defaults = array(
-		'width'       => '100%',
-		'height'      => '480px',
-		'align'       => '',
-		'class'       => '',
-		'continuous'  => true,
-		'infobar'     => false,
-		'zoom'        => false,
-		'live'        => null,
-		'maxage'      => false,
+		'width'      => '100%',
+		'height'     => '480px',
+		'align'      => '',
+		'class'      => '',
+		'continuous' => true,
+		'infobar'    => false,
+		'zoom'       => false,
+		'live'       => null,
+		'maxage'     => false,
+		'quiet'      => false,
 	);
 
 	private $link_attr_defaults = array(
@@ -124,6 +125,23 @@ class Trackserver_Shortcode {
 	}
 
 	/**
+	 * Expand shortcode attributes without value to being true.
+	 * Return the input array with flags expanded.
+	 * A value-less attribute will appear as $atts[ (int) ] === 'attr'.
+	 *
+	 * @since 6.0
+	 */
+	private function expand_shortcode_flags( $atts ) {
+		foreach ( $atts as $key => $value ) {
+			if ( is_int( $key ) ) {
+				unset( $atts[ $key ] );
+				$atts[ $value ] = true;
+			}
+		}
+		return $atts;
+	}
+
+	/**
 	 * Parse shortcode attributes and store values in a class property.
 	 *
 	 * @since 5.1
@@ -140,6 +158,7 @@ class Trackserver_Shortcode {
 
 		$track_ids = array();
 		$user_ids  = array();
+		$atts      = $this->expand_shortcode_flags( $atts );
 		$atts      = shortcode_atts( $defaults, $atts, $this->shortcode1 );
 		$this->init_multivalue_atts( $atts );
 
@@ -163,6 +182,7 @@ class Trackserver_Shortcode {
 
 		$this->shortcode_data['config']['continuous'] = $this->get_content_boolean( $atts['continuous'], true );
 		$this->shortcode_data['config']['live']       = $this->get_content_boolean( $atts['live'], false );
+		$this->shortcode_data['config']['quiet']      = $this->get_content_boolean( $atts['quiet'], false );
 		$this->shortcode_data['config']['zoom']       = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : false );
 		$this->shortcode_data['config']['fit']        = ( $atts['zoom'] !== false ? false : true );  // zoom is always set, so we need a signal for altering fitBounds() options
 
@@ -559,6 +579,7 @@ class Trackserver_Shortcode {
 			'infobar'      => $this->shortcode_data['config']['infobar'],
 			'infobar_tpl'  => $infobar_tpl,
 			'alltracks'    => $alltracks_url,
+			'quiet'        => $this->shortcode_data['config']['quiet'],
 		);
 
 		$this->trackserver->mapdata[]    = $mapdata;
@@ -771,9 +792,9 @@ class Trackserver_Shortcode {
 			return null;
 		}
 		if ( $default_value === false ) {
-			return ( in_array( $raw, array( 'true', 't', 'yes', 'y' ), true ) ? true : false ); // default false
+			return ( in_array( $raw, array( 'true', 't', 'yes', 'y', true ), true ) ? true : false ); // default false
 		} else {
-			return ( in_array( $raw, array( 'false', 'f', 'no', 'n' ), true ) ? false : true ); // default true
+			return ( in_array( $raw, array( 'false', 'f', 'no', 'n', false ), true ) ? false : true ); // default true
 		}
 	}
 

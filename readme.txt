@@ -101,6 +101,7 @@ For the [tsmap] shortcode:
 * json: one or more URLs to GeoJSON files to be plotted on the map. Multiple URLs should be separated by spaces, and the value as a whole enclosed by double quotes (json="http://....geojson http://....geojson"). If enabled in the settings, when a url is prefixed with the string 'proxy:', the request is proxied through Trackserver.
 * infobar: true (or 't', 'yes' or 'y'), false (default), or a template string, to specify whether an information bar should be shown on the map, when live tracking is active. This only works with 'track=live' or the 'user' parameter, and has no effect in other cases. When multiple live tracks are requested, the infobar will display the data of the first track only. Instead of 'true' or 'yes', a template string containing one or more placeholders (like {lat}, {lon}, {speedkmh}, etc.) can be given to the attribute, in which case it overrides the value specified in the user profile. Please check the Trackserver user profile page in the WordPress backend for which placeholders are supported.
 * zoom: the zoom factor to use for the map, a number between 0 and 18. For a map with live tracks, this number is absolute. For a map with only static tracks, this number represents the maximum zoom level, so the map will always fit all the tracks.
+* quiet: suppress a message popup if there is nothing to display on the map.
 
 The following attributes apply to tracks that are drawn on the map. Each of them can contain multiple values, separated by commas (or colons, in the case of 'dash'), to be applied to different tracks in order. If there a are less values than tracks, the last value will be applied to the remaining tracks.
 
@@ -310,12 +311,14 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 Added:
 * A shortcode attribute named 'arrows', to enable drawing arrows over a track to indicate its direction. The implementation is very simple, with a hardcoded arrow sign, but the JS library being used allows for any text to be rendered, so in the future, this functionality may become more flexible and configurable.
 * New syntax for adding tracks to the map, using shortcode content, rather than attributes.
+* A shortcode attribute named 'quiet', to suppress the 'Nothing to display' popup on the map when Trackserver doesn't find any valid tracks or points to display.
 
 Changed:
 * Updated Leaflet to v1.9.4.
 * Changed max zoom for the map from 18 to 22.
 * Refactored the shortcode handling to make it more robust and maintainable.
 * Changed admin menu order and made 'Manage tracks' the primary page, rather than 'Options'.
+* If a boolean shortcode attribute like 'live' and 'quiet' is given as a flag without a value, it now evaluates to 'true'.
 
 = v5.0.3 =
 Release date: 09 January 2025
