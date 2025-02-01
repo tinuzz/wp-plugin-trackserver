@@ -31,6 +31,8 @@ class Trackserver_Settings {
 		// All options in one array
 		$args = array( 'sanitize_callback' => array( &$this, 'sanitize_option_values' ) );  // WP >= 4.7
 		register_setting( 'trackserver-options', 'trackserver_options', $args );
+		$args = array( 'sanitize_callback' => array( &$this, 'sanitize_map_profiles' ) );  // WP >= 4.7
+		register_setting( 'trackserver-options', 'trackserver_map_profiles', $args );
 
 		// Add a custom action to add the settings sections.
 		// This was meant to be called from options_page_html(), but that seems too late; the sections aren't rendered.
@@ -53,6 +55,14 @@ class Trackserver_Settings {
 			array( &$this, 'universal_slug_html' ),
 			'trackserver',
 			'trackserver-general'
+		);
+
+		// Settings for section 'trackserver-map-profile'
+		add_settings_section(
+			'trackserver-map-profile',
+			esc_html__( 'Map profiles', 'trackserver' ),
+			array( &$this, 'map_profiles_html' ),
+			'trackserver'
 		);
 
 		// Settings for section 'trackserver-trackme'
@@ -179,29 +189,6 @@ class Trackserver_Settings {
 			'trackserver-httppost'
 		);
 
-		// Settings for section 'trackserver-shortcode'
-		add_settings_section(
-			'trackserver-shortcode',
-			esc_html__( 'Shortcode / map settings', 'trackserver' ),
-			array( &$this, 'shortcode_settings_html' ),
-			'trackserver'
-		);
-
-		add_settings_field(
-			'trackserver_tile_url',
-			esc_html__( 'OSM/Google tile server URL', 'trackserver' ),
-			array( &$this, 'tile_url_html' ),
-			'trackserver',
-			'trackserver-shortcode'
-		);
-		add_settings_field(
-			'trackserver_attribution',
-			esc_html__( 'Tile attribution', 'trackserver' ),
-			array( &$this, 'attribution_html' ),
-			'trackserver',
-			'trackserver-shortcode'
-		);
-
 		// Settings for section 'trackserver-embedded'
 		add_settings_section(
 			'trackserver-embedded',
@@ -254,6 +241,31 @@ class Trackserver_Settings {
 		$options['enable_proxy']  = ( isset( $options['enable_proxy'] ) ? (bool) $options['enable_proxy'] : false );
 		$options['fetchmode_all'] = ( isset( $options['fetchmode_all'] ) ? (bool) $options['fetchmode_all'] : false );
 		return $options;
+	}
+
+	/**
+	 * Callback for sanitizing map profile data.
+	 *
+	 * @since 6.0
+	 */
+	public function sanitize_map_profiles( $data ) {
+		if ( is_array( $data ) ) {
+			foreach ( $data as $k => $v ) {
+				if ( empty( $v['tile_url'] ) && empty( $v['attribution'] ) ) {
+					unset( $data[ $k ] );
+					continue;
+				}
+				$data[ $k ]['vector']      = ( isset( $v['vector'] ) && $v['vector'] === 'on' ? true : false );
+				$data[ $k ]['label']       = ( empty( $v['label'] ) ? 'profile' . $k : $v['label'] );
+				$data[ $k ]['min_zoom']    = ( (int) $v['min_zoom'] < 0 ? '0' : (int) $v['min_zoom'] );
+				$data[ $k ]['max_zoom']    = ( (int) $v['max_zoom'] <= 0 ? '18' : (int) $v['max_zoom'] );
+				$data[ $k ]['default_lat'] = (float) $v['default_lat'];
+				$data[ $k ]['default_lon'] = (float) $v['default_lon'];
+			}
+		} else {
+			$data = $this->trackserver->map_profiles;
+		}
+		return $data;
 	}
 
 	public function general_settings_html() {
@@ -436,9 +448,6 @@ EOF;
 	public function httppost_settings_html() {
 	}
 
-	public function shortcode_settings_html() {
-	}
-
 	public function embedded_settings_html() {
 	}
 
@@ -577,6 +586,102 @@ EOF;
 		printf( $format, esc_html__( 'Please check with your map tile provider what attribution is required.', 'trackserver' ) );
 	}
 
+	public function map_profiles_html() {
+		$page = menu_page_url( 'trackserver-options', false );
+
+		_e(
+			'A map profile is a set of values that define what a map looks like and how it behaves. It consists of a tile server or style URL,
+			an attribution string (often mandatory from the tile provider), a minimum and maximum zoom level for the map, and the default
+			coordinates to display when for some reason nothing else is shown on the map. Map profiles have a label by which you can reference them
+			in a shortcode (<tt>profile=&lt;label&gt;</tt>). If no profile is specified in the shortcode, the profile with the label
+			"<em>default</em>" is used. If that label does not exist, the first profile is used. ',
+			'trackserver'
+		);
+
+		printf(
+			// translators: placeholders are for documentation links
+			__(
+				'<a href="%1$s">Vector tiles</a> are supported. To use them, specify the URL to the <tt><a href="%2$s">style.json</a></tt> document
+				and check the "Vector tiles" checkbox. This will cause the necessary scripts for vector tile support to be loaded.',
+				'trackserver'
+			),
+			'https://en.wikipedia.org/wiki/Vector_tiles',
+			'https://maplibre.org/maplibre-style-spec/'
+		);
+
+		$strings = array(
+			'label'       => esc_html__( 'Label', 'trackserver' ),
+			'url'         => esc_html__( 'Tile / style URL', 'trackserver' ),
+			'vector'      => esc_html__( 'Vector tiles', 'trackserver' ),
+			'attribution' => esc_html__( 'Tile attribution', 'trackserver' ),
+			'maxzoom'     => esc_html__( 'Max. zoom', 'trackserver' ),
+			'minzoom'     => esc_html__( 'Min. zoom', 'trackserver' ),
+			'latitude'    => esc_html__( 'Default latitude', 'trackserver' ),
+			'longitude'   => esc_html__( 'Default longitude', 'trackserver' ),
+			'delete'      => esc_html__( 'Delete', 'trackserver' ),
+			'addprofile'  => esc_html__( 'Add map profile', 'trackserver' ),
+			'save'        => esc_html__( 'Save', 'trackserver' ),
+			'cancel'      => esc_html__( 'Cancel', 'trackserver' ),
+		);
+
+		echo <<<EOF
+			<table class="form-table fixed" border="1" id="map-profile-table">
+				<tbody>
+					<tr>
+						<th style="width: 40px; padding-left: 10px">{$strings['label']}</th>
+						<th style="padding-left: 10px">{$strings['url']}</th>
+						<th style="width: 10px; padding-left: 10px">{$strings['vector']}</th>
+						<th style="padding-left: 10px">{$strings['attribution']}</th>
+						<th style="width: 20px; padding-left: 10px">{$strings['minzoom']}</th>
+						<th style="width: 20px; padding-left: 10px">{$strings['maxzoom']}</th>
+						<th style="width: 60px; padding-left: 10px">{$strings['latitude']}</th>
+						<th style="width: 60px; padding-left: 10px">{$strings['longitude']}</th>
+						<th style="width: 50px">&nbsp;</th>
+					</tr>
+EOF;
+
+		for ( $i = 0; $i < count( $this->trackserver->map_profiles ); $i++ ) {
+
+			$itemdata  = 'data-id="' . $i . '"';
+			$label     = $this->esc_html( $this->trackserver->map_profiles[ $i ]['label'] );
+			$url       = $this->esc_html( $this->trackserver->map_profiles[ $i ]['tile_url'] );
+			$attrib    = $this->esc_html( $this->trackserver->map_profiles[ $i ]['attribution'] );
+			$minzoom   = $this->esc_html( $this->trackserver->map_profiles[ $i ]['min_zoom'] );
+			$maxzoom   = $this->esc_html( $this->trackserver->map_profiles[ $i ]['max_zoom'] );
+			$latitude  = $this->esc_html( $this->trackserver->map_profiles[ $i ]['default_lat'] );
+			$longitude = $this->esc_html( $this->trackserver->map_profiles[ $i ]['default_lon'] );
+			$vector    = ( $this->trackserver->map_profiles[ $i ]['vector'] === true ? 'checked' : '' );
+
+			$d = '&nbsp;';
+			if ( $i > 0 ) {
+				$d = '<a id="delete-profile-button' . $i . '" title="' . $strings['delete'] . '" class="button ts-delete-profile-button" ' .
+					$itemdata . ' data-action="deleteprofile">' . $strings['delete'] . '</a>';
+			}
+
+			echo <<<EOF
+				<tr $itemdata id="profile-row$i" class="trackserver-map-profile">
+					<td id="label$i" $itemdata><input type="text" size="5" name="trackserver_map_profiles[$i][label]" value="$label"></td>
+					<td style="word-wrap:break-word;"><textarea rows=4 cols=30 name="trackserver_map_profiles[$i][tile_url]">$url</textarea></td>
+					<td><input type="checkbox" name="trackserver_map_profiles[$i][vector]" $vector></td>
+					<td style="word-wrap:break-word;"><textarea rows=4 cols=30 name="trackserver_map_profiles[$i][attribution]">$attrib</textarea></td>
+					<td><input type="text" size="2" id="minzoom{$i}" name="trackserver_map_profiles[$i][min_zoom]" value="$minzoom"></td>
+					<td><input type="text" size="2" id="maxzoom{$i}" name="trackserver_map_profiles[$i][max_zoom]" value="$maxzoom"></td>
+					<td><input type="text" size="5" id="latitude{$i}" name="trackserver_map_profiles[$i][default_lat]" value="$latitude"></td>
+					<td><input type="text" size="5" id="longitude{$i}" name="trackserver_map_profiles[$i][default_lon]" value="$longitude"></td>
+					<td>$d</td>
+				</tr>
+EOF;
+		}
+
+		echo <<<EOF
+				</tbody>
+			</table>
+			<br>
+      <a id="add-row-button" title="{$strings['addprofile']}"
+        class="button" data-id="0" data-action="addprofile">{$strings['addprofile']}</a>
+EOF;
+	}
+
 	public function embedded_slug_html() {
 		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['embedded_slug'] );
 		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
@@ -661,5 +766,14 @@ EOF;
 			'best for you.'
 			// phpcs:enable
 		);
+	}
+
+	/**
+	 * A function to fully escape HTML special characters for printing.
+	 *
+	 * @since @6.0
+	 */
+	private function esc_html( $text ) {
+		return esc_html( htmlspecialchars( $text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' ) );
 	}
 } // class

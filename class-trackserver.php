@@ -44,8 +44,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			'embedded_slug'                 => 'tsmap',
 			'gettrack_slug'                 => 'trackserver/gettrack',
 			'enable_proxy'                  => false,
-			'tile_url'                      => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-			'attribution'                   => '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			'db_version'                    => false,
 			'fetchmode_all'                 => true,
 		);
@@ -69,6 +67,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		public  $url_prefix             = '';
 		private $have_scripts           = false;
 		public  $need_scripts           = false;
+		public  $need_maplibre          = false;
 		// phpcs:enable
 
 		/**
@@ -120,6 +119,40 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$this->delete_option( 'osmand_key' );
 			$this->delete_option( 'normalize_tripnames' );
 			$this->delete_option( 'tripnames_format' );
+
+			// Initialize map profiles and remove old options.
+			$this->init_map_profiles();
+			$this->delete_option( 'tile_url' );
+			$this->delete_option( 'attribution' );
+		}
+
+		/**
+		 * Initialize map profiles
+		 *
+		 * @since 6.0
+		 */
+		private function init_map_profiles() {
+			$this->map_profiles = get_option( 'trackserver_map_profiles' );
+			if ( ! $this->map_profiles ) {
+				$this->map_profiles = array();
+			}
+
+			if ( count( $this->map_profiles ) === 0 ) {
+
+				$tile_url    = ( isset( $this->options['tile_url'] ) ? $this->options['tile_url'] : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' );
+				$attribution = ( isset( $this->options['attribution'] ) ? $this->options['attribution'] : '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' );
+
+				$this->map_profiles[] = array(
+					'label'       => 'default',
+					'tile_url'    => $tile_url,
+					'attribution' => $attribution,
+					'min_zoom'    => 0,
+					'max_zoom'    => 22,
+					'default_lat' => '51.443168',
+					'default_lon' => '5.447200',
+				);
+			}
+			update_option( 'trackserver_map_profiles', $this->map_profiles );
 		}
 
 		/**
@@ -330,8 +363,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			wp_register_script( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.js', array(), TRACKSERVER_VERSION, true );
 
 			$settings = array(
-				'tile_url'        => $this->options['tile_url'],
-				'attribution'     => $this->options['attribution'],
 				'plugin_url'      => TRACKSERVER_PLUGIN_URL,
 				'leaflet_version' => $this->leaflet_version,
 			);
@@ -373,9 +404,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				$this->wp_enqueue_script( 'leaflet-messagebox', TRACKSERVER_JSLIB . 'leaflet-messagebox-1.0/leaflet-messagebox.js', array(), false, true );
 				$this->wp_enqueue_style( 'leaflet-liveupdate', TRACKSERVER_JSLIB . 'leaflet-liveupdate-1.1/leaflet-liveupdate.css' );
 				$this->wp_enqueue_script( 'leaflet-liveupdate', TRACKSERVER_JSLIB . 'leaflet-liveupdate-1.1/leaflet-liveupdate.js', array(), false, true );
-
-				// Enqueue the main script last
-				$this->wp_enqueue_script( 'trackserver' );
 
 				// Instruct wp_footer() that we already have the scripts.
 				$this->have_scripts = true;
@@ -464,6 +492,19 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			if ( $this->need_scripts && ! $this->have_scripts ) {
 				$this->wp_enqueue_scripts( true );
 			}
+
+			// Enqueue Maplibre GL JS is necessary
+			if ( $this->need_maplibre ) {
+				$this->wp_enqueue_style( 'maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-4.7.1/maplibre-gl.css' );
+				$this->wp_enqueue_script( 'maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-4.7.1/maplibre-gl.js', array(), false, true );
+				$this->wp_enqueue_script( 'leaflet-maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-4.7.1/leaflet-maplibre-gl.js', array(), false, true );
+			}
+
+			// Enqueue the main script last
+			if ( $this->need_scripts ) {
+				$this->wp_enqueue_script( 'trackserver' );
+			}
+
 			wp_localize_script( 'trackserver', 'trackserver_mapdata', $this->mapdata );
 		}
 

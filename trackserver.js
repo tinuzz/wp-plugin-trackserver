@@ -562,9 +562,23 @@ var Trackserver = (function () {
                     container._leaflet = false;
                 }
 
-                var map_layer0 = L.tileLayer(
-                    trackserver_settings['tile_url'],
-                    { attribution: trackserver_settings['attribution'], maxZoom: 22 });
+                // Add a basemap raster or vector tile layer.
+                if ( mymapdata['profile']['vector'] ) {
+                  var map_layer0 = L.maplibreGL({
+                    style: mymapdata['profile']['tile_url'],
+                    attribution: mymapdata['profile']['attribution'],
+                    minZoom: mymapdata['profile']['min_zoom'],
+                    maxZoom: mymapdata['profile']['max_zoom']
+                  });
+                } else {
+                  var map_layer0 = L.tileLayer(
+                    mymapdata['profile']['tile_url'], {
+                      attribution: mymapdata['profile']['attribution'],
+                      minZoom: mymapdata['profile']['min_zoom'],
+                      maxZoom: mymapdata['profile']['max_zoom']
+                    }
+                  );
+                }
 
                 var options = {center : center, zoom : zoom, layers: [map_layer0], messagebox: true };
 

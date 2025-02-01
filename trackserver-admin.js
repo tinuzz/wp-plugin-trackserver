@@ -415,6 +415,38 @@ var TrackserverAdmin = (function () {
               jQuery('#trackserver-copy-url1-button').css('display', 'none');
               jQuery('#trackserver-copy-url2-button').css('display', 'none');
             }
+
+            jQuery('#add-row-button').on('click', function() {
+
+              const last_id = parseInt( jQuery('#map-profile-table tr:last').data('id') );
+              const next_id = last_id + 1;
+              const minzoom = jQuery('#minzoom' + last_id).val();
+              const maxzoom = jQuery('#maxzoom' + last_id).val();
+              const lat = jQuery('#latitude' + last_id).val();
+              const lon = jQuery('#longitude' + last_id).val();
+
+              const row = '<tr id="profile-row' + next_id + '" data-id="' + next_id + '"><td><input type="text" size="5" name="trackserver_map_profiles[' + next_id + '][label]" value="profile' + next_id + '"></td>' +
+                '<td><textarea rows="4" cols="30" name="trackserver_map_profiles[' + next_id + '][tile_url]"></textarea></td>' +
+                '<td><input type="checkbox" name="trackserver_map_profiles[' + next_id + '][vector]"></td>' +
+                '<td><textarea rows="4" cols="30" name="trackserver_map_profiles[' + next_id + '][attribution]"></textarea></td>' +
+                '<td><input type="text" size="2" id="minzoom' + next_id + '" name="trackserver_map_profiles[' + next_id + '][min_zoom]" value="' + minzoom + '"></td>' +
+                '<td><input type="text" size="2" id="maxzoom' + next_id + '" name="trackserver_map_profiles[' + next_id + '][max_zoom]" value="' + maxzoom + '"></td>' +
+                '<td><input type="text" size="5" id="latitude' + next_id + '" name="trackserver_map_profiles[' + next_id + '][default_lat]" value="' + lat + '"></td>' +
+                '<td><input type="text" size="5" id="longitude' + next_id + '" name="trackserver_map_profiles[' + next_id + '][default_lon]" value="' + lon + '"></td>' +
+                '<td><a id="delete-profile-button' + next_id + '" title="Delete profile" class="button ts-delete-profile-button" data-id="' + next_id +'" data-action="deleteprofile">Delete</a></td></tr>';
+              jQuery('#map-profile-table > tbody:last-child').append(row);
+
+              jQuery('#delete-profile-button' + next_id).on('click', function() {
+                const row_id = jQuery(this).data('id');
+                jQuery('#profile-row' + row_id ).remove();
+              });
+            });
+
+            jQuery('.ts-delete-profile-button').on('click', function() {
+              const row_id = jQuery(this).data('id');
+              jQuery('#profile-row' + row_id ).remove();
+            });
+
         },
 
         show_savedialog_if_modified: function( callback=false ) {

@@ -63,6 +63,7 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 
 For the `[tsmap]` shortcode:
 
+* **profile**: the name (label) of a map profile.
 * **track**: one or more track IDs, separated by commas, or 'live' (deprecated,
   'user=@' is preferred).
 * **id**: an alias for 'track'
@@ -180,6 +181,14 @@ Example: `[tslink track=1,2,3,4 text="Download the tracks of our 4-day hike in G
 Instead of using the 'text' attribute, you can also use shortcode to enclose the text:
 
 Example: `[tslink track=1,2,3,4]Download the tracks of our 4-day hike in GPX format[/tslink]`
+
+## What is a map profile?
+
+A map profile is a set of values that define what a map looks like and how it behaves. It consists of a tile server or style URL, an attribution string (often mandatory from the tile provider), a minimum and maximum zoom level for the map, and the default coordinates to display when for some reason nothing else is shown on the map. Site administrators can configure map profiles in the options page. One default map profile is provided out of the box.
+
+Map profiles have a label by which you can reference them in a shortcode (profile=<label>). If no profile is specified in the shortcode, the profile with the label "default" is used. If that label does not exist, the first profile is used.
+
+If the tile/style URL contains the string 'style.json', the URL will be treated as pointing to a vector tile style declaration, and Trackserver will load some extra JavaScript and CSS (Maplibre GL JS) to render vector tiles rather than raster tiles. This should work with vector tile providers like Maptiler and OpenFreeMap. It can also work with Mapbox, but the style JSON needs modifications to make it work.
 
 ## How does the shortcode content syntax work?
 

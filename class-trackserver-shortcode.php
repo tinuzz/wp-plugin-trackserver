@@ -18,6 +18,7 @@ class Trackserver_Shortcode {
 	private $shortcode_data;
 
 	private $map_attr_defaults = array(
+		'profile'    => 'default',
 		'width'      => '100%',
 		'height'     => '480px',
 		'align'      => '',
@@ -185,6 +186,7 @@ class Trackserver_Shortcode {
 		$this->shortcode_data['config']['quiet']      = $this->get_content_boolean( $atts['quiet'], false );
 		$this->shortcode_data['config']['zoom']       = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : false );
 		$this->shortcode_data['config']['fit']        = ( $atts['zoom'] !== false ? false : true );  // zoom is always set, so we need a signal for altering fitBounds() options
+		$this->shortcode_data['config']['profile']    = $atts['profile'];
 
 		if ( $atts['infobar'] !== false ) {
 			$this->shortcode_data['config']['infobar'] = ( in_array( $atts['infobar'], array( 'true', 't', 'yes', 'y' ), true ) ? true : $atts['infobar'] ); // selectively convert to boolean
@@ -429,11 +431,11 @@ class Trackserver_Shortcode {
 	 *
 	 * @since 5.1
 	 */
-	private function get_default_latlng() {
+	private function get_default_latlng( $profile ) {
 		global $wpdb;
 
-		$default_lat = '51.443168';
-		$default_lng = '5.447200';
+		$default_lat = $profile['default_lat'];
+		$default_lng = $profile['default_lon'];
 
 		if ( count( $this->shortcode_data['all_track_ids'] ) ) {
 			$sql_in = "('" . implode( "','", $this->shortcode_data['all_track_ids'] ) . "')";
@@ -545,8 +547,6 @@ class Trackserver_Shortcode {
 			);
 		}
 
-		list( $default_lat, $default_lng ) = $this->get_default_latlng();
-
 		if ( is_null( $this->shortcode_data['config']['live'] ) ) {
 			$is_live = (bool) count( $this->shortcode_data['user_ids'] ) > 0;
 		} else {
@@ -566,6 +566,25 @@ class Trackserver_Shortcode {
 			$infobar_tpl = $this->shortcode_data['config']['infobar_tpl'];     // This value is already HTML escaped
 		}
 
+		foreach ( $this->trackserver->map_profiles as $i => $profile ) {
+			if ( $i === 0 || $profile['label'] === 'default' ) {
+				$map_profile = $profile;
+			}
+			if ( $profile['label'] === $this->shortcode_data['config']['profile'] ) {
+				$map_profile = $profile;
+				break;
+			}
+		}
+		unset( $map_profile['label'] );  // not needed by client
+
+		// If the chosen profile uses vector tiles, we set a signal to load Maplibre GL JS
+		// integration. Once it is set to true, it cannot go back to false.
+		if ( $map_profile['vector'] === true ) {
+			$this->trackserver->need_maplibre = true;
+		}
+
+		list( $default_lat, $default_lng ) = $this->get_default_latlng( $map_profile );
+
 		$mapdata = array(
 			'div_id'       => $div_id,
 			'tracks'       => array_values( $this->shortcode_data['tracks'] ),
@@ -579,6 +598,7 @@ class Trackserver_Shortcode {
 			'infobar'      => $this->shortcode_data['config']['infobar'],
 			'infobar_tpl'  => $infobar_tpl,
 			'alltracks'    => $alltracks_url,
+			'profile'      => $map_profile,
 			'quiet'        => $this->shortcode_data['config']['quiet'],
 		);
 
@@ -844,12 +864,12 @@ class Trackserver_Shortcode {
 			}
 		}
 
-		$default = $item_attr_defaults['markersize'];
+		$default = $this->item_attr_defaults['markersize'];
 		return ( (int) $p > 0 ? $p : $default );
 	}
 
 	private function get_content_markersize( $raw ) {
-		$default = $item_attr_defaults['markersize'];
+		$default = $this->item_attr_defaults['markersize'];
 		return ( (int) $raw > 0 ? $raw : $default );
 	}
 

@@ -34,3 +34,7 @@
 	width: 6px;
 	height: 6px;
 }
+
+img[alt="MapTiler logo"] {
+  display: none;
+}

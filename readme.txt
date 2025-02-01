@@ -86,6 +86,7 @@ It includes some code and libraries written by other people:
 
 For the [tsmap] shortcode:
 
+* profile: the name (label) of a map profile.
 * track: one or more track IDs, separated by commas, or 'live' (deprecated, 'user=@' is preferred).
 * id: an alias for 'track'
 * user: one or more user IDs, separated by commas, who's latest track to follow 'live'. A literal '@' means the author of the post (you). When viewing the map, the liveupdate feature will follow the track of the first user specified. When the end-marker is enabled for a live track (and why shouldn't it?), clicking it will change the focus of the liveupdate to that track. The map view will follow the latest location and the infobar (if present) will display its information.
@@ -150,6 +151,14 @@ Example: [tslink track=1,2,3,4 text="Download the tracks of our 4-day hike in GP
 Instead of using the 'text' attribute, you can also use shortcode to enclose the text:
 
 Example: [tslink track=1,2,3,4]Download the tracks of our 4-day hike in GPX format[/tslink]
+
+= What is a map profile? =
+
+A map profile is a set of values that define what a map looks like and how it behaves. It consists of a tile server or style URL, an attribution string (often mandatory from the tile provider), a minimum and maximum zoom level for the map, and the default coordinates to display when for some reason nothing else is shown on the map. Site administrators can configure map profiles in the options page. One default map profile is provided out of the box.
+
+Map profiles have a label by which you can reference them in a shortcode (profile=<label>). If no profile is specified in the shortcode, the profile with the label "default" is used. If that label does not exist, the first profile is used.
+
+If the tile/style URL contains the string 'style.json', the URL will be treated as pointing to a vector tile style declaration, and Trackserver will load some extra JavaScript and CSS (Maplibre GL JS) to render vector tiles rather than raster tiles. This should work with vector tile providers like Maptiler and OpenFreeMap. It can also work with Mapbox, but the style JSON needs modifications to make it work.
 
 = How does the shortcode content syntax work? =
 
@@ -311,11 +320,12 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 Added:
 * A shortcode attribute named 'arrows', to enable drawing arrows over a track to indicate its direction. The implementation is very simple, with a hardcoded arrow sign, but the JS library being used allows for any text to be rendered, so in the future, this functionality may become more flexible and configurable.
 * New syntax for adding tracks to the map, using shortcode content, rather than attributes.
+* Map profiles, allowing you to use different tile sources and map settings (like zoom levels) in different maps.
+* Experimental support for vector tiles, using Maplibre GL JS.
 * A shortcode attribute named 'quiet', to suppress the 'Nothing to display' popup on the map when Trackserver doesn't find any valid tracks or points to display.
 
 Changed:
 * Updated Leaflet to v1.9.4.
-* Changed max zoom for the map from 18 to 22.
 * Refactored the shortcode handling to make it more robust and maintainable.
 * Changed admin menu order and made 'Manage tracks' the primary page, rather than 'Options'.
 * If a boolean shortcode attribute like 'live' and 'quiet' is given as a flag without a value, it now evaluates to 'true'.
