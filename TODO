@@ -8,18 +8,19 @@ General:
 - implement shortcode to display TrackMe/OsmAnd password (feature request through WP forum)
 - implement generic HTTP GET interface and/or CelltracGTS/Free support
 - uLogger support
-- implement one universal URL endpoint for Trackserver, that handles all the protocols
-- implement 'access keys' to replace individual app passwords. They should also work for Basic auth, in addition to WP password.
+X implement one universal URL endpoint for Trackserver, that handles all the protocols
+X implement 'access keys' to replace individual app passwords. They should also work for Basic auth, in addition to WP password.
 - support GET/POST parameters for source, comment, track name prefix
 - comment field for location entries, to be used for extra data that's available in some apps, like battery level, etc.
 
 Frontend:
 - query tracks by string match with wildcards, instead of just by id
-- query tracks by collection, when admin backend is implemented
+- query tracks by collection (tag), when admin backend is implemented
 - avatar support for live tracks (like in OwnTracks)
 - live tracking tooltip format template
 - track decorations, for example with the [PolylineDecorator](https://github.com/bbecquet/Leaflet.PolylineDecorator) plugin
 - infobar tags for total elapsed time, average speed, number of points
+- icons!
 
 Admin backend:
 - add user profile setting for default map center (replace hardcoded coordinates)
@@ -34,6 +35,7 @@ Admin backend:
 - Move OsmAnd / SendLocation / OwnTracks trackname format from Options to Profile
 - For OwnTracks / TrackMe cloud sharing, add a profile settings for share last location duration (TrackMe limit is 1h)
 - delete or chown location data when removing users from WordPress
+- use WP_List_Table for app passwords
 
 Javascript:
 - better live tracking tooltip handling
@@ -73,3 +75,16 @@ PASS AUTHORIZATION HEADER IN ENVIRONMENT
 RewriteEngine on
 RewriteCond %{HTTP:Authorization} ^(.*)
 RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
+
+
+
+
+
+
+<div class="application-passwords-list-table-wrapper">
+        <?php
+        $application_passwords_list_table = _get_list_table( 'WP_Application_Passwords_List_Table', array( 'screen' => 'application-passwords-user' ) );
+        $application_passwords_list_table->prepare_items();
+        $application_passwords_list_table->display();
+        ?>
+</div>
