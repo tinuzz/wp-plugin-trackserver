@@ -62,6 +62,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		public  $tbl_tracks;
 		public  $tbl_locations;
 		public  $options;
+		public  $map_profiles;
 		public  $mapdata                = array();
 		public  $bulk_action_result_msg = false;
 		public  $url_prefix             = '';
@@ -662,7 +663,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 					} elseif ( $proto === 'owntracks1' || $proto === 'owntracks2' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-owntracks.php';
-						Trackserver_OwnTracks::get_instance( $this )->handle_request();
+						Trackserver_Owntracks::get_instance( $this )->handle_request();
 
 					} else {
 						$this->http_terminate( 500, 'BUG: Unhandled protocol. Please file a bug report.' );

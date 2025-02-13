@@ -16,6 +16,7 @@ class Trackserver_Shortcode {
 	private $attr_data  = array();
 	private $track_type = null;
 	private $shortcode_data;
+	private $previous;
 
 	private $map_attr_defaults = array(
 		'profile'    => 'default',
@@ -53,7 +54,7 @@ class Trackserver_Shortcode {
 		'dash'       => false,
 		'points'     => false,
 		'arrows'     => false,
-		'delay'      => false,
+		//'delay'      => false,
 	);
 
 	/**
@@ -521,7 +522,7 @@ class Trackserver_Shortcode {
 					array(
 						'id'    => $this->shortcode_data['track_ids'],
 						'live'  => $this->shortcode_data['user_ids'],
-						'delay' => $delay,
+						//'delay' => $delay,
 					)
 				);
 				$query         = base64_encode( $query );

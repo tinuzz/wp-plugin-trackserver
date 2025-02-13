@@ -148,7 +148,7 @@ class Trackserver_Getrequest {
 		if ( ! empty( $_REQUEST['source'] ) ) {
 			$source = rawurldecode( $_REQUEST['source'] );
 
-		} elseif ( array_key_exists( 'timestamp', $_REQUEST ) && strlen( $timestamp ) > 10 ) {
+		} elseif ( array_key_exists( 'timestamp', $_REQUEST ) && strlen( $_REQUEST['timestamp'] ) > 10 ) {
 			$source = 'OsmAnd';
 
 		} elseif ( array_key_exists( 'deviceid', $_REQUEST ) ) {

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<title><?php echo the_title(); ?></title>
+		<title><?php the_title(); ?></title>
 		<?php wp_head(); ?>
 		<style>
 			body {

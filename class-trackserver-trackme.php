@@ -170,7 +170,7 @@ class Trackserver_Trackme {
 	 * @since 1.0
 	 */
 	private function handle_export() {
-		$this->http_terminate( 501, 'Export is not supported by the server.' );
+		$this->trackserver->http_terminate( 501, 'Export is not supported by the server.' );
 	}
 
 	/**

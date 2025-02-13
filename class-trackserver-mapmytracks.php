@@ -161,7 +161,7 @@ class Trackserver_Mapmytracks {
 	 * @since 1.0
 	 */
 	private function handle_stop_activity() {
-		return $this->mapmytracks_response( 'activity_stopped' );
+		return $this->send_response( 'activity_stopped' );
 	}
 
 	/**
