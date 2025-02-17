@@ -157,9 +157,9 @@ class Trackserver_Trackme {
 	 * @since 1.0
 	 */
 	private function trackme_result( $rc, $message = false ) {
-		echo "Result:$rc";
+		echo 'Result:' . esc_html( $rc );
 		if ( $message ) {
-			echo "|$message";
+			echo '|' . esc_html( $message );
 		}
 		die();
 	}

@@ -683,7 +683,7 @@ EOF;
 				$message = 'Track "' . $name . '" (ID=' . $track_id . ') saved';
 			}
 		} else {
-			$message = __( 'It seems you have insufficient permissions to manage track ID ' ) . $track_id;
+			$message = __( 'It seems you have insufficient permissions to manage track ID ', 'trackserver' ) . $track_id;
 		}
 
 		// Redirect back to the admin page. This should be safe.

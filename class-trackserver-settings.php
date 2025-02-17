@@ -751,7 +751,7 @@ EOF;
 		$format  = '<input type="checkbox" name="trackserver_options[fetchmode_all]" id="trackserver_fetchmode_all" ' . $checked . '> %1$s<br /><br />';
 		printf(
 			$format,
-			esc_html__( 'Check this to enable the mode where Trackserver gets all track data in a single HTTP request when displaying a map.' )
+			esc_html__( 'Check this to enable the mode where Trackserver gets all track data in a single HTTP request when displaying a map.', 'trackserver' )
 		);
 		echo esc_html__(
 			// phpcs:disable
@@ -763,7 +763,7 @@ EOF;
 			'the performance. On the other hand, if your users are on slow or ' .
 			'high-latency networks, enabling single request mode may give ' .
 			'better results. You can safely switch between modes to see what works ' .
-			'best for you.'
+			'best for you.', 'trackserver'
 			// phpcs:enable
 		);
 	}
