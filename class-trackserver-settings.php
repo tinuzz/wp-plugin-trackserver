@@ -290,23 +290,22 @@ class Trackserver_Settings {
 	}
 
 	public function universal_slug_html() {
-		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackserver_slug'] );
-		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-
-		$format = <<<EOF
-			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
-			<input type="text" size="25" name="trackserver_options[trackserver_slug]" id="trackserver_slug" value="$val" autocomplete="off" /><br /><br />
-			<strong>%2\$s:<br></strong> $url/$val<br><br>
-			<strong>%3\$s:<br></strong> $url/$val/&lt;<strong>%4\$s</strong>&gt;/&lt;<strong>%5\$s</strong>&gt;<br /><br>
-EOF;
+		$val = $this->htmlspecialchars( $this->trackserver->options['trackserver_slug'] );
+		$url = site_url( null ) . $this->trackserver->url_prefix;
 
 		printf(
-			$format,
+			'%1$s (%6$s/<b>&lt;slug&gt;</b>/) <br />' .
+			'<input type="text" size="25" name="trackserver_options[trackserver_slug]" id="trackserver_slug" value="%7$s" autocomplete="off" /><br /><br />' .
+			'<strong>%2$s:</strong><br> %6$s/%8$s<br><br>' .
+			'<strong>%3$s:</strong><br> %6$s/%8$s/&lt;<strong>%4$s</strong>&gt;/&lt;<strong>%5$s</strong>&gt;<br /><br>',
 			esc_html__( 'The Trackserver universal URL slug for all protocols', 'trackserver' ),
 			esc_html__( 'Full URL for OruxMaps / MapMyTracks, OwnTracks, uLogger', 'trackserver' ),
 			esc_html__( 'Full URL for TrackMe, OsmAnd, SendLocation', 'trackserver' ),
 			esc_html__( 'username', 'trackserver' ),
-			esc_html__( 'password', 'trackserver' )
+			esc_html__( 'password', 'trackserver' ),
+			esc_url( $url ),
+			esc_attr( $val ),
+			esc_html( $val ),
 		);
 	}
 
@@ -319,31 +318,26 @@ EOF;
 	}
 
 	public function trackme_slug_html() {
-		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackme_slug'] );
-		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-
-		$format = <<<EOF
-			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
-			<input type="text" size="25" name="trackserver_options[trackme_slug]" id="trackserver_trackme_slug" value="$val" autocomplete="off" /><br /><br />
-EOF;
+		$val = $this->htmlspecialchars( $this->trackserver->options['trackme_slug'] );
+		$url = site_url( null ) . $this->trackserver->url_prefix;
 
 		printf(
-			$format,
+			'%1$s (%2$s/<b>&lt;slug&gt;</b>/) <br />' .
+			'<input type="text" size="25" name="trackserver_options[trackme_slug]" id="trackserver_trackme_slug" value="%3$s" autocomplete="off" /><br /><br />',
 			esc_html__( "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe", 'trackserver' ),
+			esc_url( $url ),
+			esc_attr( $val ),
 		);
 	}
 
 	public function trackme_extension_html() {
-		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackme_extension'] );
+		$val = $this->htmlspecialchars( $this->trackserver->options['trackme_extension'] );
 
-		$format = <<<EOF
-			%1\$s<br />
-			<input type="text" size="25" name="trackserver_options[trackme_extension]" id="trackserver_trackme_extension" value="$val" autocomplete="off" /><br />
-			<br />
-			<b>%2\$s</b>: %3\$s<br /><br />
-EOF;
 		printf(
-			$format,
+			'%1$s<br />' .
+			'<input type="text" size="25" name="trackserver_options[trackme_extension]" id="trackserver_trackme_extension" value="%4$s" autocomplete="off" /><br />' .
+			'<br />' .
+			'<b>%2$s</b>: %3$s<br /><br />',
 			esc_html__( "The Server extension in TrackMe's settings", 'trackserver' ),
 			esc_html__( 'WARNING', 'trackserver' ),
 			esc_html__(
@@ -354,7 +348,8 @@ EOF;
 				"character like 'z' (the default) should work just fine. Change the 'Server extension' setting " .
 				'in TrackMe to match the value you put here.', 'trackserver'
 				// phpcs:enable
-			)
+			),
+			esc_attr( $val ),
 		);
 	}
 
@@ -367,19 +362,15 @@ EOF;
 	}
 
 	public function mapmytracks_tag_html() {
-		$val     = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['mapmytracks_tag'] );
-		$url     = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-		$linkurl = esc_attr__( 'http://en.wikipedia.org/wiki/Server_Name_Indication', 'trackserver' );
-		$link    = "<a href=\"$linkurl\">SNI</a>";
-
-		$format = <<<EOF
-			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
-			<input type="text" size="25" name="trackserver_options[mapmytracks_tag]" id="trackserver_mapmytracks_tag" value="$val" autocomplete="off" /><br /><br />
-EOF;
+		$val = $this->htmlspecialchars( $this->trackserver->options['mapmytracks_tag'] );
+		$url = site_url( null ) . $this->trackserver->url_prefix;
 
 		printf(
-			$format,
-			esc_html__( "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps", 'trackserver' )
+			'%1$s (%2$s/<b>&lt;slug&gt;</b>/) <br />' .
+			'<input type="text" size="25" name="trackserver_options[mapmytracks_tag]" id="trackserver_mapmytracks_tag" value="%3$s" autocomplete="off" /><br /><br />',
+			esc_html__( "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps", 'trackserver' ),
+			esc_url( $url ),
+			esc_attr( $val ),
 		);
 	}
 
@@ -387,50 +378,50 @@ EOF;
 	}
 
 	public function osmand_slug_html() {
-		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['osmand_slug'] );
-		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-
-		$format = <<<EOF
-			%1\$s ($url/<b>&lt;slug&gt;</b>/?...) <br />
-			<input type="text" size="25" name="trackserver_options[osmand_slug]" id="trackserver_osmand_slug" value="$val" autocomplete="off" /><br /><br />
-EOF;
+		$val = $this->htmlspecialchars( $this->trackserver->options['osmand_slug'] );
+		$url = site_url( null ) . $this->trackserver->url_prefix;
 
 		printf(
-			$format,
-			esc_html__( "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd", 'trackserver' )
+			'%1$s (%2$s/<b>&lt;slug&gt;</b>/?...) <br />' .
+			'<input type="text" size="25" name="trackserver_options[osmand_slug]" id="trackserver_osmand_slug" value="%3$s" autocomplete="off" /><br /><br />',
+			esc_html__( "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd", 'trackserver' ),
+			esc_url( $url ),
+			esc_attr( $val ),
 		);
 	}
 
 	public function osmand_trackname_format_html() {
-		$val  = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['osmand_trackname_format'] );
-		$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
-
-		$format = <<<EOF
-			%1\$s<br /><br />
-			<input type="text" size="25" name="trackserver_options[osmand_trackname_format]" id="trackserver_osmand_trackname_format" value="$val" autocomplete="off" /><br />
-			%%Y = %2\$s, %%m = %3\$s, %%d = %4\$s, %%H = %5\$s, %%F = %%Y-%%m-%%d
-			<br />
-EOF;
+		$val = $this->htmlspecialchars( $this->trackserver->options['osmand_trackname_format'] );
 
 		printf(
-			$format,
-			sprintf(
-				// translators: placeholder is for link to strftime() manual
-				esc_html__(
+			'%1$s<br /><br />' .
+			'<input type="text" size="25" name="trackserver_options[osmand_trackname_format]" id="trackserver_osmand_trackname_format" value="%6$s" autocomplete="off" /><br />' .
+			'%%Y = %2$s, %%m = %3$s, %%d = %4$s, %%H = %5$s, %%F = %%Y-%%m-%%d' .
+			'<br />' ,
+			wp_kses(
+				sprintf(
+					// translators: placeholder is for link to strftime() manual
 					// phpcs:disable
-					'Generated track name in %1$s format. OsmAnd online tracking does not support the concept of ' .
+					__('Generated track name in %1$s format. OsmAnd online tracking does not support the concept of ' .
 					"'tracks', there are only locations. Trackserver needs to group these in tracks and automatically generates " .
 					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
 					'can be specified here. If you specify a constant string, without any strftime() format placeholders, one ' .
-					'and the same track will be used forever and all locations.', 'trackserver'
+					'and the same track will be used forever and all locations.', 'trackserver' ),
 					// phpcs:enable
+					'<a href="' . __( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>'
 				),
-				$link
+				array(
+					'a' => array(
+						'href'   => array(),
+						'target' => array(),
+					),
+				),
 			),
 			esc_html__( 'year', 'trackserver' ),
 			esc_html__( 'month', 'trackserver' ),
 			esc_html__( 'day', 'trackserver' ),
-			esc_html__( 'hour', 'trackserver' )
+			esc_html__( 'hour', 'trackserver' ),
+			esc_attr( $val ),
 		);
 	}
 
@@ -775,5 +766,9 @@ EOF;
 	 */
 	private function esc_html( $text ) {
 		return esc_html( htmlspecialchars( $text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' ) );
+	}
+
+	private function htmlspecialchars( $text ) {
+		return htmlspecialchars( $text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' );
 	}
 } // class
