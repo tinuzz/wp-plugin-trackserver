@@ -19,7 +19,8 @@ class Trackserver_Admin {
 	private $tbl_tracks;
 	private $tbl_locations;
 	private $tracks_list_table = false;
-	private $trashcan_icon     = '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" x="0px" y="0px" viewBox="0 0 172.541 172.541" style="enable-background:new 0 0 172.541 172.541;" xml:space="preserve"><g><path d="M166.797,25.078h-13.672h-29.971V0H49.388v25.078H19.417H5.744v15h14.806l10,132.463h111.443l10-132.463h14.805V25.078z M64.388,15h43.766v10.078H64.388V15z M128.083,157.541H44.46L35.592,40.078h13.796h73.766h13.796L128.083,157.541z"/><rect x="80.271" y="65.693" width="12" height="66.232"/><rect x="57.271" y="65.693" width="12" height="66.232"/><rect x="103.271" y="65.693" width="12" height="66.232"/></g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg>';
+	private $trashcan_icon     = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" x="0px" y="0px" viewBox="0 0 172.541 172.541" xml:space="preserve"><g><path d="M166.797,25.078h-13.672h-29.971V0H49.388v25.078H19.417H5.744v15h14.806l10,132.463h111.443l10-132.463h14.805V25.078z M64.388,15h43.766v10.078H64.388V15z M128.083,157.541H44.46L35.592,40.078h13.796h73.766h13.796L128.083,157.541z"/><rect x="80.271" y="65.693" width="12" height="66.232"/><rect x="57.271" y="65.693" width="12" height="66.232"/><rect x="103.271" y="65.693" width="12" height="66.232"/></g></svg>';
+	private $trashcan_kses     = array( 'svg' => array( 'version' => array(), 'xmlns' => array(), 'viewbox' => array(), 'width' => array(), 'height' => array() ), 'path' => array( 'd' => array(), 'g' => array() ), 'rect' => array( 'x' => array(), 'y' => array(), 'width' => array(), 'height' => array() ) );
 	// phpcs:enable
 
 	public function __construct( $trackserver ) {
@@ -347,7 +348,6 @@ EOF;
 		$url    = set_url_scheme( get_permalink( $post ), ( is_ssl() ? 'https' : 'http' ) );
 		$code   = '<iframe src="' . $url . '" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>';
 		$status = get_post_status( $post->ID );
-		$msg    = '<i>X-Frame-Options</i>';
 
 		esc_html_e( 'To embed this map in a web page outside WordPress, include the following HTML in the page: ', 'trackserver' );
 		echo '<br><br><div style="font-family: monospace; background-color: #dddddd">';
@@ -362,11 +362,11 @@ EOF;
 		}
 		echo '<li>';
 		// translators: the placeholder is for the literal header name in <i> tags.
-		printf( esc_html__( 'Make sure your WordPress doesn\'t forbid framing the map with a too-strict %1$s header.', 'trackserver' ), $msg );
+		printf( esc_html__( 'Make sure your WordPress doesn\'t forbid framing the map with a too-strict %1$s header.', 'trackserver' ), '<i>X-Frame-Options</i>' );
 		echo '</li></ul>';
 		esc_html_e( 'This is what the last saved version of the embedded map looks like:', 'trackserver' );
 		echo '<br><br>';
-		echo '<iframe src="' . $url . '" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>';
+		echo '<iframe src="' . esc_url( $url ) . '" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>';
 	}
 
 	/**
@@ -451,7 +451,7 @@ EOF;
 	 */
 	public function options_page_html() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 		}
 
 		add_thickbox();
@@ -486,7 +486,7 @@ EOF;
 	public function manage_tracks_html() {
 
 		if ( ! current_user_can( 'use_trackserver' ) ) {
-			wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 		}
 
 		add_thickbox();
@@ -501,7 +501,7 @@ EOF;
 			<!-- Edit track properties -->
 			<div id="trackserver-edit-modal" style="display:none;">
 				<p>
-					<form id="trackserver-edit-track" method="post" action="<?php echo $url; ?>">
+					<form id="trackserver-edit-track" method="post" action="<?php echo esc_url( $url ); ?>">
 						<table style="width: 100%">
 							<?php wp_nonce_field( 'manage_track' ); ?>
 							<input type="hidden" name="action" value="trackserver_save_track" />
@@ -526,7 +526,7 @@ EOF;
 						<input type="hidden" id="trackserver-edit-action" name="trackserver_action" value="save">
 						<button id="trackserver-delete-track" class="button action" type="button" title="<?php esc_html_e( 'Delete', 'trackserver' ); ?>" style="float: right;" onClick="tb_remove(); return false;">
 							<div style="position: relative; top: 3px; display: inline-block;">
-								<?php echo $this->trashcan_icon; ?>
+								<?php echo wp_kses( $this->trashcan_icon, $this->trashcan_kses ); ?>
 							</div>
 							<?php esc_html_e( 'Delete', 'trackserver' ); ?>
 						</button>
@@ -545,7 +545,7 @@ EOF;
 			<div id="trackserver-merge-modal" style="display:none;">
 				<p>
 					<?php esc_html__( 'Merge all points of multiple tracks into one track. Please specify the name for the merged track.', 'trackserver' ); ?>
-					<form method="post" action="<?php echo $url; ?>">
+					<form method="post" action="<?php echo esc_url( $url ); ?>">
 						<table style="width: 100%">
 							<?php wp_nonce_field( 'manage_track' ); ?>
 							<tr>
@@ -566,7 +566,7 @@ EOF;
 			<!-- Upload files -->
 			<div id="trackserver-upload-modal" style="display:none;">
 				<div style="padding: 15px 0">
-					<form id="trackserver-upload-form" method="post" action="<?php echo $url; ?>" enctype="multipart/form-data">
+					<form id="trackserver-upload-form" method="post" action="<?php echo esc_url( $url ); ?>" enctype="multipart/form-data">
 						<?php wp_nonce_field( 'upload_track' ); ?>
 						<input type="hidden" name="action" value="trackserver_upload_track" />
 						<input type="file" name="gpxfile[]" multiple="multiple" style="display: none" id="trackserver-file-input" />
@@ -747,7 +747,7 @@ EOF;
 				$this->trackserver->calculate_distance( $track_id );
 			}
 		}
-		echo "OK: $i queries executed";
+		echo esc_html( "OK: $i queries executed" );
 		die();
 	}
 
