@@ -398,7 +398,7 @@ class Trackserver_Settings {
 			'<input type="text" size="25" name="trackserver_options[osmand_trackname_format]" id="trackserver_osmand_trackname_format" value="%6$s" autocomplete="off" /><br />' .
 			'%%Y = %2$s, %%m = %3$s, %%d = %4$s, %%H = %5$s, %%F = %%Y-%%m-%%d' .
 			'<br />' ,
-			wp_kses(
+			wp_kses_post(
 				sprintf(
 					// translators: placeholder is for link to strftime() manual
 					// phpcs:disable
@@ -409,13 +409,7 @@ class Trackserver_Settings {
 					'and the same track will be used forever and all locations.', 'trackserver' ),
 					// phpcs:enable
 					'<a href="' . __( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>'
-				),
-				array(
-					'a' => array(
-						'href'   => array(),
-						'target' => array(),
-					),
-				),
+				)
 			),
 			esc_html__( 'year', 'trackserver' ),
 			esc_html__( 'month', 'trackserver' ),
@@ -446,100 +440,89 @@ class Trackserver_Settings {
 	}
 
 	public function sendlocation_slug_html() {
-		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['sendlocation_slug'] );
-		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-
-		$format = <<<EOF
-			%1\$s ($url/<b>&lt;slug&gt;/&lt;username&gt;/&lt;access key&gt;</b>/) <br />
-			<input type="text" size="25" name="trackserver_options[sendlocation_slug]" id="trackserver_sendlocation_slug" value="$val" autocomplete="off" /><br /><br />
-EOF;
+		$val = $this->htmlspecialchars( $this->trackserver->options['sendlocation_slug'] );
+		$url = site_url( null ) . $this->trackserver->url_prefix;
 
 		printf(
-			$format,
-			esc_html__( "The URL slug for SendLocation, used in SendLocation's settings", 'trackserver' )
+			'%1$s (%2$s/<b>&lt;slug&gt;/&lt;username&gt;/&lt;access key&gt;</b>/) <br />' .
+			'<input type="text" size="25" name="trackserver_options[sendlocation_slug]" id="trackserver_sendlocation_slug" value="%3$s" autocomplete="off" /><br /><br />',
+			esc_html__( "The URL slug for SendLocation, used in SendLocation's settings", 'trackserver' ),
+			esc_url( $url ),
+			esc_attr( $val ),
 		);
 	}
 
-	public function sendlocation_trackname_format_html() {
-		$val  = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['sendlocation_trackname_format'] );
-		$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
-
-		$format = <<<EOF
-			%1\$s<br /><br />
-			<input type="text" size="25" name="trackserver_options[sendlocation_trackname_format]" id="trackserver_sendlocation_trackname_format" value="$val" autocomplete="off" /><br />
-			%%Y = %2\$s, %%m = %3\$s, %%d = %4\$s, %%H = %5\$s, %%F = %%Y-%%m-%%d
-			<br />
-EOF;
+	public function  sendlocation_trackname_format_html() {
+		$val = $this->htmlspecialchars( $this->trackserver->options['sendlocation_trackname_format'] );
 
 		printf(
-			$format,
-			sprintf(
-				// translators: placeholder is for link to strftime() manual
-				esc_html__(
+			'%1$s<br /><br />' .
+			'<input type="text" size="25" name="trackserver_options[sendlocation_trackname_format]" id="trackserver_sendlocation_trackname_format" value="%6$s" autocomplete="off" /><br />' .
+			'%%Y = %2$s, %%m = %3$s, %%d = %4$s, %%H = %5$s, %%F = %%Y-%%m-%%d' .
+			'<br />' ,
+			wp_kses_post(
+				sprintf(
+					// translators: placeholder is for link to strftime() manual
 					// phpcs:disable
-					'Generated track name in %1$s format. SendLocation online tracking does not support the concept of ' .
+					__('Generated track name in %1$s format. Sendlocation online tracking does not support the concept of ' .
 					"'tracks', there are only locations. Trackserver needs to group these in tracks and automatically generates " .
 					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
 					'can be specified here. If you specify a constant string, without any strftime() format placeholders, one ' .
-					'and the same track will be used forever and all locations.', 'trackserver'
+					'and the same track will be used forever and all locations.', 'trackserver' ),
 					// phpcs:enable
-				),
-				$link
+					'<a href="' . __( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>'
+				)
 			),
 			esc_html__( 'year', 'trackserver' ),
 			esc_html__( 'month', 'trackserver' ),
 			esc_html__( 'day', 'trackserver' ),
-			esc_html__( 'hour', 'trackserver' )
+			esc_html__( 'hour', 'trackserver' ),
+			esc_attr( $val ),
 		);
 	}
 
 	public function owntracks_slug_html() {
-		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['owntracks_slug'] );
-		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-
-		$format = <<<EOF
-			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
-			<input type="text" size="25" name="trackserver_options[owntracks_slug]" id="trackserver_owntracks_slug" value="$val" autocomplete="off" /><br /><br />
-			<strong>%2\$s:</strong> $url/$val/<br /><br />
-EOF;
+		$val = $this->htmlspecialchars( $this->trackserver->options['owntracks_slug'] );
+		$url = site_url( null ) . $this->trackserver->url_prefix;
 
 		printf(
-			$format,
+			'%1$s (%3$s/<b>&lt;slug&gt;/&lt;username&gt;</b>/) <br />' .
+			'<input type="text" size="25" name="trackserver_options[owntracks_slug]" id="trackserver_owntracks_slug" value="%4$s" autocomplete="off" /><br /><br />' .
+			'<strong>%2$s:</strong> %s$s/%5$s/<br /><br />' ,
 			esc_html__( "The URL slug for OwnTracks, used in OwnTracks' settings", 'trackserver' ),
-			esc_html__( 'Preferences -> Connection -> Host', 'trackserver' )
+			esc_html__( 'Preferences -> Connection -> Host', 'trackserver' ),
+			esc_url( $url ),
+			esc_attr( $val ),
+			esc_html( $val ),
 		);
 	}
 
-	public function owntracks_trackname_format_html() {
-		$val  = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['owntracks_trackname_format'] );
-		$link = '<a href="' . esc_attr__( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>';
-
-		$format = <<<EOF
-			%1\$s<br /><br />
-			<input type="text" size="25" name="trackserver_options[owntracks_trackname_format]" id="trackserver_owntracks_trackname_format" value="$val" autocomplete="off" /><br />
-			%%Y = %2\$s, %%m = %3\$s, %%d = %4\$s, %%H = %5\$s, %%F = %%Y-%%m-%%d
-			<br />
-EOF;
+	public function  owntracks_trackname_format_html() {
+		$val = $this->htmlspecialchars( $this->trackserver->options['owntracks_trackname_format'] );
 
 		printf(
-			$format,
-			sprintf(
-				// translators: placeholder is for link to strftime() manual
-				esc_html__(
+			'%1$s<br /><br />' .
+			'<input type="text" size="25" name="trackserver_options[owntracks_trackname_format]" id="trackserver_owntracks_trackname_format" value="%6$s" autocomplete="off" /><br />' .
+			'%%Y = %2$s, %%m = %3$s, %%d = %4$s, %%H = %5$s, %%F = %%Y-%%m-%%d' .
+			'<br />' ,
+			wp_kses_post(
+				sprintf(
+					// translators: placeholder is for link to strftime() manual
 					// phpcs:disable
-					'Generated track name in %1$s format. OwnTracks online tracking does not support the concept of ' .
+					__('Generated track name in %1$s format. OwnTracks online tracking does not support the concept of ' .
 					"'tracks', there are only locations. Trackserver needs to group these in tracks and automatically generates " .
 					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
 					'can be specified here. If you specify a constant string, without any strftime() format placeholders, one ' .
-					'and the same track will be used forever and all locations.', 'trackserver'
+					'and the same track will be used forever and all locations.', 'trackserver' ),
 					// phpcs:enable
-				),
-				$link
+					'<a href="' . __( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>'
+				)
 			),
 			esc_html__( 'year', 'trackserver' ),
 			esc_html__( 'month', 'trackserver' ),
 			esc_html__( 'day', 'trackserver' ),
-			esc_html__( 'hour', 'trackserver' )
+			esc_html__( 'hour', 'trackserver' ),
+			esc_attr( $val ),
 		);
 	}
 
@@ -674,55 +657,48 @@ EOF;
 	}
 
 	public function embedded_slug_html() {
-		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['embedded_slug'] );
-		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-
-		$format = <<<EOF
-			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
-			<input type="text" size="25" name="trackserver_options[embedded_slug]" id="trackserver_embedded_slug" value="$val" autocomplete="off" /><br />
-			<br />
-EOF;
+		$val = $this->htmlspecialchars( $this->trackserver->options['embedded_slug'] );
+		$url = site_url( null ) . $this->trackserver->url_prefix;
 
 		printf(
-			$format,
-			esc_html__( 'The URL slug for embedded maps', 'trackserver' )
+			'%1$s (%2$s/<b>&lt;slug&gt;</b>/) <br />' .
+			'<input type="text" size="25" name="trackserver_options[embedded_slug]" id="trackserver_embedded_slug" value="%3$s" autocomplete="off" /><br />' .
+			'<br />',
+			esc_html__( 'The URL slug for embedded maps', 'trackserver' ),
+			esc_url( $url ),
+			esc_attr( $val )
 		);
 
 		echo esc_html__( 'Warning: if you change this, links to existing embedded maps will be invalidated.', 'trackserver' );
 	}
 
 	public function gettrack_slug_html() {
-		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['gettrack_slug'] );
-		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-
-		$format = <<<EOF
-			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
-			%2\$s<br />
-			<input type="text" size="25" name="trackserver_options[gettrack_slug]" id="trackserver_gettrack_slug" value="$val" autocomplete="off" /><br />
-			<br />
-EOF;
+		$val = $this->htmlspecialchars( $this->trackserver->options['gettrack_slug'] );
+		$url = site_url( null ) . $this->trackserver->url_prefix;
 
 		printf(
-			$format,
+			'%1$s (%2$s/<b>&lt;slug&gt;</b>/) <br />' .
+			'%3$s<br />' .
+			'<input type="text" size="25" name="trackserver_options[gettrack_slug]" id="trackserver_gettrack_slug" value="%4$s" autocomplete="off" /><br />' .
+			'<br />',
 			esc_html__( "The URL slug for the 'gettrack' API, used by Trackserver's shortcode [tsmap]", 'trackserver' ),
-			esc_html__( 'There is generally no need to change this.', 'trackserver' )
+			esc_url( $url ),
+			esc_html__( 'There is generally no need to change this.', 'trackserver' ),
+			esc_attr( $val )
 		);
 	}
 
 	public function enable_proxy_html() {
 		$checked  = ( $this->trackserver->options['enable_proxy'] ? 'checked' : '' );
-		$linkurl  = esc_attr__( 'https://wordpress.org/plugins/trackserver/faq/', 'trackserver' );
+		$linkurl  = 'https://wordpress.org/plugins/trackserver/faq/';
 		$linktext = esc_html__( 'FAQ about security', 'trackserver' );
-		$link     = "<a href=\"$linkurl\">$linktext</a>";
-
-		$format = <<<EOF
-			<input type="checkbox" name="trackserver_options[enable_proxy]" id="trackserver_enable_proxy" $checked> %1\$s<br />
-			%2\$s<br />
-EOF;
+		$link     = '<a href="' . esc_url( $linkurl ) . '">' . $linktext . '</a>';
 
 		printf(
-			$format,
-			esc_html__( "Check this to enable the proxy for external tracks, which can be used by prefixing their URL with 'proxy:'", 'trackserver' ),
+			'<input type="checkbox" name="trackserver_options[enable_proxy]" id="trackserver_enable_proxy" %1$s> %2$s<br /><br />' .
+			'%3$s<br />',
+			esc_attr( $checked ),   // %1
+			esc_html__( "Check this to enable the proxy for external tracks, which can be used by prefixing their URL with 'proxy:'", 'trackserver' ), // %2
 			sprintf(
 				// translators: placeholder is for link to Trackserver FAQ
 				esc_html__(
@@ -732,16 +708,17 @@ EOF;
 					'Please see the %1$s for more information.', 'trackserver'
 					// phpcs:enable
 				),
-				$link
+				wp_kses_post( $link )
 			)
 		);
 	}
 
 	public function fetchmode_all_html() {
 		$checked = ( $this->trackserver->options['fetchmode_all'] ? 'checked' : '' );
-		$format  = '<input type="checkbox" name="trackserver_options[fetchmode_all]" id="trackserver_fetchmode_all" ' . $checked . '> %1$s<br /><br />';
+
 		printf(
-			$format,
+			'<input type="checkbox" name="trackserver_options[fetchmode_all]" id="trackserver_fetchmode_all" %1$s> %2$s<br /><br />',
+			esc_attr( $checked ),
 			esc_html__( 'Check this to enable the mode where Trackserver gets all track data in a single HTTP request when displaying a map.', 'trackserver' )
 		);
 		echo esc_html__(
