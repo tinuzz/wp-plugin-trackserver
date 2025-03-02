@@ -518,10 +518,10 @@ class Trackserver_Shortcode {
 		if ( $this->trackserver->options['fetchmode_all'] ) {
 
 			if ( count( $this->shortcode_data['tracks'] ) ) {
-				$query         = json_encode(
+				$query = json_encode(
 					array(
-						'id'    => $this->shortcode_data['track_ids'],
-						'live'  => $this->shortcode_data['user_ids'],
+						'id'   => $this->shortcode_data['track_ids'],
+						'live' => $this->shortcode_data['user_ids'],
 						//'delay' => $delay,
 					)
 				);
@@ -604,7 +604,7 @@ class Trackserver_Shortcode {
 		);
 
 		$this->trackserver->mapdata[]    = $mapdata;
-		$out                             = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . $this->shortcode_data['config']['width'] . '; height: ' . $this->shortcode_data['config']['height'] . '; max-width: 100%"></div>';
+		$out                             = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . esc_attr( $this->shortcode_data['config']['width'] ) . '; height: ' . esc_attr( $this->shortcode_data['config']['height'] ) . '; max-width: 100%"></div>';
 		$this->trackserver->need_scripts = true;
 
 		return $out;
