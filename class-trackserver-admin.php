@@ -374,7 +374,7 @@ EOF;
 		echo '</li></ul>';
 		esc_html_e( 'This is what the last saved version of the embedded map looks like:', 'trackserver' );
 		echo '<br><br>';
-		echo '<iframe src="' . esc_url( $url ) . '" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>';
+		printf( '<iframe src="%s" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>', esc_url( $url ) );
 	}
 
 	/**
@@ -464,12 +464,10 @@ EOF;
 
 		add_thickbox();
 
-		echo '<div class="wrap"><h2>';
-		esc_html_e( 'Trackserver Options', 'trackserver' );
-		echo '</h2>';
+		printf( '<div class="wrap"><h2>%s</h2>', esc_html__( 'Trackserver Options', 'trackserver' ) );
 
 		if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] === 'true' ) {
-			echo '<div class="updated"><p>' . esc_html__( 'Settings updated', 'trackserver' ) . '</p></div>';
+			printf( '<div class="updated"><p>%s</p></div>', esc_html__( 'Settings updated', 'trackserver' ) );
 
 			// Flush rewrite rules, for when embedded maps slug has been changed
 			flush_rewrite_rules();
@@ -755,7 +753,7 @@ EOF;
 				$this->trackserver->calculate_distance( $track_id );
 			}
 		}
-		echo esc_html( "OK: $i queries executed" );
+		printf( 'OK: %s queries executed', esc_html( $i ) );
 		die();
 	}
 
