@@ -10,12 +10,12 @@ require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-profile.php';
 
 class Trackserver_Admin {
 
-	// Singleton
+	// Singleton.
 	protected static $instance;
 
 	// phpcs:disable
-	private $trackserver; // Reference to the main object
-	public  $settings;    // Reference to the settings object
+	private $trackserver;
+	public  $settings;
 	private $tbl_tracks;
 	private $tbl_locations;
 	private $tracks_list_table = false;
@@ -23,6 +23,13 @@ class Trackserver_Admin {
 	private $trashcan_kses     = array( 'svg' => array( 'version' => array(), 'xmlns' => array(), 'viewbox' => array(), 'width' => array(), 'height' => array() ), 'path' => array( 'd' => array(), 'g' => array() ), 'rect' => array( 'x' => array(), 'y' => array(), 'width' => array(), 'height' => array() ) );
 	// phpcs:enable
 
+	/**
+	 * Trackserver_Admin constructor
+	 *
+	 * @param object $trackserver Reference to the main object
+	 *
+	 * @since 1.0
+	 */
 	public function __construct( $trackserver ) {
 		$this->trackserver = $trackserver;
 		$this->set_table_refs();
@@ -277,7 +284,6 @@ class Trackserver_Admin {
 			if ( ! $this->trackserver->user_has_tracks( $view ) ) {
 				$view = 0;
 			}
-			// if ( $old_view != $view ) ?
 			update_user_meta( $user_id, 'ts_tracks_admin_view', $view );
 		}
 
@@ -668,7 +674,7 @@ EOF;
 			} elseif ( $_REQUEST['trackserver_action'] === 'split' ) {
 				$vertex  = intval( $_REQUEST['vertex'] );  // not covered by nonce!
 				$r       = $this->wpdb_split_track( $track_id, $vertex );
-				$message = 'Track "' . $name . '" (ID=' . $track_id . ') has been split at point ' . $vertex . ' ' . $r;  // TODO: i18n
+				$message = 'Track "' . $name . '" (ID=' . $track_id . ') has been split at point ' . $vertex . ' (New ID=' . $r . ').';  // TODO: i18n
 			} else {
 				$data  = array(
 					'name'    => $name,
@@ -935,7 +941,7 @@ EOF;
 
 			$this->trackserver->calculate_distance( $track_id );
 			$this->trackserver->calculate_distance( $new_id );
-			return print_r( $new_id, true );
+			return $new_id;
 		}
 	}
 } // class
