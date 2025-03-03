@@ -279,6 +279,7 @@ class Trackserver_Admin {
 		if ( current_user_can( 'trackserver_admin' ) ) {
 			$view = (int) get_user_meta( $user_id, 'ts_tracks_admin_view', true );
 			if ( isset( $_REQUEST['author'] ) ) {
+				check_admin_referer( 'bulk-tracks' );
 				$view = (int) $_REQUEST['author'];
 			}
 			if ( ! $this->trackserver->user_has_tracks( $view ) ) {
@@ -291,6 +292,7 @@ class Trackserver_Admin {
 		$per_page = (int) get_user_meta( $user_id, 'ts_tracks_admin_per_page', true );
 		$per_page = ( $per_page === 0 ? 20 : $per_page );
 		if ( isset( $_REQUEST['per_page'] ) ) {
+			check_admin_referer( 'bulk-tracks' );
 			$per_page = (int) $_REQUEST['per_page'];
 			update_user_meta( $user_id, 'ts_tracks_admin_per_page', $per_page );
 		}
