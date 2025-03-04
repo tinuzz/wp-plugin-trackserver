@@ -807,9 +807,9 @@ class Trackserver_Profile {
 		$num_geofences = count( $geofences );
 		for ( $i = 0; $i < $num_geofences; $i++ ) {
 			$fence                 = $geofences[ $i ];
-			$lat                   = $fence['lat'];
-			$lon                   = $fence['lon'];
-			$radius                = $fence['radius'];
+			$lat                   = (string) $fence['lat'];
+			$lon                   = (string) $fence['lon'];
+			$radius                = (string) $fence['radius'];
 			$action                = $fence['action'];
 			$action_select_options = '';
 
@@ -824,13 +824,13 @@ class Trackserver_Profile {
 			}
 
 			printf(
-				'<tr data-id="%1$s" %2$s>
+				'<tr data-id="%1$s" %2$s class="trackserver_geofence">
 				   <td>%3$s</td>
 				   <td><input type="text" size="10" name="ts_geofence_lat[%1$s]" value="%4$s" class="ts-input-geofence-lat ts-input-geofence" autocomplete="off" data-id="%1$s"></td>
 				   <td>%5$s</td>
 				   <td><input type="text" size="10" name="ts_geofence_lon[%1$s]" value="%6$s" class="ts-input-geofence-lon ts-input-geofence" autocomplete="off" data-id="%1$s"></td>
 				   <td>%7$s</td>
-				   <td><input type="text" size="10" name="ts_geofence_radius[%1$s]" value="%8$s" class="ts-input-geofence-lon ts-input-radius" autocomplete="off" data-id="%1$s"></td>
+				   <td><input type="text" size="10" name="ts_geofence_radius[%1$s]" value="%8$s" class="ts-input-geofence-radius ts-input-geofence" autocomplete="off" data-id="%1$s"></td>
 				   <td>%9$s</td>
 				   <td><select name="ts_geofence_action[%1$s]" data-id="%1$s" class="ts-input-geofence">%10$s</select></td>
 				 </tr>',
