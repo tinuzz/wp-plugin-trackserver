@@ -21,11 +21,11 @@ class Trackserver_Profile {
 		$this->trackserver   = $trackserver;
 		$this->current_user  = wp_get_current_user();
 		$this->app_passwords = get_user_meta( $this->current_user->ID, 'ts_app_passwords', true );
-		$this->username      = $this->trackserver->printf_htmlspecialchars( $this->current_user->user_login );
-		$base_url            = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
-		$slug                = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['trackserver_slug'] );
+		$this->username      = $this->current_user->user_login;
+		$base_url            = site_url( null ) . $this->trackserver->url_prefix;
+		$slug                = $this->trackserver->options['trackserver_slug'];
 		$this->url           = $base_url . '/' . $slug;
-		$this->url2          = $this->url . '/' . $this->username . '/' . '**********';
+		$this->url2          = $this->url . '/' . $this->username . '/**********';
 	}
 
 	/**
@@ -58,7 +58,7 @@ class Trackserver_Profile {
 	public function yourprofile_html() {
 
 		if ( ! current_user_can( 'use_trackserver' ) ) {
-			wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 		}
 
 		add_thickbox();
@@ -110,7 +110,7 @@ class Trackserver_Profile {
 										<?php $this->ulogger_profile_html(); ?>
 									</div>
 									<div>
-										<img src="<?php echo TRACKSERVER_PLUGIN_URL . 'img/ulogger-logo.png'; ?>" alt="&micro;logger" width="150">
+										<img src="<?php echo esc_url( TRACKSERVER_PLUGIN_URL ) . 'img/ulogger-logo.png'; ?>" alt="&micro;logger" width="150">
 									</div>
 								</div>
 							</td>
@@ -127,7 +127,7 @@ class Trackserver_Profile {
 										<?php $this->mapmytracks_profile_html(); ?>
 									</div>
 									<div>
-										<img src="<?php echo TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-logo.png'; ?>" alt="OruxMaps" width="150">
+										<img src="<?php echo esc_url( TRACKSERVER_PLUGIN_URL ) . 'img/oruxmaps-logo.png'; ?>" alt="OruxMaps" width="150">
 									</div>
 								</div>
 							</td>
@@ -144,7 +144,7 @@ class Trackserver_Profile {
 										<?php $this->trackme_profile_html(); ?>
 									</div>
 									<div>
-										<img src="<?php echo TRACKSERVER_PLUGIN_URL . 'img/trackme-logo.png'; ?>" alt="TrackMe" width="150">
+										<img src="<?php echo esc_url( TRACKSERVER_PLUGIN_URL ) . 'img/trackme-logo.png'; ?>" alt="TrackMe" width="150">
 									</div>
 								</div>
 							</td>
@@ -161,7 +161,7 @@ class Trackserver_Profile {
 										<?php $this->gpslogger_profile_html(); ?>
 									</div>
 									<div>
-										<img src="<?php echo TRACKSERVER_PLUGIN_URL . 'img/gpslogger-logo.png'; ?>" alt="GPSLogger" width="130">
+										<img src="<?php echo esc_url( TRACKSERVER_PLUGIN_URL ) . 'img/gpslogger-logo.png'; ?>" alt="GPSLogger" width="130">
 									</div>
 								</div>
 							</td>
@@ -178,7 +178,7 @@ class Trackserver_Profile {
 										<?php $this->owntracks_profile_html(); ?>
 									</div>
 									<div>
-										<img src="<?php echo TRACKSERVER_PLUGIN_URL . 'img/owntracks-logo.png'; ?>" alt="OwnTracks" width="150">
+										<img src="<?php echo esc_url( TRACKSERVER_PLUGIN_URL ) . 'img/owntracks-logo.png'; ?>" alt="OwnTracks" width="150">
 									</div>
 								</div>
 							</td>
@@ -195,7 +195,7 @@ class Trackserver_Profile {
 										<?php $this->phonetrack_profile_html(); ?>
 									</div>
 									<div>
-										<img src="<?php echo TRACKSERVER_PLUGIN_URL . 'img/phonetrack-logo.png'; ?>" alt="PhoneTrack" width="130">
+										<img src="<?php echo esc_url( TRACKSERVER_PLUGIN_URL ) . 'img/phonetrack-logo.png'; ?>" alt="PhoneTrack" width="130">
 									</div>
 								</div>
 							</td>
@@ -212,7 +212,7 @@ class Trackserver_Profile {
 										<?php $this->osmand_profile_html(); ?>
 									</div>
 									<div>
-										<img src="<?php echo TRACKSERVER_PLUGIN_URL . 'img/osmand-logo.png'; ?>" alt="OsmAnd" width="150">
+										<img src="<?php echo esc_url( TRACKSERVER_PLUGIN_URL ) . 'img/osmand-logo.png'; ?>" alt="OsmAnd" width="150">
 									</div>
 								</div>
 							</td>
@@ -229,7 +229,7 @@ class Trackserver_Profile {
 										<?php $this->traccar_profile_html(); ?>
 									</div>
 									<div>
-										<img src="<?php echo TRACKSERVER_PLUGIN_URL . 'img/traccar-logo.png'; ?>" alt="Traccar Client" width="130">
+										<img src="<?php echo esc_url( TRACKSERVER_PLUGIN_URL ) . 'img/traccar-logo.png'; ?>" alt="Traccar Client" width="130">
 									</div>
 								</div>
 							</td>
@@ -304,7 +304,7 @@ class Trackserver_Profile {
 			</div>
 			<div id="trackserver-addpass-modal" style="display:none;">
 				<p>
-					<form id="trackserver-add-pass" method="post" action="<?php echo $url; ?>">
+					<form id="trackserver-add-pass" method="post" action="<?php echo esc_url( $url ); ?>">
 						<table style="width: 100%">
 							<?php wp_nonce_field( 'your-profile' ); ?>
 							<input type="hidden" name="apppass_action" value="add">
@@ -312,8 +312,8 @@ class Trackserver_Profile {
 								<th style="width: 150px;"><?php esc_html_e( 'Password', 'trackserver' ); ?></th>
 								<td>
 									<input id="ts-apppass-input" name="password" type="password" size="30" />
-									<input type="button" class="button" id="ts-gen-pass-button" value="<?php esc_html_e( 'Generate', 'trackserver' ); ?>">
-									<input type="button" class="button" id="ts-view-pass-button" value="<?php esc_html_e( 'View', 'trackserver' ); ?>">
+									<input type="button" class="button" id="ts-gen-pass-button" value="<?php esc_attr_e( 'Generate', 'trackserver' ); ?>">
+									<input type="button" class="button" id="ts-view-pass-button" value="<?php esc_attr_e( 'View', 'trackserver' ); ?>">
 								</td>
 							</tr>
 							<tr>
@@ -337,145 +337,142 @@ class Trackserver_Profile {
 	}
 
 	private function howto_modals_html() {
-		$trackme_settings_img     = TRACKSERVER_PLUGIN_URL . 'img/trackme-howto.png';
-		$trackme_settings         = esc_attr__( 'TrackMe settings', 'trackserver' );
-		$mapmytracks_settings_img = TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png';
-		$mapmytracks_settings     = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
-		$osmand_settings_img      = TRACKSERVER_PLUGIN_URL . 'img/osmand-howto.png';
-		$osmand_settings          = esc_attr__( 'OsmAnd settings', 'trackserver' );
-		$autoshare_settings_img   = TRACKSERVER_PLUGIN_URL . 'img/autoshare-settings.png';
-		$autoshare_settings       = esc_attr__( 'AutoShare settings', 'trackserver' );
-		$ulogger_settings_img     = TRACKSERVER_PLUGIN_URL . 'img/ulogger-howto.png';
-		$ulogger_settings         = esc_attr__( '&micro;logger settings', 'trackserver' );
-		$gpslogger_settings_img   = TRACKSERVER_PLUGIN_URL . 'img/gpslogger-howto.png';
-		$gpslogger_settings       = esc_attr__( 'GPSLogger settings', 'trackserver' );
-		$owntracks_settings_img   = TRACKSERVER_PLUGIN_URL . 'img/owntracks-howto.png';
-		$owntracks_settings       = esc_attr__( 'OwnTracks settings', 'trackserver' );
-		$phonetrack_settings_img  = TRACKSERVER_PLUGIN_URL . 'img/phonetrack-howto.png';
-		$phonetrack_settings      = esc_attr__( 'PhoneTrack settings', 'trackserver' );
-		$traccar_settings_img     = TRACKSERVER_PLUGIN_URL . 'img/traccar-howto.png';
-		$traccar_settings         = esc_attr__( 'Traccar Client settings', 'trackserver' );
-
-		echo <<<EOF
-			<div id="trackserver-trackmehowto-modal" style="display:none;">
+		printf(
+			'<div id="trackserver-trackmehowto-modal" style="display:none;">
 				<p>
-						<img src="$trackme_settings_img" alt="$trackme_settings" />
+						<img src="%1$s" alt="%2$s" />
 				</p>
 			</div>
 			<div id="trackserver-osmandhowto-modal" style="display:none;">
 				<p>
-						<img src="$osmand_settings_img" alt="$osmand_settings" />
+						<img src="%3$s" alt="%4$s" />
 				</p>
 			</div>
 			<div id="trackserver-oruxmapshowto-modal" style="display:none;">
 				<p>
-						<img src="$mapmytracks_settings_img" alt="$mapmytracks_settings" />
+						<img src="%5$s" alt="%6$s" />
 				</p>
 			</div>
 			<div id="trackserver-uloggerhowto-modal" style="display:none;">
 				<p>
-						<img src="$ulogger_settings_img" alt="$ulogger_settings" />
+						<img src="%7$s" alt="%8$s" />
 				</p>
 			</div>
 			<div id="trackserver-gpsloggerhowto-modal" style="display:none;">
 				<p>
-						<img src="$gpslogger_settings_img" alt="$gpslogger_settings" />
+						<img src="%9$s" alt="%10$s" />
 				</p>
 			</div>
 			<div id="trackserver-owntrackshowto-modal" style="display:none;">
 				<p>
-						<img src="$owntracks_settings_img" alt="$owntracks_settings" />
+						<img src="%11$s" alt="%12$s" />
 				</p>
 			</div>
 			<div id="trackserver-phonetrackhowto-modal" style="display:none;">
 				<p>
-						<img src="$phonetrack_settings_img" alt="$phonetrack_settings" />
+						<img src="%13$s" alt="%14$s" />
 				</p>
 			</div>
 			<div id="trackserver-traccarhowto-modal" style="display:none;">
 				<p>
-						<img src="$traccar_settings_img" alt="$traccar_settings" />
+						<img src="%15$s" alt="%16$s" />
 				</p>
-			</div>
-EOF;
+			</div>',
+			esc_url( TRACKSERVER_PLUGIN_URL . 'img/trackme-howto.png' ),
+			esc_attr__( 'TrackMe settings', 'trackserver' ),
+			esc_url( TRACKSERVER_PLUGIN_URL . 'img/osmand-howto.png' ),
+			esc_attr__( 'OsmAnd settings', 'trackserver' ),
+			esc_url( TRACKSERVER_PLUGIN_URL . 'img/oruxmaps-mapmytracks.png' ),
+			esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' ),
+			esc_url( TRACKSERVER_PLUGIN_URL . 'img/ulogger-howto.png' ),
+			esc_attr__( '&micro;logger settings', 'trackserver' ),
+			esc_url( TRACKSERVER_PLUGIN_URL . 'img/gpslogger-howto.png' ),
+			esc_attr__( 'GPSLogger settings', 'trackserver' ),
+			esc_url( TRACKSERVER_PLUGIN_URL . 'img/owntracks-howto.png' ),
+			esc_attr__( 'OwnTracks settings', 'trackserver' ),
+			esc_url( TRACKSERVER_PLUGIN_URL . 'img/phonetrack-howto.png' ),
+			esc_attr__( 'PhoneTrack settings', 'trackserver' ),
+			esc_url( TRACKSERVER_PLUGIN_URL . 'img/traccar-howto.png' ),
+			esc_attr__( 'Traccar Client settings', 'trackserver' ),
+		);
 	}
 
 	private function trackserver_url_html() {
 
-		// phpcs:disable
-		echo esc_html__( 'As of version 5.0, Trackserver uses a single URL slug for all the protocols it supports. ' .
-				'The old, seperate slugs for TrackMe, MapMyTracks, OsmAnd, SendLocation and OwnTracks are now deprecated. ' .
-				'With this single slug, two different URLs can be made for Trackserver: one with credentials in it, and ' .
-				'one without. Some apps need credentials in the URL, because they do not support other mechanisms for ' .
-				'authentication.', 'trackserver' ) . '<br><br>';
-		// phpcs:enable
-
-		$suffix = $this->trackserver->printf_htmlspecialchars( '/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}' );
-		$format = <<<EOF
-			<strong>%1\$s:</strong><br>
-			<div class="trackserver-info" id="trackserver-url1">{$this->url}</div>
-			<input id="trackserver-copy-url-button1" type="button" class="button trackserver-copy-url" value="%3\$s" style="margin-top: 5px">
-			<br><br>
-			<strong>%2\$s:</strong><br>
-			<div class="trackserver-info" id="trackserver-url2">{$this->url2}</div>
-			<input id="trackserver-copy-url-button2" type="button" class="button trackserver-copy-url" value="%4\$s" style="margin-top: 5px">
-			<br><br>
-			%5\$s
-			<br><br>
-EOF;
+		esc_html_e(
+			'As of version 5.0, Trackserver uses a single URL slug for all the protocols it supports.
+			The old, seperate slugs for TrackMe, MapMyTracks, OsmAnd, SendLocation and OwnTracks are now deprecated.
+			With this single slug, two different URLs can be made for Trackserver: one with credentials in it, and
+			one without. Some apps need credentials in the URL, because they do not support other mechanisms for
+			authentication.',
+			'trackserver'
+		);
 
 		printf(
-			$format,
+			'<br><br>
+			<strong>%1$s:</strong><br>
+			<div class="trackserver-info" id="trackserver-url1">%6$s</div>
+			<input id="trackserver-copy-url-button1" type="button" class="button trackserver-copy-url" value="%3$s" style="margin-top: 5px">
+			<br><br>
+			<strong>%2$s:</strong><br>
+			<div class="trackserver-info" id="trackserver-url2">%7$s</div>
+			<input id="trackserver-copy-url-button2" type="button" class="button trackserver-copy-url" value="%4$s" style="margin-top: 5px">
+			<br><br>
+			%5$s
+			<br><br>',
 			esc_html__( 'Full URL without credentials', 'trackserver' ),
 			esc_html__( 'Full URL with credentials', 'trackserver' ),
 			esc_html__( 'Copy', 'trackserver' ),
 			esc_html__( 'Copy with password', 'trackserver' ),
 			esc_html__( 'See below for app-specific URLs with URL parameters.', 'trackserver' ),
+			esc_html( $this->url ),
+			esc_html( $this->url2 ),
 		);
 	}
 
 	private function app_passwords_html() {
 
-		// phpcs:disable
-		echo esc_html__( 'As of Trackserver v5.0, app-specific access keys have been replaced with app passwords. ' .
-			'An app password is usable in all of the supported apps, including the ones that previously only worked with ' .
-			'your WordPress password, like OruxMaps.', 'trackserver' ) . '<br><br>';
-		echo esc_html__( 'App passwords have configurable permissions. "Write" permission means that the password can ' .
-			'be used for creating tracks. "Read" means that tracks and metadata can be queried and downloaded. "Delete" ' .
-			'means the password can be used to delete tracks. For most apps, only write permission is needed, but for ' .
-			'example TrackMe has functionality that requires read and/or delete permissions.', 'trackserver' ) . '<br><br>';
-		// phpcs:enable
+		esc_html_e(
+			'As of Trackserver v5.0, app-specific access keys have been replaced with app passwords.
+			An app password is usable in all of the supported apps, including the ones that previously only worked with
+			your WordPress password, like OruxMaps.',
+			'trackserver'
+		);
+		echo '<br><br>';
+		esc_html_e(
+			'App passwords have configurable permissions. "Write" permission means that the password can
+			be used for creating tracks. "Read" means that tracks and metadata can be queried and downloaded. "Delete"
+			means the password can be used to delete tracks. For most apps, only write permission is needed, but for
+			example TrackMe has functionality that requires read and/or delete permissions.',
+			'trackserver'
+		);
+		echo '<br><br>';
 
 		$passwords = get_user_meta( $this->current_user->ID, 'ts_app_passwords', true );
-		$viewstr   = esc_html__( 'View', 'trackserver' );
-		$deletestr = esc_html__( 'Delete', 'trackserver' );
-		$strings   = array(
-			'password'   => esc_html__( 'Password', 'trackserver' ),
-			'read'       => esc_html__( 'Read', 'trackserver' ),
-			'write'      => esc_html__( 'Write', 'trackserver' ),
-			'delete'     => esc_html__( 'Delete', 'trackserver' ),
-			'created'    => esc_html__( 'Created', 'trackserver' ),
-			'operations' => esc_html__( 'Operations', 'trackserver' ),
-			'view'       => esc_html__( 'View', 'trackserver' ),
-			'addapppass' => esc_html__( 'Add app password', 'trackserver' ),
-		);
 
-		echo <<<EOF
-			<input type="hidden" name="apppass_action">
+		printf(
+			'<input type="hidden" name="apppass_action">
 			<input type="hidden" name="apppass_id">
 			<table class="form-table fixed">
-			<tr>
-				<th>{$strings['password']}</th>
-				<th style="width: 90px">&nbsp;</th>
-				<th style="width: 40px">{$strings['read']}</th>
-				<th style="width: 40px">{$strings['write']}</th>
-				<th style="width: 40px">{$strings['delete']}</th>
-				<th>{$strings['created']}</th>
-				<th>{$strings['operations']}</th>
-			</tr>
-EOF;
+			  <tr>
+				   <th>%1$s</th>
+				   <th style="width: 90px">&nbsp;</th>
+				   <th style="width: 40px">%2$s</th>
+				   <th style="width: 40px">%3$s</th>
+				   <th style="width: 40px">%4$s</th>
+				   <th>%5$s</th>
+				   <th>%6$s</th>
+			  </tr>',
+			esc_html__( 'Password', 'trackserver' ),
+			esc_html__( 'Read', 'trackserver' ),
+			esc_html__( 'Write', 'trackserver' ),
+			esc_html__( 'Delete', 'trackserver' ),
+			esc_html__( 'Created', 'trackserver' ),
+			esc_html__( 'Operations', 'trackserver' ),
+		);
 
-		for ( $i = 0; $i < count( $passwords ); $i++ ) {
+		$num_passwords = count( $passwords );
+		for ( $i = 0; $i < $num_passwords; $i++ ) {
 			$pass = $passwords[ $i ]['password'];
 			if ( is_array( $passwords[ $i ]['permissions'] ) ) {
 				$perm = $passwords[ $i ]['permissions'];
@@ -483,150 +480,148 @@ EOF;
 				$perm = array();
 			}
 			$created    = ( array_key_exists( 'created', $passwords[ $i ] ) ? htmlspecialchars( $passwords[ $i ]['created'] ) : '&lt;' . esc_html__( 'unknown', 'trackserver' ) . '&gt;' );
-			$itemdata   = 'data-id="' . $i . '"';
-			$passdata   = 'data-password="' . htmlspecialchars( $pass ) . '"';
-			$readperm   = ( in_array( 'read', $perm, true ) ? esc_html__( 'Yes', 'trackserver' ) : '-' );
-			$writeperm  = ( in_array( 'write', $perm, true ) ? esc_html__( 'Yes', 'trackserver' ) : '-' );
-			$deleteperm = ( in_array( 'delete', $perm, true ) ? esc_html__( 'Yes', 'trackserver' ) : '-' );
+			$readperm   = ( in_array( 'read', $perm, true ) ? __( 'Yes', 'trackserver' ) : '-' );
+			$writeperm  = ( in_array( 'write', $perm, true ) ? __( 'Yes', 'trackserver' ) : '-' );
+			$deleteperm = ( in_array( 'delete', $perm, true ) ? __( 'Yes', 'trackserver' ) : '-' );
 
-			echo <<<EOF
-				<tr $itemdata class="trackserver-apppass">
-					<td id="pass$i" $itemdata $passdata><tt id="passtext$i">**********</tt></td>
-					<td>
-						<input type="button" class="button ts-view-pass" data-action="view" id="viewbutton$i" $itemdata value="{$strings['view']}">
-					</td>
-					<td>$readperm</td>
-					<td>$writeperm</td>
-					<td>$deleteperm</td>
-					<td>$created</td>
-					<td>
-						<input type="submit" class="button ts-delete-pass" data-action="delete" id="ts-deletepass-button$i" $itemdata value="{$strings['delete']}">
-					</td>
-				</tr>
-EOF;
-
+			printf(
+				'<tr data-id="%1$s" class="trackserver-apppass">
+				  <td id="pass%1$s" data-id="%1$s" data-password="%2$s">
+				    <tt id="passtext%1$s">**********</tt>
+				  </td><td>
+				    <input type="button" class="button ts-view-pass" data-action="view" id="viewbutton%1$s" data-id="%1$s" value="%7$s">
+				  </td>
+				  <td>%3$s</td>
+				  <td>%4$s</td>
+				  <td>%5$s</td>
+				  <td>%6$s</td>
+				  <td>
+				    <input type="submit" class="button ts-delete-pass" data-action="delete" id="ts-deletepass-button%1$s" data-id="%1$s" value="%8$s">
+				  </td>
+				</tr>',
+				esc_attr( $i ),
+				esc_attr( $this->htmlspecialchars( $pass ) ),
+				esc_html( $readperm ),
+				esc_html( $writeperm ),
+				esc_html( $deleteperm ),
+				esc_html( $created ),
+				esc_attr__( 'View', 'trackserver' ),
+				esc_attr__( 'Delete', 'trackserver' ),
+			);
 		}
 
-		echo <<<EOF
-			</table>
-			<a href="#TB_inline?width=&inlineId=trackserver-addpass-modal&height=200" title="{$strings['addapppass']}"
-				class="button thickbox" data-id="0" data-action="addpass">{$strings['addapppass']}</a>
-EOF;
+		printf(
+			'</table>' .
+			'<a href="#TB_inline?width=&inlineId=trackserver-addpass-modal&height=200" title="%1$s" ' .
+			'	class="button thickbox" data-id="0" data-action="addpass">%2$s</a>',
+			esc_attr__( 'Add app password', 'trackserver' ),
+			esc_html__( 'Add app password', 'trackserver' ),
+		);
 	}
 
 	private function profile_html( $description, $with_creds, $suffix = null ) {
 		$url  = ( $with_creds ? $this->url2 : $this->url );
-		$copy = ( $with_creds ? esc_html__( 'Copy with password', 'trackserver' ) : esc_html__( 'Copy', 'trackserver' ) );
-		if ( ! empty( $suffix ) ) {
-				$url .= $this->trackserver->printf_htmlspecialchars( $suffix );
-		}
-		$format = <<<EOF
-			<strong>%1\$s:</strong><br>
-			<div class="trackserver-info" id="trackserver-url{$this->p_index}">{$url}</div>
-			<input id="trackserver-copy-url-button{$this->p_index}" type="button" class="button trackserver-copy-url" value="%2\$s" style="margin-top: 5px">
-			<br><br>
-EOF;
+		$copy = ( $with_creds ? __( 'Copy with password', 'trackserver' ) : __( 'Copy', 'trackserver' ) );
 
-		$args = array(
-			esc_html__( $description, 'trackserver' ),  // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
-			$copy,
+		if ( ! empty( $suffix ) ) {
+				$url .= $suffix;
+		}
+
+		printf(
+			'<strong>%1$s:</strong><br>
+			<div class="trackserver-info" id="trackserver-url%2$s">%3$s</div>
+			<input id="trackserver-copy-url-button%2$s" type="button" class="button trackserver-copy-url" value="%4$s" style="margin-top: 5px">
+			<br><br>',
+			esc_html__( $description, 'trackserver' ), // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+			esc_attr( $this->p_index ),
+			esc_html( $url ),
+			esc_attr( $copy ),
 		);
 
 		$this->p_index += 1;
 
 		if ( ! $with_creds ) {
-			$format .= <<<EOF
-				<strong>%3\$s:</strong> {$this->username}<br>
-				<strong>%4\$s:</strong> %5\$s<br><br>
-EOF;
-
-			$args[] = esc_html__( 'Username', 'trackserver' );
-			$args[] = esc_html__( 'Password', 'trackserver' );
-			$args[] = esc_html__( 'an app password', 'trackserver' );
+			printf(
+				'<strong>%1$s:</strong> %2$s<br>
+				<strong>%3$s:</strong> %4$s<br><br>',
+				esc_html__( 'Username', 'trackserver' ),
+				esc_html( $this->username ),
+				esc_html__( 'Password', 'trackserver' ),
+				esc_html__( 'an app password', 'trackserver' ),
+			);
 		}
-		// phpcs:disable
-		printf(
-			$format,
-			...$args
-		);
-		// phpcs:enable
 	}
 
 	private function trackme_profile_html() {
 		$this->profile_html( 'URL header', true );
 
-		$howto    = esc_html__( 'How to use TrackMe', 'trackserver' );
-		$download = esc_html__( 'Download TrackMe', 'trackserver' );
-		$settings = esc_attr__( 'TrackMe settings', 'trackserver' );
-
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-trackmehowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://play.google.com/store/apps/details?id=LEM.TrackMe" target="tsexternal">$download</a>
-			<br />
-EOF;
+		printf(
+			'<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-trackmehowto-modal"
+				data-action="howto" title="%1$s">%2$s</a> &nbsp; &nbsp;
+			<a href="https://play.google.com/store/apps/details?id=LEM.TrackMe" target="tsexternal">%3$s</a>
+			<br />',
+			esc_attr__( 'TrackMe settings', 'trackserver' ),
+			esc_html__( 'How to use TrackMe', 'trackserver' ),
+			esc_html__( 'Download TrackMe', 'trackserver' ),
+		);
 	}
 
 	private function mapmytracks_profile_html() {
 		$this->profile_html( 'Full custom URL', false );
 
-		$howto    = esc_html__( 'How to use OruxMaps MapMyTracks', 'trackserver' );
-		$download = esc_html__( 'Download OruxMaps', 'trackserver' );
-		$settings = esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' );
-
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-oruxmapshowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://www.oruxmaps.com/cs/en/" target="tsexternal">$download</a>
-			<br />
-EOF;
+		printf(
+			'<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-oruxmapshowto-modal"
+				data-action="howto" title="%1$s">%2$s</a> &nbsp; &nbsp;
+			<a href="https://www.oruxmaps.com/cs/en/" target="tsexternal">%3$s</a>
+			<br />',
+			esc_attr__( 'OruxMaps MapMyTracks settings', 'trackserver' ),
+			esc_html__( 'How to use OruxMaps MapMyTracks', 'trackserver' ),
+			esc_html__( 'Download OruxMaps', 'trackserver' ),
+		);
 	}
 
 	private function osmand_profile_html() {
 		$suffix = '/?lat={0}&lon={1}&timestamp={2}&altitude={4}&speed={5}&bearing={6}';
 		$this->profile_html( 'Online tracking web address', true, $suffix );
 
-		$howto    = esc_html__( 'How to use OsmAnd', 'trackserver' );
-		$download = esc_html__( 'Download OsmAnd', 'trackserver' );
-		$settings = esc_attr__( 'OsmAnd settings', 'trackserver' );
-
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-osmandhowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://play.google.com/store/apps/details?id=net.osmand" target="tsexternal">$download</a>
-			<br />
-EOF;
+		printf(
+			'<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-osmandhowto-modal"
+				data-action="howto" title="%1$s">%2$s</a> &nbsp; &nbsp;
+			<a href="https://play.google.com/store/apps/details?id=net.osmand" target="tsexternal">%3$s</a>
+			<br />',
+			esc_attr__( 'OsmAnd settings', 'trackserver' ),
+			esc_html__( 'How to use OsmAnd', 'trackserver' ),
+			esc_html__( 'Download OsmAnd', 'trackserver' ),
+		);
 	}
 
 	private function ulogger_profile_html() {
 		$this->profile_html( 'Server URL', false );
 
-		$howto    = esc_html__( 'How to use &micro;logger', 'trackserver' );
-		$download = esc_html__( 'Download &micro;logger', 'trackserver' );
-		$settings = esc_attr__( '&micro;logger settings', 'trackserver' );
-
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-uloggerhowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://f-droid.org/en/packages/net.fabiszewski.ulogger/" target="tsexternal">$download</a>
-			<br />
-EOF;
+		printf(
+			'<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-uloggerhowto-modal"
+				data-action="howto" title="%1$s">%2$s</a> &nbsp; &nbsp;
+			<a href="https://f-droid.org/en/packages/net.fabiszewski.ulogger/" target="tsexternal">%3$s</a>
+			<br />',
+			esc_attr__( '&micro;logger settings', 'trackserver' ),
+			esc_html__( 'How to use &micro;logger', 'trackserver' ),
+			esc_html__( 'Download &micro;logger', 'trackserver' )
+		);
 	}
 
 	private function gpslogger_profile_html() {
 		$suffix = '/?lat=%LAT&lon=%LON&timestamp=%TIMESTAMP&altitude=%ALT&speed=%SPD&bearing=%DIR';
 		$this->profile_html( 'Custom URL', false, $suffix );
 
-		$howto    = esc_html__( 'How to use GPSLogger', 'trackserver' );
-		$download = esc_html__( 'Download GPSLogger', 'trackserver' );
-		$settings = esc_attr__( 'GPSLogger settings', 'trackserver' );
-
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-gpsloggerhowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://gpslogger.app/" target="tsexternal">$download</a>
-			<br />
-EOF;
+		printf(
+			'<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-gpsloggerhowto-modal"
+				data-action="howto" title="%1$s">%2$s</a> &nbsp; &nbsp;
+			<a href="https://gpslogger.app/" target="tsexternal">%3$s</a>
+			<br />',
+			esc_attr__( 'GPSLogger settings', 'trackserver' ),
+			esc_html__( 'How to use GPSLogger', 'trackserver' ),
+			esc_html__( 'Download GPSLogger', 'trackserver' )
+		);
 	}
 
 	private function sendlocation_profile_html() {
@@ -635,110 +630,138 @@ EOF;
 
 	private function owntracks_profile_html() {
 		$this->profile_html( 'Connection Host', false );
-		$download = esc_html__( 'Download OwnTracks', 'trackserver' );
-		$howto    = esc_html__( 'How to use OwnTracks', 'trackserver' );
-		$settings = esc_attr__( 'OwnTracks settings', 'trackserver' );
 
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-owntrackshowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://play.google.com/store/apps/details?id=org.owntracks.android" target="tsexternal">$download</a>
-			<br />
-EOF;
+		printf(
+			'<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-owntrackshowto-modal"
+				data-action="howto" title="%1$s">%2$s</a> &nbsp; &nbsp;
+			<a href="https://play.google.com/store/apps/details?id=org.owntracks.android" target="tsexternal">%3$s</a>
+			<br />',
+			esc_attr__( 'OwnTracks settings', 'trackserver' ),
+			esc_html__( 'How to use OwnTracks', 'trackserver' ),
+			esc_html__( 'Download OwnTracks', 'trackserver' )
+		);
 	}
 
 	private function phonetrack_profile_html() {
 		$suffix = '/?lat=%LAT&lon=%LON&timestamp=%TIMESTAMP&altitude=%ALT&speed=%SPD&bearing=%DIR';
 		$this->profile_html( 'Target address', false, $suffix );
 
-		$download = esc_html__( 'Download PhoneTrack', 'trackserver' );
-		$howto    = esc_html__( 'How to use PhoneTrack', 'trackserver' );
-		$settings = esc_attr__( 'PhoneTrack settings', 'trackserver' );
-
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-phonetrackhowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/" target="tsexternal">$download</a>
-			<br />
-EOF;
+		printf(
+			'<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-phonetrackhowto-modal"
+				data-action="howto" title="%1$s">%2$s</a> &nbsp; &nbsp;
+			<a href="https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/" target="tsexternal">%3$s</a>
+			<br />',
+			esc_attr__( 'PhoneTrack settings', 'trackserver' ),
+			esc_html__( 'How to use PhoneTrack', 'trackserver' ),
+			esc_html__( 'Download PhoneTrack', 'trackserver' )
+		);
 	}
 
 	private function traccar_profile_html() {
 		$this->profile_html( 'Server URL', true );
-		$download = esc_html__( 'Download Traccar Client', 'trackserver' );
-		$howto    = esc_html__( 'How to use Traccar Client', 'trackserver' );
-		$settings = esc_attr__( 'Traccar Client settings', 'trackserver' );
 
-		echo <<<EOF
-			<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-traccarhowto-modal"
-				data-action="howto" title="$settings">$howto</a> &nbsp; &nbsp;
-			<a href="https://play.google.com/store/apps/details?id=org.traccar.client" target="tsexternal">$download</a>
-			<br />
-EOF;
+		printf(
+			'<a class="thickbox" href="#TB_inline?width=&inlineId=trackserver-traccarhowto-modal"
+				data-action="howto" title="%1$s">%2$s</a> &nbsp; &nbsp;
+			<a href="https://play.google.com/store/apps/details?id=org.traccar.client" target="tsexternal">%3$s</a>
+			<br />',
+			esc_attr__( 'Traccar Client settings', 'trackserver' ),
+			esc_html__( 'How to use Traccar Client', 'trackserver' ),
+			esc_html__( 'Download Traccar Client', 'trackserver' )
+		);
 	}
 
 	private function share_friends_html() {
-		$value    = htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_share', true ) );
-		$link_url = 'http://owntracks.org/booklet/features/friends/';
+		$value     = $this->htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_share', true ) );
+		$link_url  = 'http://owntracks.org/booklet/features/friends/';
+		$link_desc = __( 'the description of the Friends feature in the OwnTracks booklet', 'trackserver' );
 
-		// phpcs:disable
-		echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to share your location with. ' .
-			'Users who use OwnTracks or TrackMe\'s "Show Cloud People" feature will see your latest location on the map, ' .
-			'if they follow you. This setting is only about sharing your latest (live) location with TrackMe and ' .
-			'OwnTracks users. It does not grant access to your track data in any other way.', 'trackserver'
-		) . '<br><br>';
-		// translators: placeholder is for a http link URL
-		echo sprintf(
-			__( 'See <a href="%1$s" target="_blank">the description of the Friends feature in the OwnTracks booklet</a> for more information.', 'trackserver' ), $link_url
-		) . '<br><br>';
-		// phpcs:enable
-		echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_share]" value="' . $value . '" autocomplete="off" /><br><br>';
+		esc_html_e(
+			'A comma-separated list of WordPress usernames, whom you want to share your location with.
+			Users who use OwnTracks or TrackMe\'s "Show Cloud People" feature will see your latest location on the map,
+			if they follow you. This setting is only about sharing your latest (live) location with TrackMe and
+			OwnTracks users. It does not grant access to your track data in any other way.',
+			'trackserver'
+		);
+		echo '<br><br>';
+
+		printf(
+			// translators: placeholder is for a http link URL and description
+			esc_html__( 'See %1$s for more information.', 'trackserver' ),
+			'<a href="' . esc_url( $link_url ) . '" target="_blank">' . esc_html( $link_desc ) . '</a>',
+		);
+
+		printf(
+			'<br><br><input type="text" size="40" name="ts_user_meta[ts_owntracks_share]" value="%1$s" autocomplete="off" /><br><br>',
+			esc_attr( $value )
+		);
 	}
 
 	private function follow_friends_html() {
-		$value = htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_follow', true ) );
-		// phpcs:disable
-		echo esc_html__( 'A comma-separated list of WordPress usernames, whom you want to follow with TrackMe\'s ' .
-			'"Show Cloud People" feature or with OwnTracks. These users must share their location with you, by listing ' .
-			'your username in the "Share via ..." setting above and publishing their location to Trackserver with one ' .
-			'of the supported apps. Leave this setting empty to follow all users that share their location with you. ' .
-			'You can exclude users by prefixing their username with a "!" (exclamation mark).', 'trackserver'
-		) . '<br>';
-		// phpcs:enable
-		echo '<input type="text" size="40" name="ts_user_meta[ts_owntracks_follow]" value="' . $value . '" autocomplete="off" /><br><br>';
+		$value = $this->htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_owntracks_follow', true ) );
+
+		esc_html_e(
+			'A comma-separated list of WordPress usernames, whom you want to follow with TrackMe\'s
+			"Show Cloud People" feature or with OwnTracks. These users must share their location with you, by listing
+			your username in the "Share via ..." setting above and publishing their location to Trackserver with one
+			of the supported apps. Leave this setting empty to follow all users that share their location with you.
+			You can exclude users by prefixing their username with a "!" (exclamation mark).',
+			'trackserver'
+		);
+
+		printf( '<br><br><input type="text" size="40" name="ts_user_meta[ts_owntracks_follow]" value="%1$s" autocomplete="off" /><br><br>', esc_attr( $value ) );
 	}
 
 	private function infobar_template_html() {
-		$template = $this->trackserver->printf_htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_infobar_template', true ) );
-		$format   = <<<EOF
-			%1\$s<br>
-			<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="$template" autocomplete="off" /><br><br>
-EOF;
-		// phpcs:disable
+		$template = $this->htmlspecialchars( get_user_meta( $this->current_user->ID, 'ts_infobar_template', true ) );
+
 		printf(
-			$format,
+			'%1s<br><br>
+			<input type="text" size="40" name="ts_user_meta[ts_infobar_template]" id="trackserver_infobar_template" value="%2$s" autocomplete="off" /><br><br>',
 			esc_html__(
-				'With live tracking, an information bar can be shown on the map, displaying some data from the track and the latest trackpoint. ' .
-				'Here you can format the content of the infobar.', 'trackserver'
-			)
+				'With live tracking, an information bar can be shown on the map, displaying some data from the track and the latest trackpoint.
+				Here you can format the content of the infobar.',
+				'trackserver'
+			),
+			esc_attr( $template ),
 		);
-		// phpcs:enable
-		echo esc_html__( 'Possible replacement tags are:', 'trackserver' ) . '<br>';
-		echo '{lat}, {lon} - ' . esc_html__( 'the last known coordinates', 'trackserver' ) . '<br>';
-		echo '{timestamp} - ' . esc_html__( 'the timestamp of the last update', 'trackserver' ) . '<br>';
-		echo '{userid} - ' . esc_html__( 'the numeric user id of the track owner', 'trackserver' ) . '<br>';
-		echo '{userlogin} - ' . esc_html__( 'the username of the track owner', 'trackserver' ) . '<br>';
-		echo '{displayname} - ' . esc_html__( 'the display name of the track owner', 'trackserver' ) . '<br>';
-		echo '{trackname} - ' . esc_html__( 'the name of the track', 'trackserver' ) . '<br>';
-		echo '{altitudem} - ' . esc_html__( 'the altitude in meters', 'trackserver' ) . '<br>';
-		echo '{altitudeft} - ' . esc_html__( 'the altitude in feet', 'trackserver' ) . '<br>';
-		echo '{speedms}, {speedms1}, {speedms2} - ' . esc_html__( 'last known speed in m/s, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
-		echo '{speedkmh}, {speedkmh1}, {speedkmh2} - ' . esc_html__( 'last known speed in km/h, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
-		echo '{speedmph}, {speedmph1}, {speedmph2} - ' . esc_html__( 'last known speed in mi/h, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
-		echo '{distancem} - ' . esc_html__( 'track total distance in meters', 'trackserver' ) . '<br>';
-		echo '{distanceyd} - ' . esc_html__( 'track total distance in yards', 'trackserver' ) . '<br>';
-		echo '{distancekm}, {distancekm1}, {distancekm2} - ' . esc_html__( 'track total distance in km, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
-		echo '{distancemi}, {distancemi1}, {distancemi2} - ' . esc_html__( 'track total distance in miles, with 0, 1 or 2 decimals', 'trackserver' ) . '<br>';
+
+		printf(
+			'%16$s:<br><br>
+			 <table class="tsadmin-table">
+			   <tr><td>{lat}, {lon}</td><td>%1$s</td></tr>
+			   <tr><td>{timestamp}</td><td>%2$s</td></tr>
+			   <tr><td>{userid}</td><td>%3$s</td></tr>
+			   <tr><td>{userlogin}</td><td>%4$s</td></tr>
+			   <tr><td>{displayname}</td><td>%5$s</td></tr>
+			   <tr><td>{trackname}</td><td>%6$s</td></tr>
+			   <tr><td>{altitudem}</td><td>%7$s</td></tr>
+			   <tr><td>{altitudeft}</td><td>%8$s</td></tr>
+			   <tr><td>{speedms}, {speedms1}, {speedms2}</td><td>%9$s</td></tr>
+			   <tr><td>{speedkmh}, {speedkmh1}, {speedkmh2}</td><td>%10$s</td></tr>
+			   <tr><td>{speedmph}, {speedmph1}, {speedmph2}</td><td>%11$s</td></tr>
+			   <tr><td>{distancem}</td><td>%12$s</td></tr>
+			   <tr><td>{distanceyd}</td><td>%13$s</td></tr>
+			   <tr><td>{distancekm}, {distancekm1}, {distancekm2}</td><td>%14$s</td></tr>
+			   <tr><td>{distancemi}, {distancemi1}, {distancemi2}</td><td>%15$s</td></tr>
+			</table>',
+			esc_html__( 'the last known coordinates', 'trackserver' ),
+			esc_html__( 'the timestamp of the last update', 'trackserver' ),
+			esc_html__( 'the numeric user id of the track owner', 'trackserver' ),
+			esc_html__( 'the username of the track owner', 'trackserver' ),
+			esc_html__( 'the display name of the track owner', 'trackserver' ),
+			esc_html__( 'the name of the track', 'trackserver' ),
+			esc_html__( 'the altitude in meters', 'trackserver' ),
+			esc_html__( 'the altitude in feet', 'trackserver' ),
+			esc_html__( 'last known speed in m/s, with 0, 1 or 2 decimals', 'trackserver' ),
+			esc_html__( 'last known speed in km/h, with 0, 1 or 2 decimals', 'trackserver' ),
+			esc_html__( 'last known speed in mi/h, with 0, 1 or 2 decimals', 'trackserver' ),
+			esc_html__( 'track total distance in meters', 'trackserver' ),
+			esc_html__( 'track total distance in yards', 'trackserver' ),
+			esc_html__( 'track total distance in km, with 0, 1 or 2 decimals', 'trackserver' ),
+			esc_html__( 'track total distance in miles, with 0, 1 or 2 decimals', 'trackserver' ),
+			esc_html__( 'Possible replacement tags are', 'trackserver' ),
+		);
 	}
 
 	/**
@@ -770,60 +793,88 @@ EOF;
 			$geofences[] = $default_geofence;
 		}
 
-		// phpcs:disable
-		echo esc_html__( 'Track updates that fall within the specified radius (in meters) from the center point, ' .
-			'will be marked as hidden or discarded, depending on the specified action. Modify the "0, 0, 0" entry to add a new fence. ' .
-			'Set the values to "0, 0, 0, Hide" to delete an entry. ' .
-			'The center point coordinates should be specified in decimal degrees. A radius of 0 will disable the fence. ' .
-			'Use the link below to view existing geofences. You can also click the map to pick the center coordinates for a new fence. ' .
-			'Remember to set a radius and update your profile afterwards.', 'trackserver' ) . '<br>';
-		// phpcs:enable
+		esc_html_e(
+			'Track updates that fall within the specified radius (in meters) from the center point,
+			will be marked as hidden or discarded, depending on the specified action. Modify the "0, 0, 0" entry to add a new fence.
+			Set the values to "0, 0, 0, Hide" to delete an entry.
+			The center point coordinates should be specified in decimal degrees. A radius of 0 will disable the fence.
+			Use the link below to view existing geofences. You can also click the map to pick the center coordinates for a new fence.
+			Remember to set a radius and update your profile afterwards.',
+			'trackserver'
+		);
 
-		echo '<table>';
-		for ( $i = 0; $i < count( $geofences ); $i++ ) {
+		echo '<br><table class="tsadmin-table">';
+		$num_geofences = count( $geofences );
+		for ( $i = 0; $i < $num_geofences; $i++ ) {
 			$fence                 = $geofences[ $i ];
-			$lat                   = htmlspecialchars( $fence['lat'] );
-			$lon                   = htmlspecialchars( $fence['lon'] );
-			$radius                = htmlspecialchars( $fence['radius'] );
+			$lat                   = $fence['lat'];
+			$lon                   = $fence['lon'];
+			$radius                = $fence['radius'];
 			$action                = $fence['action'];
 			$action_select_options = '';
+
 			foreach ( $actions as $k => $v ) {
 				$option_selected        = ( $action === $k ? 'selected' : '' );
 				$action_select_options .= '<option value="' . $k . '" ' . $option_selected . '>' . $v . '</option>';
 			}
 
-			// Mark all rows (and especially the '0,0,0' row) for easier finding in JavaScript
-			$itemdata = 'data-id="' . $i . '"';
+			$newentry = '';
 			if ( $lat === '0' && $lon === '0' && $radius === '0' && $action === 'hide' ) {
-				$itemdata .= ' data-newentry';
+				$newentry = 'data-newentry';
 			}
 
-			echo '<tr ' . $itemdata . ' class="trackserver_geofence">' .
-				'<td>' . esc_html__( 'Center latitude', 'trackserver' ) .
-				' <input type="text" size="10" name="ts_geofence_lat[' . $i . ']" value="' . $lat . '" class="ts-input-geofence-lat ts-input-geofence" autocomplete="off" ' .
-				$itemdata . ' /></td>' .
-				'<td>' . esc_html__( 'Longitude', 'trackserver' ) .
-				' <input type="text" size="10" name="ts_geofence_lon[' . $i . ']" value="' . $lon . '" class="ts-input-geofence-lon ts-input-geofence" autocomplete="off" ' .
-				$itemdata . ' /></td>' .
-				'<td>' . esc_html__( 'Radius', 'trackserver' ) .
-				' <input type="text" size="10" name="ts_geofence_radius[' . $i . ']" value="' . $radius . '" class="ts-input-geofence-radius ts-input-geofence" autocomplete="off" ' .
-				$itemdata . ' /></td>' .
-				'<td>' . esc_html__( 'Action', 'trackserver' ) . ' ';
-
-			printf( $action_select_fmt, $i, $action_select_options );
-
-			echo '</td></tr>';
+			printf(
+				'<tr data-id="%1$s" %2$s>
+				   <td>%3$s</td>
+				   <td><input type="text" size="10" name="ts_geofence_lat[%1$s]" value="%4$s" class="ts-input-geofence-lat ts-input-geofence" autocomplete="off" data-id="%1$s"></td>
+				   <td>%5$s</td>
+				   <td><input type="text" size="10" name="ts_geofence_lon[%1$s]" value="%6$s" class="ts-input-geofence-lon ts-input-geofence" autocomplete="off" data-id="%1$s"></td>
+				   <td>%7$s</td>
+				   <td><input type="text" size="10" name="ts_geofence_radius[%1$s]" value="%8$s" class="ts-input-geofence-lon ts-input-radius" autocomplete="off" data-id="%1$s"></td>
+				   <td>%9$s</td>
+				   <td><select name="ts_geofence_action[%1$s]" data-id="%1$s" class="ts-input-geofence">%10$s</select></td>
+				 </tr>',
+				esc_attr( $i ),
+				esc_html( $newentry ),
+				esc_html__( 'Center latitude', 'trackserver' ),
+				esc_attr( $lat ),
+				esc_html__( 'Longitude', 'trackserver' ),
+				esc_attr( $lon ),
+				esc_html__( 'Radius', 'trackserver' ),
+				esc_attr( $radius ),
+				esc_html__( 'Action', 'trackserver' ),
+				wp_kses(
+					$action_select_options,
+					array(
+						'option' => array(
+							'value'    => array(),
+							'selected' => array(),
+						),
+					),
+				),
+			);
 		}
-		echo '<tr><td colspan="4" style="text-align: right">' .
-			'<a href="#TB_inline?width=&inlineId=trackserver-geofences-modal" title="' . esc_attr__( 'Geofences', 'trackserver' ) .
-			'" class="thickbox" data-id="0" data-action="fences">' . esc_html__( 'View geofences', 'trackserver' ) . '</a>' .
-			'</td></tr>';
-		echo '</table>';
-		echo '<div id="ts_geofences_changed" style="color: red; display: none">' .
-			esc_html__( "It seems you have made changes to the geofences. Don't forget to update your profile!", 'trackserver' );
-			'</div>';
+
+		printf(
+			'</table><br>
+			<a href="#TB_inline?width=&inlineId=trackserver-geofences-modal" title="%1$s"
+			  class="button thickbox" data-id="0" data-action="fences">%2$s</a><br><br>
+			<div id="ts_geofences_changed" style="color: red; display: none">%3$s</div>',
+			esc_attr__( 'Geofences', 'trackserver' ),
+			esc_html__( 'View geofences', 'trackserver' ),
+			esc_html__( "It seems you have made changes to the geofences. Don't forget to update your profile!", 'trackserver' )
+		);
 
 		// Prepare the map data
 		wp_localize_script( 'trackserver-admin', 'trackserver_admin_geofences', $geofences );
+	}
+
+	/**
+	 * A function to escape HTML special characters for printing, needed for form fields.
+	 *
+	 * @since @6.0
+	 */
+	private function htmlspecialchars( $text ) {
+		return htmlspecialchars( $text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' );
 	}
 } // class
