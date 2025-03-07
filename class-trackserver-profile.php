@@ -53,6 +53,7 @@ class Trackserver_Profile {
 	}
 
 	public function process_profile_update() {
+		check_admin_referer( 'your-profile' );
 	}
 
 	public function yourprofile_html() {

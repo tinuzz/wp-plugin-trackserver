@@ -626,8 +626,7 @@ EOF;
 		// Handle POST from 'Trackserver profile' page
 		// $_POST['ts_user_meta'] holds all the values, or we handle 'apppass_action'
 		if ( isset( $_POST['ts_user_meta'] ) || isset( $_POST['apppass_action'] ) ) {
-			check_admin_referer( 'your-profile' );
-			Trackserver_Profile::get_instance( $this->trackserver )->process_profile_update();
+			Trackserver_Profile::get_instance( $this->trackserver )->process_profile_update();  // empty stub for now
 			$this->trackserver->process_profile_update();  // this will not return
 		}
 

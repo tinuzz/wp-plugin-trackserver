@@ -1385,6 +1385,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @since 1.9
 		 */
 		public function process_profile_update() {
+			check_admin_referer( 'your-profile' );
+
 			$user_id       = get_current_user_id();
 			$data          = $_POST['ts_user_meta'];
 			$valid_fields  = array(
@@ -1452,6 +1454,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			}
 
 			setcookie( 'ts_bulk_result', $message, time() + 300 );
+			nocache_headers();
 			wp_redirect( $_REQUEST['_wp_http_referer'] );
 			exit;
 		}
