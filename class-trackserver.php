@@ -1380,8 +1380,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		/**
 		 * Function to handle a profile update for the current user
 		 *
-		 * If this is called, check_admin_referer() has already succeeded.
-		 *
 		 * @since 1.9
 		 */
 		public function process_profile_update() {
