@@ -1355,7 +1355,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		public function profiles_html() {
 
 			if ( ! current_user_can( 'manage_options' ) ) {
-				wp_die( __( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
+				wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'trackserver' ) );
 			}
 			echo '<h2>Trackserver map profiles</h2>';
 		}
@@ -1525,7 +1525,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			if ( $this->bulk_action_result_msg ) {
 				?>
 					<div class="updated">
-						<p><?php echo nl2br( htmlspecialchars( $this->bulk_action_result_msg ) ); ?></p>
+						<p><?php echo nl2br( esc_html( htmlspecialchars( $this->bulk_action_result_msg ) ) ); ?></p>
 					</div>
 				<?php
 			}
