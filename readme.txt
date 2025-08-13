@@ -1,11 +1,11 @@
 === Trackserver ===
 Contributors: tinuzz
 Donate link: http://www.grendelman.net/wp/trackserver-wordpress-plugin/
-Tags: gps, gpx, map, leaflet, track, mobile, tracking
 Requires at least: 4.7
-Tested up to: 6.7
-Stable tag: trunk
+Tags: gps, map, track, mobile, tracking
 Requires PHP: 7.3
+Tested up to: 6.8
+Stable tag: 5.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -329,6 +329,35 @@ Changed:
 * Refactored the shortcode handling to make it more robust and maintainable.
 * Changed admin menu order and made 'Manage tracks' the primary page, rather than 'Options'.
 * If a boolean shortcode attribute like 'live' and 'quiet' is given as a flag without a value, it now evaluates to 'true'.
+
+= v5.1.1 =
+Release date: 15 April 2025
+
+Fixed:
+* Fix for CVE-2025-30961 now actually merged.
+
+= v5.1.0 =
+Release date: 15 April 2025
+
+Fixed:
+* Escaping issues with dynamic output (CVE-2025-30961).
+* Nonce checking in the backend.
+* Missing property declarations in several classes.
+* Unknown function calls in TrackMe and MapMyTracks handlers.
+* Coding style recommendations.
+* Visibility declarations of various functions and properties.
+* Illegal function use in file upload handler in the backend.
+* Explicit loading of WordPress functions for file uploads.
+* Double output of HTML title element in embedded maps page.
+* Filename with illegal character in Leaflet Fullscreen plugin.
+* Removed WP admin bar from embedded maps output.
+* Silenced warning messages from GPX schema validation.
+* Removed some debugging code.
+* WordPress compatibility set to v6.8.
+* Minimum PHP version set to 7.3.
+
+Known bug:
+* uLogger support is broken when WP permalinks are disabled.
 
 = v5.0.3 =
 Release date: 09 January 2025
