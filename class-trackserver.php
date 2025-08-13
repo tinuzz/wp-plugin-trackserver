@@ -163,11 +163,13 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		public function debug( $log ) {
 			if ( true === WP_DEBUG ) {
+				// phpcs:disable
 				if ( is_array( $log ) || is_object( $log ) ) {
 					error_log( print_r( $log, true ) );
 				} else {
 					error_log( $log );
 				}
+				// phpcs:enable
 			}
 		}
 
@@ -616,7 +618,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					if ( ! empty( $props['params'] ) ) {
 						// Count the number of params that are present in $props['params'],
 						// but not in $_REQUEST. There should be none to match this protocol.
-						if ( count( array_diff_key( array_flip( $props['params'] ), $_REQUEST ) ) > 0 ) {
+						if ( count( array_diff_key( array_flip( $props['params'] ), $_REQUEST ) ) > 0 ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 							continue;
 						}
 					}
@@ -1115,7 +1117,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$tmp = $this->get_temp_dir();
 
 			$message = '';
-			$files   = $this->rearrange( $_FILES );
+			$files   = $this->rearrange( $_FILES ); // WordPress.Security.NonceVerification.Missing
 
 			foreach ( $files as $f ) {
 				$filename = $tmp . '/' . uniqid();
@@ -1548,7 +1550,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * Filter function that inserts tracks from the media library into the
 		 * database and returns shortcodes for the added tracks.
 		 */
-		public function media_send_to_editor( $html, $id, $attachment ) {
+		public function media_send_to_editor( $html, $id, $attachment ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 			$type = get_post_mime_type( $id );
 
@@ -1682,7 +1684,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$slug = $this->options['embedded_slug'];
 			if (
 				( substr( $wp->request, 0, strlen( $slug ) + 1 ) === "{$slug}/" ) || // match trailing slash to not match it as a prefix
-				( isset( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] === $slug )
+				( isset( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] === $slug ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			) {
 				$template = __DIR__ . '/embedded-404.php';
 			}

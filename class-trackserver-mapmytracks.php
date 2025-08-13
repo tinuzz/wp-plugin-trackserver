@@ -9,6 +9,8 @@ require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
 
 class Trackserver_Mapmytracks {
 
+	// phpcs:disable WordPress.Security.NonceVerification.Missing
+
 	private $trackserver;  // Reference to the calling object
 	private $user_id;      // User ID of WP_User doing the request
 	private $tbl_tracks;
@@ -84,7 +86,7 @@ class Trackserver_Mapmytracks {
 		foreach ( $data as $key => $value ) {
 			$xml->addChild( $key, $value );
 		}
-		echo str_replace( array( "\r", "\n" ), '', $xml->asXML() );
+		echo str_replace( array( "\r", "\n" ), '', $xml->asXML() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**

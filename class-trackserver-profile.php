@@ -71,6 +71,7 @@ class Trackserver_Profile {
 		$title = sprintf( $title, $user->display_name );
 		$url   = menu_page_url( 'trackserver-yourprofile', false );
 
+		// phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 		?>
 		<div class="wrap">
 			<h2><?php echo esc_html( $title ); ?></h2>
@@ -335,9 +336,11 @@ class Trackserver_Profile {
 		</div>
 		<?php
 		$this->howto_modals_html();
+		//phpcs:enable
 	}
 
 	private function howto_modals_html() {
+		// phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 		printf(
 			'<div id="trackserver-trackmehowto-modal" style="display:none;">
 				<p>
@@ -396,6 +399,7 @@ class Trackserver_Profile {
 			esc_url( TRACKSERVER_PLUGIN_URL . 'img/traccar-howto.png' ),
 			esc_attr__( 'Traccar Client settings', 'trackserver' ),
 		);
+		//phpcs:enable
 	}
 
 	private function trackserver_url_html() {
@@ -873,7 +877,7 @@ class Trackserver_Profile {
 	/**
 	 * A function to escape HTML special characters for printing, needed for form fields.
 	 *
-	 * @since @6.0
+	 * @since 6.0
 	 */
 	private function htmlspecialchars( $text ) {
 		return htmlspecialchars( $text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' );

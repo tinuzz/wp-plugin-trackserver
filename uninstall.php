@@ -12,4 +12,4 @@ function delete_tables() {
 
 delete_option( 'trackserver_options' );
 delete_site_option( 'trackserver_options' );
-delete_tables();
+delete_tables(); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange

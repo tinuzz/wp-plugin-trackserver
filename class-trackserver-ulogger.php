@@ -9,6 +9,8 @@ require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
 
 class Trackserver_Ulogger {
 
+	// phpcs:disable WordPress.Security.NonceVerification.Missing
+
 	private $trackserver;  // Reference to the calling object
 
 	/**

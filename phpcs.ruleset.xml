@@ -6,7 +6,8 @@
 		<exclude name="WordPress.PHP.YodaConditions" />
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 	</rule>
-	<!--rule ref="WordPress-Docs" /> -->
+	<!-- <rule ref="WordPress-Docs" /> -->
+	<rule ref="WordPress-Extra" />
 
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
@@ -14,4 +15,16 @@
 	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
 		<exclude-pattern>*/tests/*</exclude-pattern>
 	</rule>
+
+ <!-- Customizations -->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="use_trackserver"/>
+				<element value="trackserver_publish"/>
+				<element value="trackserver_admin"/>
+			</property>
+		</properties>
+	</rule>
+
 </ruleset>

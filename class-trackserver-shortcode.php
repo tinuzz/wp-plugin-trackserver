@@ -6,6 +6,9 @@ if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
 
 class Trackserver_Shortcode {
 
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+
 	// Singleton
 	protected static $instance;
 
@@ -964,11 +967,11 @@ class Trackserver_Shortcode {
 
 		if ( $track_id ) {
 
-			// phpcs:disable
+			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 			$sql = $wpdb->prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
 				 $this->trackserver->tbl_locations . ' l INNER JOIN ' . $this->trackserver->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id=%d  ORDER BY occurred', $track_id );
 			$res = $wpdb->get_results( $sql, ARRAY_A );
-			// phpcs:enable
+			// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 			if ( $format === 'gpx' ) {
 				$this->send_as_gpx( $res );
@@ -1023,12 +1026,12 @@ class Trackserver_Shortcode {
 		$user_track_ids      = $this->trackserver->get_live_tracks( $validated_user_ids, $maxage );
 		$track_ids           = array_merge( $validated_track_ids, $user_track_ids );
 
-		// phpcs:disable
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		$sql_in = "('" . implode( "','", $track_ids ) . "')";
 		$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->trackserver->tbl_locations .
 			' l INNER JOIN ' . $this->trackserver->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' AND l.hidden = 0 ORDER BY trip_id, occurred';
 		$res = $wpdb->get_results( $sql, ARRAY_A );
-		// phpcs:enable
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( $format === 'gpx' ) {
 			$this->send_as_gpx( $res );
@@ -1072,7 +1075,7 @@ class Trackserver_Shortcode {
 				} else {
 					header( 'Content-Type: application/xml' );
 				}
-				print( wp_remote_retrieve_body( $response ) );
+				print( wp_remote_retrieve_body( $response ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} else {
 				$this->trackserver->http_terminate( '500', $response->get_error_message() );
 			}
@@ -1131,10 +1134,8 @@ class Trackserver_Shortcode {
 	 */
 	private function send_as_gpx( $res ) {
 		$dom = new DOMDocument( '1.0', 'utf-8' );
-		// phpcs:disable
 		$dom->preserveWhiteSpace = false;
 		$dom->formatOutput = true;
-		// phpcs:enable
 		$gpx = $dom->createElementNS( 'http://www.topografix.com/GPX/1/1', 'gpx' );
 		$dom->appendChild( $gpx );
 		$gpx->setAttributeNS( 'http://www.w3.org/2000/xmlns/', 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance' );
@@ -1204,7 +1205,7 @@ class Trackserver_Shortcode {
 
 		header( 'Content-Type: application/gpx+xml' );
 		header( 'Content-Disposition: filename="trackserver-' . $first_track_id . '.gpx"' );
-		echo $dom->saveXML();
+		echo $dom->saveXML(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -1337,6 +1338,7 @@ class Trackserver_Shortcode {
 		$sql_in    = "('" . implode( "','", $track_ids ) . "')";
 
 		// If the author has the power, don't check the track's owner
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		if ( user_can( $author_id, 'trackserver_publish' ) ) {
 			$sql = 'SELECT id FROM ' . $this->trackserver->tbl_tracks . ' WHERE id IN ' . $sql_in;
 		} else {
@@ -1344,6 +1346,7 @@ class Trackserver_Shortcode {
 			$sql = $wpdb->prepare( 'SELECT id FROM ' . $this->trackserver->tbl_tracks . ' WHERE id IN ' . $sql_in . ' AND user_id=%d;', $author_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		}
 		$validated_track_ids = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 		// Restore track order as given in the shortcode
 		$trk0 = array();
@@ -1378,9 +1381,11 @@ class Trackserver_Shortcode {
 		}
 
 		if ( count( $user_ids ) > 0 ) {
+			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 			$sql_in             = "('" . implode( "','", $user_ids ) . "')";
 			$sql                = 'SELECT DISTINCT(user_id) FROM ' . $this->trackserver->tbl_tracks . ' WHERE user_id IN ' . $sql_in;
 			$validated_user_ids = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 			// Restore track order as given in the shortcode
 			$usr0 = array();

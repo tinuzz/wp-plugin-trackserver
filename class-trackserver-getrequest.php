@@ -7,6 +7,8 @@ if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-track.php';
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-location.php';
 
+// phpcs:disable WordPress.Security.NonceVerification.Recommended
+
 class Trackserver_Getrequest {
 
 	private $trackserver;  // Reference to the calling object

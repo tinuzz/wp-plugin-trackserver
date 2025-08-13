@@ -160,6 +160,7 @@ class Tracks_List_Table extends WP_List_Table {
 		$sortable = $this->get_sortable_columns();
 
 		// This should be prettier.
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		$orderby = 'tstart';
 		if ( ! empty( $_REQUEST['orderby'] ) &&
 			in_array( $_REQUEST['orderby'], array( 'id', 'user_id', 'name', 'tstart', 'tend', 'source' ), true ) ) {
@@ -170,6 +171,7 @@ class Tracks_List_Table extends WP_List_Table {
 			in_array( $_REQUEST['order'], array( 'asc', 'desc' ), true ) ) {
 				$order = $_REQUEST['order'];
 		}
+		// phpcs:enable
 
 		$current_page = $this->get_pagenum();
 		$offset       = ( $current_page - 1 ) * $per_page;
