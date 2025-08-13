@@ -1,11 +1,11 @@
 === Trackserver ===
 Contributors: tinuzz
 Donate link: http://www.grendelman.net/wp/trackserver-wordpress-plugin/
-Requires at least: 4.7
 Tags: gps, map, track, mobile, tracking
-Requires PHP: 7.3
+Requires at least: 6.7
 Tested up to: 6.8
 Stable tag: 5.1.1
+Requires PHP: 8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

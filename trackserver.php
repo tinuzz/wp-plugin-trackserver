@@ -5,7 +5,7 @@ Plugin Name: Trackserver
 Plugin Script: trackserver.php
 Plugin URI: https://www.grendelman.net/wp/trackserver-wordpress-plugin/
 Description: GPS Track Server for TrackMe, OruxMaps and others
-Version: 5.1.1
+Version: 6.0-pre
 Author: Martijn Grendelman
 Author URI: http://www.grendelman.net/
 Text Domain: trackserver
@@ -56,7 +56,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'TRACKSERVER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'TRACKSERVER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'TRACKSERVER_JSLIB', TRACKSERVER_PLUGIN_URL . 'lib/' );
-define( 'TRACKSERVER_VERSION', '5.1-20250415' );
+define( 'TRACKSERVER_VERSION', '6.0-pre' );
 
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver.php';
 
