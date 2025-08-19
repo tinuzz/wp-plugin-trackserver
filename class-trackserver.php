@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-shortcode.php';
+require_once TRACKSERVER_PLUGIN_DIR . 'strftime.php';
 
 if ( ! class_exists( 'Trackserver' ) ) {
 
@@ -14,13 +15,16 @@ if ( ! class_exists( 'Trackserver' ) ) {
 	class Trackserver {
 
 		/**
-		 * LeafletJS version that Trackserver will use.
+		 * Library versions that Trackserver will use.
 		 *
-		 * @since 5.0
+		 * @since 6.0
 		 * @access private
-		 * @var str $leaflet_version
+		 * @var array $libversions
 		 */
-		private $leaflet_version = '1.9.4';
+		private $libversions = array(
+			'leaflet'     => '1.9.4',
+			'maplibre_gl' => '4.7.1',
+		);
 
 		/**
 		 * Default values for options. See class constructor for more.
@@ -352,8 +356,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		public function load_common_scripts() {
 
-			$this->wp_enqueue_style( 'leaflet-js', TRACKSERVER_JSLIB . 'leaflet-' . $this->leaflet_version . '/leaflet.css' );
-			$this->wp_enqueue_script( 'leaflet-js', TRACKSERVER_JSLIB . 'leaflet-' . $this->leaflet_version . '/leaflet.js', array(), false, true );
+			$this->wp_enqueue_style( 'leaflet-js', TRACKSERVER_JSLIB . 'leaflet-' . $this->libversions['leaflet'] . '/leaflet.css' );
+			$this->wp_enqueue_script( 'leaflet-js', TRACKSERVER_JSLIB . 'leaflet-' . $this->libversions['leaflet'] . '/leaflet.js', array(), false, true );
 			$this->wp_enqueue_style( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/leaflet.fullscreen.css' );
 			$this->wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/Leaflet.fullscreen.min.js', array(), false, true );
 			$this->wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), TRACKSERVER_VERSION, true );
@@ -367,7 +371,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 			$settings = array(
 				'plugin_url'      => TRACKSERVER_PLUGIN_URL,
-				'leaflet_version' => $this->leaflet_version,
+				'leaflet_version' => $this->libversions['leaflet'],
 			);
 			wp_localize_script( 'trackserver', 'trackserver_settings', $settings );
 
@@ -498,9 +502,9 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 			// Enqueue Maplibre GL JS is necessary
 			if ( $this->need_maplibre ) {
-				$this->wp_enqueue_style( 'maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-4.7.1/maplibre-gl.css' );
-				$this->wp_enqueue_script( 'maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-4.7.1/maplibre-gl.js', array(), false, true );
-				$this->wp_enqueue_script( 'leaflet-maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-4.7.1/leaflet-maplibre-gl.js', array(), false, true );
+				$this->wp_enqueue_style( 'maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-' . $this->libversions['maplibre_gl'] . '/maplibre-gl.css' );
+				$this->wp_enqueue_script( 'maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-' . $this->libversions['maplibre_gl'] . '/maplibre-gl.js', array(), false, true );
+				$this->wp_enqueue_script( 'leaflet-maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-' . $this->libversions['maplibre_gl'] . '/leaflet-maplibre-gl.js', array(), false, true );
 			}
 
 			// Enqueue the main script last
