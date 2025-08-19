@@ -397,7 +397,7 @@ class Trackserver_Settings {
 			'%1$s<br /><br />' .
 			'<input type="text" size="25" name="trackserver_options[osmand_trackname_format]" id="trackserver_osmand_trackname_format" value="%6$s" autocomplete="off" /><br />' .
 			'%%Y = %2$s, %%m = %3$s, %%d = %4$s, %%H = %5$s, %%F = %%Y-%%m-%%d' .
-			'<br />' ,
+			'<br />',
 			wp_kses_post(
 				sprintf(
 					// translators: placeholder is for link to strftime() manual
@@ -452,14 +452,14 @@ class Trackserver_Settings {
 		);
 	}
 
-	public function  sendlocation_trackname_format_html() {
+	public function sendlocation_trackname_format_html() {
 		$val = $this->htmlspecialchars( $this->trackserver->options['sendlocation_trackname_format'] );
 
 		printf(
 			'%1$s<br /><br />' .
 			'<input type="text" size="25" name="trackserver_options[sendlocation_trackname_format]" id="trackserver_sendlocation_trackname_format" value="%6$s" autocomplete="off" /><br />' .
 			'%%Y = %2$s, %%m = %3$s, %%d = %4$s, %%H = %5$s, %%F = %%Y-%%m-%%d' .
-			'<br />' ,
+			'<br />',
 			wp_kses_post(
 				sprintf(
 					// translators: placeholder is for link to strftime() manual
@@ -488,7 +488,7 @@ class Trackserver_Settings {
 		printf(
 			'%1$s (%3$s/<b>&lt;slug&gt;/&lt;username&gt;</b>/) <br />' .
 			'<input type="text" size="25" name="trackserver_options[owntracks_slug]" id="trackserver_owntracks_slug" value="%4$s" autocomplete="off" /><br /><br />' .
-			'<strong>%2$s:</strong> %s$s/%5$s/<br /><br />' ,
+			'<strong>%2$s:</strong> %s$s/%5$s/<br /><br />',
 			esc_html__( "The URL slug for OwnTracks, used in OwnTracks' settings", 'trackserver' ),
 			esc_html__( 'Preferences -> Connection -> Host', 'trackserver' ),
 			esc_url( $url ),
@@ -497,14 +497,14 @@ class Trackserver_Settings {
 		);
 	}
 
-	public function  owntracks_trackname_format_html() {
+	public function owntracks_trackname_format_html() {
 		$val = $this->htmlspecialchars( $this->trackserver->options['owntracks_trackname_format'] );
 
 		printf(
 			'%1$s<br /><br />' .
 			'<input type="text" size="25" name="trackserver_options[owntracks_trackname_format]" id="trackserver_owntracks_trackname_format" value="%6$s" autocomplete="off" /><br />' .
 			'%%Y = %2$s, %%m = %3$s, %%d = %4$s, %%H = %5$s, %%F = %%Y-%%m-%%d' .
-			'<br />' ,
+			'<br />',
 			wp_kses_post(
 				sprintf(
 					// translators: placeholder is for link to strftime() manual

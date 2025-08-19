@@ -246,7 +246,7 @@ class Trackserver_Admin {
 				);
 
 				// Enqueue leaflet-editable
-				wp_enqueue_script( 'leaflet-editable', TRACKSERVER_JSLIB . 'leaflet-editable-1.1.0/Leaflet.Editable.min.js', array(), false, true );
+				wp_enqueue_script( 'leaflet-editable', TRACKSERVER_JSLIB . 'leaflet-editable-1.1.0/Leaflet.Editable.min.js', array(), TRACKSERVER_VERSION, true );
 
 				// Enqueue the admin js (Thickbox overrides) in the footer
 				wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox' ), TRACKSERVER_VERSION, true );
@@ -395,7 +395,7 @@ class Trackserver_Admin {
 	 *
 	 * @since 5.0
 	 */
-	public function plugin_row_meta( $links_array, $plugin_file_name, $plugin_data, $status ) {
+	public function plugin_row_meta( $links_array, $plugin_file_name, $_plugin_data, $status ) {
 		if ( $plugin_file_name === 'trackserver/trackserver.php' ) {
 			$links_array[] = '<a href="https://www.grendelman.net/wp/trackserver-wordpress-plugin/" target="_blank">Homepage</a>';
 			$links_array[] = '<a href="https://github.com/tinuzz/wp-plugin-trackserver" target="_blank">Github</a>';

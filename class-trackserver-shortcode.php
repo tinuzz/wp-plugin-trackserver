@@ -309,7 +309,8 @@ class Trackserver_Shortcode {
 		$types   = implode( '|', $types );
 
 		preg_match_all( '@\{\s*(' . $types . ') ([^\{\}\x00-\x1f]+)\}@', $content, $matches );
-		for ( $i = 0; $i < count( $matches[1] ); $i++ ) {
+		$nm = count( $matches[1] );
+		for ( $i = 0; $i < $nm; $i++ ) {
 			$type = $matches[1][ $i ];
 			if ( ! array_key_exists( $type, $atts ) ) {
 				$atts[ $type ] = array();
@@ -494,7 +495,7 @@ class Trackserver_Shortcode {
 		}
 
 		static $num_maps = 0;
-		$div_id          = 'tsmap_' . ++$num_maps;
+		$div_id          = 'tsmap_' . ( ++$num_maps );
 
 		// Set $this->shortcode_data
 		$this->init_shortcode_data();

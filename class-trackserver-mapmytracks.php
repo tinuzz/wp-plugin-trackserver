@@ -243,7 +243,9 @@ class Trackserver_Mapmytracks {
 		if ( $n === 1 ) {
 			$parsed = array();
 			$all    = explode( ' ', $points );
-			for ( $i = 0; $i < count( $all ); $i += 4 ) {
+
+			$npoints = count( $all );
+			for ( $i = 0; $i < $npoints; $i += 4 ) {
 				if ( $all[ $i ] ) {
 
 					$parsed[] = array(

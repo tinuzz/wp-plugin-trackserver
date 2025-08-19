@@ -689,6 +689,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			global $wp_rewrite;
 
 			$home_path0      = parse_url( home_url(), PHP_URL_PATH );
+			$home_path0      = wp_parse_url( home_url(), PHP_URL_PATH );
 			$home_path       = ( empty( $home_path0 ) ? '' : trim( $home_path0, '/' ) ) . $this->url_prefix;
 			$home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
 
@@ -733,7 +734,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		public function http_terminate( $http = '403', $message = 'Access denied' ) {
 			http_response_code( $http );
 			header( 'Content-Type: text/plain' );
-			echo $message . "\n";
+			echo esc_html( $message ) . "\n";
 			die();
 		}
 
@@ -1164,16 +1165,20 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 		/**
 		 * Function to handle file uploads from a (mobile) client to the 'upload' slug
+		 *
+		 * @since 1.0
 		 */
 		private function handle_upload() {
 			header( 'Content-Type: text/plain' );
 			$user_id = $this->validate_http_basicauth();
 			$msg     = $this->handle_uploaded_files( $user_id );
-			echo $msg;
+			echo esc_html( $msg );
 		}
 
 		/**
 		 * Function to handle file uploads from the WordPress admin
+		 *
+		 * @since 1.0
 		 */
 		public function handle_admin_upload() {
 			$user_id = get_current_user_id();
@@ -1653,7 +1658,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					'label'               => esc_html__( 'Embedded maps', 'trackserver' ),
 					'labels'              => array(
 						'singular_name' => esc_html__( 'embedded map', 'trackserver' ),
-						'add_new_item'  => esc_html__( 'Add new embedded map', 'trackserver' ),  // Translate!!
+						'add_new_item'  => esc_html__( 'Add new embedded map', 'trackserver' ),
 						'edit_item'     => esc_html__( 'Edit embedded map', 'trackserver' ),
 						'search_items'  => esc_html__( 'Search embedded maps', 'trackserver' ),
 						'not_found'     => esc_html__( 'No embedded maps found', 'trackserver' ),
@@ -1691,7 +1696,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			return $template;
 		}
 	} // class
-} // if !class_exists
+} // if
 
 // Main
 $trackserver = new Trackserver();

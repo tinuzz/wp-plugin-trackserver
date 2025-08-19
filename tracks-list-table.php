@@ -122,16 +122,24 @@ class Tracks_List_Table extends WP_List_Table {
 		$perpage_values      = array( 20, 50, 100 );
 
 		echo '<div class="alignleft actions" style="padding-bottom: 1px; line-height: 32px">';
-		echo '<input id="' . $addtrack_button_id . '" class="button action" style="margin: 1px 8px 0 0" type="button" value="' . esc_attr__( 'Upload tracks', 'trackserver' ) . '" name="">';
+		printf(
+			'<input id="%1$s" class="button action" style="margin: 1px 8px 0 0" type="button" value="%2$s" name="">',
+			esc_attr( $addtrack_button_id ),
+			esc_attr__( 'Upload tracks', 'trackserver' ),
+		);
 		if ( current_user_can( 'trackserver_admin' ) ) {
-			echo '<select name="' . $author_select_name . '" id="' . $author_select_id . '" class="postform">';
+			printf(
+				'<select name="%1$s" id="%2$s" class="postform">',
+				esc_attr( $author_select_name ),
+				esc_attr( $author_select_id ),
+			);
 			echo '<option value="0">All users</option>';
 			foreach ( $this->usercache as $u ) {
-				echo '<option class="level-0" value="' . $u->user_id . '"';
+				printf( '<option class="level-0" value="%1$s"', esc_attr( $u->user_id ) );
 				if ( (int) $u->user_id === (int) $view ) {
 					echo ' selected';
 				}
-				echo '>' . htmlspecialchars( $u->user_login ) . '</option>';
+				printf( '>%1$s</option>', esc_html( htmlspecialchars( $u->user_login ) ) );
 			}
 			echo '</select>';
 		}
@@ -139,13 +147,17 @@ class Tracks_List_Table extends WP_List_Table {
 
 		echo '<div class="tablenav-pages"> &nbsp;';
 		echo '<span class="paging-input"> Show ';
-		echo '<select name="' . $perpage_select_name . '" id="' . $perpage_select_id . '" class="postform">';
+		printf(
+			'<select name="%1$s" id="%2$s" class="postform">',
+			esc_attr( $perpage_select_name ),
+			esc_attr( $perpage_select_id ),
+		);
 		foreach ( $perpage_values as $npp ) {
-			echo '<option value="' . $npp . '"';
+			printf( '<option value="%1$s"', esc_attr( $npp ) );
 			if ( $npp === $this->options['per_page'] ) {
 				echo ' selected';
 			}
-			echo '>' . $npp . '</option>';
+			printf( '>%1$s</option>', esc_html( $npp ) );
 		}
 		echo '</select> items';
 		echo '</span></div>';
@@ -227,6 +239,6 @@ class Tracks_List_Table extends WP_List_Table {
 	}
 
 	public function get_views() {
-		return array( 'all' => '<a href="' . admin_url() . 'admin.php?page=trackserver-tracks' . '">' . esc_html__( 'All tracks', 'trackserver' ) . '</a> (' . $this->total_items . ')' );
+		return array( 'all' => '<a href="' . admin_url() . 'admin.php?page=trackserver-tracks">' . esc_html__( 'All tracks', 'trackserver' ) . '</a> (' . $this->total_items . ')' );
 	}
 }

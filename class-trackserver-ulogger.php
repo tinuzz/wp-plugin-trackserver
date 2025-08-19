@@ -177,7 +177,7 @@ class Trackserver_Ulogger {
 
 				if ( $loc->save() ) {
 					//$track->calculate_distance();  // not implemented yet
-					$this->trackserver->calculate_distance( $track_id );
+					$this->trackserver->calculate_distance( $track->id );
 					return $this->send_response();
 				} else {
 					return $this->send_response( array( 'message' => 'Server error' ) );
