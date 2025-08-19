@@ -313,9 +313,9 @@ class Trackserver_Admin {
 	 * @since 1.0
 	 */
 	public function admin_head() {
-		echo <<<EOF
+		echo '
 			<style type="text/css">
-				.wp-list-table .column-id { width: 50px; }
+				.wp-list-table .column-id { width: 60px; }
 				.wp-list-table .column-user_id { width: 100px; }
 				.wp-list-table .column-tstart { width: 150px; }
 				.wp-list-table .column-tend { width: 150px; }
@@ -324,8 +324,8 @@ class Trackserver_Admin {
 				.wp-list-table .column-edit { width: 50px; }
 				.wp-list-table .column-view { width: 50px; }
 				#addtrack { margin: 1px 8px 0 0; }
-			</style>\n
-EOF;
+			</style>';
+		echo "\n";
 	}
 
 	private function register_settings() {
