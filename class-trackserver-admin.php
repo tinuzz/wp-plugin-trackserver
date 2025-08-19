@@ -562,7 +562,7 @@ class Trackserver_Admin {
 						<br />
 						<span class="aligncenter"><i><?php esc_html_e( 'Warning: this action cannot be undone!', 'trackserver' ); ?></i></span><br />
 						<div class="alignright">
-							<input class="button action" type="button" value="<?php esc_attr_e( 'Save', 'trackserver' ); ?>" id="merge-submit-button">
+							<input class="button action button-primary" type="button" value="<?php esc_attr_e( 'Save', 'trackserver' ); ?>" id="merge-submit-button">
 							<input class="button action" type="button" value="<?php esc_attr_e( 'Cancel', 'trackserver' ); ?>" onClick="tb_remove(); return false;">
 						</div>
 					</form>
@@ -577,7 +577,7 @@ class Trackserver_Admin {
 						<input type="hidden" name="action" value="trackserver_upload_track" />
 						<input type="file" name="gpxfile[]" multiple="multiple" style="display: none" id="trackserver-file-input" />
 						<input type="button" class="button button-hero" value="<?php esc_attr_e( 'Select files', 'trackserver' ); ?>" id="ts-select-files-button" />
-						<button type="button" class="button button-hero" value="<?php esc_attr_e( 'Upload', 'trackserver' ); ?>" id="trackserver-upload-files" disabled="disabled"><?php esc_html_e( 'Upload', 'trackserver' ); ?></button>
+						<button type="button" class="button button-hero button-primary" value="<?php esc_attr_e( 'Upload', 'trackserver' ); ?>" id="trackserver-upload-files" disabled="disabled"><?php esc_html_e( 'Upload', 'trackserver' ); ?></button>
 					</form>
 					<br />
 					<br />
