@@ -23,7 +23,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		private $libversions = array(
 			'leaflet'     => '1.9.4',
-			'maplibre_gl' => '4.7.1',
+			'maplibre_gl' => '5.6.2',
 		);
 
 		/**
