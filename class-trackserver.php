@@ -628,13 +628,16 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 					// Check mandatory HTTP request method
 					if ( ! empty( $props['method'] ) ) {
-						if ( $_SERVER['REQUEST_METHOD'] !== $props['method'] ) {
+						if ( empty( $_SERVER['REQUEST_METHOD'] ) || $_SERVER['REQUEST_METHOD'] !== $props['method'] ) {
 							continue;
 						}
 					}
 
 					// Check mandatory Content-Type
 					if ( ! empty( $props['enctype'] ) ) {
+						if ( empty( $_SERVER['CONTENT_TYPE'] ) ) {
+							continue;
+						}
 						$req_enctype = strtok( $_SERVER['CONTENT_TYPE'], ';' );    // Strip charset/boundary off header
 						if ( $req_enctype !== $props['enctype'] ) {
 							continue;
