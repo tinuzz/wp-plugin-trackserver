@@ -691,7 +691,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		private function get_request_uri() {
 			global $wp_rewrite;
 
-			$home_path0      = parse_url( home_url(), PHP_URL_PATH );
 			$home_path0      = wp_parse_url( home_url(), PHP_URL_PATH );
 			$home_path       = ( empty( $home_path0 ) ? '' : trim( $home_path0, '/' ) ) . $this->url_prefix;
 			$home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
