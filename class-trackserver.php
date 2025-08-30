@@ -1077,6 +1077,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * and it works with both single and multiple files in a single postvar.
 		 */
 		private function rearrange( $files ) {
+			$i   = 0;
 			$j   = 0;
 			$new = array();
 			foreach ( $files as $postvar => $arr ) {
@@ -1108,54 +1109,83 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 		private function validate_gpx_data( $xml ) {
 			$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.1.xsd';
-			if ( $xml->schemaValidate( $schema ) ) {
+			if ( @$xml->schemaValidate( $schema ) ) {
 				return $xml;
 			}
 			$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.0.xsd';
-			if ( $xml->schemaValidate( $schema ) ) {
+			if ( @$xml->schemaValidate( $schema ) ) {
 				return $xml;
 			}
 			return false;
 		}
 
-		private function handle_uploaded_files( $user_id ) {
+		private function handle_uploaded_files( $user_id, $verify_nonce = false ) {
+			if ( $verify_nonce ) {
+				check_admin_referer( 'upload_track' );
+			}
 
-			$tmp = $this->get_temp_dir();
+			if ( ! function_exists( 'wp_handle_upload' ) ) {
+				require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			}
 
 			$message = '';
 			$files   = $this->rearrange( $_FILES ); // WordPress.Security.NonceVerification.Missing
 
 			foreach ( $files as $f ) {
-				$filename = $tmp . '/' . uniqid();
-
 				// Check the filename extension case-insensitively
 				if ( strcasecmp( substr( $f['name'], -4 ), '.gpx' ) === 0 ) {
-					if ( $f['error'] === 0 && move_uploaded_file( $f['tmp_name'], $filename ) ) {
-						$xml = $this->validate_gpx_file( $filename );
-						if ( $xml ) {
-							$result = $this->process_gpx( $xml, $user_id );
 
-							// No need to HTML-escape the message here
-							$format   = __( "File '%1\$s': imported %2\$s points from %3\$s track(s) in %4\$s seconds.", 'trackserver' );
-							$message .= sprintf(
-								$format,
-								(string) $f['name'],
-								(string) $result['num_trkpt'],
-								(string) $result['num_trk'],
-								(string) $result['exec_time']
-							) . "\n";
+					if ( $f['error'] === 0 ) {
+
+						// We have to override the action, otherwise it will look for 'wp_handle_upload'. We also have to
+						// disable the type test, because WP doesn't know about GPX files and I'm not sure how to educate it.
+						$result   = wp_handle_upload(
+							$f,
+							array(
+								'action'    => 'trackserver_upload_track',
+								'test_type' => false,
+								'test_form' => false,
+							)
+						);
+						if ( isset( $result['file'] ) ) {
+							$filename = $result['file'];
+							$xml      = $this->validate_gpx_file( $filename );
+
+							if ( $xml ) {
+								$result = $this->process_gpx( $xml, $user_id );
+
+								// No need to HTML-escape the message here
+								$format   = __( "File '%1\$s': imported %2\$s points from %3\$s track(s), and %4\$s waypoints in %5\$s seconds.", 'trackserver' );
+								$message .= sprintf(
+									$format,
+									(string) $f['name'],
+									(string) $result['num_trkpt'],
+									(string) $result['num_trk'],
+									(string) $result['num_wpt'],
+									(string) $result['exec_time'],
+								) . "\n";
+							} else {
+								// No need to HTML-escape the message here
+								$message .= sprintf( __( "ERROR: File '%1\$s' could not be validated as GPX 1.1", 'trackserver' ), $f['name'] ) . "\n";
+							}
+							wp_delete_file( $filename );
 						} else {
-							// No need to HTML-escape the message here
-							$message .= sprintf( __( "ERROR: File '%1\$s' could not be validated as GPX 1.1", 'trackserver' ), $f['name'] ) . "\n";
+							$message .= sprintf( __( "ERROR: WordPress error for file '%1\$s': %2\$s", 'trackserver' ), $f['name'], $result['error'] ) . "\n";
 						}
 					} else {
+						$errors = array(
+							UPLOAD_ERR_CANT_WRITE => __( 'Failed to write file to disk', 'trackserver' ),
+							UPLOAD_ERR_INI_SIZE   => __( 'The uploaded file exceeds the allowed maximum', 'trackserver' ),
+							UPLOAD_ERR_PARTIAL    => __( 'Partial upload', 'trackserver' ),
+						);
+						$errmsg = $errors[ $f['error'] ] ?? __( 'Error code: ', 'trackserver' ) . $f['error'];
+
 						// No need to HTML-escape the message here
-						$message .= sprintf( __( "ERROR: Upload '%1\$s' failed", 'trackserver' ), $f['name'] ) . ' (rc=' . $f['error'] . ")\n";
+						$message .= sprintf( __( "ERROR: Upload '%1\$s' failed (%2\$s).", 'trackserver' ), $f['name'], $errmsg ) . "\n";
 					}
 				} else {
 					$message .= sprintf( __( "ERROR: Only .gpx files accepted; discarding '%1\$s'", 'trackserver' ), $f['name'] ) . "\n";
 				}
-				unlink( $filename );
 			}
 			if ( $message === '' ) {
 				$max = $this->size_to_bytes( ini_get( 'post_max_size' ) );
@@ -1188,7 +1218,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		public function handle_admin_upload() {
 			$user_id = get_current_user_id();
 			if ( user_can( $user_id, 'use_trackserver' ) ) {
-				return $this->handle_uploaded_files( $user_id );
+				return $this->handle_uploaded_files( $user_id, true );
 			} else {
 				return 'User has insufficient permissions.';
 			}
@@ -1278,14 +1308,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				'track_ids' => $track_ids,
 				'exec_time' => $exec_time,
 			);
-		}
-
-		private function get_temp_dir() {
-			$tmp = get_temp_dir() . '/trackserver';
-			if ( ! file_exists( $tmp ) ) {
-				mkdir( $tmp );
-			}
-			return $tmp;
 		}
 
 		private function parse_iso_date( $ts ) {
