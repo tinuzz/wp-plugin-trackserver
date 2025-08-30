@@ -436,14 +436,7 @@ class Trackserver_Admin {
 			array( &$this, 'options_page_html' )
 		);
 
-		$page3 = add_submenu_page(
-			'trackserver-tracks',
-			esc_html__( 'Your profile', 'trackserver' ),
-			esc_html__( 'Your profile', 'trackserver' ),
-			'use_trackserver',
-			'trackserver-yourprofile',
-			array( Trackserver_Profile::get_instance( $this->trackserver ), 'yourprofile_html' )
-		);
+		$page3 = Trackserver_Profile::get_instance( $this->trackserver )->add_submenu_page();
 
 		// Early action to set up the 'Manage tracks' page and handle bulk actions.
 		add_action( 'load-' . $page2, array( &$this, 'load_manage_tracks' ) );

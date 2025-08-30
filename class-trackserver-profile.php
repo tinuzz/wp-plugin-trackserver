@@ -41,6 +41,24 @@ class Trackserver_Profile {
 	}
 
 	/**
+	 * Add submenu page to the admin menu. Called from the 'admin_menu' handler
+	 * in the Trackserver_Admin class.
+	 *
+	 * @since 6.0
+	 */
+	public function add_submenu_page() {
+
+		return add_submenu_page(
+			'trackserver-tracks',
+			esc_html__( 'Your profile', 'trackserver' ),
+			esc_html__( 'Your profile', 'trackserver' ),
+			'use_trackserver',
+			'trackserver-yourprofile',
+			array( &$this, 'yourprofile_html' )
+		);
+	}
+
+	/**
 	 * This function returns an array of localized messages for the trackserver-admin.js,
 	 * specific to the Trackserver_Profile class. It is called from Trackserver_Admin.
 	 */
