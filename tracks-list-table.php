@@ -14,7 +14,7 @@ class Tracks_List_Table extends WP_List_Table {
 			parent::__construct(
 				array(
 					'singular' => 'track',    // Singular name of the listed records.
-					'plural'   => 'tracks',   // Plural name of the listed records.
+					'plural'   => 'tracks',   // Plural name of the listed records. This is also used to create the nonce value ('bulk-tracks').
 					'ajax'     => false,      // Does this table support ajax?
 				)
 			);
@@ -43,7 +43,6 @@ class Tracks_List_Table extends WP_List_Table {
 		} else {
 			return htmlspecialchars( $item[ $column_name ] );
 		}
-		return print_r( $item, true );    // Show the whole array for troubleshooting purposes.
 	}
 
 	public function column_cb( $item ) {
