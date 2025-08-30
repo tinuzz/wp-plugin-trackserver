@@ -199,8 +199,6 @@ class Trackserver_Admin {
 			case 'trackserver_page_trackserver-yourprofile':
 				$this->trackserver->load_common_scripts();
 
-				wp_enqueue_style( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.css', array(), TRACKSERVER_VERSION );
-
 				// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
 				$track_base_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?', ( is_ssl() ? 'https' : 'http' ) );
 				wp_localize_script( 'trackserver', 'track_base_url', array( 'track_base_url' => $track_base_url ) );
@@ -247,6 +245,8 @@ class Trackserver_Admin {
 
 				// Enqueue leaflet-editable
 				wp_enqueue_script( 'leaflet-editable', TRACKSERVER_JSLIB . 'leaflet-editable-1.1.0/Leaflet.Editable.min.js', array(), TRACKSERVER_VERSION, true );
+
+				wp_enqueue_style( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.css', array(), TRACKSERVER_VERSION );
 
 				// Enqueue the admin js (Thickbox overrides) in the footer
 				wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox' ), TRACKSERVER_VERSION, true );
