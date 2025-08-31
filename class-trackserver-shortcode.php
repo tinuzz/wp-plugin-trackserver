@@ -185,12 +185,13 @@ class Trackserver_Shortcode {
 			}
 		}
 
-		$this->shortcode_data['config']['continuous'] = $this->get_content_boolean( $atts['continuous'], true );
-		$this->shortcode_data['config']['live']       = $this->get_content_boolean( $atts['live'], false );
-		$this->shortcode_data['config']['quiet']      = $this->get_content_boolean( $atts['quiet'], false );
-		$this->shortcode_data['config']['zoom']       = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : false );
-		$this->shortcode_data['config']['fit']        = ( $atts['zoom'] !== false ? false : true );  // zoom is always set, so we need a signal for altering fitBounds() options
-		$this->shortcode_data['config']['profile']    = $atts['profile'];
+		$this->shortcode_data['config']['continuous']  = $this->get_content_boolean( $atts['continuous'], true );
+		$this->shortcode_data['config']['live']        = $this->get_content_boolean( $atts['live'], false );
+		$this->shortcode_data['config']['quiet']       = $this->get_content_boolean( $atts['quiet'], false );
+		$this->shortcode_data['config']['zoom']        = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : false );
+		$this->shortcode_data['config']['fit']         = ( $atts['zoom'] !== false ? false : true );  // zoom is always set, so we need a signal for altering fitBounds() options
+		$this->shortcode_data['config']['profile']     = $atts['profile'];
+		$this->shortcode_data['config']['infobar_tpl'] = null;
 
 		if ( $atts['infobar'] !== false ) {
 			$this->shortcode_data['config']['infobar'] = ( in_array( $atts['infobar'], array( 'true', 't', 'yes', 'y' ), true ) ? true : $atts['infobar'] ); // selectively convert to boolean
