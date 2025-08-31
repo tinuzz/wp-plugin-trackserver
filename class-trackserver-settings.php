@@ -517,22 +517,15 @@ class Trackserver_Settings {
 	}
 
 	public function upload_tag_html() {
-		$val = $this->trackserver->printf_htmlspecialchars( $this->trackserver->options['upload_tag'] );
-		$url = $this->trackserver->printf_htmlspecialchars( site_url( null ) . $this->trackserver->url_prefix );
+		$val = $this->htmlspecialchars( $this->trackserver->options['upload_tag'] );
+		$url = site_url( null ) . $this->trackserver->url_prefix;
 
-		$format = <<<EOF
-			%1\$s ($url/<b>&lt;slug&gt;</b>/) <br />
-			<input type="text" size="25" name="trackserver_options[upload_tag]" id="trackserver_upload_tag" value="$val" autocomplete="off" /><br />
-			<br />
-			<strong>%2\$s:</strong> $url/$val<br />
-EOF;
 		printf(
-			$format,
+			'%1$s (%3$s/<b>&lt;slug&gt;</b>/) <br />' .
+			'<input type="text" size="25" name="trackserver_options[upload_tag]" id="trackserver_upload_tag" value="%4$s" autocomplete="off" /><br />' .
+			'<br />' .
+			'<strong>%2$s:</strong> %3$s/%5$s<br />',
 			esc_html__( 'The URL slug for upload via HTTP POST', 'trackserver' ),
-			esc_html__( 'Full URL', 'trackserver' )
-		);
-	}
-
 			esc_html__( 'Full URL', 'trackserver' ),
 			esc_url( $url ),
 			esc_attr( $val ),
