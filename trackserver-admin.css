@@ -26,3 +26,14 @@
 .deletepoint {
 	margin-bottom: 3px;
 }
+
+.tsadmin-table td {
+	padding: 2px 30px 2px 0px;;
+}
+
+.trackserver-map-profile textarea {
+	width: 100%;
+	min-width: 200px;
+	height:100px;
+	box-sizing: border-box;
+}

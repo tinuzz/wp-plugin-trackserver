@@ -416,7 +416,7 @@ var TrackserverAdmin = (function () {
               jQuery('#trackserver-copy-url2-button').css('display', 'none');
             }
 
-            jQuery('#add-row-button').on('click', function() {
+            jQuery('#add-map-profile-button').on('click', function() {
 
               const last_id = parseInt( jQuery('#map-profile-table tr:last').data('id') );
               const next_id = last_id + 1;

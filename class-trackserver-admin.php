@@ -7,6 +7,7 @@ if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-db.php';
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-settings.php';
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-profile.php';
+require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-map-profiles.php';
 
 class Trackserver_Admin {
 
@@ -211,6 +212,7 @@ class Trackserver_Admin {
 				// The options page only has 'trackserver-admin.js'.
 
 			case 'toplevel_page_trackserver-options':
+			case 'trackserver_page_trackserver-map-profiles':
 			case 'trackserver_page_trackserver-options':
 				$settings['msg']   = array(
 					'areyousure'     => __( 'Are you sure?', 'trackserver' ),
@@ -330,6 +332,7 @@ class Trackserver_Admin {
 
 	private function register_settings() {
 		Trackserver_Settings::get_instance( $this->trackserver )->register();
+		Trackserver_Map_Profiles::get_instance( $this->trackserver )->register();
 	}
 
 	/**
@@ -435,6 +438,8 @@ class Trackserver_Admin {
 			'trackserver-options',
 			array( &$this, 'options_page_html' )
 		);
+
+		Trackserver_Map_Profiles::get_instance( $this->trackserver )->add_submenu_page();
 
 		$page3 = Trackserver_Profile::get_instance( $this->trackserver )->add_submenu_page();
 
