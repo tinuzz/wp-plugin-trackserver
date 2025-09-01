@@ -168,19 +168,19 @@ class Trackserver_Map_Profiles {
 		);
 
 		printf(
-			'<table class="form-table fixed striped" style="table-layout: auto;" border="1" id="map-profile-table">
-				<tbody>
+			'<table class="map-profiles striped" border="1" id="map-profile-table">
+				<thead>
 					<tr>
-						<th style="width: 40px; padding-left: 10px">%1$s</th>
+						<th style="width: 80px; padding-left: 10px">%1$s</th>
 						<th style="padding-left: 10px">%2$s</th>
 						<th style="width: 10px; padding-left: 10px">%3$s</th>
 						<th style="padding-left: 10px">%4$s</th>
-						<th style="width: 20px; padding-left: 10px">%5$s</th>
-						<th style="width: 20px; padding-left: 10px">%6$s</th>
-						<th style="width: 60px; padding-left: 10px">%7$s</th>
-						<th style="width: 60px; padding-left: 10px">%8$s</th>
-						<th style="width: 50px">&nbsp;</th>
-					</tr>',
+						<th style="width: 40px; padding-left: 10px">%5$s</th>
+						<th style="width: 40px; padding-left: 10px">%6$s</th>
+						<th style="width: 80px; padding-left: 10px">%7$s</th>
+						<th style="width: 80px; padding-left: 10px">%8$s</th>
+						<th style="width: 70px">&nbsp;</th>
+					</tr></thead><tbody>',
 			esc_html( $strings['label'] ),
 			esc_html( $strings['url'] ),
 			esc_html( $strings['vector'] ),
@@ -211,15 +211,15 @@ class Trackserver_Map_Profiles {
 			}
 
 			printf(
-				'<tr data-id="%1$s" id="profile-row%1$s" class="trackserver-map-profile">
-					<td id="label%1$s" data-id="%1$s"><input type="text" size="5" name="trackserver_map_profiles[%1$s][label]" value="%2$s"></td>
+				'<tr data-id="%1$s" id="profile-row%1$s">
+					<td id="label%1$s" data-id="%1$s"><input type="text" style="width: 100%%" name="trackserver_map_profiles[%1$s][label]" value="%2$s"></td>
 					<td><textarea id="tile_url%1$s" name="trackserver_map_profiles[%1$s][tile_url]">%3$s</textarea></td>
-					<td><input type="checkbox" name="trackserver_map_profiles[%1$s][vector]" %4$s></td>
+					<td style="text-align: center;"><input type="checkbox" name="trackserver_map_profiles[%1$s][vector]" %4$s></td>
 					<td><textarea id="attribution%1$s" name="trackserver_map_profiles[%1$s][attribution]">%5$s</textarea></td>
-					<td><input type="text" size="2" id="minzoom%1$s" name="trackserver_map_profiles[%1$s][min_zoom]" value="%6$s"></td>
-					<td><input type="text" size="2" id="maxzoom%1$s" name="trackserver_map_profiles[%1$s][max_zoom]" value="%7$s"></td>
-					<td><input type="text" size="5" id="latitude%1$s" name="trackserver_map_profiles[%1$s][default_lat]" value="%8$s"></td>
-					<td><input type="text" size="5" id="longitude%1$s" name="trackserver_map_profiles[%1$s][default_lon]" value="%9$s"></td>
+					<td><input type="text" style="width: 100%%" id="minzoom%1$s" name="trackserver_map_profiles[%1$s][min_zoom]" value="%6$s"></td>
+					<td><input type="text" style="width: 100%%" id="maxzoom%1$s" name="trackserver_map_profiles[%1$s][max_zoom]" value="%7$s"></td>
+					<td><input type="text" style="width: 100%%" id="latitude%1$s" name="trackserver_map_profiles[%1$s][default_lat]" value="%8$s"></td>
+					<td><input type="text" style="width: 100%%" id="longitude%1$s" name="trackserver_map_profiles[%1$s][default_lon]" value="%9$s"></td>
 					<td>%10$s</td>
 				</tr>',
 				esc_attr( $i ),         // %1

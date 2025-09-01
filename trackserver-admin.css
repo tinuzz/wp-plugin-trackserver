@@ -31,7 +31,28 @@
 	padding: 2px 30px 2px 0px;;
 }
 
-.trackserver-map-profile textarea {
+.map-profiles {
+	width: 100%;
+	table-layout: auto;
+	border-spacing: 0;
+	clear: both;
+	margin: 0;
+	border: 1px solid #c3c4c7;
+	border-collapse: collapse;
+}
+
+.map-profiles thead {
+	padding: 11px 0 0 3px;
+	border: 1px solid #c3c4c7;
+	text-align: left;
+}
+
+.map-profiles th,td {
+	padding: 5px;
+	border: 0;
+}
+
+.map-profiles textarea {
 	width: 100%;
 	min-width: 200px;
 	height:100px;
