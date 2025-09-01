@@ -248,6 +248,21 @@ class Trackserver_Map_Profiles {
 	}
 
 	/**
+	 * Get the default map profile
+	 *
+	 * @since 6.0
+	 */
+	public function get_default_profile() {
+		foreach ( $this->trackserver->map_profiles as $i => $profile ) {
+			if ( $i === 0 || $profile['label'] === 'default' ) {
+				$map_profile = $profile;
+			}
+		}
+		unset( $map_profile['label'] );  // not needed by client
+		return $map_profile;
+	}
+
+	/**
 	 * A function to escape HTML special characters for printing, needed for form fields.
 	 *
 	 * @since @6.0

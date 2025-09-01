@@ -1,4 +1,3 @@
-/* Default dimensions, suitable for 'edit' */
 var tb_window_width;
 var tb_window_height;
 var trackserver_mapdata;
@@ -6,6 +5,12 @@ var tracklib;
 
 // Override tb_click()
 var old_tb_click = window.tb_click;
+
+var trackserver_map_profile = function()
+{
+    return trackserver_admin_settings.map_profile;
+}
+
 var tb_click = function(e)
 {
     var ts_action = jQuery(this).attr("data-action");
@@ -60,11 +65,11 @@ var tb_click = function(e)
                     break;
             }
         });
-        trackserver_mapdata = [{"div_id":"tsadminmap","tracks":[{"track_id":track_id,"track_url":track_url,"track_type":"polylinexhr","markers":true,"nonce":nonce}],"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false}];
+        trackserver_mapdata = [{"div_id":"tsadminmap","tracks":[{"track_id":track_id,"track_url":track_url,"track_type":"polylinexhr","markers":true,"nonce":nonce}],"default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false,"profile":trackserver_map_profile()}];
     }
 
     if (ts_action == 'fences') {
-        trackserver_mapdata = [{"div_id":"tsadminmap","default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false}];
+        trackserver_mapdata = [{"div_id":"tsadminmap","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false,"profile":trackserver_map_profile()}];
     }
 
     old_tb_click.call(this); // Pass the clicked element as context
@@ -237,7 +242,7 @@ var TrackserverAdmin = (function () {
                     });
                     tracks.push( { track_id: this.value, track_type: 'polylinexhr', markers: true, nonce: nonce, track_url: url });
                 });
-                trackserver_mapdata = [{"div_id":"tsadminmap","tracks":tracks,"default_lat":"51.44815","default_lon":"5.47279","default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false}];
+                trackserver_mapdata = [{"div_id":"tsadminmap","tracks":tracks,"default_zoom":"12","fullscreen":true,"is_live":false,"continuous":false,"profile":trackserver_map_profile()}];
                 ts_tb_show('trackserver-view-modal', 'Track', window.innerWidth - 40, window.innerHeight - 40);
                 return false;
             }

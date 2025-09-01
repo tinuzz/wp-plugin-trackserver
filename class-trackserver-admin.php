@@ -203,10 +203,17 @@ class Trackserver_Admin {
 				// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
 				$track_base_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?', ( is_ssl() ? 'https' : 'http' ) );
 				wp_localize_script( 'trackserver', 'track_base_url', array( 'track_base_url' => $track_base_url ) );
+
 				$settings['profile_msg'] = Trackserver_Profile::get_instance( $this->trackserver )->get_messages();
+				$settings['map_profile'] = Trackserver_Map_Profiles::get_instance( $this->trackserver )->get_default_profile();
+
+				if ( $settings['map_profile']['vector'] === true ) {
+					$this->trackserver->enqueue_maplibre();
+				}
 
 				// Enqueue the main script last
 				wp_enqueue_script( 'trackserver' );
+				wp_enqueue_script( 'leaflet-editable', TRACKSERVER_JSLIB . 'leaflet-editable-1.1.0/Leaflet.Editable.min.js', array(), TRACKSERVER_VERSION, true );
 
 				// No break! The following goes for both hooks.
 				// The options page only has 'trackserver-admin.js'.
@@ -245,12 +252,7 @@ class Trackserver_Admin {
 					'trashcan' => $this->trashcan_icon,
 				);
 
-				// Enqueue leaflet-editable
-				wp_enqueue_script( 'leaflet-editable', TRACKSERVER_JSLIB . 'leaflet-editable-1.1.0/Leaflet.Editable.min.js', array(), TRACKSERVER_VERSION, true );
-
 				wp_enqueue_style( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.css', array(), TRACKSERVER_VERSION );
-
-				// Enqueue the admin js (Thickbox overrides) in the footer
 				wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox' ), TRACKSERVER_VERSION, true );
 				wp_localize_script( 'trackserver-admin', 'trackserver_admin_settings', $settings );
 				wp_enqueue_script( 'trackserver-admin' );

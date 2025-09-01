@@ -594,8 +594,6 @@ class Trackserver_Shortcode {
 		$mapdata = array(
 			'div_id'       => $div_id,
 			'tracks'       => array_values( $this->shortcode_data['tracks'] ),
-			'default_lat'  => $default_lat,
-			'default_lon'  => $default_lng,
 			'default_zoom' => $zoom,
 			'fit'          => $this->shortcode_data['config']['fit'],
 			'fullscreen'   => true,
@@ -611,7 +609,6 @@ class Trackserver_Shortcode {
 		$this->trackserver->mapdata[]    = $mapdata;
 		$out                             = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . esc_attr( $this->shortcode_data['config']['width'] ) . '; height: ' . esc_attr( $this->shortcode_data['config']['height'] ) . '; max-width: 100%"></div>';
 		$this->trackserver->need_scripts = true;
-
 		return $out;
 	}
 

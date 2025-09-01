@@ -150,6 +150,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				$this->map_profiles[] = array(
 					'label'       => 'default',
 					'tile_url'    => $tile_url,
+					'vector'      => false,
 					'attribution' => $attribution,
 					'min_zoom'    => 0,
 					'max_zoom'    => 22,
@@ -490,6 +491,17 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		}
 
 		/**
+		 * Function to enqueue Maplibre GL scripts and style. Also used in Trackserver_Admin.
+		 *
+		 * @since 6.0
+		 */
+		public function enqueue_maplibre() {
+			$this->wp_enqueue_style( 'maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-' . $this->libversions['maplibre_gl'] . '/maplibre-gl.css' );
+			$this->wp_enqueue_script( 'maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-' . $this->libversions['maplibre_gl'] . '/maplibre-gl.js', array(), false, true );
+			$this->wp_enqueue_script( 'leaflet-maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-' . $this->libversions['maplibre_gl'] . '/leaflet-maplibre-gl.js', array(), false, true );
+		}
+
+		/**
 		 * Provision the JavaScript that initializes the map(s) with settings and data
 		 *
 		 * @since 2.0
@@ -499,11 +511,8 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				$this->wp_enqueue_scripts( true );
 			}
 
-			// Enqueue Maplibre GL JS is necessary
 			if ( $this->need_maplibre ) {
-				$this->wp_enqueue_style( 'maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-' . $this->libversions['maplibre_gl'] . '/maplibre-gl.css' );
-				$this->wp_enqueue_script( 'maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-' . $this->libversions['maplibre_gl'] . '/maplibre-gl.js', array(), false, true );
-				$this->wp_enqueue_script( 'leaflet-maplibre-gl', TRACKSERVER_JSLIB . 'maplibre-gl-' . $this->libversions['maplibre_gl'] . '/leaflet-maplibre-gl.js', array(), false, true );
+				$this->enqueue_maplibre();
 			}
 
 			// Enqueue the main script last

@@ -542,12 +542,12 @@ var Trackserver = (function () {
 
             for (var i = 0; i < mapdata.length; i++) {
 
-                var lat        = parseFloat (mapdata[i]['default_lat']);
-                var lon        = parseFloat (mapdata[i]['default_lon']);
+                var mymapdata  = mapdata[i];
+
+                var lat        = parseFloat (mymapdata['profile']['default_lat'] );
+                var lon        = parseFloat (mymapdata['profile']['default_lon'] );
                 var zoom       = parseInt (mapdata[i]['default_zoom']);
                 var center     = L.latLng(lat, lon);
-
-                var mymapdata  = mapdata[i];
 
                 /*
                  * The map div in the admin screen is re-used when viewing multiple maps.
