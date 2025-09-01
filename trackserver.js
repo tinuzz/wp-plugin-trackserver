@@ -567,6 +567,7 @@ var Trackserver = (function () {
                   var map_layer0 = L.maplibreGL({
                     style: mymapdata['profile']['tile_url'],
                     attribution: mymapdata['profile']['attribution'],
+                    attributionControl: { customAttribution: mymapdata['profile']['attribution'] },
                     minZoom: mymapdata['profile']['min_zoom'],
                     maxZoom: mymapdata['profile']['max_zoom']
                   });
