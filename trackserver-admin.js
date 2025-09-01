@@ -425,23 +425,32 @@ var TrackserverAdmin = (function () {
 
               const last_id = parseInt( jQuery('#map-profile-table tr:last').data('id') );
               const next_id = last_id + 1;
-              const tile_url = jQuery('#tile_url' + last_id).val();
-              const attribution = jQuery('#attribution' + last_id).val();
-              const minzoom = jQuery('#minzoom' + last_id).val();
-              const maxzoom = jQuery('#maxzoom' + last_id).val();
-              const lat = jQuery('#latitude' + last_id).val();
-              const lon = jQuery('#longitude' + last_id).val();
+              const label = 'profile' + next_id;
 
-              const row = '<tr id="profile-row' + next_id + '" data-id="' + next_id + '" class="trackserver-map-profile"><td><input type="text" size="5" name="trackserver_map_profiles[' + next_id + '][label]" value="profile' + next_id + '"></td>' +
-                '<td><textarea id="tile_url' + next_id + '" name="trackserver_map_profiles[' + next_id + '][tile_url]">' + tile_url + '</textarea></td>' +
-                '<td><input type="checkbox" name="trackserver_map_profiles[' + next_id + '][vector]"></td>' +
-                '<td><textarea id="attribution' + next_id + '" name="trackserver_map_profiles[' + next_id + '][attribution]">' + attribution + '</textarea></td>' +
-                '<td><input type="text" size="2" id="minzoom' + next_id + '" name="trackserver_map_profiles[' + next_id + '][min_zoom]" value="' + minzoom + '"></td>' +
-                '<td><input type="text" size="2" id="maxzoom' + next_id + '" name="trackserver_map_profiles[' + next_id + '][max_zoom]" value="' + maxzoom + '"></td>' +
-                '<td><input type="text" size="5" id="latitude' + next_id + '" name="trackserver_map_profiles[' + next_id + '][default_lat]" value="' + lat + '"></td>' +
-                '<td><input type="text" size="5" id="longitude' + next_id + '" name="trackserver_map_profiles[' + next_id + '][default_lon]" value="' + lon + '"></td>' +
+              // Numeric values are safe to be used in the 'value' attribute.
+              const vector = trackserver_admin_settings.map_profile['tile_url'] === true ? ' checked' : '';
+              const minzoom = parseInt(trackserver_admin_settings.map_profile['min_zoom']);
+              const maxzoom = parseInt(trackserver_admin_settings.map_profile['max_zoom']);
+              const lat = parseFloat(trackserver_admin_settings.map_profile['default_lat']);
+              const lon = parseFloat(trackserver_admin_settings.map_profile['default_lon']);
+
+              const row = '<tr id="profile-row' + next_id + '" data-id="' + next_id + '" class="trackserver-map-profile">' +
+                '<td><input type="text" style="width: 100%" name="trackserver_map_profiles[' + next_id + '][label]" value="' + label + '"></td>' +
+                '<td><textarea id="tile_url' + next_id + '" name="trackserver_map_profiles[' + next_id + '][tile_url]"></textarea></td>' +
+                '<td><input type="checkbox" name="trackserver_map_profiles[' + next_id + '][vector]"' + vector + '></td>' +
+                '<td><textarea id="attribution' + next_id + '" name="trackserver_map_profiles[' + next_id + '][attribution]"></textarea></td>' +
+                '<td><input type="text" style="width: 100%" id="minzoom' + next_id + '" name="trackserver_map_profiles[' + next_id + '][min_zoom]" value="' + minzoom + '"></td>' +
+                '<td><input type="text" style="width: 100%" id="maxzoom' + next_id + '" name="trackserver_map_profiles[' + next_id + '][max_zoom]" value="' + maxzoom + '"></td>' +
+                '<td><input type="text" style="width: 100%" id="latitude' + next_id + '" name="trackserver_map_profiles[' + next_id + '][default_lat]" value="' + lat + '"></td>' +
+                '<td><input type="text" style="width: 100%" id="longitude' + next_id + '" name="trackserver_map_profiles[' + next_id + '][default_lon]" value="' + lon + '"></td>' +
                 '<td><a id="delete-profile-button' + next_id + '" title="Delete profile" class="button ts-delete-profile-button" data-id="' + next_id +'" data-action="deleteprofile">Delete</a></td></tr>';
               jQuery('#map-profile-table > tbody:last-child').append(row);
+
+              // These values can contain anything, and setting them this way prevents escaping issues.
+              const tile_url = trackserver_admin_settings.map_profile['tile_url'];
+              const attribution = trackserver_admin_settings.map_profile['attribution'];
+              jQuery('#tile_url' + next_id).val(tile_url);
+              jQuery('#attribution' + next_id).val(attribution);
 
               jQuery('#delete-profile-button' + next_id).on('click', function() {
                 const row_id = jQuery(this).data('id');

@@ -197,7 +197,7 @@ class Trackserver_Admin {
 		switch ( $hook ) {
 			case 'toplevel_page_trackserver-tracks':
 			case 'trackserver_page_trackserver-tracks':
-			case 'trackserver_page_trackserver-yourprofile':
+			case 'trackserver_page_trackserver-yourprofile': // geofences
 				$this->trackserver->load_common_scripts();
 
 				// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
@@ -251,6 +251,7 @@ class Trackserver_Admin {
 				$settings['icons'] = array(
 					'trashcan' => $this->trashcan_icon,
 				);
+				$settings['map_profile'] = Trackserver_Map_Profiles::get_instance( $this->trackserver )->get_default_profile(); // yes, do it again
 
 				wp_enqueue_style( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.css', array(), TRACKSERVER_VERSION );
 				wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox' ), TRACKSERVER_VERSION, true );

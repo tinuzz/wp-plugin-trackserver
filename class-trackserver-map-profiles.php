@@ -115,6 +115,7 @@ class Trackserver_Map_Profiles {
 				$data[ $k ]['default_lat'] = (float) $v['default_lat'];
 				$data[ $k ]['default_lon'] = (float) $v['default_lon'];
 			}
+			$data = array_values( $data ); // reindex the array
 		} else {
 			$data = $this->trackserver->map_profiles;
 		}
