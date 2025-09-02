@@ -102,13 +102,19 @@ class Trackserver_Map_Profiles {
 	 * @since 6.0
 	 */
 	public function sanitize_map_profiles( $data ) {
+		$default = 0;
+		if ( isset( $_POST['default_profile'] ) ) {
+			$default = (int) $_POST['default_profile'];
+		}
+
 		if ( is_array( $data ) ) {
 			foreach ( $data as $k => $v ) {
 				if ( empty( $v['tile_url'] ) && empty( $v['attribution'] ) ) {
 					unset( $data[ $k ] );
 					continue;
 				}
-				$data[ $k ]['vector']      = ( isset( $v['vector'] ) && $v['vector'] === 'on' ? true : false );
+				$data[ $k ]['default']     = ( $k === $default ? true : false );
+				$data[ $k ]['vector']      = ( ( isset( $v['vector'] ) && in_array( $v['vector'], array( 'on', 'true', true ), true ) ) ? true : false );
 				$data[ $k ]['label']       = ( empty( $v['label'] ) ? 'profile' . $k : $v['label'] );
 				$data[ $k ]['min_zoom']    = ( (int) $v['min_zoom'] < 0 ? '0' : (int) $v['min_zoom'] );
 				$data[ $k ]['max_zoom']    = ( (int) $v['max_zoom'] <= 0 ? '18' : (int) $v['max_zoom'] );
@@ -154,6 +160,7 @@ class Trackserver_Map_Profiles {
 		echo '<br><br>';
 
 		$strings = array(
+			'default'     => __( 'Default', 'trackserver' ),
 			'label'       => __( 'Label', 'trackserver' ),
 			'url'         => __( 'Tile / style URL', 'trackserver' ),
 			'vector'      => __( 'Vector tiles', 'trackserver' ),
@@ -172,6 +179,7 @@ class Trackserver_Map_Profiles {
 			'<table class="map-profiles striped" border="1" id="map-profile-table">
 				<thead>
 					<tr>
+						<th style="width: 40px; padding-left: 10px">%9$s</th>
 						<th style="width: 80px; padding-left: 10px">%1$s</th>
 						<th style="padding-left: 10px">%2$s</th>
 						<th style="width: 10px; padding-left: 10px">%3$s</th>
@@ -190,6 +198,7 @@ class Trackserver_Map_Profiles {
 			esc_html( $strings['maxzoom'] ),
 			esc_html( $strings['latitude'] ),
 			esc_html( $strings['longitude'] ),
+			esc_html( $strings['default'] ),
 		);
 
 		$num_profiles = count( $this->trackserver->map_profiles );
@@ -203,7 +212,8 @@ class Trackserver_Map_Profiles {
 			$maxzoom   = $this->htmlspecialchars( $this->trackserver->map_profiles[ $i ]['max_zoom'] );
 			$latitude  = $this->htmlspecialchars( $this->trackserver->map_profiles[ $i ]['default_lat'] );
 			$longitude = $this->htmlspecialchars( $this->trackserver->map_profiles[ $i ]['default_lon'] );
-			$vector    = ( $this->trackserver->map_profiles[ $i ]['vector'] === true ? 'checked' : '' );
+			$vector    = ( $this->trackserver->map_profiles[ $i ]['vector'] === true ? ' checked' : '' );
+			$default   = ( $this->trackserver->map_profiles[ $i ]['default'] === true ? ' checked' : '' );
 
 			$d = '&nbsp;';
 			if ( $i > 0 ) {
@@ -213,6 +223,7 @@ class Trackserver_Map_Profiles {
 
 			printf(
 				'<tr data-id="%1$s" id="profile-row%1$s">
+					<td style="text-align:center"><input type="radio" name="default_profile" value="%1$s" %11$s></td>
 					<td id="label%1$s" data-id="%1$s"><input type="text" style="width: 100%%" name="trackserver_map_profiles[%1$s][label]" value="%2$s"></td>
 					<td><textarea id="tile_url%1$s" name="trackserver_map_profiles[%1$s][tile_url]">%3$s</textarea></td>
 					<td style="text-align: center;"><input type="checkbox" name="trackserver_map_profiles[%1$s][vector]" %4$s></td>
@@ -233,6 +244,7 @@ class Trackserver_Map_Profiles {
 				esc_attr( $latitude ),  // %8
 				esc_attr( $longitude ), // %9
 				wp_kses_post( $d ),     // %10
+				esc_attr( $default ),   // %11
 			);
 		}
 
@@ -255,7 +267,7 @@ class Trackserver_Map_Profiles {
 	 */
 	public function get_default_profile() {
 		foreach ( $this->trackserver->map_profiles as $i => $profile ) {
-			if ( $i === 0 || $profile['label'] === 'default' ) {
+			if ( $i === 0 || $profile['default'] === true ) {
 				$map_profile = $profile;
 			}
 		}

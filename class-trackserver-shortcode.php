@@ -22,7 +22,7 @@ class Trackserver_Shortcode {
 	private $previous;
 
 	private $map_attr_defaults = array(
-		'profile'    => 'default',
+		'profile'    => '',
 		'width'      => '100%',
 		'height'     => '480px',
 		'align'      => '',
@@ -573,7 +573,7 @@ class Trackserver_Shortcode {
 		}
 
 		foreach ( $this->trackserver->map_profiles as $i => $profile ) {
-			if ( $i === 0 || $profile['label'] === 'default' ) {
+			if ( $i === 0 || $profile['default'] === true ) {
 				$map_profile = $profile;
 			}
 			if ( $profile['label'] === $this->shortcode_data['config']['profile'] ) {

@@ -148,6 +148,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				$attribution = ( isset( $this->options['attribution'] ) ? $this->options['attribution'] : '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' );
 
 				$this->map_profiles[] = array(
+					'default'     => true,
 					'label'       => 'default',
 					'tile_url'    => $tile_url,
 					'vector'      => false,
