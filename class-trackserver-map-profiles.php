@@ -102,17 +102,22 @@ class Trackserver_Map_Profiles {
 	 * @since 6.0
 	 */
 	public function sanitize_map_profiles( $data ) {
-		$default = 0;
+
+		$allowed_attrs = array( 'label', 'tile_url', 'vector', 'attribution', 'min_zoom', 'max_zoom', 'default_lat', 'default_lon' );
+		$default       = 0;
+
 		if ( isset( $_POST['default_profile'] ) ) {
 			$default = (int) $_POST['default_profile'];
 		}
 
 		if ( is_array( $data ) ) {
 			foreach ( $data as $k => $v ) {
+				$data[ $k ] = array_intersect_key( $v, array_flip( $allowed_attrs ) ); // throw out unknown attributes
 				if ( empty( $v['tile_url'] ) && empty( $v['attribution'] ) ) {
 					unset( $data[ $k ] );
 					continue;
 				}
+				$data[ $k ]['tile_url']    = esc_url_raw( $v['tile_url'] );
 				$data[ $k ]['default']     = ( $k === $default ? true : false );
 				$data[ $k ]['vector']      = ( ( isset( $v['vector'] ) && in_array( $v['vector'], array( 'on', 'true', true ), true ) ) ? true : false );
 				$data[ $k ]['label']       = ( empty( $v['label'] ) ? 'profile' . $k : $v['label'] );
@@ -136,8 +141,8 @@ class Trackserver_Map_Profiles {
 				'A map profile is a set of values that define what a map looks like and how it behaves. It consists of a tile server or style URL,
 				an attribution string (often mandatory from the tile provider), a minimum and maximum zoom level for the map, and the default
 				coordinates to display when for some reason nothing else is shown on the map. Map profiles have a label by which you can reference them
-				in a shortcode (<tt>profile=&lt;label&gt;</tt>). If no profile is specified in the shortcode, the profile with the label
-				"<em>default</em>" is used. If that label does not exist, the first profile is used.',
+				in a shortcode (<tt>profile=&lt;label&gt;</tt>). If no profile is specified in the shortcode, the default profile is used.
+				The default profile is also used for viewing tracks from the Manage Tracks page.',
 				'trackserver'
 			),
 		);
