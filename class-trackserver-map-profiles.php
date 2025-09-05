@@ -97,6 +97,38 @@ class Trackserver_Map_Profiles {
 	}
 
 	/**
+	 * A function for sanitizing tile URLs. It works around the fact that WP's
+	 * sanitize_url() removes curly braces, while we need those, because raster
+	 * tile URLs contain template strings like {x}, {y} and {z}. The workaround
+	 * is to temporarily replace the braces by something that survives sanitizing.
+	 *
+	 * @since 6.0
+	 */
+	private function sanitize_tile_url( $url ) {
+		$url = preg_replace( '/\{([xyzr])\}/', '___$1___', $url );
+		$url = sanitize_url( $url );
+		$url = preg_replace( '/___([xyzr])___/', '{$1}', $url );
+		return $url;
+	}
+
+	/**
+	 * A function to sanitize attribution texts. Basically, no HTML is allowed
+	 * except simple <a> tags.
+	 *
+	 * @since 6.0
+	 */
+	private function sanitize_attribution( $txt ) {
+		return wp_kses(
+			$txt,
+			array(
+				'a' => array(
+					'href' => array(),
+				),
+			),
+		);
+	}
+
+	/**
 	 * Callback for sanitizing map profile data.
 	 *
 	 * @since 6.0
@@ -117,7 +149,8 @@ class Trackserver_Map_Profiles {
 					unset( $data[ $k ] );
 					continue;
 				}
-				$data[ $k ]['tile_url']    = esc_url_raw( $v['tile_url'] );
+				$data[ $k ]['tile_url']    = $this->sanitize_tile_url( $v['tile_url'] );
+				$data[ $k ]['attribution'] = $this->sanitize_attribution( $v['attribution'] );
 				$data[ $k ]['default']     = ( $k === $default ? true : false );
 				$data[ $k ]['vector']      = ( ( isset( $v['vector'] ) && in_array( $v['vector'], array( 'on', 'true', true ), true ) ) ? true : false );
 				$data[ $k ]['label']       = ( empty( $v['label'] ) ? 'profile' . $k : $v['label'] );
@@ -138,11 +171,15 @@ class Trackserver_Map_Profiles {
 
 		echo wp_kses_post(
 			__(
-				'A map profile is a set of values that define what a map looks like and how it behaves. It consists of a tile server or style URL,
-				an attribution string (often mandatory from the tile provider), a minimum and maximum zoom level for the map, and the default
-				coordinates to display when for some reason nothing else is shown on the map. Map profiles have a label by which you can reference them
-				in a shortcode (<tt>profile=&lt;label&gt;</tt>). If no profile is specified in the shortcode, the default profile is used.
-				The default profile is also used for viewing tracks from the Manage Tracks page.',
+				'A map profile is a set of values that define what a map looks like and
+				how it behaves. It consists of a tile server or style URL, an
+				attribution string (often mandatory from the tile provider), a minimum
+				and maximum zoom level for the map, and the default coordinates to
+				display when for some reason nothing else is shown on the map. Map
+				profiles have a label by which you can reference them in a shortcode
+				(<tt>profile=&lt;label&gt;</tt>). If no profile is specified in the
+				shortcode, the default profile is used.  The default profile is also
+				used for viewing tracks from the Manage Tracks page.',
 				'trackserver'
 			),
 		);
@@ -160,6 +197,18 @@ class Trackserver_Map_Profiles {
 				'<a href="' . __( 'https://en.wikipedia.org/wiki/Vector_tiles', 'trackserver' ) . '" target="_blank">' . __( 'Vector tiles', 'trackserver' ) . '</a>',
 				'<a href="https://maplibre.org/maplibre-style-spec/" target="_blank">style.json</a>',
 			)
+		);
+
+		echo '<br><br>';
+
+		echo wp_kses_post(
+			__(
+				'Please note that tile URL and attribution inputs are filtered when
+				saved. Placeholders like {x}, {y} and {z} are supported, but other
+				special characters may be removed. Attributions may contain links, but
+				no other HTML.',
+				'trackserver'
+			),
 		);
 
 		echo '<br><br>';
