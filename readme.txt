@@ -76,8 +76,8 @@ It includes some code and libraries written by other people:
 
 1. Use Wordpress' built-in plugin installer, or copy the folder from the plugin archive to the `/wp-content/plugins/` directory.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
-1. Configure the slugs that the plugin will listen on for location updates.
-1. Configure your mobile apps and start tracking!
+1. Review the options on the 'Options' page.
+1. Check out the 'Your profile' page, configure your mobile apps and start tracking!
 1. Use the shortcode [tsmap] to include maps and tracks in your posts and pages.
 
 == Frequently Asked Questions ==
@@ -240,12 +240,12 @@ If you have been using Trackserver with TrackMe before v1.9, you should now set 
 
 = What is this 'slug' you are talking about? =
 
-Slugs are generally defined as URL-friendly and unique versions of a name or title. In WordPress, they are short descriptions of posts and pages, to be used in URLs (permalinks). They are the part of the URL that makes WordPress serve a particular page. Trackserver uses slugs to 'listen' for tracking requests from mobile apps, and you can configure these slugs to be anything you want.  Trackserver comes with default values for these slugs, that should work for most people. Changing them is usually not necessary nor recommended. Please
+Slugs are generally defined as URL-friendly and unique versions of a name or title. In WordPress, they are short descriptions of posts and pages, to be used in URLs (permalinks). They are the part of the URL that makes WordPress serve a particular page. Trackserver uses different slugs for various purposes, and you can configure these slugs to be anything you want. Trackserver comes with default values for these slugs, that should work for most people. Changing them is usually not necessary nor recommended. Please
 read the WARNING blow before changing them.
 
 Please refer to the [Wordpress Codex](http://codex.wordpress.org/Glossary#Slug) for more information about slugs in general.
 
-WARNING: please do not confuse the slugs that you configure in Trackserver with the URLs (permalinks) that you use to publish your maps and tracks. Above all, make sure there is no conflict between the permalink for a post or page and the slugs that Trackserver uses for location updates. The slugs in Trackerver's configuration are for the location updates ONLY. If you try to open them in a browser, you will get errors like 'Illegal request'. Trackserver operates on a low level within WordPress, so if there is a conflict between Trackserver and a post or a page, Trackserver will win and the page will be inaccessible.
+WARNING: please do not confuse the slugs that you configure in Trackserver with the URLs (permalinks) that you use to publish your maps and tracks. Above all, make sure there is no conflict between the permalink for a post or page and the slugs that Trackserver uses for location updates. The slugs in Trackerver's configuration are for the location updates and other internal uses ONLY. If you try to open them in a browser, you will get errors like 'Illegal request'. Trackserver operates on a low level within WordPress, so if there is a conflict between Trackserver and a post or a page, Trackserver will win and the page will be inaccessible.
 
 To publish your tracks, simply create a page (with a non-conflicting permalink) and use the [tsmap] shortcode to add a map.
 
@@ -326,9 +326,16 @@ Added:
 
 Changed:
 * Updated Leaflet to v1.9.4.
+* Removed deprecated settings (protocol-specific URL slugs).
 * Refactored the shortcode handling to make it more robust and maintainable.
 * Changed admin menu order and made 'Manage tracks' the primary page, rather than 'Options'.
 * If a boolean shortcode attribute like 'live' and 'quiet' is given as a flag without a value, it now evaluates to 'true'.
+* Start using the WordPress REST API in the backend (only with map profiles for now).
+* Minimum PHP version set to 8.0.
+
+Fixed:
+* General security improvements (nonce checking, output escaping).
+* Use wp_handle_upload() to handle file uploads.
 
 = v5.1.1 =
 Release date: 15 April 2025

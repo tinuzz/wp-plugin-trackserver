@@ -36,16 +36,10 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		private $option_defaults = array(
 			'trackserver_slug'              => 'trackserver',
-			'trackme_slug'                  => 'trackme',
 			'trackme_extension'             => 'z',
-			'mapmytracks_tag'               => 'mapmytracks',
-			'osmand_slug'                   => 'osmand',
 			'osmand_trackname_format'       => 'OsmAnd %F %H',
-			'sendlocation_slug'             => 'sendlocation',
 			'sendlocation_trackname_format' => 'SendLocation %F %H',
-			'owntracks_slug'                => 'owntracks',
 			'owntracks_trackname_format'    => 'Owntracks %F',
-			'upload_tag'                    => 'tsupload',
 			'embedded_slug'                 => 'tsmap',
 			'gettrack_slug'                 => 'trackserver/gettrack',
 			'enable_proxy'                  => false,
@@ -125,6 +119,12 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$this->delete_option( 'osmand_key' );
 			$this->delete_option( 'normalize_tripnames' );
 			$this->delete_option( 'tripnames_format' );
+			$this->delete_option( 'trackme_slug' );
+			$this->delete_option( 'mapmytracks_tag' );
+			$this->delete_option( 'osmand_slug' );
+			$this->delete_option( 'owntracks_slug' );
+			$this->delete_option( 'sendlocation_slug' );
+			$this->delete_option( 'upload_tag' );
 
 			// Initialize map profiles and remove old options.
 			$this->init_map_profiles();
@@ -582,35 +582,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				'get2'         => array(
 					'pattern' => $pattern2,
 				),
-
-				// The matches below all use dedicated slugs and are DEPRECATED as of v5.0
-
-				'trackmeold2'  => array(
-					'pattern' => '/^(?<slug>' . preg_quote( $this->options['trackme_slug'], '/' ) . ')\/(?<method>requests|export|cloud)\.(?<ext>.*)/',
-				),
-				'trackme2'     => array(
-					'pattern' => '/^(?<slug>' . preg_quote( $this->options['trackme_slug'], '/' ) .
-						')\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/(?<method>requests|export|cloud)\.(?<ext>.*)/',
-				),
-				'mapmytracks2' => array(
-					'pattern' => '/^(?<slug>' . preg_quote( $this->options['mapmytracks_tag'], '/' ) . ')\/?$/',
-				),
-				'osmand'       => array(
-					'pattern' => '/^(?<slug>' . preg_quote( $this->options['osmand_slug'], '/' ) . ')\/?$/',
-				),
-				'sendlocation' => array(
-					'pattern' => '/^(?<slug>' . preg_quote( $this->options['sendlocation_slug'], '/' ) . ')\/(?<username>[^\/]+)\/(?<password>[^\/]+)\/?$/',
-				),
-				'upload2'      => array(
-					'pattern' => '/^(?<slug>' . preg_quote( $this->options['upload_tag'], '/' ) . ')\/?$/',
-					'method'  => 'POST',
-					'enctype' => 'multipart/form-data',
-				),
-				'owntracks2'   => array(
-					'pattern' => '/^(?<slug>' . preg_quote( $this->options['owntracks_slug'], '/' ) . ')\/?$/',
-					'method'  => 'POST',
-					'enctype' => 'application/json',
-				),
 			);
 
 			foreach ( $protocols as $proto => $props ) {
@@ -649,6 +620,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 						if ( empty( $_SERVER['CONTENT_TYPE'] ) ) {
 							continue;
 						}
+						// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 						$req_enctype = strtok( $_SERVER['CONTENT_TYPE'], ';' );    // Strip charset/boundary off header
 						if ( $req_enctype !== $props['enctype'] ) {
 							continue;
@@ -658,11 +630,11 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					if ( $proto === 'gettrack' ) {
 						Trackserver_Shortcode::get_instance( $this )->handle_gettrack();
 
-					} elseif ( $proto === 'trackmeold1' || $proto === 'trackmeold2' || $proto === 'trackme1' || $proto === 'trackme2' ) {
+					} elseif ( $proto === 'trackmeold1' || $proto === 'trackme1' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-trackme.php';
 						Trackserver_Trackme::get_instance( $this )->handle_protocol( $matches['method'], $username, $password );
 
-					} elseif ( $proto === 'mapmytracks1' || $proto === 'mapmytracks2' ) {
+					} elseif ( $proto === 'mapmytracks1' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-mapmytracks.php';
 						$client = new Trackserver_Mapmytracks( $this );
 						$client->handle_request();
@@ -672,15 +644,15 @@ if ( ! class_exists( 'Trackserver' ) ) {
 						$client = new Trackserver_Ulogger( $this );
 						$client->handle_request();
 
-					} elseif ( $proto === 'get1' || $proto === 'get2' || $proto === 'osmand' || $proto === 'sendlocation' ) {
+					} elseif ( $proto === 'get1' || $proto === 'get2' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-getrequest.php';
 						$client = new Trackserver_Getrequest( $this, $username, $password );
 						$client->handle_request();
 
-					} elseif ( $proto === 'upload1' || $proto === 'upload2' ) {
+					} elseif ( $proto === 'upload1' ) {
 						$this->handle_upload();
 
-					} elseif ( $proto === 'owntracks1' || $proto === 'owntracks2' ) {
+					} elseif ( $proto === 'owntracks1' ) {
 						require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-owntracks.php';
 						Trackserver_Owntracks::get_instance( $this )->handle_request();
 

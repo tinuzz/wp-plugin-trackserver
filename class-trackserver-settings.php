@@ -64,13 +64,6 @@ class Trackserver_Settings {
 		);
 
 		add_settings_field(
-			'trackserver_trackme_slug',
-			esc_html__( 'TrackMe URL slug', 'trackserver' ) . '<br>' . esc_html__( '(deprecated)', 'trackserver' ),
-			array( &$this, 'trackme_slug_html' ),
-			'trackserver',
-			'trackserver-trackme'
-		);
-		add_settings_field(
 			'trackserver_trackme_extension',
 			esc_html__( 'TrackMe server extension', 'trackserver' ),
 			array( &$this, 'trackme_extension_html' ),
@@ -78,37 +71,14 @@ class Trackserver_Settings {
 			'trackserver-trackme'
 		);
 
-		// Settings for section 'trackserver-mapmytracks'
-		add_settings_section(
-			'trackserver-mapmytracks',
-			esc_html__( 'OruxMaps MapMyTracks settings', 'trackserver' ),
-			array( &$this, 'mapmytracks_settings_html' ),
-			'trackserver'
-		);
-
-		add_settings_field(
-			'trackserver_mapmytracks_tag',
-			esc_html__( 'MapMyTracks URL slug', 'trackserver' ) . '<br>' . esc_html__( '(deprecated)', 'trackserver' ),
-			array( &$this, 'mapmytracks_tag_html' ),
-			'trackserver',
-			'trackserver-mapmytracks'
-		);
-
 		// Settings for section 'trackserver-osmand'
 		add_settings_section(
 			'trackserver-osmand',
 			esc_html__( 'OsmAnd online tracking settings', 'trackserver' ),
-			array( &$this, 'osmand_settings_html' ),
+			function() {},
 			'trackserver'
 		);
 
-		add_settings_field(
-			'trackserver_osmand_slug',
-			esc_html__( 'OsmAnd URL slug', 'trackserver' ) . '<br>' . esc_html__( '(deprecated)', 'trackserver' ),
-			array( &$this, 'osmand_slug_html' ),
-			'trackserver',
-			'trackserver-osmand'
-		);
 		add_settings_field(
 			'trackserver_osmand_trackname_format',
 			esc_html__( 'OsmAnd trackname format', 'trackserver' ),
@@ -121,17 +91,10 @@ class Trackserver_Settings {
 		add_settings_section(
 			'trackserver-sendlocation',
 			esc_html__( 'SendLocation settings', 'trackserver' ),
-			array( &$this, 'sendlocation_settings_html' ),
+			function() {},
 			'trackserver'
 		);
 
-		add_settings_field(
-			'trackserver_sendlocation_slug',
-			esc_html__( 'SendLocation URL slug', 'trackserver' ) . '<br>' . esc_html__( '(deprecated)', 'trackserver' ),
-			array( &$this, 'sendlocation_slug_html' ),
-			'trackserver',
-			'trackserver-sendlocation'
-		);
 		add_settings_field(
 			'trackserver_sendlocation_trackname_format',
 			esc_html__( 'SendLocation trackname format', 'trackserver' ),
@@ -144,17 +107,10 @@ class Trackserver_Settings {
 		add_settings_section(
 			'trackserver-owntracks',
 			esc_html__( 'OwnTracks settings', 'trackserver' ),
-			array( &$this, 'owntracks_settings_html' ),
+			function() {},
 			'trackserver'
 		);
 
-		add_settings_field(
-			'trackserver_owntracks_slug',
-			esc_html__( 'OwnTracks URL slug', 'trackserver' ) . '<br>' . esc_html__( '(deprecated)', 'trackserver' ),
-			array( &$this, 'owntracks_slug_html' ),
-			'trackserver',
-			'trackserver-owntracks'
-		);
 		add_settings_field(
 			'trackserver_owntracks_trackname_format',
 			esc_html__( 'OwnTracks trackname format', 'trackserver' ),
@@ -163,27 +119,11 @@ class Trackserver_Settings {
 			'trackserver-owntracks'
 		);
 
-		// Settings for section 'trackserver-httppost'
-		add_settings_section(
-			'trackserver-httppost',
-			esc_html__( 'HTTP upload settings', 'trackserver' ),
-			array( &$this, 'httppost_settings_html' ),
-			'trackserver'
-		);
-
-		add_settings_field(
-			'trackserver_upload_tag',
-			esc_html__( 'HTTP POST URL slug', 'trackserver' ) . '<br>' . esc_html__( '(deprecated)', 'trackserver' ),
-			array( &$this, 'upload_tag_html' ),
-			'trackserver',
-			'trackserver-httppost'
-		);
-
 		// Settings for section 'trackserver-embedded'
 		add_settings_section(
 			'trackserver-embedded',
 			esc_html__( 'Embedded maps settings', 'trackserver' ),
-			array( &$this, 'embedded_settings_html' ),
+			function() {},
 			'trackserver'
 		);
 
@@ -199,7 +139,7 @@ class Trackserver_Settings {
 		add_settings_section(
 			'trackserver-advanced',
 			esc_html__( 'Advanced settings', 'trackserver' ),
-			array( &$this, 'advanced_settings_html' ),
+			function() {},
 			'trackserver'
 		);
 
@@ -261,15 +201,6 @@ class Trackserver_Settings {
 	public function general_settings_html() {
 		esc_html_e(
 			// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
-			'As of version 5.0, Trackserver uses a single URL slug for all ' .
-			'the protocols it supports. The old, seperate slugs for TrackMe, ' .
-			'MapMyTracks, OsmAnd, SendLocation and OwnTracks are now deprecated and ' .
-			'will be removed in a future version.',
-			'trackserver'
-		);
-		echo '<br><br>';
-		esc_html_e(
-			// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
 			'Some protocols that use HTTP GET need to have a username and ' .
 			'password in the URL, while protocols that use HTTP POST and/or Basic ' .
 			'Authentication send the password via another method. So there are two ' .
@@ -287,7 +218,7 @@ class Trackserver_Settings {
 			'%1$s (%6$s/<b>&lt;slug&gt;</b>/) <br />' .
 			'<input type="text" size="25" name="trackserver_options[trackserver_slug]" id="trackserver_slug" value="%7$s" autocomplete="off" /><br /><br />' .
 			'<strong>%2$s:</strong><br> %6$s/%8$s<br><br>' .
-			'<strong>%3$s:</strong><br> %6$s/%8$s/&lt;<strong>%4$s</strong>&gt;/&lt;<strong>%5$s</strong>&gt;<br /><br>',
+			'<strong>%3$s:</strong><br> %6$s/%8$s/&lt;<strong>%4$s</strong>&gt;/&lt;<strong>%5$s</strong>&gt;<br />',
 			esc_html__( 'The Trackserver universal URL slug for all protocols', 'trackserver' ),
 			esc_html__( 'Full URL for OruxMaps / MapMyTracks, OwnTracks, uLogger', 'trackserver' ),
 			esc_html__( 'Full URL for TrackMe, OsmAnd, SendLocation', 'trackserver' ),
@@ -305,19 +236,6 @@ class Trackserver_Settings {
 	 * @since 1.0
 	 */
 	public function trackme_settings_html() {
-	}
-
-	public function trackme_slug_html() {
-		$val = $this->htmlspecialchars( $this->trackserver->options['trackme_slug'] );
-		$url = site_url( null ) . $this->trackserver->url_prefix;
-
-		printf(
-			'%1$s (%2$s/<b>&lt;slug&gt;</b>/) <br />' .
-			'<input type="text" size="25" name="trackserver_options[trackme_slug]" id="trackserver_trackme_slug" value="%3$s" autocomplete="off" /><br /><br />',
-			esc_html__( "The URL slug for TrackMe, used in 'URL Header' setting in TrackMe", 'trackserver' ),
-			esc_url( $url ),
-			esc_attr( $val ),
-		);
 	}
 
 	public function trackme_extension_html() {
@@ -339,43 +257,6 @@ class Trackserver_Settings {
 				'in TrackMe to match the value you put here.', 'trackserver'
 				// phpcs:enable
 			),
-			esc_attr( $val ),
-		);
-	}
-
-	/**
-	 * Output HTML for the Mapmytracks settings section.
-	 *
-	 * @since 1.0
-	 */
-	public function mapmytracks_settings_html() {
-	}
-
-	public function mapmytracks_tag_html() {
-		$val = $this->htmlspecialchars( $this->trackserver->options['mapmytracks_tag'] );
-		$url = site_url( null ) . $this->trackserver->url_prefix;
-
-		printf(
-			'%1$s (%2$s/<b>&lt;slug&gt;</b>/) <br />' .
-			'<input type="text" size="25" name="trackserver_options[mapmytracks_tag]" id="trackserver_mapmytracks_tag" value="%3$s" autocomplete="off" /><br /><br />',
-			esc_html__( "The URL slug for MapMyTracks, used in 'Custom Url' setting in OruxMaps", 'trackserver' ),
-			esc_url( $url ),
-			esc_attr( $val ),
-		);
-	}
-
-	public function osmand_settings_html() {
-	}
-
-	public function osmand_slug_html() {
-		$val = $this->htmlspecialchars( $this->trackserver->options['osmand_slug'] );
-		$url = site_url( null ) . $this->trackserver->url_prefix;
-
-		printf(
-			'%1$s (%2$s/<b>&lt;slug&gt;</b>/?...) <br />' .
-			'<input type="text" size="25" name="trackserver_options[osmand_slug]" id="trackserver_osmand_slug" value="%3$s" autocomplete="off" /><br /><br />',
-			esc_html__( "The URL slug for OsmAnd, used in 'Online tracking' settings in OsmAnd", 'trackserver' ),
-			esc_url( $url ),
 			esc_attr( $val ),
 		);
 	}
@@ -409,39 +290,6 @@ class Trackserver_Settings {
 		);
 	}
 
-	public function sendlocation_settings_html() {
-	}
-
-	public function owntracks_settings_html() {
-	}
-
-	/**
-	 * Output HTML for the HTTP POST settings section.
-	 *
-	 * @since 1.0
-	 */
-	public function httppost_settings_html() {
-	}
-
-	public function embedded_settings_html() {
-	}
-
-	public function advanced_settings_html() {
-	}
-
-	public function sendlocation_slug_html() {
-		$val = $this->htmlspecialchars( $this->trackserver->options['sendlocation_slug'] );
-		$url = site_url( null ) . $this->trackserver->url_prefix;
-
-		printf(
-			'%1$s (%2$s/<b>&lt;slug&gt;/&lt;username&gt;/&lt;access key&gt;</b>/) <br />' .
-			'<input type="text" size="25" name="trackserver_options[sendlocation_slug]" id="trackserver_sendlocation_slug" value="%3$s" autocomplete="off" /><br /><br />',
-			esc_html__( "The URL slug for SendLocation, used in SendLocation's settings", 'trackserver' ),
-			esc_url( $url ),
-			esc_attr( $val ),
-		);
-	}
-
 	public function sendlocation_trackname_format_html() {
 		$val = $this->htmlspecialchars( $this->trackserver->options['sendlocation_trackname_format'] );
 
@@ -471,22 +319,6 @@ class Trackserver_Settings {
 		);
 	}
 
-	public function owntracks_slug_html() {
-		$val = $this->htmlspecialchars( $this->trackserver->options['owntracks_slug'] );
-		$url = site_url( null ) . $this->trackserver->url_prefix;
-
-		printf(
-			'%1$s (%3$s/<b>&lt;slug&gt;/&lt;username&gt;</b>/) <br />' .
-			'<input type="text" size="25" name="trackserver_options[owntracks_slug]" id="trackserver_owntracks_slug" value="%4$s" autocomplete="off" /><br /><br />' .
-			'<strong>%2$s:</strong> %s$s/%5$s/<br /><br />',
-			esc_html__( "The URL slug for OwnTracks, used in OwnTracks' settings", 'trackserver' ),
-			esc_html__( 'Preferences -> Connection -> Host', 'trackserver' ),
-			esc_url( $url ),
-			esc_attr( $val ),
-			esc_html( $val ),
-		);
-	}
-
 	public function owntracks_trackname_format_html() {
 		$val = $this->htmlspecialchars( $this->trackserver->options['owntracks_trackname_format'] );
 
@@ -513,23 +345,6 @@ class Trackserver_Settings {
 			esc_html__( 'day', 'trackserver' ),
 			esc_html__( 'hour', 'trackserver' ),
 			esc_attr( $val ),
-		);
-	}
-
-	public function upload_tag_html() {
-		$val = $this->htmlspecialchars( $this->trackserver->options['upload_tag'] );
-		$url = site_url( null ) . $this->trackserver->url_prefix;
-
-		printf(
-			'%1$s (%3$s/<b>&lt;slug&gt;</b>/) <br />' .
-			'<input type="text" size="25" name="trackserver_options[upload_tag]" id="trackserver_upload_tag" value="%4$s" autocomplete="off" /><br />' .
-			'<br />' .
-			'<strong>%2$s:</strong> %3$s/%5$s<br />',
-			esc_html__( 'The URL slug for upload via HTTP POST', 'trackserver' ),
-			esc_html__( 'Full URL', 'trackserver' ),
-			esc_url( $url ),
-			esc_attr( $val ),
-			esc_html( $val ),
 		);
 	}
 
