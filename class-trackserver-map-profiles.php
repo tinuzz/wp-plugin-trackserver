@@ -224,7 +224,7 @@ class Trackserver_Map_Profiles {
 			'latitude'    => __( 'Default latitude', 'trackserver' ),
 			'longitude'   => __( 'Default longitude', 'trackserver' ),
 			'delete'      => __( 'Delete', 'trackserver' ),
-			'addprofile'  => __( 'Add map profile', 'trackserver' ),
+			'addprofile'  => __( 'Copy map profile', 'trackserver' ),
 			'save'        => __( 'Save', 'trackserver' ),
 			'cancel'      => __( 'Cancel', 'trackserver' ),
 		);
@@ -280,7 +280,7 @@ class Trackserver_Map_Profiles {
 					<td style="text-align:center"><input type="radio" name="default_profile" value="%1$s" %11$s></td>
 					<td id="label%1$s" data-id="%1$s"><input type="text" style="width: 100%%" name="trackserver_map_profiles[%1$s][label]" value="%2$s"></td>
 					<td><textarea id="tile_url%1$s" name="trackserver_map_profiles[%1$s][tile_url]">%3$s</textarea></td>
-					<td style="text-align: center;"><input type="checkbox" name="trackserver_map_profiles[%1$s][vector]" %4$s></td>
+					<td style="text-align: center;"><input type="checkbox" id="vector%1$s" name="trackserver_map_profiles[%1$s][vector]" %4$s></td>
 					<td><textarea id="attribution%1$s" name="trackserver_map_profiles[%1$s][attribution]">%5$s</textarea></td>
 					<td><input type="text" style="width: 100%%" id="minzoom%1$s" name="trackserver_map_profiles[%1$s][min_zoom]" value="%6$s"></td>
 					<td><input type="text" style="width: 100%%" id="maxzoom%1$s" name="trackserver_map_profiles[%1$s][max_zoom]" value="%7$s"></td>
@@ -306,7 +306,11 @@ class Trackserver_Map_Profiles {
 			'	</tbody>
 			</table>
 			<br>
-			<a id="add-map-profile-button" title="%1$s" class="button" data-id="0" data-action="addprofile">%2$s</a><br><br>
+			<div id="add-profile-wrapper">
+				<a id="add-map-profile-button" title="%1$s" class="button" data-id="0" data-action="addprofile">%2$s</a>
+				<span id="add-profile-result"></span>
+			</div>
+			<br><br>
 			<div id="ts_map_profiles_changed" style="color: red; display: none">%3$s</div>',
 			esc_attr( $strings['addprofile'] ),
 			esc_html( $strings['addprofile'] ),
@@ -336,5 +340,18 @@ class Trackserver_Map_Profiles {
 	 */
 	private function htmlspecialchars( $text ) {
 		return htmlspecialchars( $text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' );
+	}
+
+	/**
+	 * Handle the REST request for adding a map profile. Sanatize the input and
+	 * add it to the existing profiles. Then save the option.
+	 *
+	 * @since 6.0
+	 */
+	public function handle_rest_add_map_profile( WP_REST_Request $request ) {
+		$new_profile = array( $request->get_body_params() );
+		$profiles    = array_merge( $this->trackserver->map_profiles, $new_profile );
+		update_option( 'trackserver_map_profiles', $profiles ); // this will call 'sanitize'
+		return array( 'message' => 'Profile saved' );
 	}
 } // class

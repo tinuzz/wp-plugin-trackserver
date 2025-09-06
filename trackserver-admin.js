@@ -426,18 +426,21 @@ var TrackserverAdmin = (function () {
               const last_id = parseInt( jQuery('#map-profile-table tr:last').data('id') );
               const next_id = last_id + 1;
               const label = 'profile' + next_id;
-
-              // Numeric values are safe to be used in the 'value' attribute.
-              const vector = trackserver_admin_settings.map_profile['tile_url'] === true ? ' checked' : '';
-              const minzoom = parseInt(trackserver_admin_settings.map_profile['min_zoom']);
-              const maxzoom = parseInt(trackserver_admin_settings.map_profile['max_zoom']);
-              const lat = parseFloat(trackserver_admin_settings.map_profile['default_lat']);
-              const lon = parseFloat(trackserver_admin_settings.map_profile['default_lon']);
+              const selected_profile = jQuery('input[name="default_profile"]:checked').val();
+              const is_vector = jQuery('#vector' + selected_profile).is(':checked')
+              const vector = is_vector === true ? ' checked' : '';                     // safe value
+              const tile_url = jQuery('#tile_url' + selected_profile).val();           // unsafe value
+              const attribution = jQuery('#attribution' + selected_profile).val();     // unsafe value
+              const minzoom = parseInt( jQuery('#minzoom' + selected_profile).val() ); // safe value
+              const maxzoom = parseInt( jQuery('#maxzoom' + selected_profile).val() ); // safe value
+              const lat = parseFloat( jQuery('#latitude' + selected_profile).val() );  // safe value
+              const lon = parseFloat( jQuery('#longitude' + selected_profile).val() ); // safe value
 
               const row = '<tr id="profile-row' + next_id + '" data-id="' + next_id + '" class="trackserver-map-profile">' +
+                '<td style="text-align:center"><input type="radio" name="default_profile" value="' + next_id + '"></td>' +
                 '<td><input type="text" style="width: 100%" name="trackserver_map_profiles[' + next_id + '][label]" value="' + label + '"></td>' +
                 '<td><textarea id="tile_url' + next_id + '" name="trackserver_map_profiles[' + next_id + '][tile_url]"></textarea></td>' +
-                '<td><input type="checkbox" name="trackserver_map_profiles[' + next_id + '][vector]"' + vector + '></td>' +
+                '<td style="text-align:center"><input type="checkbox" id="vector' + next_id + '" name="trackserver_map_profiles[' + next_id + '][vector]"' + vector + '></td>' +
                 '<td><textarea id="attribution' + next_id + '" name="trackserver_map_profiles[' + next_id + '][attribution]"></textarea></td>' +
                 '<td><input type="text" style="width: 100%" id="minzoom' + next_id + '" name="trackserver_map_profiles[' + next_id + '][min_zoom]" value="' + minzoom + '"></td>' +
                 '<td><input type="text" style="width: 100%" id="maxzoom' + next_id + '" name="trackserver_map_profiles[' + next_id + '][max_zoom]" value="' + maxzoom + '"></td>' +
@@ -446,21 +449,49 @@ var TrackserverAdmin = (function () {
                 '<td><a id="delete-profile-button' + next_id + '" title="Delete profile" class="button ts-delete-profile-button" data-id="' + next_id +'" data-action="deleteprofile">Delete</a></td></tr>';
               jQuery('#map-profile-table > tbody:last-child').append(row);
 
-              // These values can contain anything, and setting them this way prevents escaping issues.
-              const tile_url = trackserver_admin_settings.map_profile['tile_url'];
-              const attribution = trackserver_admin_settings.map_profile['attribution'];
+              // Set unsafe values this way to prevent escaping issues.
               jQuery('#tile_url' + next_id).val(tile_url);
               jQuery('#attribution' + next_id).val(attribution);
+
 
               jQuery('#delete-profile-button' + next_id).on('click', function() {
                 const row_id = jQuery(this).data('id');
                 jQuery('#profile-row' + row_id ).remove();
+                jQuery('#ts_map_profiles_changed').css({display: 'block'});
               });
+
+              wp.apiRequest( {
+                path: '/trackserver/v1/add-map-profile',
+                method: 'POST',
+                data: {
+                  label: label,
+                  tile_url: tile_url,
+                  vector: Boolean(trackserver_admin_settings.map_profile['vector']),
+                  attribution: attribution,
+                  min_zoom: minzoom,
+                  max_zoom: maxzoom,
+                  default_lat: lat,
+                  default_lon: lon
+                 }
+              } )
+                .then( ( response ) => {
+                  jQuery('#add-profile-result').html( ' &nbsp; ' + response.message + ' &nbsp; ' );
+                  setTimeout(
+                    function() {
+                      jQuery('#add-profile-result').html('');
+                    }, 3000
+                  );
+                } )
+                .catch( ( error ) => {
+                  console.error( 'Request failed:', error );
+                  jQuery('#ts_map_profiles_changed').css({display: 'block'});
+                } );
             });
 
             jQuery('.ts-delete-profile-button').on('click', function() {
               const row_id = jQuery(this).data('id');
               jQuery('#profile-row' + row_id ).remove();
+              jQuery('#ts_map_profiles_changed').css({display: 'block'});
             });
 
         },

@@ -58,3 +58,15 @@
 	height:100px;
 	box-sizing: border-box;
 }
+
+#add-profile-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+#add-profile-result {
+	padding: 3px 0px;
+	background-color: green;
+	color: white;
+}

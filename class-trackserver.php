@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-shortcode.php';
+require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-rest-api.php';
 require_once TRACKSERVER_PLUGIN_DIR . 'strftime.php';
 
 if ( ! class_exists( 'Trackserver' ) ) {

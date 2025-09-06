@@ -254,7 +254,7 @@ class Trackserver_Admin {
 				$settings['map_profile'] = Trackserver_Map_Profiles::get_instance( $this->trackserver )->get_default_profile(); // yes, do it again
 
 				wp_enqueue_style( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.css', array(), TRACKSERVER_VERSION );
-				wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox' ), TRACKSERVER_VERSION, true );
+				wp_register_script( 'trackserver-admin', TRACKSERVER_PLUGIN_URL . 'trackserver-admin.js', array( 'thickbox', 'wp-api-request' ), TRACKSERVER_VERSION, true );
 				wp_localize_script( 'trackserver-admin', 'trackserver_admin_settings', $settings );
 				wp_enqueue_script( 'trackserver-admin' );
 				break;
@@ -945,4 +945,5 @@ class Trackserver_Admin {
 			return $new_id;
 		}
 	}
+
 } // class
