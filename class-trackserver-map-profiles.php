@@ -78,6 +78,7 @@ class Trackserver_Map_Profiles {
 
 		printf( '<div class="wrap"><h2>%s</h2>', esc_html__( 'Map profiles', 'trackserver' ) );
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] === 'true' ) {
 			printf( '<div class="updated"><p>%s</p></div>', esc_html__( 'Map profiles updated', 'trackserver' ) );
 		}
@@ -138,9 +139,13 @@ class Trackserver_Map_Profiles {
 		$allowed_attrs = array( 'label', 'tile_url', 'vector', 'attribution', 'min_zoom', 'max_zoom', 'default_lat', 'default_lon' );
 		$default       = 0;
 
+		// Accessing $_POST here is ugly, but to prevent it, 'default_profile' would have to be part of 'trackserver_map_profiles',
+		// which would require adding an extra dimension to the array. Nonce is checked via settings API.
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( isset( $_POST['default_profile'] ) ) {
 			$default = (int) $_POST['default_profile'];
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		if ( is_array( $data ) ) {
 			foreach ( $data as $k => $v ) {
