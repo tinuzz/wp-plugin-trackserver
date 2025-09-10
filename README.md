@@ -43,8 +43,8 @@ For more information, please see:
 
 # Requirements
 
-Trackserver requires PHP 7.3 or newer and it needs both DOMDocument and
-SimpleXML extensions installed.
+Trackserver requires PHP 8.0 or newer and it needs the intl, DOMDocument and
+SimpleXML extensions enabled.
 
 # Credits
 
@@ -54,8 +54,10 @@ This plugin was written by Martijn Grendelman. It includes some code and librari
 * [Polyline encoder](https://github.com/emcconville/polyline-encoder) by Eric McConville
 * [Leaflet-omnivore](https://github.com/mapbox/leaflet-omnivore) by Mapbox
 * [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) by John Firebaugh and others
+* [Leaflet.Editable] (https://leaflet.github.io/Leaflet.Editable/) by Yohan Boniface
 * [Leaflet.TextPath](https://github.com/makinacorpus/Leaflet.TextPath/) by Makina Corpus
-* [Promise-polyfill](https://github.com/taylorhakes/promise-polyfill) by Taylor Hakes
+* [strftime polyfill](https://github.com/alphp/strftime) by bohwaz, Fernando Herrero and others
+* [Maplibre GL JS](https://maplibre.org/maplibre-gl-js/) by The MapLibre Organization
 
 # Frequently Asked Questions
 
