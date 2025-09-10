@@ -268,6 +268,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			add_action( 'init', array( &$this, 'wp_init' ) );
 			add_filter( 'single_template', array( &$this, 'get_tsmap_single_template' ) );
 			add_filter( '404_template', array( &$this, 'get_tsmap_404_template' ) );
+			add_filter( 'show_admin_bar', array( &$this, 'hide_tsmap_admin_bar' ) );
 
 			# Rest API
 			$rest =	Trackserver_Rest_Api::get_instance( $this );
@@ -1708,6 +1709,19 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				$template = __DIR__ . '/embedded-404.php';
 			}
 			return $template;
+		}
+
+		/**
+		 * Function to hide the admin bar from embedded maps.
+		 *
+		 * @since 5.1.0
+		 */
+		public function hide_tsmap_admin_bar( $show_admin_bar ) {
+			global $post;
+			if ( ! is_null( $post ) && $post->post_type === 'tsmap' ) {
+				return false;
+			}
+			return $show_admin_bar;
 		}
 	} // class
 } // if
