@@ -8,7 +8,10 @@
 	use IntlDateFormatter;
 	use IntlGregorianCalendar;
 	use InvalidArgumentException;
-	//use Locale;
+
+	if ( ! defined( 'ABSPATH' ) ) {
+		exit;
+	}
 
 	/**
 	 * Locale-formatted strftime using IntlDateFormatter (PHP 8 compatible)
@@ -39,7 +42,6 @@
 			$timestamp->setTimezone( new DateTimeZone( date_default_timezone_get() ) );
 		}
 
-		//$locale = Locale::canonicalize( $locale ?? ( Locale::getDefault() ?? setlocale( LC_TIME, '0' ) ) );
 		$locale = get_locale();
 
 		$intl_formats = array(

@@ -229,7 +229,7 @@ class Trackserver_Trackme {
 				}
 				$ts               = strtotime( $occurred );  // Is this reliable?
 				$trip_name_format = 'TrackMe Cloud %F';
-				$trip_name        = strftime( $trip_name_format, $ts );
+				$trip_name        = Trackserver\strftime( $trip_name_format, $ts );
 
 				$this->handle_upload( $trip_name );
 				break;

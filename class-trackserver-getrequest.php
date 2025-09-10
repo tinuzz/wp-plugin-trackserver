@@ -76,7 +76,7 @@ class Trackserver_Getrequest {
 
 		// Get track name from strftime format string. Use the 'osmand' format. This format should be renamed.
 		// The 'sendlocation' format is now deprecated.
-		$trackname = strftime( str_replace( '{source}', $source, $this->trackserver->options['osmand_trackname_format'] ), $ts );
+		$trackname = Trackserver\strftime( str_replace( '{source}', $source, $this->trackserver->options['osmand_trackname_format'] ), $ts );
 
 		if ( ! empty( $trackname ) ) {
 			$track = new Trackserver_Track( $this->trackserver, $trackname, $user_id, 'name' );

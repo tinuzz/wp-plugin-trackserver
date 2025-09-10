@@ -89,7 +89,7 @@ class Trackserver_Owntracks {
 			$occurred = date( 'Y-m-d H:i:s', $ts ); // phpcs:ignore
 
 			// Get track name from strftime format string
-			$trackname = strftime( $this->trackserver->options['owntracks_trackname_format'], $ts );
+			$trackname = Trackserver\strftime( $this->trackserver->options['owntracks_trackname_format'], $ts );
 
 			if ( ! empty( $trackname ) ) {
 				$track = new Trackserver_Track( $this->trackserver, $trackname, $this->user->ID, 'name' );
