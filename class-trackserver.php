@@ -281,7 +281,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @since 4.3
 		 */
 		public function wp_init() {
-			$this->load_textdomain();
 			$this->register_tsmap_post_type();
 		}
 
@@ -446,16 +445,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 					wp_dequeue_style( $css );
 				}
 			}
-		}
-
-		/**
-		 * Function to load the gettext domain for this plugin. Called from the 'init' hook.
-		 *
-		 * @since 4.3
-		 */
-		private function load_textdomain() {
-			// Load the MO file for the current language.
-			load_plugin_textdomain( 'trackserver', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 		}
 
 		/**
