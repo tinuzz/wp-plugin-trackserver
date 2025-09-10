@@ -268,6 +268,10 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			add_action( 'init', array( &$this, 'wp_init' ) );
 			add_filter( 'single_template', array( &$this, 'get_tsmap_single_template' ) );
 			add_filter( '404_template', array( &$this, 'get_tsmap_404_template' ) );
+
+			# Rest API
+			$rest =	Trackserver_Rest_Api::get_instance( $this );
+			add_action( 'rest_api_init', array( $rest, 'rest_api_init' ) );
 		}
 
 		/**
