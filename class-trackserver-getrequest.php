@@ -75,7 +75,6 @@ class Trackserver_Getrequest {
 		$occurred = date( 'Y-m-d H:i:s', $ts ); // phpcs:ignore
 
 		// Get track name from strftime format string. Use the 'osmand' format. This format should be renamed.
-		// The 'sendlocation' format is now deprecated.
 		$trackname = Trackserver\strftime( str_replace( '{source}', $source, $this->trackserver->options['osmand_trackname_format'] ), $ts );
 
 		if ( ! empty( $trackname ) ) {

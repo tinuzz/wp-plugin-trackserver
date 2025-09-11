@@ -38,7 +38,6 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			'trackserver_slug'              => 'trackserver',
 			'trackme_extension'             => 'z',
 			'osmand_trackname_format'       => 'OsmAnd %F %H',
-			'sendlocation_trackname_format' => 'SendLocation %F %H',
 			'owntracks_trackname_format'    => 'Owntracks %F',
 			'embedded_slug'                 => 'tsmap',
 			'gettrack_slug'                 => 'trackserver/gettrack',
@@ -125,6 +124,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$this->delete_option( 'owntracks_slug' );
 			$this->delete_option( 'sendlocation_slug' );
 			$this->delete_option( 'upload_tag' );
+			$this->delete_option( 'sendlocation_trackname_format' );
 
 			// Initialize map profiles and remove old options.
 			$this->init_map_profiles();

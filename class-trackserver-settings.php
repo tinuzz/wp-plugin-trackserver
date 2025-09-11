@@ -87,22 +87,6 @@ class Trackserver_Settings {
 			'trackserver-osmand'
 		);
 
-		// Settings for section 'trackserver-sendlocation'
-		add_settings_section(
-			'trackserver-sendlocation',
-			esc_html__( 'SendLocation settings', 'trackserver' ),
-			function() {},
-			'trackserver'
-		);
-
-		add_settings_field(
-			'trackserver_sendlocation_trackname_format',
-			esc_html__( 'SendLocation trackname format', 'trackserver' ),
-			array( &$this, 'sendlocation_trackname_format_html' ),
-			'trackserver',
-			'trackserver-sendlocation'
-		);
-
 		// Settings for section 'trackserver-owntracks'
 		add_settings_section(
 			'trackserver-owntracks',
@@ -274,35 +258,6 @@ class Trackserver_Settings {
 					// translators: placeholder is for link to strftime() manual
 					// phpcs:disable
 					__('Generated track name in %1$s format. OsmAnd online tracking does not support the concept of ' .
-					"'tracks', there are only locations. Trackserver needs to group these in tracks and automatically generates " .
-					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
-					'can be specified here. If you specify a constant string, without any strftime() format placeholders, one ' .
-					'and the same track will be used forever and all locations.', 'trackserver' ),
-					// phpcs:enable
-					'<a href="' . __( 'http://php.net/manual/en/function.strftime.php', 'trackserver' ) . '" target="_blank">strftime()</a>'
-				)
-			),
-			esc_html__( 'year', 'trackserver' ),
-			esc_html__( 'month', 'trackserver' ),
-			esc_html__( 'day', 'trackserver' ),
-			esc_html__( 'hour', 'trackserver' ),
-			esc_attr( $val ),
-		);
-	}
-
-	public function sendlocation_trackname_format_html() {
-		$val = $this->htmlspecialchars( $this->trackserver->options['sendlocation_trackname_format'] );
-
-		printf(
-			'%1$s<br /><br />' .
-			'<input type="text" size="25" name="trackserver_options[sendlocation_trackname_format]" id="trackserver_sendlocation_trackname_format" value="%6$s" autocomplete="off" /><br />' .
-			'%%Y = %2$s, %%m = %3$s, %%d = %4$s, %%H = %5$s, %%F = %%Y-%%m-%%d' .
-			'<br />',
-			wp_kses_post(
-				sprintf(
-					// translators: placeholder is for link to strftime() manual
-					// phpcs:disable
-					__('Generated track name in %1$s format. Sendlocation online tracking does not support the concept of ' .
 					"'tracks', there are only locations. Trackserver needs to group these in tracks and automatically generates " .
 					"new tracks based on the location's timestamp. The format to use (and thus, how often to start a new track) " .
 					'can be specified here. If you specify a constant string, without any strftime() format placeholders, one ' .
