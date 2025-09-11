@@ -287,7 +287,7 @@ class Trackserver_Admin {
 				check_admin_referer( 'bulk-tracks' );
 				$view = (int) $_REQUEST['author'];
 			}
-			if ( ! $this->trackserver->user_has_tracks( $view ) ) {
+			if ( $view > 0 && ! $this->trackserver->user_has_tracks( $view ) ) {
 				$view = 0;
 			}
 			update_user_meta( $user_id, 'ts_tracks_admin_view', $view );

@@ -271,7 +271,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			add_filter( 'show_admin_bar', array( &$this, 'hide_tsmap_admin_bar' ) );
 
 			# Rest API
-			$rest =	Trackserver_Rest_Api::get_instance( $this );
+			$rest = Trackserver_Rest_Api::get_instance( $this );
 			add_action( 'rest_api_init', array( $rest, 'rest_api_init' ) );
 		}
 

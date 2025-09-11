@@ -110,7 +110,9 @@ class Tracks_List_Table extends WP_List_Table {
 			$this->options['tbl_tracks'] . ' t LEFT JOIN ' .
 			$wpdb->users . ' u  ON t.user_id = u.ID ORDER BY user_login';
 
-		$this->usercache = $wpdb->get_results( $sql, OBJECT_K ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		if ( empty( $this->usercache ) ) {
+			$this->usercache = $wpdb->get_results( $sql, OBJECT_K ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		}
 
 		$view                = $this->options['view'];
 		$author_select_name  = "author-$which";

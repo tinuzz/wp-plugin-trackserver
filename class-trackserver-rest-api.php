@@ -7,6 +7,7 @@ class Trackserver_Rest_Api {
 
 	// Singleton.
 	protected static $instance;
+	private $trackserver; // Reference to the main object
 
 	/**
 	 * Trackserver_Rest_Api constructor
