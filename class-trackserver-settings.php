@@ -75,7 +75,7 @@ class Trackserver_Settings {
 		add_settings_section(
 			'trackserver-osmand',
 			esc_html__( 'OsmAnd online tracking settings', 'trackserver' ),
-			function() {},
+			function () {},
 			'trackserver'
 		);
 
@@ -91,7 +91,7 @@ class Trackserver_Settings {
 		add_settings_section(
 			'trackserver-owntracks',
 			esc_html__( 'OwnTracks settings', 'trackserver' ),
-			function() {},
+			function () {},
 			'trackserver'
 		);
 
@@ -107,7 +107,7 @@ class Trackserver_Settings {
 		add_settings_section(
 			'trackserver-embedded',
 			esc_html__( 'Embedded maps settings', 'trackserver' ),
-			function() {},
+			function () {},
 			'trackserver'
 		);
 
@@ -123,7 +123,7 @@ class Trackserver_Settings {
 		add_settings_section(
 			'trackserver-advanced',
 			esc_html__( 'Advanced settings', 'trackserver' ),
-			function() {},
+			function () {},
 			'trackserver'
 		);
 

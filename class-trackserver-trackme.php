@@ -264,9 +264,11 @@ class Trackserver_Trackme {
 
 		foreach ( $track_ids as $track_id ) {
 			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-			$sql = $wpdb->prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
+			$sql = $wpdb->prepare(
+				'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
 				$this->tbl_locations . ' l INNER JOIN ' . $this->tbl_tracks .
-				' t ON l.trip_id = t.id WHERE trip_id=%d AND l.hidden = 0 ORDER BY occurred DESC LIMIT 0,1', $track_id
+				' t ON l.trip_id = t.id WHERE trip_id=%d AND l.hidden = 0 ORDER BY occurred DESC LIMIT 0,1',
+				$track_id
 			);
 			$res = $wpdb->get_row( $sql, ARRAY_A );
 			// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared

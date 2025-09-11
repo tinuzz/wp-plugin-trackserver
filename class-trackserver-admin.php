@@ -945,5 +945,4 @@ class Trackserver_Admin {
 			return $new_id;
 		}
 	}
-
 } // class

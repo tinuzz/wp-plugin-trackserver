@@ -181,9 +181,9 @@ function strftime( string $format, $timestamp = null, ?string $locale = null ): 
 
 	$out = preg_replace_callback(
 		'/(?<!%)%([_#-]?)([a-zA-Z])/',
-		function ( $match ) use ( $translation_table, $timestamp ) {
-			$prefix  = $match[1];
-			$char    = $match[2];
+		function ( $m ) use ( $translation_table, $timestamp ) {
+			$prefix  = $m[1];
+			$char    = $m[2];
 			$pattern = '%' . $char;
 			if ( $pattern === '%n' ) {
 				return "\n";

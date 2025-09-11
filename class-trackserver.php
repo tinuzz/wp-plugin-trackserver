@@ -35,15 +35,15 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @var array $option_defaults
 		 */
 		private $option_defaults = array(
-			'trackserver_slug'              => 'trackserver',
-			'trackme_extension'             => 'z',
-			'osmand_trackname_format'       => 'OsmAnd %F %H',
-			'owntracks_trackname_format'    => 'Owntracks %F',
-			'embedded_slug'                 => 'tsmap',
-			'gettrack_slug'                 => 'trackserver/gettrack',
-			'enable_proxy'                  => false,
-			'db_version'                    => false,
-			'fetchmode_all'                 => true,
+			'trackserver_slug'           => 'trackserver',
+			'trackme_extension'          => 'z',
+			'osmand_trackname_format'    => 'OsmAnd %F %H',
+			'owntracks_trackname_format' => 'Owntracks %F',
+			'embedded_slug'              => 'tsmap',
+			'gettrack_slug'              => 'trackserver/gettrack',
+			'enable_proxy'               => false,
+			'db_version'                 => false,
+			'fetchmode_all'              => true,
 		);
 
 		private $user_meta_defaults = array(
@@ -1086,10 +1086,12 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 		private function validate_gpx_data( $xml ) {
 			$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.1.xsd';
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 			if ( @$xml->schemaValidate( $schema ) ) {
 				return $xml;
 			}
 			$schema = plugin_dir_path( __FILE__ ) . '/gpx-1.0.xsd';
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 			if ( @$xml->schemaValidate( $schema ) ) {
 				return $xml;
 			}
@@ -1102,7 +1104,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			}
 
 			if ( ! function_exists( 'wp_handle_upload' ) ) {
-				require_once( ABSPATH . 'wp-admin/includes/file.php' );
+				require_once ABSPATH . 'wp-admin/includes/file.php' ;
 			}
 
 			$message = '';
@@ -1116,7 +1118,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 						// We have to override the action, otherwise it will look for 'wp_handle_upload'. We also have to
 						// disable the type test, because WP doesn't know about GPX files and I'm not sure how to educate it.
-						$result   = wp_handle_upload(
+						$result = wp_handle_upload(
 							$f,
 							array(
 								'action'    => 'trackserver_upload_track',

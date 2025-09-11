@@ -52,8 +52,8 @@ class Trackserver_Rest_Api {
 				'trackserver/v1',
 				$rte['route'],
 				array(
-					'methods'  => $rte['methods'],
-					'callback' => array( &$this, 'handle_rest_request' ),
+					'methods'             => $rte['methods'],
+					'callback'            => array( &$this, 'handle_rest_request' ),
 					'permission_callback' => function () use ( $rte ) {
 						return current_user_can( $rte['cap'] );
 					},
@@ -76,10 +76,9 @@ class Trackserver_Rest_Api {
 			case '/trackserver/v1/add-map-profile':
 				require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-map-profiles.php';
 				return Trackserver_Map_Profiles::get_instance( $this->trackserver )->handle_rest_add_map_profile( $request );
-				break;
 		}
 
 		// return an empty object for unhandled routes. If this is ever returned, it should be considered a bug.
-		return new stdClass;
+		return new stdClass();
 	}
 }

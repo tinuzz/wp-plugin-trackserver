@@ -71,7 +71,7 @@ class Trackserver_Ulogger {
 		$response          = array();
 		$response['error'] = ( array_key_exists( 'message', $data ) ? true : false );
 		header( 'Content-Type: application/json' );
-		echo json_encode( array_merge( $response, $data ) );
+		echo wp_json_encode( array_merge( $response, $data ) );
 	}
 
 	/**

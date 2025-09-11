@@ -667,7 +667,7 @@ class Trackserver_Shortcode {
 				$track_format = $this->shortcode_data['config']['format'];
 			}
 
-			$query = json_encode(
+			$query = wp_json_encode(
 				array(
 					'id'   => $this->shortcode_data['track_ids'],
 					'live' => $this->shortcode_data['user_ids'],
@@ -967,8 +967,11 @@ class Trackserver_Shortcode {
 		if ( $track_id ) {
 
 			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-			$sql = $wpdb->prepare( 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
-				 $this->trackserver->tbl_locations . ' l INNER JOIN ' . $this->trackserver->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id=%d  ORDER BY occurred', $track_id );
+			$sql = $wpdb->prepare(
+				'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' .
+				$this->trackserver->tbl_locations . ' l INNER JOIN ' . $this->trackserver->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id=%d  ORDER BY occurred',
+				$track_id
+			);
 			$res = $wpdb->get_results( $sql, ARRAY_A );
 			// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
@@ -1027,9 +1030,9 @@ class Trackserver_Shortcode {
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		$sql_in = "('" . implode( "','", $track_ids ) . "')";
-		$sql = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->trackserver->tbl_locations .
+		$sql    = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->trackserver->tbl_locations .
 			' l INNER JOIN ' . $this->trackserver->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' AND l.hidden = 0 ORDER BY trip_id, occurred';
-		$res = $wpdb->get_results( $sql, ARRAY_A );
+		$res    = $wpdb->get_results( $sql, ARRAY_A );
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( $format === 'gpx' ) {
@@ -1132,10 +1135,10 @@ class Trackserver_Shortcode {
 	 * Send output as GPX 1.1. Takes a $wpdb result set as input.
 	 */
 	private function send_as_gpx( $res ) {
-		$dom = new DOMDocument( '1.0', 'utf-8' );
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
-		$gpx = $dom->createElementNS( 'http://www.topografix.com/GPX/1/1', 'gpx' );
+		$dom                     = new DOMDocument( '1.0', 'utf-8' );
+		$dom->preserveWhiteSpace = false; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		$dom->formatOutput       = true; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		$gpx                     = $dom->createElementNS( 'http://www.topografix.com/GPX/1/1', 'gpx' );
 		$dom->appendChild( $gpx );
 		$gpx->setAttributeNS( 'http://www.w3.org/2000/xmlns/', 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance' );
 		$gpx->setAttribute( 'creator', 'Trackserver ' . TRACKSERVER_VERSION );
