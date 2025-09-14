@@ -11,7 +11,7 @@ class Trackserver_Db {
 	 *
 	 * @since 1.0
 	 */
-	private $db_version = 29;
+	private $db_version = 30;
 
 	// Singleton
 	protected static $instance;
@@ -77,7 +77,8 @@ class Trackserver_Db {
 				`comment` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
 				`distance` int(11) NOT NULL,
 				PRIMARY KEY (`id`),
-				KEY `user_id` (`user_id`)
+				KEY `user_id` (`user_id`),
+				KEY `user_id_id` (`user_id`,`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
 			$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -151,6 +152,8 @@ class Trackserver_Db {
 			if ( count( $indexes ) === 0 ) {
 				$upgrade_sql[29] = 'ALTER TABLE ' . $this->tbl_locations . ' ADD INDEX `trip_id_occurred` (`trip_id`, `occurred`)';
 			}
+
+			$upgrade_sql[30] = 'ALTER TABLE ' . $this->tbl_tracks . ' ADD INDEX user_id_id ( `user_id`, `id` )';
 
 			for ( $i = $installed_version + 1; $i <= $this->db_version; $i++ ) {
 				if ( array_key_exists( $i, $upgrade_sql ) ) {
