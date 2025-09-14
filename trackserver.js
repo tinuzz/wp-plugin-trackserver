@@ -630,12 +630,34 @@ var Trackserver = (function () {
                         .setLatLng(mymapdata.center)
                         .setContent(trackserver_i18n['no_tracks_to_display']).openOn(map);
                 }
+
+                if (mymapdata.locate) {
+                    var locateControl = L.control.locate({
+                      locateOptions: { 'enableHighAccuracy': true },
+                      setView: 'always',
+                      keepCurrentZoomLevel: true,
+                      initialZoomLevel: false,
+                      drawCircle: true,
+                      showPopup: false
+                    })
+                    .addTo( map )
+
+                    map.on('locateactivate', function() {
+                      // Stop liveupdate
+                      if ( 'liveUpdateControl' in this ) {
+                        this.liveUpdateControl.stopUpdating();
+                      }
+                    });
+
+                    map.on('liveupdatestart', function() {
+                      locateControl.stop();
+                    });
+                }
             }
         }
     };
 
 })();
-
 
 // Requires global variable 'trackserver_mapdata' to be set
 if (typeof trackserver_mapdata != 'undefined')

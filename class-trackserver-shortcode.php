@@ -33,6 +33,7 @@ class Trackserver_Shortcode {
 		'live'       => null,
 		'maxage'     => false,
 		'quiet'      => false,
+		'locate'     => false,
 	);
 
 	private $link_attr_defaults = array(
@@ -188,6 +189,7 @@ class Trackserver_Shortcode {
 		$this->shortcode_data['config']['continuous']  = $this->get_content_boolean( $atts['continuous'], true );
 		$this->shortcode_data['config']['live']        = $this->get_content_boolean( $atts['live'], false );
 		$this->shortcode_data['config']['quiet']       = $this->get_content_boolean( $atts['quiet'], false );
+		$this->shortcode_data['config']['locate']      = $this->get_content_boolean( $atts['locate'], false );
 		$this->shortcode_data['config']['zoom']        = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : false );
 		$this->shortcode_data['config']['fit']         = ( $atts['zoom'] !== false ? false : true );  // zoom is always set, so we need a signal for altering fitBounds() options
 		$this->shortcode_data['config']['profile']     = $atts['profile'];
@@ -604,11 +606,17 @@ class Trackserver_Shortcode {
 			'alltracks'    => $alltracks_url,
 			'profile'      => $map_profile,
 			'quiet'        => $this->shortcode_data['config']['quiet'],
+			'locate'       => $this->shortcode_data['config']['locate'],
 		);
 
 		$this->trackserver->mapdata[]    = $mapdata;
 		$out                             = '<div id="' . $div_id . '" ' . $class_str . ' style="width: ' . esc_attr( $this->shortcode_data['config']['width'] ) . '; height: ' . esc_attr( $this->shortcode_data['config']['height'] ) . '; max-width: 100%"></div>';
 		$this->trackserver->need_scripts = true;
+
+		if ( $mapdata['locate'] ) {
+			$this->trackserver->need_locatecontrol = true;
+		}
+
 		return $out;
 	}
 

@@ -120,6 +120,7 @@ For the `[tsmap]` shortcode:
   tracks, this number represents the maximum zoom level, so the map will always
   fit all the tracks.
 * **quiet**: suppress a message popup if there is nothing to display on the map.
+* **locate**: enable a control to show the user's location on the map.
 
 The following attributes apply to tracks that are drawn on the map. Each of
 them can contain multiple values, separated by commas (or colons, in the case

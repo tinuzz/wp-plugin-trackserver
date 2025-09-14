@@ -23,8 +23,9 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 * @var array $libversions
 		 */
 		private $libversions = array(
-			'leaflet'     => '1.9.4',
-			'maplibre_gl' => '5.6.2',
+			'leaflet'               => '1.9.4',
+			'maplibre_gl'           => '5.6.2',
+			'leaflet-locatecontrol' => '0.85.1',
 		);
 
 		/**
@@ -67,6 +68,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		private $have_scripts           = false;
 		public  $need_scripts           = false;
 		public  $need_maplibre          = false;
+		public  $need_locatecontrol     = false;
 		// phpcs:enable
 
 		/**
@@ -498,6 +500,18 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		}
 
 		/**
+		 * Function to enqueue Locatecontrol scripts and style.
+		 *
+		 * @since 6.0
+		 */
+		public function enqueue_locatecontrol() {
+			$lib  = 'leaflet-locatecontrol';
+			$deps = array( 'leaflet-js' );
+			$this->wp_enqueue_style( $lib, TRACKSERVER_JSLIB . $lib . '-' . $this->libversions[ $lib ] . '/dist/L.Control.Locate.min.css' );
+			$this->wp_enqueue_script( $lib, TRACKSERVER_JSLIB . $lib . '-' . $this->libversions[ $lib ] . '/dist/L.Control.Locate.min.js', $deps, false, true );
+		}
+
+		/**
 		 * Provision the JavaScript that initializes the map(s) with settings and data
 		 *
 		 * @since 2.0
@@ -509,6 +523,9 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 			if ( $this->need_maplibre ) {
 				$this->enqueue_maplibre();
+			}
+			if ( $this->need_locatecontrol ) {
+				$this->enqueue_locatecontrol();
 			}
 
 			// Enqueue the main script last
