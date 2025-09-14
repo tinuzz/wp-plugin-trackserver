@@ -163,7 +163,7 @@ Map profiles have a label by which you can reference them in a shortcode (profil
 
 If the tile/style URL contains the string 'style.json', the URL will be treated as pointing to a vector tile style declaration, and Trackserver will load some extra JavaScript and CSS (Maplibre GL JS) to render vector tiles rather than raster tiles. This should work with vector tile providers like Maptiler and OpenFreeMap. It can also work with Mapbox, but the style JSON needs modifications to make it work.
 
-= How does the shortcode content syntax work? =
+= How does the extended shortcode syntax work? =
 
 Since Trackserver v6.0, an alternative syntax for adding tracks to a map is provided, using the shortcode content, rather than the attributes. An example:
 
