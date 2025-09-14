@@ -193,16 +193,16 @@ class Trackserver_Shortcode {
 		$this->shortcode_data['config']['zoom']        = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : false );
 		$this->shortcode_data['config']['fit']         = ( $atts['zoom'] !== false ? false : true );  // zoom is always set, so we need a signal for altering fitBounds() options
 		$this->shortcode_data['config']['profile']     = $atts['profile'];
-		$this->shortcode_data['config']['infobar_tpl'] = null;
 
-		if ( $atts['infobar'] !== false ) {
-			$this->shortcode_data['config']['infobar'] = ( in_array( $atts['infobar'], array( 'true', 't', 'yes', 'y' ), true ) ? true : $atts['infobar'] ); // selectively convert to boolean
-		}
+		// 'infobar' can be true, false (both in boolean or string form) or a string
+		// true means: use the template from the user metadata.
+		// string means: use the value as a template.
+		// End result: 'infobar' is either true or false and 'infobar_tpl' contains either NULL or the template.
 
-		if ( in_array( $atts['infobar'], array( 'true', 't', 'yes', 'y', 'false', 'f', 'no', 'n' ), true ) ) {
+		if ( in_array( $atts['infobar'], array( true, 'true', 't', 'yes', 'y', false, 'false', 'f', 'no', 'n' ), true ) ) {
 			$this->shortcode_data['config']['infobar']     = $this->get_content_boolean( $atts['infobar'] );
-			$this->shortcode_data['config']['infobar_tpl'] = null;
-		} elseif ( $atts['infobar'] !== false ) {    // set to other value
+			$this->shortcode_data['config']['infobar_tpl'] = null; // to be filled in later
+		} else {
 			$this->shortcode_data['config']['infobar']     = true;
 			$this->shortcode_data['config']['infobar_tpl'] = $atts['infobar'];    // Already HTML escaped.
 		}
