@@ -1354,7 +1354,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			}
 
 			$res       = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$track_ids = $wpdb->get_col( $sql, 1 );           // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$track_ids = $wpdb->get_col( null, 1 );           // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$idmap     = array_column( $res, 'id', 'user_id' );
 
 			/*
