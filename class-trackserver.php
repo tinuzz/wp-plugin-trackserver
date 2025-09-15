@@ -1263,28 +1263,32 @@ if ( ! class_exists( 'Trackserver' ) ) {
 				} else {
 					foreach ( $trk->trkseg as $trkseg ) {
 						foreach ( $trkseg->trkpt as $trkpt ) {
-							$trkpt_ts = $this->parse_iso_date( (string) $trkpt->time );
-							if ( ! $trip_start ) {
-								$trip_start = date( 'Y-m-d H:i:s', $trkpt_ts ); // phpcs:ignore
-								$last_ts    = (int) $trkpt_ts - 1;
+
+							if ( $trip_start ) {
 								if ( empty( $trkpt->time ) ) {
-									$fake_time = true;
+									$trkpt_datetime = $last_datetime->add( new DateInterval( 'PT1S' ) );
+								} else {
+									$trkpt_datetime = $this->parse_iso_date( (string) $trkpt->time );
 								}
+							} else {
+								$trkpt_datetime = $this->parse_iso_date( ( empty( $trkpt->time ) ? 'now' : (string) $trkpt->time ) );
+								$trip_start     = $trkpt_datetime;
 							}
+
 							$points[] = array(
 								'latitude'  => (string) $trkpt['lat'],
 								'longitude' => (string) $trkpt['lon'],
 								'altitude'  => (string) $trkpt->ele,
-								'timestamp' => ( $fake_time ? ( $last_ts + 1 ) : $this->parse_iso_date( (string) $trkpt->time ) ),
+								'timestamp' => $trkpt_datetime->format( 'U' ),
 							);
 							++$ntrkpt;
-							++$last_ts;
+							$last_datetime = $trkpt_datetime;
 						}
 					}
 					$data   = array(
 						'user_id' => $user_id,
 						'name'    => $trip_name,
-						'created' => $trip_start,
+						'created' => $trip_start->format( 'Y-m-d H:i:s' ),
 						'source'  => $source,
 						'comment' => $comment,
 					);
@@ -1306,11 +1310,15 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			);
 		}
 
+		/**
+		 * Function to parse a date from a string and return a DateTime object with the
+		 * timezone set to the local time.
+		 */
 		private function parse_iso_date( $ts ) {
-			//$i = new DateInterval('PT' .strval (get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) .'S' );
-			$d = new DateTime( $ts );
-			//$d = $d->add( $i );
-			return $d->format( 'U' );
+			$datetime = new DateTime( $ts );   // Datetime object with 'Z' timezone
+			$timezone = new DateTimeZone( wp_timezone_string() );
+			$datetime = $datetime->setTimezone( $timezone );
+			return $datetime;
 		}
 
 		/**
