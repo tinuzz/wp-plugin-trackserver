@@ -729,7 +729,12 @@ class Trackserver_Shortcode {
 		$this->attr_data = array();   // Start with an empty array for each tsmap.
 
 		foreach ( $allowed_attrs as $a ) {
-			$this->attr_data[ $a ] = ( $atts[ $a ] ? explode( ',', $atts[ $a ] ) : false );
+			if ( is_bool(  $atts[ $a ] ) ) {
+				$this->attr_data[ $a ] = $atts[ $a ];
+			}
+			else {
+				$this->attr_data[ $a ] = ( $atts[ $a ] ? explode( ',', $atts[ $a ] ) : false );
+			}
 		}
 	}
 
@@ -799,7 +804,7 @@ class Trackserver_Shortcode {
 	 * @since 5.1
 	 */
 	private function get_boolean_att( $att_name, $default_value = false ) {
-		$p = false;
+		$p = $this->attr_data[ $att_name ];
 		if ( is_array( $this->attr_data[ $att_name ] ) ) {
 			$p = array_shift( $this->attr_data[ $att_name ] );
 			if ( empty( $this->attr_data[ $att_name ] ) ) {
@@ -807,9 +812,9 @@ class Trackserver_Shortcode {
 			}
 		}
 		if ( $default_value === false ) {
-			return ( in_array( $p, array( 'true', 't', 'yes', 'y' ), true ) ? true : false ); // default false
+			return ( in_array( $p, array( true, 'true', 't', 'yes', 'y' ), true ) ? true : false ); // default false
 		} else {
-			return ( in_array( $p, array( 'false', 'f', 'no', 'n' ), true ) ? false : true ); // default true
+			return ( in_array( $p, array( false, 'false', 'f', 'no', 'n' ), true ) ? false : true ); // default true
 		}
 	}
 
