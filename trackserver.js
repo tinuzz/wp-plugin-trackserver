@@ -307,9 +307,9 @@ var Trackserver = (function () {
 
                         if (do_arrows) {
                             // Draw textPath
-                            let text = '           ➜          ';
-                            //text = '         ➤       ';
-                            layer.setText(text, { repeat: true, offset: 0, attributes: {
+                            let text = '➜';
+                            //text = '➤';
+                            layer.setText(text, { repeat: 12, offset: 0, attributes: {
                               'font-size': '14px',
                               'fill': layer.options.color,
                               'fill-opacity': layer.options.opacity,

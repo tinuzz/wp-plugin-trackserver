@@ -26,6 +26,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			'leaflet'               => '1.9.4',
 			'maplibre_gl'           => '5.6.2',
 			'leaflet-locatecontrol' => '0.85.1',
+			'leaflet-textpath'      => '1.3.0',
 		);
 
 		/**
@@ -371,7 +372,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$this->wp_enqueue_script( 'leaflet-fullscreen', TRACKSERVER_JSLIB . 'leaflet-fullscreen-1.0.2/Leaflet.fullscreen.min.js', array(), false, true );
 			$this->wp_enqueue_script( 'leaflet-omnivore', TRACKSERVER_PLUGIN_URL . 'trackserver-omnivore.js', array(), TRACKSERVER_VERSION, true );
 			$this->wp_enqueue_style( 'trackserver', TRACKSERVER_PLUGIN_URL . 'trackserver.css', array(), TRACKSERVER_VERSION );
-			$this->wp_enqueue_script( 'leaflet-textpath', TRACKSERVER_JSLIB . 'leaflet-textpath-1.2.3/leaflet.textpath.js', array(), TRACKSERVER_VERSION, true );
+			$this->wp_enqueue_script( 'leaflet-textpath', TRACKSERVER_JSLIB . 'leaflet-textpath-' . $this->libversions['leaflet-textpath'] . '/leaflet.textpath.js', array(), TRACKSERVER_VERSION, true );
 
 			// To be localized in wp_footer() with data from the shortcode(s). Enqueued last, in wp_enqueue_scripts.
 			// Also localized and enqueued in admin_enqueue_scripts
