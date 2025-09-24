@@ -8,3 +8,4 @@ test-*.php
 trackme-cloud.txt
 *-cookie.txt
 *.xcf
+node_modules
