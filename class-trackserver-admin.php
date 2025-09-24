@@ -551,7 +551,7 @@ class Trackserver_Admin {
 			<!-- Merge tracks -->
 			<div id="trackserver-merge-modal" style="display:none;">
 				<p>
-					<?php esc_html__( 'Merge all points of multiple tracks into one track. Please specify the name for the merged track.', 'trackserver' ); ?>
+					<?php esc_html_e( 'Merge all points of multiple tracks into one track. Please specify the name for the merged track.', 'trackserver' ); ?>
 					<form method="post" action="<?php echo esc_url( $url ); ?>">
 						<table style="width: 100%">
 							<?php wp_nonce_field( 'manage_track' ); ?>
