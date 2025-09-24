@@ -201,8 +201,8 @@ class Trackserver_Admin {
 				$this->trackserver->load_common_scripts();
 
 				// The is_ssl() check should not be necessary, but somehow, get_home_url() doesn't correctly return a https URL by itself
-				$track_base_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?', ( is_ssl() ? 'https' : 'http' ) );
-				wp_localize_script( 'trackserver', 'track_base_url', array( 'track_base_url' => $track_base_url ) );
+				$track_base_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/', ( is_ssl() ? 'https' : 'http' ) );
+				wp_localize_script( 'trackserver', 'track_base_url', $track_base_url );
 
 				$settings['profile_msg'] = Trackserver_Profile::get_instance( $this->trackserver )->get_messages();
 				$settings['map_profile'] = Trackserver_Map_Profiles::get_instance( $this->trackserver )->get_default_profile();
