@@ -321,10 +321,10 @@ Yes. Donations are welcome. Please visit http://www.grendelman.net/wp/trackserve
 = Unreleased =
 
 Added:
-* A shortcode attribute named 'arrows', to enable drawing arrows over a track to indicate its direction. The implementation is very simple, with a hardcoded arrow sign, but the JS library being used allows for any text to be rendered, so in the future, this functionality may become more flexible and configurable.
-* New syntax for adding tracks to the map, using shortcode content, rather than attributes.
 * Map profiles, allowing you to use different tile sources and map settings (like zoom levels) in different maps.
 * Experimental support for vector tiles, using Maplibre GL JS.
+* New syntax for adding tracks to the map, using shortcode content, rather than attributes.
+* A shortcode attribute named 'arrows', to enable drawing arrows over a track to indicate its direction. The implementation is very simple, with a hardcoded arrow sign, but the JS library being used allows for any text to be rendered, so in the future, this functionality may become more flexible and configurable.
 * A shortcode attribute named 'quiet', to suppress the 'Nothing to display' popup on the map when Trackserver doesn't find any valid tracks or points to display.
 * A shortcode attribute named 'locate', to add a control on the map that allows the user to see its own location (#51).
 
@@ -335,6 +335,7 @@ Changed:
 * Changed admin menu order and made 'Manage tracks' the primary page, rather than 'Options'.
 * If a boolean shortcode attribute like 'live' and 'quiet' is given as a flag without a value, it now evaluates to 'true'.
 * Start using the WordPress REST API in the backend (only with map profiles for now).
+* Modernized the frontend JavaScript code.
 * Minimum PHP version set to 8.0.
 
 Fixed:
