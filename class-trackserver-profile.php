@@ -93,7 +93,6 @@ class Trackserver_Profile {
 		?>
 		<div class="wrap">
 			<h2><?php echo esc_html( $title ); ?></h2>
-			<?php $this->trackserver->notice_bulk_action_result(); ?>
 			<form method="post">
 				<?php wp_nonce_field( 'your-profile' ); ?>
 				<table class="form-table">

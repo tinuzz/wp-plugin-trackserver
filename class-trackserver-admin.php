@@ -66,6 +66,7 @@ class Trackserver_Admin {
 		add_action( 'admin_post_trackserver_save_track', array( &$this, 'admin_post_save_track' ) );
 		add_action( 'admin_post_trackserver_upload_track', array( &$this, 'admin_post_upload_track' ) );
 		add_action( 'wp_ajax_trackserver_save_track', array( &$this, 'admin_ajax_save_modified_track' ) );
+		add_action( 'admin_notices', array( &$this, 'admin_notices' ) );
 
 		// WordPress MU
 		add_action( 'wpmu_new_blog', array( &$this, 'wpmu_new_blog' ) );
@@ -259,6 +260,10 @@ class Trackserver_Admin {
 				wp_enqueue_script( 'trackserver-admin' );
 				break;
 		}
+	}
+
+	public function admin_notices() {
+		$this->trackserver->notice_bulk_action_result();
 	}
 
 	/**
@@ -594,7 +599,6 @@ class Trackserver_Admin {
 				<input type="hidden" name="page" value="trackserver-tracks" />
 				<div class="wrap">
 					<h2><?php esc_html_e( 'Manage tracks', 'trackserver' ); ?></h2>
-					<?php $this->trackserver->notice_bulk_action_result(); ?>
 					<?php $this->tracks_list_table->views(); ?>
 					<?php $this->tracks_list_table->search_box( esc_attr__( 'Search tracks', 'trackserver' ), 'search_tracks' ); ?>
 					<?php $this->tracks_list_table->display(); ?>

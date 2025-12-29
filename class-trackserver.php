@@ -1574,11 +1574,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		 */
 		public function notice_bulk_action_result() {
 			if ( $this->bulk_action_result_msg ) {
-				?>
-					<div class="updated">
-						<p><?php echo nl2br( esc_html( htmlspecialchars( $this->bulk_action_result_msg ) ) ); ?></p>
-					</div>
-				<?php
+				wp_admin_notice( $this->bulk_action_result_msg, array( 'type' => 'info' ) );
 			}
 		}
 
