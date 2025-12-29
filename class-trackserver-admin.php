@@ -222,7 +222,7 @@ class Trackserver_Admin {
 			case 'toplevel_page_trackserver-options':
 			case 'trackserver_page_trackserver-map-profiles':
 			case 'trackserver_page_trackserver-options':
-				$settings['msg']   = array(
+				$settings['msg']         = array(
 					'areyousure'     => __( 'Are you sure?', 'trackserver' ),
 					'delete'         => __( 'deletion', 'trackserver' ),
 					'deletecap'      => __( 'Deleting', 'trackserver' ),
@@ -245,11 +245,11 @@ class Trackserver_Admin {
 					/* translators: %1$s = action, %2$s = number and %3$s is 'track' or 'tracks' */
 					'selectminimum'  => __( 'For %1$s, select %2$s %3$s at minimum', 'trackserver' ),
 				);
-				$settings['urls']  = array(
+				$settings['urls']        = array(
 					'adminpost'    => admin_url() . 'admin-post.php',
 					'managetracks' => admin_url() . 'admin.php?page=trackserver-tracks',
 				);
-				$settings['icons'] = array(
+				$settings['icons']       = array(
 					'trashcan' => $this->trashcan_icon,
 				);
 				$settings['map_profile'] = Trackserver_Map_Profiles::get_instance( $this->trackserver )->get_default_profile(); // yes, do it again
@@ -887,6 +887,7 @@ class Trackserver_Admin {
 			$track_format = 'gpx';
 			// phpcs:ignore
 			$query         = json_encode( array( 'id' => $track_ids, 'live' => array() ) );
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			$query         = base64_encode( $query );
 			$query_nonce   = wp_create_nonce( 'manage_track_' . $query );
 			$alltracks_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&format=$track_format&admin=1&_wpnonce=$query_nonce" );
