@@ -886,7 +886,7 @@ class Trackserver_Admin {
 
 			$track_format = 'gpx';
 			// phpcs:ignore
-			$query         = json_encode( array( 'id' => $track_ids, 'live' => array() ) );
+			$query         = wp_json_encode( array( 'id' => $track_ids, 'live' => array() ) );
 			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			$query         = base64_encode( $query );
 			$query_nonce   = wp_create_nonce( 'manage_track_' . $query );

@@ -525,7 +525,7 @@ class Trackserver_Shortcode {
 		if ( $this->trackserver->options['fetchmode_all'] ) {
 
 			if ( count( $this->shortcode_data['tracks'] ) ) {
-				$query = json_encode(
+				$query = wp_json_encode(
 					array(
 						'id'   => $this->shortcode_data['track_ids'],
 						'live' => $this->shortcode_data['user_ids'],
@@ -1141,7 +1141,7 @@ class Trackserver_Shortcode {
 			'metadata' => $metadata,
 		);
 		header( 'Content-Type: application/json' );
-		echo json_encode( $data );
+		echo wp_json_encode( $data );
 	}
 
 	/**
@@ -1255,7 +1255,7 @@ class Trackserver_Shortcode {
 		}
 
 		header( 'Content-Type: application/json' );
-		echo json_encode( $tracks );
+		echo wp_json_encode( $tracks );
 	}
 
 	/**

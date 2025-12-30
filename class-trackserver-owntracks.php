@@ -183,7 +183,7 @@ class Trackserver_Owntracks {
 
 			$objects[] = $card;
 		}
-		return json_encode( $objects );
+		return wp_json_encode( $objects );
 	}
 
 	/**
