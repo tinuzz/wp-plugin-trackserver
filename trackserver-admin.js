@@ -688,8 +688,10 @@ const TrackserverAdmin = (() => {
             map.addControl(new L.EditControl());
 
             map.on('editable:vertex:contextmenu', function(e) {
-                const vertex = e.vertex;
+                const vertex       = e.vertex;
                 const vertex_index = _this.get_vertex_index(vertex);
+                const track_id     = vertex.editor.feature.options.track_id;
+                const nonce        = trackserver_mapdata[0].tracks.find(t => t.track_id === track_id).nonce;
 
                 map.once('popupopen', function() {
                     jQuery('.deletepoint').on('click', function() {
@@ -701,6 +703,8 @@ const TrackserverAdmin = (() => {
                             // This function will be called with TrackserverAdmin as context.
                             _this.show_savedialog_if_modified(function() {
                                 jQuery('#trackserver-edit-action').val('split');
+                                jQuery('#track_id').val(track_id);
+                                jQuery('#_wpnonce').val(nonce);
                                 jQuery('#trackserver-edit-track').append(
                                     jQuery('<input>').attr({
                                         type: 'hidden',
