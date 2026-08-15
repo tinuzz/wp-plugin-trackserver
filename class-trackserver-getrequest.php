@@ -74,8 +74,13 @@ class Trackserver_Getrequest {
 		$ts      += $this->trackserver->utc_to_local_offset( $ts );
 		$occurred = date( 'Y-m-d H:i:s', $ts ); // phpcs:ignore
 
-		// Get track name from strftime format string. Use the 'osmand' format. This format should be renamed.
-		$trackname = Trackserver\strftime( str_replace( '{source}', $source, $this->trackserver->options['osmand_trackname_format'] ), $ts );
+		if ( isset( $_REQUEST['tn'] ) ) {
+			// Strip newlines and sanitize input
+			$trackname = str_replace( array( "\r", "\n" ), '', wp_check_invalid_utf8( wp_unslash( $_REQUEST['tn'] ), true ) );
+		} else {
+			// Get track name from strftime format string. Use the 'osmand' format. This format should be renamed.
+			$trackname = Trackserver\strftime( str_replace( '{source}', $source, $this->trackserver->options['osmand_trackname_format'] ), $ts );
+		}
 
 		if ( ! empty( $trackname ) ) {
 			$track = new Trackserver_Track( $this->trackserver, $trackname, $user_id, 'name' );
