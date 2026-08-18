@@ -1,7 +1,7 @@
 <?php
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-	die;
+	exit;
 }
 
 function delete_tables() {

@@ -50,7 +50,7 @@ License: GPL2
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	die( 'No, sorry.' );
+	exit;
 }
 
 define( 'TRACKSERVER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

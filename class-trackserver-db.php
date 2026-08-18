@@ -1,7 +1,11 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
-	die( 'No, sorry.' );
+	exit;
 }
 
 class Trackserver_Db {

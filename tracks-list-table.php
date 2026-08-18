@@ -1,4 +1,12 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
+	exit;
+}
+
 class Tracks_List_Table extends WP_List_Table {
 
 	private $options;

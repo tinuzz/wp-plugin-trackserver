@@ -1,8 +1,13 @@
 <?php
 
-if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
-	die( 'No, sorry.' );
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
+
+if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
+	exit;
+}
+
 class Trackserver_Rest_Api {
 
 	// Singleton.

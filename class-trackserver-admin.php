@@ -1,7 +1,11 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
-	die( 'No, sorry.' );
+	exit;
 }
 
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-db.php';

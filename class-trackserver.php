@@ -4,6 +4,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+if ( ! defined( 'TRACKSERVER_PLUGIN_DIR' ) ) {
+	exit;
+}
+
 require_once TRACKSERVER_PLUGIN_DIR . 'functions-trackserver.php';
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-shortcode.php';
 require_once TRACKSERVER_PLUGIN_DIR . 'class-trackserver-rest-api.php';
