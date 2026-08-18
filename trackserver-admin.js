@@ -1,4 +1,4 @@
-/* global L, Trackserver, trackserver_admin_settings, track_base_url, wp, jQuery, ajaxurl */
+/* global L, Trackserver, trackserver_admin_settings, trackserver_extra_settings, wp, jQuery, ajaxurl */
 
 let tb_window_width;
 let tb_window_height;
@@ -26,7 +26,7 @@ window.tb_click = function() {
 
     if (ts_action === 'view' || ts_action === 'edit') {
         // track_base_url comes from WP via wp_localize_script()
-        const track_url = new URL(track_base_url);
+        const track_url = new URL(trackserver_extra_settings.track_base_url);
         track_url.searchParams.append("admin", 1);
         let nonce = false;
         let track_id;
@@ -236,7 +236,7 @@ const TrackserverAdmin = (() => {
             }
             if (action === 'view') {
                 const tracks = [];
-                const track_url = new URL(track_base_url);
+                const track_url = new URL(trackserver_extra_settings.track_base_url);
                 track_url.searchParams.append("admin", 1);
                 let nonce =  false;
                 this.checked.each(function() {
