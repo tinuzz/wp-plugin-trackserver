@@ -65,7 +65,7 @@ class Trackserver_Map_Profiles {
 			esc_html__( 'Map profiles', 'trackserver' ), // page title
 			esc_html__( 'Map profiles', 'trackserver' ), // menu title
 			'manage_options',                            // capability
-			$this->page_name          ,                  // menu slug
+			$this->page_name,                            // menu slug
 			array( &$this, 'map_profiles_page_html' ),   // callback
 		);
 	}
@@ -98,7 +98,6 @@ class Trackserver_Map_Profiles {
 		?>
 			</form>
 		<?php
-
 	}
 
 	/**
