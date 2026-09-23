@@ -23,19 +23,17 @@ Frontend:
 - icons!
 
 Admin backend:
-- add user profile setting for default map center (replace hardcoded coordinates)
 - file tracks in folders/collections
 - add waypoints
 - add HOWTO screens for OwnTracks, LocusMaps and other supported apps
 - add a Users page for Trackserver user profile management by WP admins
 - add a button to create a 'Trackserver_Subscriber' role, which is Subscriber + 'use_trackserver'
-- bulk action to remove / reapply geofences
+- bulk action to remove / reapply geofences [#10]
 - reverse geofence support
-- map profiles, [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers) plugin ?
 - Move OsmAnd / SendLocation / OwnTracks trackname format from Options to Profile
 - For OwnTracks / TrackMe cloud sharing, add a profile settings for share last location duration (TrackMe limit is 1h)
 - delete or chown location data when removing users from WordPress
-- use WP_List_Table for app passwords
+- Move client configuration info to dedicated page
 
 Javascript:
 - better live tracking tooltip handling
