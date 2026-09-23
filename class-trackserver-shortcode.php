@@ -733,10 +733,9 @@ class Trackserver_Shortcode {
 		$this->attr_data = array();   // Start with an empty array for each tsmap.
 
 		foreach ( $allowed_attrs as $a ) {
-			if ( is_bool(  $atts[ $a ] ) ) {
+			if ( is_bool( $atts[ $a ] ) ) {
 				$this->attr_data[ $a ] = $atts[ $a ];
-			}
-			else {
+			} else {
 				$this->attr_data[ $a ] = ( $atts[ $a ] ? explode( ',', $atts[ $a ] ) : false );
 			}
 		}
