@@ -92,6 +92,9 @@ class Trackserver_Trackme {
 	 */
 	private function handle_request() {
 		// Delegate the action to another function
+		if ( ! isset( $_GET['a'] ) ) {
+				return;
+		}
 		switch ( $_GET['a'] ) {
 			case 'upload':
 				$this->handle_upload();
