@@ -220,6 +220,18 @@ class Tracks_List_Table extends WP_List_Table {
 			$this->options['tbl_tracks'] . ' t LEFT JOIN ' . $this->options['tbl_locations'] .
 			" l ON l.trip_id = t.id WHERE $where GROUP BY t.id ORDER BY $orderby $order LIMIT $offset,$limit";
 
+		// We could implement caching of the results for faster page reloads, but we'd need to invalidate
+		// the whole cache group when we update something, which is not yet implemented, so disable for now.
+		/*
+		$cache_key = md5( $sql );
+		$data      = wp_cache_get( $cache_key, 'trackserver' );
+
+		if ( $data === false ) {
+			$data = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			wp_cache_set( $cache_key, $data, 'trackserver', 30 );
+		}
+		*/
+
 		$data = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		/*
