@@ -8,4 +8,11 @@ test-*.php
 trackme-cloud.txt
 *-cookie.txt
 *.xcf
+*.json
 node_modules
+README-js.md
+README-pois-markers.md
+gpx-extensions.txt
+trackserver-*.gpx
+TODO-REPLACE_SESSIONS_WITH_REAL_COOKIES_IN_ULOGGER
+eslint.config.mjs
