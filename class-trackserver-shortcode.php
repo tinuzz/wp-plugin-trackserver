@@ -450,9 +450,10 @@ class Trackserver_Shortcode {
 		$default_lng = $profile['default_lon'];
 
 		if ( count( $this->shortcode_data['all_track_ids'] ) ) {
-			$sql_in = "('" . implode( "','", $this->shortcode_data['all_track_ids'] ) . "')";
-			$sql    = 'SELECT AVG(latitude) FROM ' . $this->trackserver->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
-			$result = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$track_ids = array_map( 'intval', $this->shortcode_data['all_track_ids'] );
+			$sql_in    = '(' . implode( ',', $track_ids ) . ')';
+			$sql       = 'SELECT AVG(latitude) FROM ' . $this->trackserver->tbl_locations . ' WHERE trip_id IN ' . $sql_in;
+			$result    = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			if ( $result ) {
 				$default_lat = $result;
 			}
@@ -1035,7 +1036,7 @@ class Trackserver_Shortcode {
 			$author_id = $this->trackserver->get_author( $post_id );
 		}
 
-		$query               = base64_decode( $query_string );
+		$query               = base64_decode( $query_string ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 		$query               = json_decode( $query );
 		$track_ids           = $query->id;
 		$user_ids            = $query->live;
@@ -1045,10 +1046,11 @@ class Trackserver_Shortcode {
 		$track_ids           = array_merge( $validated_track_ids, $user_track_ids );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-		$sql_in = "('" . implode( "','", $track_ids ) . "')";
-		$sql    = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->trackserver->tbl_locations .
+		$track_ids = array_map( 'intval', $track_ids );
+		$sql_in    = '(' . implode( ',', $track_ids ) . ')';
+		$sql       = 'SELECT trip_id, latitude, longitude, altitude, speed, occurred, t.user_id, t.name, t.distance, t.comment FROM ' . $this->trackserver->tbl_locations .
 			' l INNER JOIN ' . $this->trackserver->tbl_tracks . ' t ON l.trip_id = t.id WHERE trip_id IN ' . $sql_in . ' AND l.hidden = 0 ORDER BY trip_id, occurred';
-		$res    = $wpdb->get_results( $sql, ARRAY_A );
+		$res       = $wpdb->get_results( $sql, ARRAY_A );
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( $format === 'gpx' ) {
@@ -1353,7 +1355,7 @@ class Trackserver_Shortcode {
 
 		// Remove all non-numeric values from the tracks array and prepare query
 		$track_ids = array_map( 'intval', array_filter( $track_ids, 'is_numeric' ) );
-		$sql_in    = "('" . implode( "','", $track_ids ) . "')";
+		$sql_in    = '(' . implode( ',', $track_ids ) . ')';
 
 		// If the author has the power, don't check the track's owner
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
@@ -1400,7 +1402,8 @@ class Trackserver_Shortcode {
 
 		if ( count( $user_ids ) > 0 ) {
 			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-			$sql_in             = "('" . implode( "','", $user_ids ) . "')";
+			$user_ids           = array_map( 'intval', $user_ids );
+			$sql_in             = '(' . implode( ',', $user_ids ) . ')';
 			$sql                = 'SELECT DISTINCT(user_id) FROM ' . $this->trackserver->tbl_tracks . ' WHERE user_id IN ' . $sql_in;
 			$validated_user_ids = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared

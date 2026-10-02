@@ -1346,8 +1346,9 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			 * New implementation.
 			 * This is a nice query that gives the exact result we need, but it seems to be slow at times.
 			 */
-			$sql_in = "('" . implode( "','", $user_ids ) . "')";
-			$sql    = 'SELECT DISTINCT t.user_id, l.trip_id AS id FROM ' . $this->tbl_tracks . ' t INNER JOIN ' . $this->tbl_locations . ' l ' .
+			$user_ids = array_map( 'intval', $user_ids );
+			$sql_in   = '(' . implode( ',', $user_ids ) . ')';
+			$sql      = 'SELECT DISTINCT t.user_id, l.trip_id AS id FROM ' . $this->tbl_tracks . ' t INNER JOIN ' . $this->tbl_locations . ' l ' .
 				'ON t.id = l.trip_id INNER JOIN (SELECT t2.user_id, MAX(l2.occurred) AS endts FROM ' . $this->tbl_locations . ' l2 ' .
 				'INNER JOIN ' . $this->tbl_tracks . ' t2 ON l2.trip_id = t2.id GROUP BY t2.user_id) uu ON l.occurred = uu.endts ' .
 				'AND t.user_id = uu.user_id WHERE t.user_id IN ' . $sql_in;
@@ -1424,12 +1425,16 @@ if ( ! class_exists( 'Trackserver' ) ) {
 		public function get_location_ids_by_index( $track_id, $indexes ) {
 			global $wpdb;
 
-			$sql_in = "('" . implode( "','", $indexes ) . "')";
-			// phpcs:disable
-			$sql = $wpdb->prepare( 'SELECT c.* FROM (' .
+			$indexes = array_map( 'intval', $indexes );
+			$sql_in  = '(' . implode( ',', $indexes ) . ')';
+			$sql     = $wpdb->prepare(
+				'SELECT c.* FROM (' .
 				'SELECT @row := @row + 1 AS rownum, l.id FROM ' . $this->tbl_locations . ' l CROSS JOIN (select @row := -1) r WHERE l.trip_id=%d ORDER BY occurred' .
-				') c WHERE c.rownum IN ' . $sql_in, $track_id );
-			$res = $wpdb->get_results( $sql, OBJECT_K );
+				') c WHERE c.rownum IN ' . $sql_in,
+				$track_id
+			);
+			$res     = $wpdb->get_results( $sql, OBJECT_K );
+			// phpcs:disable
 			// phpcs:enable
 			return $res;
 		}
@@ -1562,11 +1567,12 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			if ( ! is_array( $track_ids ) ) {
 				$track_ids = array( $track_ids );
 			}
-			$in  = '(' . implode( ',', $track_ids ) . ')';
-			$sql = 'DELETE FROM ' . $this->tbl_locations . " WHERE trip_id IN $in";
-			$nl  = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$sql = 'DELETE FROM ' . $this->tbl_tracks . " WHERE id IN $in";
-			$nt  = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$track_ids = array_map( 'intval', $track_ids );
+			$in        = '(' . implode( ',', $track_ids ) . ')';
+			$sql       = 'DELETE FROM ' . $this->tbl_locations . " WHERE trip_id IN $in";
+			$nl        = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$sql       = 'DELETE FROM ' . $this->tbl_tracks . " WHERE id IN $in";
+			$nt        = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			return array(
 				'locations' => $nl,
 				'tracks'    => $nt,

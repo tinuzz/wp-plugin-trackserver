@@ -748,8 +748,9 @@ class Trackserver_Admin {
 				}
 
 				if ( count( $delete_ids ) ) {
-					$sql_in = "('" . implode( "','", $delete_ids ) . "')";
-					$sql[]  = 'DELETE FROM ' . $this->tbl_locations . ' WHERE id IN ' . $sql_in;
+					$delete_ids = array_map( 'intval', $delete_ids );
+					$sql_in     = '(' . implode( ',', $delete_ids ) . ')';
+					$sql[]      = 'DELETE FROM ' . $this->tbl_locations . ' WHERE id IN ' . $sql_in;
 				}
 
 				// If a query fails, give up immediately
@@ -816,8 +817,7 @@ class Trackserver_Admin {
 			if ( $n > 1 ) {
 				$id   = min( $track_ids );
 				$rest = array_diff( $track_ids, array( $id ) );
-				// How useful is it to escape integers?
-				array_walk( $rest, array( $wpdb, 'escape_by_ref' ) );
+				array_walk( $rest, 'intval' );
 				$in   = '(' . implode( ',', $rest ) . ')';
 				$sql  = $wpdb->prepare( 'UPDATE ' . $this->tbl_locations . " SET trip_id=%d WHERE trip_id IN $in", $id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$nl   = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared

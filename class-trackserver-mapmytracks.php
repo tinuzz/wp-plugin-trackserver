@@ -191,8 +191,9 @@ class Trackserver_Mapmytracks {
 				if ( isset( $_POST['description'] ) ) {
 					$track_ids = $result['track_ids'];
 					if ( count( $track_ids ) > 0 ) {
-						$in  = '(' . implode( ',', $track_ids ) . ')';
-						$sql = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $this->user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+						$track_ids = array_map( 'intval', $track_ids );
+						$in        = '(' . implode( ',', $track_ids ) . ')';
+						$sql       = $wpdb->prepare( 'UPDATE ' . $this->tbl_tracks . " SET comment=%s WHERE user_id=%d AND id IN $in", $_POST['description'], $this->user_id ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 						$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					}
 				}
