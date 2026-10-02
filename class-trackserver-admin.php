@@ -709,7 +709,7 @@ class Trackserver_Admin {
 		if ( isset( $_POST['s'] ) && ! empty( $_POST['s'] ) ) {
 			$referer = add_query_arg( 's', rawurlencode( wp_unslash( $_POST['s'] ) ), $referer );
 		}
-		wp_redirect( $referer );
+		wp_safe_redirect( $referer );
 		exit;
 	}
 
@@ -775,7 +775,7 @@ class Trackserver_Admin {
 		$message = $this->trackserver->handle_admin_upload();
 		setcookie( 'ts_bulk_result', $message, time() + 300 );
 		// Redirect back to the admin page. This should be safe.
-		wp_redirect( $_REQUEST['_wp_http_referer'] );
+		wp_safe_redirect( $_REQUEST['_wp_http_referer'] );
 		exit;
 	}
 
@@ -807,7 +807,7 @@ class Trackserver_Admin {
 				$message = __( 'No tracks deleted', 'trackserver' );
 			}
 			setcookie( 'ts_bulk_result', $message, time() + 300 );
-			wp_redirect( $referer );
+			wp_safe_redirect( $referer );
 			exit;
 		}
 
@@ -839,7 +839,7 @@ class Trackserver_Admin {
 				$message = sprintf( $format, $n );
 			}
 			setcookie( 'ts_bulk_result', $message, time() + 300 );
-			wp_redirect( $referer );
+			wp_safe_redirect( $referer );
 			exit;
 		}
 
@@ -882,7 +882,7 @@ class Trackserver_Admin {
 				$message = __( 'No tracks duplicated', 'trackserver' );
 			}
 			setcookie( 'ts_bulk_result', $message, time() + 300 );
-			wp_redirect( $referer );
+			wp_safe_redirect( $referer );
 			exit;
 		}
 
@@ -895,7 +895,7 @@ class Trackserver_Admin {
 			$query         = base64_encode( $query );
 			$query_nonce   = wp_create_nonce( 'manage_track_' . $query );
 			$alltracks_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?query=' . rawurlencode( $query ) . "&format=$track_format&admin=1&_wpnonce=$query_nonce" );
-			wp_redirect( $alltracks_url );
+			wp_safe_redirect( $alltracks_url );
 		}
 
 		if ( $action === 'recalc' ) {
@@ -912,7 +912,7 @@ class Trackserver_Admin {
 				$message = __( 'No tracks found to recalculate', 'trackserver' );
 			}
 			setcookie( 'ts_bulk_result', $message, time() + 300 );
-			wp_redirect( $referer );
+			wp_safe_redirect( $referer );
 			exit;
 		}
 	}

@@ -1515,7 +1515,7 @@ if ( ! class_exists( 'Trackserver' ) ) {
 
 			setcookie( 'ts_bulk_result', $message, time() + 300 );
 			nocache_headers();
-			wp_redirect( $_REQUEST['_wp_http_referer'] );
+			wp_safe_redirect( $_REQUEST['_wp_http_referer'] );
 			exit;
 		}
 
