@@ -1081,11 +1081,11 @@ if ( ! class_exists( 'Trackserver' ) ) {
 			$new = array();
 			foreach ( $files as $postvar => $arr ) {
 				foreach ( $arr as $key => $list ) {
-					if ( is_array( $list ) ) {               // name="userfile[]"
+					if ( is_array( $list ) ) {               // name="userfile[]"   // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 						foreach ( $list as $i => $val ) {
 								$new[ $j + $i ][ $key ] = $val;
 						}
-					} else {                                   // name="userfile"
+					} else {                                   // name="userfile"   // phpcs:ignore // Squiz.PHP.CommentedOutCode.Found
 						$new[ $j ][ $key ] = $list;
 					}
 				}

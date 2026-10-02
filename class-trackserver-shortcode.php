@@ -190,13 +190,13 @@ class Trackserver_Shortcode {
 			}
 		}
 
-		$this->shortcode_data['config']['continuous']  = $this->get_content_boolean( $atts['continuous'], true );
-		$this->shortcode_data['config']['live']        = $this->get_content_boolean( $atts['live'], false );
-		$this->shortcode_data['config']['quiet']       = $this->get_content_boolean( $atts['quiet'], false );
-		$this->shortcode_data['config']['locate']      = $this->get_content_boolean( $atts['locate'], false );
-		$this->shortcode_data['config']['zoom']        = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : false );
-		$this->shortcode_data['config']['fit']         = ( $atts['zoom'] !== false ? false : true );  // zoom is always set, so we need a signal for altering fitBounds() options
-		$this->shortcode_data['config']['profile']     = $atts['profile'];
+		$this->shortcode_data['config']['continuous'] = $this->get_content_boolean( $atts['continuous'], true );
+		$this->shortcode_data['config']['live']       = $this->get_content_boolean( $atts['live'], false );
+		$this->shortcode_data['config']['quiet']      = $this->get_content_boolean( $atts['quiet'], false );
+		$this->shortcode_data['config']['locate']     = $this->get_content_boolean( $atts['locate'], false );
+		$this->shortcode_data['config']['zoom']       = ( $atts['zoom'] !== false ? intval( $atts['zoom'] ) : false );
+		$this->shortcode_data['config']['fit']        = ( $atts['zoom'] !== false ? false : true );  // zoom is always set, so we need a signal for altering fitBounds() options
+		$this->shortcode_data['config']['profile']    = $atts['profile'];
 
 		// 'infobar' can be true, false (both in boolean or string form) or a string
 		// true means: use the template from the user metadata.
@@ -537,7 +537,7 @@ class Trackserver_Shortcode {
 						//'delay' => $delay,
 					)
 				);
-				$query         = base64_encode( $query );
+				$query         = base64_encode( $query ); //phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 				$query_nonce   = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
 				$alltracks_url = $gettrack_url_prefix . '?query=' . rawurlencode( $query ) . "&p=$post_id&format=" .
 					$this->trackserver->track_format . '&maxage=' . $this->shortcode_data['config']['maxage'] . "&_wpnonce=$query_nonce";
@@ -687,7 +687,7 @@ class Trackserver_Shortcode {
 				)
 			);
 
-			$query         = base64_encode( $query );
+			$query         = base64_encode( $query ); //phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			$query_nonce   = wp_create_nonce( 'gettrack_' . $query . '_p' . $post_id );
 			$alltracks_url = $gettrack_url_prefix . '?query=' . rawurlencode( $query ) . "&p=$post_id&format=$track_format&maxage=" . $this->shortcode_data['config']['maxage'] . "&_wpnonce=$query_nonce";
 
@@ -716,7 +716,7 @@ class Trackserver_Shortcode {
 	private function proxy_url( $url ) {
 		if ( substr( $url, 0, 6 ) === 'proxy:' ) {
 			$track_base_url = get_home_url( null, $this->trackserver->url_prefix . '/' . $this->trackserver->options['gettrack_slug'] . '/?', ( is_ssl() ? 'https' : 'http' ) );
-			$proxy          = base64_encode( substr( $url, 6 ) );
+			$proxy          = base64_encode( substr( $url, 6 ) ); //phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			$post_id        = get_the_ID();
 			$proxy_nonce    = wp_create_nonce( 'proxy_' . $proxy . '_p' . $post_id );
 			$url            = $track_base_url . 'proxy=' . rawurlencode( $proxy ) . "&p=$post_id&_wpnonce=$proxy_nonce";
@@ -1078,7 +1078,7 @@ class Trackserver_Shortcode {
 		$post_id      = ( isset( $_REQUEST['p'] ) ? intval( $_REQUEST['p'] ) : 0 );
 
 		if ( wp_verify_nonce( $_REQUEST['_wpnonce'], 'proxy_' . $proxy_string . '_p' . $post_id ) ) {
-			$url      = base64_decode( $proxy_string );
+			$url      = base64_decode( $proxy_string ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			$options  = array(
 				'httpversion' => '1.1',
 				'user-agent'  => 'WordPress/Trackserver ' . TRACKSERVER_VERSION . '; https://github.com/tinuzz/wp-plugin-trackserver',

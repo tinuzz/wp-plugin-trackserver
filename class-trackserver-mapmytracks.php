@@ -148,7 +148,7 @@ class Trackserver_Mapmytracks {
 	 * @since 1.0
 	 */
 	private function handle_update_activity() {
-		$track = new Trackserver_Track( $this->trackserver, $_POST['activity_id'], $this->user_id );   // $restrict = true
+		$track = new Trackserver_Track( $this->trackserver, $_POST['activity_id'], $this->user_id );
 		if ( $track->id ) {
 			list( $result, $reason ) = $this->process_points( $track->id );
 			if ( $result ) {
